@@ -55,7 +55,7 @@ export default async function HomePage() {
         title="Le bien-être de votre chien, au cœur de Paris"
         subtitle="Toilettage, spa, crèche, éducation et ostéopathie — tout ce dont votre compagnon a besoin, dans un espace chaleureux et bienveillant."
       />
-      {services.length > 0 && <ServicesGrid services={services} />}
+      {services.length > 0 && <ServicesGrid services={services} preview />}
       <Values />
       {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
       <ShopTeaser products={featuredProducts} />

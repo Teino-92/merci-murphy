@@ -7,9 +7,10 @@ import { urlFor } from '@/sanity/client'
 
 interface ServicesGridProps {
   services: ServiceSummary[]
+  preview?: boolean
 }
 
-export function ServicesGrid({ services }: ServicesGridProps) {
+export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
   return (
     <Section className="bg-cream">
       <Container>
@@ -22,15 +23,17 @@ export function ServicesGrid({ services }: ServicesGridProps) {
               Tout ce dont votre chien a besoin, sous un même toit.
             </p>
           </div>
-          <Link
-            href="/services"
-            className="flex items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all"
-          >
-            Voir tout <ArrowRight className="h-4 w-4" />
-          </Link>
+          {preview && (
+            <Link
+              href="/services"
+              className="flex items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all"
+            >
+              Voir tout <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
         </div>
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.slice(0, 3).map((service) => (
+          {(preview ? services.slice(0, 3) : services).map((service) => (
             <ServiceCard
               key={service._id}
               title={service.title}
