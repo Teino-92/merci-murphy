@@ -9,7 +9,7 @@ import { formatPrice } from '@/lib/shopify'
 export function CartDrawer() {
   const { cart, isOpen, isLoading, closeCart, removeItem, updateItem } = useCart()
 
-  const lines = cart?.lines.nodes ?? []
+  const lines = cart?.lines ?? []
   const isEmpty = lines.length === 0
 
   return (
@@ -57,13 +57,10 @@ export function CartDrawer() {
                 <li key={line.id} className="flex gap-4 py-5">
                   {/* Image */}
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-rose/20">
-                    {line.merchandise.product.featuredImage && (
+                    {line.image && (
                       <Image
-                        src={line.merchandise.product.featuredImage.url}
-                        alt={
-                          line.merchandise.product.featuredImage.altText ??
-                          line.merchandise.product.title
-                        }
+                        src={line.image.url}
+                        alt={line.image.altText ?? line.title}
                         fill
                         className="object-cover"
                         sizes="80px"
@@ -73,15 +70,11 @@ export function CartDrawer() {
 
                   {/* Info */}
                   <div className="flex flex-1 flex-col">
-                    <p className="font-medium text-charcoal leading-snug">
-                      {line.merchandise.product.title}
-                    </p>
-                    {line.merchandise.title !== 'Default Title' && (
-                      <p className="mt-0.5 text-sm text-charcoal/50">{line.merchandise.title}</p>
+                    <p className="font-medium text-charcoal leading-snug">{line.title}</p>
+                    {line.variantTitle !== 'Default Title' && (
+                      <p className="mt-0.5 text-sm text-charcoal/50">{line.variantTitle}</p>
                     )}
-                    <p className="mt-1 font-semibold text-terracotta">
-                      {formatPrice(line.merchandise.price)}
-                    </p>
+                    <p className="mt-1 font-semibold text-terracotta">{formatPrice(line.price)}</p>
 
                     {/* Qty controls */}
                     <div className="mt-3 flex items-center gap-3">
@@ -123,7 +116,7 @@ export function CartDrawer() {
               <div className="flex items-center justify-between">
                 <span className="text-charcoal/70">Total</span>
                 <span className="text-xl font-bold text-charcoal">
-                  {cart?.cost.totalAmount && formatPrice(cart.cost.totalAmount)}
+                  {cart?.totalAmount && formatPrice(cart.totalAmount)}
                 </span>
               </div>
               <p className="text-xs text-charcoal/40 text-center">
