@@ -1,0 +1,171 @@
+import { notFound } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import type { Metadata } from 'next'
+import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
+import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { urlFor } from '@/sanity/client'
+import { Section, Container } from '@/components/ui/section'
+import { Button } from '@/components/ui/button'
+import { PortableText } from '@/components/sections/portable-text'
+import { FaqAccordion } from '@/components/sections/faq-accordion'
+import { MobileCta } from '@/components/sections/mobile-cta'
+
+interface Props {
+  params: { slug: string }
+}
+
+export async function generateStaticParams() {
+  const services = await getAllServices()
+  return services.map((s) => ({ slug: s.slug.current }))
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const service = await getServiceBySlug(params.slug)
+  if (!service) return {}
+  const url = `https://mercimurphy.com/services/${params.slug}`
+  const image = service.image ? urlFor(service.image).width(1200).height(630).url() : undefined
+  return {
+    title: service.title,
+    description: service.description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: service.title,
+      description: service.description,
+      url,
+      type: 'website',
+      images: image ? [{ url: image, alt: service.title }] : [],
+    },
+  }
+}
+
+export default async function ServicePage({ params }: Props) {
+  const [service, settings] = await Promise.all([getServiceBySlug(params.slug), getSiteSettings()])
+
+  if (!service) notFound()
+
+  const imageUrl = service.image ? urlFor(service.image).width(1600).height(800).url() : null
+
+  return (
+    <>
+      {/* Header */}
+      <div className="relative h-[50vh] min-h-72 w-full overflow-hidden bg-charcoal">
+        {imageUrl && (
+          <Image
+            src={imageUrl}
+            alt={service.title}
+            fill
+            priority
+            className="object-cover opacity-60"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+          <h1 className="font-display text-4xl font-bold text-cream sm:text-5xl">
+            {service.title}
+          </h1>
+          <p className="mt-4 max-w-xl text-lg text-cream/80">{service.description}</p>
+        </div>
+      </div>
+
+      {/* Approche */}
+      {service.approche && service.approche.length > 0 && (
+        <Section className="bg-cream">
+          <Container className="max-w-3xl">
+            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+              Notre approche
+            </h2>
+            <PortableText value={service.approche} className="mt-6" />
+          </Container>
+        </Section>
+      )}
+
+      {/* Déroulé */}
+      {service.deroule && service.deroule.length > 0 && (
+        <Section className="bg-rose/30">
+          <Container className="max-w-3xl">
+            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+              Le déroulé du rendez-vous
+            </h2>
+            <PortableText value={service.deroule} className="mt-6" />
+          </Container>
+        </Section>
+      )}
+
+      {/* Tarifs */}
+      {service.tarifs && service.tarifs.length > 0 && (
+        <Section className="bg-cream">
+          <Container className="max-w-3xl">
+            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
+            <p className="mt-2 text-sm text-charcoal/50">
+              Tarifs indicatifs — notre équipe vous confirmera le prix exact lors de la prise de
+              rendez-vous.
+            </p>
+            <div className="mt-8 divide-y divide-charcoal/10 rounded-2xl border border-charcoal/10 bg-white">
+              {service.tarifs.map((tarif, i) => (
+                <div key={i} className="flex items-start justify-between px-6 py-4">
+                  <div>
+                    <p className="font-medium text-charcoal">{tarif.label}</p>
+                    {tarif.disclaimer && (
+                      <p className="mt-0.5 text-xs text-charcoal/40">{tarif.disclaimer}</p>
+                    )}
+                  </div>
+                  <p className="ml-4 shrink-0 font-semibold text-terracotta">{tarif.prix}</p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* FAQ */}
+      {service.faq && service.faq.length > 0 && (
+        <Section className="bg-rose/20">
+          <Container className="max-w-3xl">
+            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+              Questions fréquentes
+            </h2>
+            <div className="mt-8">
+              <FaqAccordion items={service.faq} />
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* CTA desktop */}
+      <Section className="bg-charcoal text-cream">
+        <Container className="max-w-2xl text-center">
+          <h2 className="font-display text-2xl font-bold sm:text-3xl">
+            Prêt à prendre rendez-vous ?
+          </h2>
+          <p className="mt-4 text-cream/70">Contactez-nous ou réservez directement en ligne.</p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
+              <Link href="/reservation">{service.cta?.label ?? 'Prendre rendez-vous'}</Link>
+            </Button>
+            {settings?.telephone && (
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-cream text-cream hover:bg-cream hover:text-charcoal"
+              >
+                <a href={`tel:${settings.telephone}`}>Nous appeler</a>
+              </Button>
+            )}
+          </div>
+        </Container>
+      </Section>
+
+      {/* Mobile sticky CTA */}
+      <MobileCta
+        phone={settings?.telephone}
+        type={service.cta?.type ?? 'reservation'}
+        label={service.cta?.label}
+      />
+
+      {/* Spacer for mobile CTA */}
+      <div className="h-20 lg:hidden" />
+    </>
+  )
+}

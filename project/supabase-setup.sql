@@ -1,3 +1,32 @@
+-- profiles (linked to Supabase Auth users)
+create table public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamp with time zone default now(),
+  nom text not null,
+  telephone text not null,
+  -- dog info
+  nom_chien text,
+  race_chien text,
+  poids_chien text,
+  etat_poil text,
+  -- team toggle: when true the customer can self-book (Phase 2)
+  can_book boolean not null default false
+);
+
+alter table public.profiles enable row level security;
+
+create policy "profiles_select_own" on public.profiles
+  for select to authenticated using (auth.uid() = id);
+
+create policy "profiles_insert_own" on public.profiles
+  for insert to authenticated with check (auth.uid() = id);
+
+create policy "profiles_update_own" on public.profiles
+  for update to authenticated using (auth.uid() = id);
+
+create policy "profiles_all_service_role" on public.profiles
+  for all to service_role using (true);
+
 -- leads
 create table public.leads (
   id uuid primary key default gen_random_uuid(),
@@ -11,7 +40,8 @@ create table public.leads (
   etat_poil text,
   message text,
   source text not null check (source in ('reservation', 'contact', 'newsletter')),
-  status text not null default 'new' check (status in ('new', 'contacted', 'confirmed', 'cancelled'))
+  status text not null default 'new' check (status in ('new', 'contacted', 'confirmed', 'cancelled')),
+  user_id uuid references auth.users(id) on delete set null
 );
 
 -- newsletter_subscribers
@@ -26,9 +56,12 @@ create table public.newsletter_subscribers (
 alter table public.leads enable row level security;
 alter table public.newsletter_subscribers enable row level security;
 
--- leads: public INSERT, service role SELECT/UPDATE
-create policy "leads_insert_public" on public.leads
-  for insert to anon with check (true);
+-- leads: authenticated INSERT, service role SELECT/UPDATE
+create policy "leads_insert_authenticated" on public.leads
+  for insert to authenticated with check (true);
+
+create policy "leads_select_own" on public.leads
+  for select to authenticated using (auth.uid() = user_id);
 
 create policy "leads_select_service_role" on public.leads
   for select to service_role using (true);

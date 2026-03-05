@@ -49,6 +49,8 @@
 - sage: #8B9E7A
 - terracotta: #C4845A
 - charcoal: #1A1A1A
+- rose: #FFDAD4
+- bleu: #1D164E
 
 ---
 
