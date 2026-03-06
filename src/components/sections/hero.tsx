@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Reveal } from '@/components/ui/reveal'
 import { SITE_CONFIG } from '@/config/site'
 import { cn } from '@/lib/utils'
 
@@ -27,31 +26,25 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-charcoal/20 to-transparent" />
 
       <div className="relative flex h-full min-h-[85vh] flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-        <Reveal>
-          <h1 className="font-display text-4xl font-bold leading-tight text-cream sm:text-5xl lg:text-6xl">
-            {title}
-          </h1>
-        </Reveal>
-        <Reveal delay={150}>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/80">{subtitle}</p>
-        </Reveal>
-        <Reveal delay={280}>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
-              <Link href="/reservation">Prendre rendez-vous</Link>
+        <h1 className="font-display text-4xl font-bold leading-tight text-cream sm:text-5xl lg:text-6xl">
+          {title}
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/80">{subtitle}</p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
+            <Link href="/reservation">Prendre rendez-vous</Link>
+          </Button>
+          {SITE_CONFIG.phone && (
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-cream text-cream hover:bg-cream hover:text-charcoal"
+            >
+              <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler</a>
             </Button>
-            {SITE_CONFIG.phone && (
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-cream text-cream hover:bg-cream hover:text-charcoal"
-              >
-                <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler</a>
-              </Button>
-            )}
-          </div>
-        </Reveal>
+          )}
+        </div>
       </div>
     </div>
   )
