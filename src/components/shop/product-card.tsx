@@ -8,12 +8,16 @@ import { cn } from '@/lib/utils'
 interface ProductCardProps {
   product: ShopifyProduct
   className?: string
+  imageOverride?: [number, number] // [defaultIndex, hoverIndex] into images.nodes
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, imageOverride }: ProductCardProps) {
   const price = product.priceRange.minVariantPrice
-  const firstImage = product.featuredImage
-  const secondImage = product.images?.nodes?.[1] ?? null
+  const nodes = product.images?.nodes ?? []
+  const firstImage = imageOverride
+    ? (nodes[imageOverride[0]] ?? product.featuredImage)
+    : product.featuredImage
+  const secondImage = imageOverride ? (nodes[imageOverride[1]] ?? null) : (nodes[1] ?? null)
 
   return (
     <Link href={`/shop/${product.handle}`} className={cn('group flex flex-col', className)}>

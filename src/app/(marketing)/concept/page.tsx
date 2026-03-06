@@ -3,7 +3,7 @@ import { Section, Container } from '@/components/ui/section'
 import { TeamMemberCard } from '@/components/sections/team-member-card'
 import { getTeamMembers } from '@/sanity/queries/team'
 import { urlFor } from '@/sanity/client'
-import { Leaf, Heart, Recycle, ShieldCheck } from 'lucide-react'
+import { Leaf, Heart, Recycle, ShieldCheck, Users } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Le concept',
@@ -82,6 +82,84 @@ export default async function ConceptPage() {
             <div className="flex items-center justify-center">
               <div className="flex h-72 w-72 items-center justify-center rounded-full bg-rose/30">
                 <p className="font-display text-2xl font-bold text-charcoal/30">Murphy 🐾</p>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Valeurs */}
+      <Section className="bg-charcoal text-cream">
+        <Container className="max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">Nos Valeurs</h2>
+            <p className="mt-3 text-cream/60">Des convictions ancrées et des actions engagées.</p>
+          </div>
+
+          <div className="space-y-20">
+            {/* Valeur 1 — texte gauche, photo droite */}
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+              <div className="border-l-2 border-terracotta pl-6">
+                <Heart className="h-6 w-6 text-terracotta mb-4" />
+                <p className="leading-relaxed text-cream/80">
+                  Un chien est un être sensible et un membre à part entière de votre famille.{' '}
+                  <span className="text-cream font-medium">merci murphy®</span> a à cœur de le
+                  considérer comme tel et de répondre au mieux à ses besoins physiologiques.
+                </p>
+              </div>
+              <div className="flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
+                <p className="text-sm text-cream/20">Photo à venir</p>
+              </div>
+            </div>
+
+            {/* Valeur 2 — photo gauche, texte droite */}
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+              <div className="order-2 lg:order-1 flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
+                <p className="text-sm text-cream/20">Photo à venir</p>
+              </div>
+              <div className="order-1 lg:order-2 border-l-2 border-terracotta pl-6">
+                <Users className="h-6 w-6 text-terracotta mb-4" />
+                <p className="leading-relaxed text-cream/80">
+                  Dans tout ce qui est entrepris pour la relation entre les chiens et leur famille,{' '}
+                  <span className="text-cream font-medium">merci murphy®</span> recherche un impact
+                  sociétal positif et significatif — amélioration des conditions de travail,
+                  recherche d&apos;une juste rémunération, insertion par le travail, soutien de
+                  l&apos;entreprenariat féminin.
+                </p>
+              </div>
+            </div>
+
+            {/* Valeur 3 — texte gauche, photo droite */}
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+              <div className="border-l-2 border-terracotta pl-6">
+                <Leaf className="h-6 w-6 text-terracotta mb-4" />
+                <p className="leading-relaxed text-cream/80">
+                  <span className="text-cream font-medium">merci murphy®</span> est engagé pour
+                  réduire son impact environnemental — conception éco-responsable de la crèche et de
+                  l&apos;atelier de toilettage, pratiques quotidiennes visant la réduction de
+                  consommation énergétique et d&apos;eau, choix du matériel et produits utilisés.
+                </p>
+              </div>
+              <div className="flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
+                <p className="text-sm text-cream/20">Photo à venir</p>
+              </div>
+            </div>
+
+            {/* Valeur 4 — photo gauche, texte droite */}
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+              <div className="order-2 lg:order-1 flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
+                <p className="text-sm text-cream/20">Photo à venir</p>
+              </div>
+              <div className="order-1 lg:order-2 border-l-2 border-terracotta pl-6">
+                <Recycle className="h-6 w-6 text-terracotta mb-4" />
+                <p className="leading-relaxed text-cream/80">
+                  Souhaiter le meilleur pour son chien, c&apos;est aussi consommer différemment.{' '}
+                  <span className="text-cream font-medium">merci murphy®</span> propose une
+                  consommation en vrac et une offre resserrée de produits éco-responsables et
+                  éthiques — et est la première boutique pour chien à proposer du{' '}
+                  <span className="text-cream font-medium">second-hand</span>. Réutiliser est la
+                  meilleure option pour la planète.
+                </p>
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { MapPin, Phone, Clock, Instagram } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
 import { Button } from '@/components/ui/button'
+import { HorairesAccordion } from './horaires-accordion'
 import type { SiteSettings } from '@/sanity/queries/site-settings'
 
 interface InfoPratiquesProps {
@@ -69,27 +70,11 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
 
           {settings.horairesGroupes && settings.horairesGroupes.length > 0 && (
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-4">
                 <Clock className="h-5 w-5 text-terracotta" />
                 <h3 className="font-display text-xl font-semibold">Horaires d&apos;ouverture</h3>
               </div>
-              <div className="mt-6 space-y-8">
-                {settings.horairesGroupes.map((groupe, i) => (
-                  <div key={i}>
-                    {groupe.titre && (
-                      <p className="mb-3 font-semibold text-cream">{groupe.titre}</p>
-                    )}
-                    <dl className="space-y-2">
-                      {groupe.lignes?.map((h, j) => (
-                        <div key={j} className="flex justify-between border-b border-cream/10 pb-2">
-                          <dt className="text-cream/60">{h.jour}</dt>
-                          <dd className="font-medium text-cream">{h.heures}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                ))}
-              </div>
+              <HorairesAccordion groupes={settings.horairesGroupes} />
             </div>
           )}
         </div>

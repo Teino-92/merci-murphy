@@ -76,7 +76,7 @@ const PRODUCT_FRAGMENT = `
   handle
   description
   featuredImage { url altText width height }
-  images(first: 2) { nodes { url altText width height } }
+  images(first: 3) { nodes { url altText width height } }
   priceRange { minVariantPrice { amount currencyCode } }
   collections(first: 3) { nodes { handle title } }
 `

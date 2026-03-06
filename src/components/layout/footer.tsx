@@ -9,22 +9,17 @@ export function Footer() {
     <footer className="border-t border-charcoal/10 bg-charcoal text-cream">
       {/* Newsletter band */}
       <div className="border-b border-cream/10">
-        <Container className="py-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-display text-lg font-semibold">Restez informé(e)</p>
-              <p className="text-sm text-cream/60">
-                Actualités, conseils bien-être et offres exclusives.
-              </p>
-            </div>
-            <div className="w-full sm:max-w-sm">
+        <Container className="py-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-display text-base font-semibold shrink-0">Restez informé(e)</p>
+            <div className="w-full sm:max-w-xs">
               <NewsletterForm />
             </div>
           </div>
         </Container>
       </div>
 
-      <Container className="py-12">
+      <Container className="py-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <Image
@@ -95,7 +90,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-cream/10 pt-8 text-center text-xs text-cream/40">
+        <div className="mt-8 border-t border-cream/10 pt-6 text-center text-xs text-cream/40">
           <p>
             © {new Date().getFullYear()} Merci Murphy.{' '}
             <Link href="/mentions-legales" className="hover:text-cream/60">
