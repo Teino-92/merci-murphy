@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 import { ContactForm } from '@/components/forms/contact-form'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { HorairesAccordion } from '@/components/sections/horaires-accordion'
@@ -21,94 +22,97 @@ export default async function ContactPage() {
     <>
       <Section className="bg-charcoal text-cream py-20">
         <Container className="max-w-2xl text-center">
-          <h1 className="font-display text-4xl font-bold sm:text-5xl">Contact</h1>
-          <p className="mt-4 text-lg text-cream/70">
-            Une question ? N&apos;hésitez pas à nous écrire ou nous appeler.
-          </p>
+          <Reveal>
+            <h1 className="font-display text-4xl font-bold sm:text-5xl">Contact</h1>
+            <p className="mt-4 text-lg text-cream/70">
+              Une question ? N&apos;hésitez pas à nous écrire ou nous appeler.
+            </p>
+          </Reveal>
         </Container>
       </Section>
 
       <Section className="bg-cream">
         <Container>
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-            {/* Infos */}
-            <div>
-              <h2 className="font-display text-2xl font-bold text-charcoal">Nous trouver</h2>
-              <div className="mt-6 space-y-5">
-                {adresse && (
-                  <div className="flex gap-3">
-                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
-                    <div>
-                      <p className="text-charcoal/80">{adresse}</p>
-                      {settings?.google_maps_url && (
-                        <a
-                          href={settings.google_maps_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 text-sm text-terracotta hover:underline"
-                        >
-                          Voir sur Google Maps →
-                        </a>
-                      )}
+            <Reveal>
+              <div>
+                <h2 className="font-display text-2xl font-bold text-charcoal">Nous trouver</h2>
+                <div className="mt-6 space-y-5">
+                  {adresse && (
+                    <div className="flex gap-3">
+                      <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+                      <div>
+                        <p className="text-charcoal/80">{adresse}</p>
+                        {settings?.google_maps_url && (
+                          <a
+                            href={settings.google_maps_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 text-sm text-terracotta hover:underline"
+                          >
+                            Voir sur Google Maps →
+                          </a>
+                        )}
+                      </div>
                     </div>
+                  )}
+                  {settings?.telephone && (
+                    <div className="flex gap-3">
+                      <Phone className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+                      <a
+                        href={`tel:${settings.telephone}`}
+                        className="text-charcoal/80 hover:text-charcoal"
+                      >
+                        {settings.telephone}
+                      </a>
+                    </div>
+                  )}
+                  {settings?.email && (
+                    <div className="flex gap-3">
+                      <Mail className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+                      <a
+                        href={`mailto:${settings.email}`}
+                        className="text-charcoal/80 hover:text-charcoal"
+                      >
+                        {settings.email}
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {settings?.horairesGroupes && settings.horairesGroupes.length > 0 && (
+                  <div className="mt-8">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Clock className="h-5 w-5 text-terracotta" />
+                      <h3 className="font-display text-lg font-semibold text-charcoal">Horaires</h3>
+                    </div>
+                    <HorairesAccordion groupes={settings.horairesGroupes} variant="light" />
                   </div>
                 )}
-                {settings?.telephone && (
-                  <div className="flex gap-3">
-                    <Phone className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+
+                {settings?.google_maps_url && (
+                  <div className="mt-8 overflow-hidden rounded-2xl bg-rose/20 h-48 flex items-center justify-center">
                     <a
-                      href={`tel:${settings.telephone}`}
-                      className="text-charcoal/80 hover:text-charcoal"
+                      href={settings.google_maps_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-charcoal/50 hover:text-terracotta"
                     >
-                      {settings.telephone}
-                    </a>
-                  </div>
-                )}
-                {settings?.email && (
-                  <div className="flex gap-3">
-                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
-                    <a
-                      href={`mailto:${settings.email}`}
-                      className="text-charcoal/80 hover:text-charcoal"
-                    >
-                      {settings.email}
+                      Voir sur Google Maps →
                     </a>
                   </div>
                 )}
               </div>
+            </Reveal>
 
-              {settings?.horairesGroupes && settings.horairesGroupes.length > 0 && (
-                <div className="mt-8">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Clock className="h-5 w-5 text-terracotta" />
-                    <h3 className="font-display text-lg font-semibold text-charcoal">Horaires</h3>
-                  </div>
-                  <HorairesAccordion groupes={settings.horairesGroupes} variant="light" />
+            <Reveal delay={150}>
+              <div>
+                <h2 className="font-display text-2xl font-bold text-charcoal">Nous écrire</h2>
+                <div className="mt-6">
+                  <ContactForm />
                 </div>
-              )}
-
-              {/* Google Maps embed placeholder */}
-              {settings?.google_maps_url && (
-                <div className="mt-8 overflow-hidden rounded-2xl bg-rose/20 h-48 flex items-center justify-center">
-                  <a
-                    href={settings.google_maps_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium text-charcoal/50 hover:text-terracotta"
-                  >
-                    Voir sur Google Maps →
-                  </a>
-                </div>
-              )}
-            </div>
-
-            {/* Form */}
-            <div>
-              <h2 className="font-display text-2xl font-bold text-charcoal">Nous écrire</h2>
-              <div className="mt-6">
-                <ContactForm />
               </div>
-            </div>
+            </Reveal>
           </div>
         </Container>
       </Section>

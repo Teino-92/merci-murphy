@@ -6,6 +6,7 @@ import { Section, Container } from '@/components/ui/section'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Leaf, Heart, Globe, RefreshCw } from 'lucide-react'
+import { Reveal } from '@/components/ui/reveal'
 
 export const metadata: Metadata = {
   title: 'Boutique éthique pour chiens à Paris',
@@ -171,8 +172,10 @@ export default async function ShopPage({
           {/* Products grid */}
           {products.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {products.map((product, i) => (
+                <Reveal key={product.id} delay={(i % 4) * 80}>
+                  <ProductCard product={product} />
+                </Reveal>
               ))}
             </div>
           ) : (
