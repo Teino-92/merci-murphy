@@ -32,7 +32,7 @@ export default async function ShopPage({
       {/* Manifesto */}
       <Section className="bg-charcoal text-cream py-12">
         <Container className="max-w-6xl">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-start">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch">
             {/* Left — full text */}
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-terracotta">
@@ -97,33 +97,37 @@ export default async function ShopPage({
               </div>
             </div>
 
-            {/* Right — 3 photos stacked */}
-            <div className="grid grid-cols-3 gap-3 lg:grid-cols-1 lg:gap-4">
-              <div className="relative aspect-video overflow-hidden rounded-xl lg:aspect-[16/7]">
-                <Image
-                  src="/shop-shelves.webp"
-                  alt="Sélection merci murphy"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 33vw, 50vw"
-                />
+            {/* Right — mosaic, matches text column height */}
+            <div className="flex h-full flex-col gap-3">
+              {/* Top row — shelves + bulk side by side */}
+              <div className="flex flex-1 gap-3">
+                <div className="relative flex-1 overflow-hidden rounded-xl">
+                  <Image
+                    src="/shop-shelves.webp"
+                    alt="Sélection merci murphy"
+                    fill
+                    className="object-cover object-center"
+                    sizes="25vw"
+                  />
+                </div>
+                <div className="relative flex-1 overflow-hidden rounded-xl">
+                  <Image
+                    src="/shop-bulk.webp"
+                    alt="Vrac merci murphy"
+                    fill
+                    className="object-cover object-center"
+                    sizes="25vw"
+                  />
+                </div>
               </div>
-              <div className="relative aspect-video overflow-hidden rounded-xl lg:aspect-[16/7]">
+              {/* Bottom — candles full width */}
+              <div className="relative h-36 overflow-hidden rounded-xl">
                 <Image
                   src="/shop-candles.webp"
                   alt="Bougies merci murphy"
                   fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 33vw, 50vw"
-                />
-              </div>
-              <div className="relative aspect-video overflow-hidden rounded-xl lg:aspect-[16/7]">
-                <Image
-                  src="/shop-bulk.webp"
-                  alt="Vrac merci murphy"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 33vw, 50vw"
+                  className="object-cover object-center"
+                  sizes="50vw"
                 />
               </div>
             </div>
