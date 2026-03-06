@@ -1,6 +1,6 @@
 const SHOPIFY_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!
-const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
-const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`
+const SHOPIFY_ACCESS_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN!
+const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2026-01/graphql.json`
 
 async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const res = await fetch(SHOPIFY_API_URL, {
@@ -13,10 +13,14 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
     next: { revalidate: 3600 },
   })
 
-  if (!res.ok) throw new Error(`Shopify API error: ${res.status}`)
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Shopify API error: ${res.status} — ${text}`)
+  }
 
-  const { data } = await res.json()
-  return data as T
+  const json = await res.json()
+  if (json.errors) throw new Error(`Shopify GraphQL error: ${JSON.stringify(json.errors)}`)
+  return json.data as T
 }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -72,12 +76,23 @@ const PRODUCT_FRAGMENT = `
   handle
   description
   featuredImage { url altText width height }
+  images(first: 2) { nodes { url altText width height } }
+  priceRange { minVariantPrice { amount currencyCode } }
+  collections(first: 3) { nodes { handle title } }
+`
+
+const PRODUCT_BASE_FRAGMENT = `
+  id
+  title
+  handle
+  description
+  featuredImage { url altText width height }
   priceRange { minVariantPrice { amount currencyCode } }
   collections(first: 3) { nodes { handle title } }
 `
 
 const PRODUCT_DETAIL_FRAGMENT = `
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_BASE_FRAGMENT}
   descriptionHtml
   images(first: 10) { nodes { url altText width height } }
   variants(first: 20) {
@@ -138,14 +153,26 @@ export async function getCollectionByHandle(handle: string): Promise<ShopifyColl
   return data.collection
 }
 
-export async function getFeaturedProducts(first = 3): Promise<ShopifyProduct[]> {
+export async function getFeaturedProducts(first = 6): Promise<ShopifyProduct[]> {
   const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>(
     `{ products(first: ${first}, sortKey: BEST_SELLING) { nodes { ${PRODUCT_FRAGMENT} } } }`
   )
   return data.products.nodes
 }
 
-// ─── Cart Types (Checkout-based) ─────────────────────────────────────────────
+export async function getProductsByHandles(handles: string[]): Promise<ShopifyProduct[]> {
+  const results = await Promise.all(
+    handles.map((handle) =>
+      shopifyFetch<{ product: ShopifyProduct | null }>(
+        `query($handle: String!) { product(handle: $handle) { ${PRODUCT_FRAGMENT} } }`,
+        { handle }
+      ).then((d) => d.product)
+    )
+  )
+  return results.filter((p): p is ShopifyProduct => p !== null)
+}
+
+// ─── Cart Types ───────────────────────────────────────────────────────────────
 
 export interface CartLine {
   id: string
@@ -166,104 +193,102 @@ export interface Cart {
   totalQuantity: number
 }
 
-interface CheckoutResponse {
+interface CartApiLine {
   id: string
-  webUrl: string
-  subtotalPriceV2: ShopifyPrice
-  lineItems: {
-    edges: Array<{
-      node: {
-        id: string
-        quantity: number
-        title: string
-        variant: {
-          id: string
-          title: string
-          priceV2: ShopifyPrice
-          image: ShopifyImage | null
-          product: { handle: string }
-        }
-      }
-    }>
+  quantity: number
+  cost: { totalAmount: ShopifyPrice }
+  merchandise: {
+    id: string
+    title: string
+    price: ShopifyPrice
+    image: ShopifyImage | null
+    product: { title: string; handle: string }
   }
 }
 
-const CHECKOUT_FRAGMENT = `
+interface CartApiResponse {
+  id: string
+  checkoutUrl: string
+  cost: { totalAmount: ShopifyPrice }
+  lines: { nodes: CartApiLine[] }
+}
+
+const CART_FRAGMENT = `
   id
-  webUrl
-  subtotalPriceV2 { amount currencyCode }
-  lineItems(first: 100) {
-    edges {
-      node {
-        id
-        quantity
-        title
-        variant {
+  checkoutUrl
+  cost { totalAmount { amount currencyCode } }
+  lines(first: 100) {
+    nodes {
+      id
+      quantity
+      cost { totalAmount { amount currencyCode } }
+      merchandise {
+        ... on ProductVariant {
           id
           title
-          priceV2 { amount currencyCode }
+          price { amount currencyCode }
           image { url altText width height }
-          product { handle }
+          product { title handle }
         }
       }
     }
   }
 `
 
-function mapCheckout(checkout: CheckoutResponse): Cart {
-  const lines: CartLine[] = checkout.lineItems.edges.map(({ node }) => ({
+function mapCart(cart: CartApiResponse): Cart {
+  const lines: CartLine[] = cart.lines.nodes.map((node) => ({
     id: node.id,
     quantity: node.quantity,
-    variantId: node.variant.id,
-    title: node.title,
-    variantTitle: node.variant.title,
-    price: node.variant.priceV2,
-    image: node.variant.image,
-    handle: node.variant.product.handle,
+    variantId: node.merchandise.id,
+    title: node.merchandise.product.title,
+    variantTitle: node.merchandise.title,
+    price: node.merchandise.price,
+    image: node.merchandise.image,
+    handle: node.merchandise.product.handle,
   }))
   return {
-    id: checkout.id,
-    checkoutUrl: checkout.webUrl,
+    id: cart.id,
+    checkoutUrl: cart.checkoutUrl,
     lines,
-    totalAmount: checkout.subtotalPriceV2,
+    totalAmount: cart.cost.totalAmount,
     totalQuantity: lines.reduce((sum, l) => sum + l.quantity, 0),
   }
 }
 
 export async function createCart(variantId: string, quantity = 1): Promise<Cart> {
-  const data = await shopifyFetch<{ checkoutCreate: { checkout: CheckoutResponse } }>(
-    `mutation CheckoutCreate($input: CheckoutCreateInput!) {
-      checkoutCreate(input: $input) {
-        checkout { ${CHECKOUT_FRAGMENT} }
+  const data = await shopifyFetch<{ cartCreate: { cart: CartApiResponse } }>(
+    `mutation CartCreate($input: CartInput!) {
+      cartCreate(input: $input) {
+        cart { ${CART_FRAGMENT} }
       }
     }`,
-    { input: { lineItems: [{ variantId, quantity }] } }
+    { input: { lines: [{ merchandiseId: variantId, quantity }] } }
   )
-  return mapCheckout(data.checkoutCreate.checkout)
+  return mapCart(data.cartCreate.cart)
 }
 
 export async function addToCart(cartId: string, variantId: string, quantity = 1): Promise<Cart> {
-  const data = await shopifyFetch<{ checkoutLineItemsAdd: { checkout: CheckoutResponse } }>(
-    `mutation CheckoutLineItemsAdd($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) {
-      checkoutLineItemsAdd(checkoutId: $checkoutId, lineItems: $lineItems) {
-        checkout { ${CHECKOUT_FRAGMENT} }
+  const data = await shopifyFetch<{ cartLinesAdd: { cart: CartApiResponse } }>(
+    `mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+      cartLinesAdd(cartId: $cartId, lines: $lines) {
+        cart { ${CART_FRAGMENT} }
       }
     }`,
-    { checkoutId: cartId, lineItems: [{ variantId, quantity }] }
+    { cartId, lines: [{ merchandiseId: variantId, quantity }] }
   )
-  return mapCheckout(data.checkoutLineItemsAdd.checkout)
+  return mapCart(data.cartLinesAdd.cart)
 }
 
 export async function removeFromCart(cartId: string, lineId: string): Promise<Cart> {
-  const data = await shopifyFetch<{ checkoutLineItemsRemove: { checkout: CheckoutResponse } }>(
-    `mutation CheckoutLineItemsRemove($checkoutId: ID!, $lineItemIds: [ID!]!) {
-      checkoutLineItemsRemove(checkoutId: $checkoutId, lineItemIds: $lineItemIds) {
-        checkout { ${CHECKOUT_FRAGMENT} }
+  const data = await shopifyFetch<{ cartLinesRemove: { cart: CartApiResponse } }>(
+    `mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+      cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+        cart { ${CART_FRAGMENT} }
       }
     }`,
-    { checkoutId: cartId, lineItemIds: [lineId] }
+    { cartId, lineIds: [lineId] }
   )
-  return mapCheckout(data.checkoutLineItemsRemove.checkout)
+  return mapCart(data.cartLinesRemove.cart)
 }
 
 export async function updateCartLine(
@@ -271,28 +296,26 @@ export async function updateCartLine(
   lineId: string,
   quantity: number
 ): Promise<Cart> {
-  const data = await shopifyFetch<{ checkoutLineItemsUpdate: { checkout: CheckoutResponse } }>(
-    `mutation CheckoutLineItemsUpdate($checkoutId: ID!, $lineItems: [CheckoutLineItemUpdateInput!]!) {
-      checkoutLineItemsUpdate(checkoutId: $checkoutId, lineItems: $lineItems) {
-        checkout { ${CHECKOUT_FRAGMENT} }
+  const data = await shopifyFetch<{ cartLinesUpdate: { cart: CartApiResponse } }>(
+    `mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+      cartLinesUpdate(cartId: $cartId, lines: $lines) {
+        cart { ${CART_FRAGMENT} }
       }
     }`,
-    { checkoutId: cartId, lineItems: [{ id: lineId, quantity }] }
+    { cartId, lines: [{ id: lineId, quantity }] }
   )
-  return mapCheckout(data.checkoutLineItemsUpdate.checkout)
+  return mapCart(data.cartLinesUpdate.cart)
 }
 
 export async function getCart(cartId: string): Promise<Cart | null> {
-  const data = await shopifyFetch<{ node: CheckoutResponse | null }>(
-    `query GetCheckout($cartId: ID!) {
-      node(id: $cartId) {
-        ... on Checkout { ${CHECKOUT_FRAGMENT} }
-      }
+  const data = await shopifyFetch<{ cart: CartApiResponse | null }>(
+    `query GetCart($cartId: ID!) {
+      cart(id: $cartId) { ${CART_FRAGMENT} }
     }`,
     { cartId }
   )
-  if (!data.node) return null
-  return mapCheckout(data.node)
+  if (!data.cart) return null
+  return mapCart(data.cart)
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

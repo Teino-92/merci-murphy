@@ -28,11 +28,20 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
             Voir tout <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:gap-6">
+      </Container>
+
+      {/* Scrollable carousel — full width, no Container clipping */}
+      <div className="mt-10 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-4 px-4 sm:px-6 lg:px-8 xl:px-[max(2rem,calc((100vw-1280px)/2+2rem))]">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <div key={product.id} className="w-64 shrink-0 sm:w-80">
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
+      </div>
+
+      <Container>
         <div className="mt-8 text-center sm:hidden">
           <Link href="/shop" className="text-sm font-medium text-terracotta hover:underline">
             Voir toute la boutique →

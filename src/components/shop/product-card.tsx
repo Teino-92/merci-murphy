@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatPrice, type ShopifyProduct } from '@/lib/shopify'
@@ -10,18 +12,36 @@ interface ProductCardProps {
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const price = product.priceRange.minVariantPrice
+  const firstImage = product.featuredImage
+  const secondImage = product.images?.nodes?.[1] ?? null
 
   return (
     <Link href={`/shop/${product.handle}`} className={cn('group flex flex-col', className)}>
       <div className="relative aspect-square overflow-hidden rounded-2xl bg-rose/20">
-        {product.featuredImage ? (
-          <Image
-            src={product.featuredImage.url}
-            alt={product.featuredImage.altText ?? product.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
+        {firstImage ? (
+          <>
+            <Image
+              src={firstImage.url}
+              alt={firstImage.altText ?? product.title}
+              fill
+              className={cn(
+                'object-cover transition-opacity duration-500',
+                secondImage
+                  ? 'opacity-100 group-hover:opacity-0'
+                  : 'group-hover:scale-105 transition-transform duration-300'
+              )}
+              sizes="(max-width: 640px) 256px, 320px"
+            />
+            {secondImage && (
+              <Image
+                src={secondImage.url}
+                alt={secondImage.altText ?? product.title}
+                fill
+                className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                sizes="(max-width: 640px) 256px, 320px"
+              />
+            )}
+          </>
         ) : (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-charcoal/30">Pas de photo</p>

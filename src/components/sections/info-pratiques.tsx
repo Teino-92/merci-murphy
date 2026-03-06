@@ -67,20 +67,29 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
             </div>
           </div>
 
-          {settings.horaires && settings.horaires.length > 0 && (
+          {settings.horairesGroupes && settings.horairesGroupes.length > 0 && (
             <div>
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-terracotta" />
-                <h3 className="font-display text-xl font-semibold">Horaires</h3>
+                <h3 className="font-display text-xl font-semibold">Horaires d&apos;ouverture</h3>
               </div>
-              <dl className="mt-6 space-y-3">
-                {settings.horaires.map((h, i) => (
-                  <div key={i} className="flex justify-between border-b border-cream/10 pb-3">
-                    <dt className="text-cream/60">{h.jour}</dt>
-                    <dd className="font-medium text-cream">{h.heures}</dd>
+              <div className="mt-6 space-y-8">
+                {settings.horairesGroupes.map((groupe, i) => (
+                  <div key={i}>
+                    {groupe.titre && (
+                      <p className="mb-3 font-semibold text-cream">{groupe.titre}</p>
+                    )}
+                    <dl className="space-y-2">
+                      {groupe.lignes?.map((h, j) => (
+                        <div key={j} className="flex justify-between border-b border-cream/10 pb-2">
+                          <dt className="text-cream/60">{h.jour}</dt>
+                          <dd className="font-medium text-cream">{h.heures}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </div>
                 ))}
-              </dl>
+              </div>
             </div>
           )}
         </div>

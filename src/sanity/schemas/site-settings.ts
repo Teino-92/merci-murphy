@@ -31,18 +31,49 @@ export const siteSettings = defineType({
       type: 'string',
     }),
     defineField({
-      name: 'horaires',
-      title: 'Horaires',
+      name: 'horairesGroupes',
+      title: "Horaires d'ouverture",
       type: 'array',
       of: [
         {
           type: 'object',
+          name: 'horaireGroupe',
+          title: "Section d'horaires",
           fields: [
-            defineField({ name: 'jour', title: 'Jour(s)', type: 'string' }),
-            defineField({ name: 'heures', title: 'Heures', type: 'string' }),
+            defineField({
+              name: 'titre',
+              title: 'Titre de la section',
+              type: 'string',
+              description: 'Ex: Boutique et les bains, La crèche, Toilettage…',
+            }),
+            defineField({
+              name: 'lignes',
+              title: 'Lignes horaires',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({
+                      name: 'jour',
+                      title: 'Jour(s)',
+                      type: 'string',
+                      description: 'Ex: Lundi, Mardi – Vendredi',
+                    }),
+                    defineField({
+                      name: 'heures',
+                      title: 'Heures',
+                      type: 'string',
+                      description: 'Ex: 10:30 – 19:30',
+                    }),
+                  ],
+                  preview: { select: { title: 'jour', subtitle: 'heures' } },
+                },
+              ],
+            }),
           ],
           preview: {
-            select: { title: 'jour', subtitle: 'heures' },
+            select: { title: 'titre' },
           },
         },
       ],
