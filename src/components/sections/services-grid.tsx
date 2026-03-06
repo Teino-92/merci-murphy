@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { ServiceCard } from './service-card'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 import type { ServiceSummary } from '@/sanity/queries/services'
 import { urlFor } from '@/sanity/client'
 
@@ -32,7 +33,10 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             </Link>
           )}
         </div>
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal
+          stagger=":scope > *"
+          className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {(preview ? services.slice(0, 3) : services).map((service) => (
             <ServiceCard
               key={service._id}
@@ -44,7 +48,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
               }
             />
           ))}
-        </div>
+        </Reveal>
       </Container>
     </Section>
   )

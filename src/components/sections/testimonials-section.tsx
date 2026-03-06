@@ -1,5 +1,6 @@
 import { TestimonialCard } from './testimonial-card'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 import type { Testimonial } from '@/sanity/queries/testimonials'
 
 interface TestimonialsSectionProps {
@@ -17,7 +18,10 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
             Ils nous font confiance
           </h2>
         </div>
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal
+          stagger=":scope > *"
+          className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {testimonials.map((t) => (
             <TestimonialCard
               key={t._id}
@@ -27,7 +31,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               service={t.service?.title}
             />
           ))}
-        </div>
+        </Reveal>
       </Container>
     </Section>
   )

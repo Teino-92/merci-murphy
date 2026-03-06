@@ -1,5 +1,6 @@
 import { Leaf, Heart, MapPin, Sparkles } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 
 const VALUES = [
   {
@@ -36,7 +37,10 @@ export function Values() {
             Nos engagements
           </h2>
         </div>
-        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal
+          stagger=":scope > *"
+          className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {VALUES.map((value) => (
             <div key={value.title} className="flex flex-col items-center text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose">
@@ -48,7 +52,7 @@ export function Values() {
               <p className="mt-2 text-sm leading-relaxed text-charcoal/60">{value.description}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </Section>
   )

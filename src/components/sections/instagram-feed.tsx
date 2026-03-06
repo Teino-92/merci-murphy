@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Instagram } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 
 interface BeholdPost {
   id: string
@@ -58,7 +59,10 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
             Nous suivre
           </a>
         </div>
-        <div className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
+        <Reveal
+          stagger=":scope > *"
+          className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3"
+        >
           {posts.map((post) => {
             // Prefer stable Behold CDN URL over expiring Instagram CDN
             const imgSrc = post.sizes?.medium?.mediaUrl ?? post.mediaUrl
@@ -90,7 +94,7 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
               </Link>
             )
           })}
-        </div>
+        </Reveal>
       </Container>
     </Section>
   )

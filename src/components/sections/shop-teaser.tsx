@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 import { ProductCard } from '@/components/shop/product-card'
 import type { ShopifyProduct } from '@/lib/shopify'
 
@@ -37,7 +38,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
       </Container>
 
       {/* Scrollable carousel — full width, no Container clipping */}
-      <div className="mt-10 overflow-x-auto scrollbar-hide">
+      <Reveal stagger=":scope > *" className="mt-10 overflow-x-auto scrollbar-hide">
         <div className="flex gap-4 px-4 sm:px-6 lg:px-8 xl:px-[max(2rem,calc((100vw-1280px)/2+2rem))]">
           {products.map((product) => (
             <div key={product.id} className="w-64 shrink-0 sm:w-80">
@@ -45,7 +46,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
             </div>
           ))}
         </div>
-      </div>
+      </Reveal>
 
       <Container>
         <div className="mt-8 text-center sm:hidden">
