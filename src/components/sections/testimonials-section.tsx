@@ -13,25 +13,25 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
   return (
     <Section className="bg-cream">
       <Container>
-        <div className="text-center">
-          <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-            Ils nous font confiance
-          </h2>
-        </div>
-        <Reveal
-          stagger=":scope > *"
-          className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {testimonials.map((t) => (
-            <TestimonialCard
-              key={t._id}
-              auteur={t.auteur}
-              note={t.note}
-              texte={t.texte}
-              service={t.service?.title}
-            />
-          ))}
+        <Reveal>
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
+              Ils nous font confiance
+            </h2>
+          </div>
         </Reveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((t, i) => (
+            <Reveal key={t._id} delay={i * 100}>
+              <TestimonialCard
+                auteur={t.auteur}
+                note={t.note}
+                texte={t.texte}
+                service={t.service?.title}
+              />
+            </Reveal>
+          ))}
+        </div>
       </Container>
     </Section>
   )

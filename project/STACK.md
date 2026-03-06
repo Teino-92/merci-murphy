@@ -46,7 +46,6 @@
 ## Palette de couleurs (Tailwind config)
 
 - cream: #F5F0E8
-- sage: #8B9E7A
 - terracotta: #C4845A
 - charcoal: #1A1A1A
 - rose: #FFDAD4

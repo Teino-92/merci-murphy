@@ -32,27 +32,28 @@ export function Values() {
   return (
     <Section className="bg-rose/40">
       <Container>
-        <div className="text-center">
-          <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-            Nos engagements
-          </h2>
-        </div>
-        <Reveal
-          stagger=":scope > *"
-          className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {VALUES.map((value) => (
-            <div key={value.title} className="flex flex-col items-center text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose">
-                <value.icon className="h-6 w-6 text-terracotta" />
-              </div>
-              <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">
-                {value.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-charcoal/60">{value.description}</p>
-            </div>
-          ))}
+        <Reveal>
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
+              Nos engagements
+            </h2>
+          </div>
         </Reveal>
+        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {VALUES.map((value, i) => (
+            <Reveal key={value.title} delay={i * 100}>
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose">
+                  <value.icon className="h-6 w-6 text-terracotta" />
+                </div>
+                <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">
+                  {value.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-charcoal/60">{value.description}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </Container>
     </Section>
   )

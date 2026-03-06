@@ -59,42 +59,39 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
             Nous suivre
           </a>
         </div>
-        <Reveal
-          stagger=":scope > *"
-          className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3"
-        >
-          {posts.map((post) => {
-            // Prefer stable Behold CDN URL over expiring Instagram CDN
+        <div className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
+          {posts.map((post, i) => {
             const imgSrc = post.sizes?.medium?.mediaUrl ?? post.mediaUrl
             if (!imgSrc) return null
             return (
-              <Link
-                key={post.id}
-                href={post.permalink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative aspect-square overflow-hidden rounded-xl bg-rose/20"
-              >
-                <Image
-                  src={imgSrc}
-                  alt={post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram'}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 640px) 33vw, 16vw"
-                />
-                {post.mediaType === 'VIDEO' && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="rounded-full bg-black/30 p-2">
-                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
+              <Reveal key={post.id} delay={i * 80}>
+                <Link
+                  href={post.permalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative aspect-square block overflow-hidden rounded-xl bg-rose/20"
+                >
+                  <Image
+                    src={imgSrc}
+                    alt={post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram'}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 640px) 33vw, 16vw"
+                  />
+                  {post.mediaType === 'VIDEO' && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="rounded-full bg-black/30 p-2">
+                        <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Link>
+                  )}
+                </Link>
+              </Reveal>
             )
           })}
-        </Reveal>
+        </div>
       </Container>
     </Section>
   )

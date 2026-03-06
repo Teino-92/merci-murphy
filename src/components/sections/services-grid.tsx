@@ -12,43 +12,44 @@ interface ServicesGridProps {
 }
 
 export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
+  const displayed = preview ? services.slice(0, 3) : services
   return (
     <Section className="bg-cream">
       <Container>
-        <div className="flex items-end justify-between">
-          <div>
-            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-              Nos services
-            </h2>
-            <p className="mt-2 text-charcoal/60">
-              Tout ce dont votre chien a besoin, sous un même toit.
-            </p>
+        <Reveal>
+          <div className="flex items-end justify-between">
+            <div>
+              <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
+                Nos services
+              </h2>
+              <p className="mt-2 text-charcoal/60">
+                Tout ce dont votre chien a besoin, sous un même toit.
+              </p>
+            </div>
+            {preview && (
+              <Link
+                href="/services"
+                className="flex items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all"
+              >
+                Voir tout <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
-          {preview && (
-            <Link
-              href="/services"
-              className="flex items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all"
-            >
-              Voir tout <ArrowRight className="h-4 w-4" />
-            </Link>
-          )}
-        </div>
-        <Reveal
-          stagger=":scope > *"
-          className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {(preview ? services.slice(0, 3) : services).map((service) => (
-            <ServiceCard
-              key={service._id}
-              title={service.title}
-              description={service.description}
-              slug={service.slug.current}
-              imageSrc={
-                service.image ? urlFor(service.image).width(600).height(400).url() : undefined
-              }
-            />
-          ))}
         </Reveal>
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {displayed.map((service, i) => (
+            <Reveal key={service._id} delay={i * 100}>
+              <ServiceCard
+                title={service.title}
+                description={service.description}
+                slug={service.slug.current}
+                imageSrc={
+                  service.image ? urlFor(service.image).width(600).height(400).url() : undefined
+                }
+              />
+            </Reveal>
+          ))}
+        </div>
       </Container>
     </Section>
   )

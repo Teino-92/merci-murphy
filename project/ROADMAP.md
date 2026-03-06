@@ -22,75 +22,73 @@
 
 ## Phase 2: Sanity CMS – Schémas & Studio
 
-- [x] Schema `service` (titre, slug, description, approche, tarifs[], faq[], image, cta)
-- [x] Schema `teamMember` (nom, role, bio, photo)
-- [x] Schema `testimonial` (auteur, note /5, texte, service, date)
-- [x] Schema `siteSettings` (singleton : adresse, horaires, tel, email, réseaux)
-- [x] GROQ queries optimisées pour chaque type (fichiers dans /sanity/queries/)
+- [ ] Schema `service` (titre, slug, description, approche, tarifs[], faq[], image, cta)
+- [ ] Schema `teamMember` (nom, role, bio, photo)
+- [ ] Schema `testimonial` (auteur, note /5, texte, service, date)
+- [ ] Schema `siteSettings` (singleton : adresse, horaires, tel, email, réseaux)
+- [ ] GROQ queries optimisées pour chaque type (fichiers dans /sanity/queries/)
 - [ ] Preview live depuis le Sanity Studio
 - [ ] Seeder : contenu de démo pour les 5 services
-- [x] Déploiement Sanity Studio sur /studio
+- [ ] Déploiement Sanity Studio sur /studio
 
 ## Phase 3: Page Accueil
 
-- [x] Hero section (visuel fort + pitch + CTA "Réserver" / "Appeler")
-- [x] Section services (6 ServiceCards avec liens)
-- [x] Section valeurs & engagements (écoresponsabilité, bien-être animal)
-- [x] Section témoignages (depuis Sanity, 3 cards)
-- [x] Section boutique teaser (3 produits mis en avant depuis Shopify)
-- [x] Section infos pratiques (adresse, horaires, Google Maps embed)
-- [x] SEO : title, description, OG tags, structured data LocalBusiness
+- [ ] Hero section (visuel fort + pitch + CTA "Réserver" / "Appeler")
+- [ ] Section services (6 ServiceCards avec liens)
+- [ ] Section valeurs & engagements (écoresponsabilité, bien-être animal)
+- [ ] Section témoignages (depuis Sanity, 3 cards)
+- [ ] Section boutique teaser (3 produits mis en avant depuis Shopify)
+- [ ] Section infos pratiques (adresse, horaires, Google Maps embed)
+- [ ] SEO : title, description, OG tags, structured data LocalBusiness
 
 ## Phase 4: Pages Services (template commun × 5)
 
-- [x] Template `/services/[slug]` dynamique depuis Sanity
-- [x] Section header service (photo + titre + accroche)
-- [x] Section approche / déroulé d'un RDV (pour toilettage et crèche)
-- [x] Composant Tarifs avec disclaimer "selon race/poids" (données Sanity)
-- [x] Composant FAQ accordéon (questions/réponses depuis Sanity)
-- [x] CTA flottant mobile (Appeler / Réserver)
-- [x] SEO individualisé par service
-- Pages : /services/[slug] dynamique — slugs définis dans Sanity
+- [ ] Template `/services/[slug]` dynamique depuis Sanity
+- [ ] Section header service (photo + titre + accroche)
+- [ ] Section approche / déroulé d'un RDV (pour toilettage et crèche)
+- [ ] Composant Tarifs avec disclaimer "selon race/poids" (données Sanity)
+- [ ] Composant FAQ accordéon (questions/réponses depuis Sanity)
+- [ ] CTA flottant mobile (Appeler / Réserver)
+- [ ] SEO individualisé par service
+- Pages : /services/toilettage, /services/bains, /services/creche, /services/education, /services/osteo
 
 ## Phase 5: Page Concept
 
-- [x] Section histoire de Merci Murphy (rich text depuis Sanity)
-- [x] Section mascotte Murphy (photo + texte)
-- [x] Section équipe (TeamMemberCards depuis Sanity)
-- [x] Section valeurs et engagements écoresponsables
+- [ ] Section histoire de Merci Murphy (rich text depuis Sanity)
+- [ ] Section mascotte Murphy (photo + texte)
+- [ ] Section équipe (TeamMemberCards depuis Sanity)
+- [ ] Section valeurs et engagements écoresponsables
 
 ## Phase 6: Formulaires & Réservation
 
-- [x] Page /reservation : formulaire multi-étapes (4 étapes)
+- [ ] Page /reservation : formulaire multi-étapes (4 étapes)
   - Étape 1 : Choix du service
   - Étape 2 : Infos chien (race, poids, état du poil)
   - Étape 3 : Infos contact (nom, email, tél)
-  - Étape 4 : Message libre
-- [x] Server Action : validation Zod + insert Supabase table `leads`
+  - Étape 4 : Message libre + embed Calendly
+- [ ] Server Action : validation Zod + insert Supabase table `leads`
 - [ ] Email de confirmation client via Resend
 - [ ] Email de notification interne merci murphy via Resend
-- [x] Page /contact : formulaire simple + Google Maps + coordonnées
-- [x] Inscription newsletter (footer)
-- [x] Server Action newsletter : insert Supabase table `newsletter_subscribers`
+- [ ] Page /contact : formulaire simple + Google Maps + coordonnées
+- [ ] Inscription newsletter (footer + pop-up au scroll 60%)
+- [ ] Server Action newsletter : insert Supabase table `newsletter_subscribers`
 
 ## Phase 7: E-commerce Shopify
 
-- [x] Client Shopify Storefront API dans /lib/shopify.ts
-- [x] Page /shop : grille produits avec filtres par catégorie
-- [x] Catégories : collections depuis Shopify
-- [x] Page produit /shop/[handle] avec fiche détaillée
-- [x] Composant AddToCart (redirige vers Shopify checkout natif)
-- [x] Revalidation ISR via webhook Shopify (mise à jour stock/prix auto)
-- [x] Mise en avant produits sur la page Accueil
+- [ ] Client Shopify Storefront API dans /lib/shopify.ts
+- [ ] Page /shop : grille produits avec filtres par catégorie
+- [ ] Catégories : petlovers / chiens / marque propre merci murphy
+- [ ] Page produit /shop/[category]/[slug] avec fiche détaillée
+- [ ] Composant AddToCart (redirige vers Shopify checkout natif)
+- [ ] Revalidation ISR via webhook Shopify (mise à jour stock/prix auto)
+- [ ] Mise en avant produits marque propre sur la page Accueil
 
 ## Phase 8: SEO, Performance & Analytics
 
-- [x] Sitemap.xml dynamique (routes statiques + slugs Sanity + produits Shopify)
-- [x] robots.txt (disallow /studio/, /api/)
-- [x] Metadata dynamiques sur toutes les pages (via generateMetadata)
-- [x] OpenGraph + canonical URLs sur toutes les pages produit et service
-- [x] JSON-LD LocalBusiness (homepage) + Product schema (pages produit)
-- [ ] OpenGraph image par défaut (og-default.jpg à créer dans /public)
+- [ ] Sitemap.xml dynamique (routes statiques + slugs Sanity + produits Shopify)
+- [ ] robots.txt
+- [ ] Metadata dynamiques sur toutes les pages (via generateMetadata)
+- [ ] OpenGraph images auto-générées via next/og
 - [ ] Audit et fix images : next/image + blur placeholder partout
 - [ ] Score Lighthouse > 90 sur Accueil, Toilettage, Shop
 - [ ] Intégration Plausible (script dans layout.tsx)
@@ -117,11 +115,11 @@
 
 ## Open Questions
 
-- URL exacte de l'eshop Shopify existant ?
+- URL exacte de l'eshop Shopify existant : https://mercimurphy.myshopify.com/
 - Calendly déjà créé ? Si oui, URL de l'événement ?
 - Photos/vidéos disponibles pour le hero ? (sinon placeholder)
-- Domaine final : mercimurphy.com ou autre ?
-- Adresse email pour les notifications internes (Resend) ?
+- Domaine final : mercimurphy.com
+- Adresse email pour les notifications internes bonjour@mercimurphy.com
 
 ## Notes
 
