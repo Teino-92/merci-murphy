@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
 import { ContactForm } from '@/components/forms/contact-form'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { HorairesAccordion } from '@/components/sections/horaires-accordion'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -76,23 +77,13 @@ export default async function ContactPage() {
                 )}
               </div>
 
-              {settings?.horaires && settings.horaires.length > 0 && (
+              {settings?.horairesGroupes && settings.horairesGroupes.length > 0 && (
                 <div className="mt-8">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mb-3">
                     <Clock className="h-5 w-5 text-terracotta" />
                     <h3 className="font-display text-lg font-semibold text-charcoal">Horaires</h3>
                   </div>
-                  <dl className="mt-4 space-y-2">
-                    {settings.horaires.map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex justify-between border-b border-charcoal/10 pb-2"
-                      >
-                        <dt className="text-charcoal/60">{h.jour}</dt>
-                        <dd className="font-medium text-charcoal">{h.heures}</dd>
-                      </div>
-                    ))}
-                  </dl>
+                  <HorairesAccordion groupes={settings.horairesGroupes} variant="light" />
                 </div>
               )}
 
