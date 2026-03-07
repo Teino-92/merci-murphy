@@ -11,6 +11,7 @@ import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
 import { MobileCta } from '@/components/sections/mobile-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
+import { Reveal } from '@/components/ui/reveal'
 
 // Avant/après pour Maison Poilus — remplacer les src par les vraies photos
 const BEFORE_AFTER_PAIRS = [
@@ -93,39 +94,47 @@ export default async function ServicePage({ params }: Props) {
       {service.approche && service.approche.length > 0 && (
         <Section className="bg-cream">
           <Container className="max-w-3xl">
-            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-              Notre approche
-            </h2>
-            <PortableText value={service.approche} className="mt-6" />
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+                Notre approche
+              </h2>
+              <PortableText value={service.approche} className="mt-6" />
+            </Reveal>
           </Container>
         </Section>
       )}
 
       {/* Déroulé */}
       {service.deroule && service.deroule.length > 0 && (
-        <Section className="bg-rose/30">
+        <Section className="bg-[#1D164E] pb-8 lg:pb-12">
           <Container className="max-w-3xl">
-            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-              Le déroulé du rendez-vous
-            </h2>
-            <PortableText value={service.deroule} className="mt-6" />
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-cream sm:text-3xl">
+                Le déroulé du rendez-vous
+              </h2>
+              <PortableText value={service.deroule} className="mt-6" light />
+            </Reveal>
           </Container>
         </Section>
       )}
 
       {/* Avant / Après — Maison Poilus uniquement */}
       {params.slug === 'maison-poilus-r' && (
-        <Section className="bg-cream">
+        <Section className="bg-cream py-8 lg:py-12">
           <Container>
-            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl text-center">
-              Avant & après
-            </h2>
-            <p className="mt-2 text-center text-charcoal/50 text-sm">
-              Glissez le curseur pour découvrir la transformation.
-            </p>
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl text-center">
+                Avant & après
+              </h2>
+              <p className="mt-2 text-center text-charcoal/50 text-sm">
+                Glissez le curseur pour découvrir la transformation.
+              </p>
+            </Reveal>
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {BEFORE_AFTER_PAIRS.map((pair, i) => (
-                <BeforeAfterSlider key={i} before={pair.before} after={pair.after} />
+                <Reveal key={i} delay={i * 100}>
+                  <BeforeAfterSlider before={pair.before} after={pair.after} />
+                </Reveal>
               ))}
             </div>
           </Container>
@@ -136,24 +145,26 @@ export default async function ServicePage({ params }: Props) {
       {service.tarifs && service.tarifs.length > 0 && (
         <Section className="bg-cream">
           <Container className="max-w-3xl">
-            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
-            <p className="mt-2 text-sm text-charcoal/50">
-              Tarifs indicatifs — notre équipe vous confirmera le prix exact lors de la prise de
-              rendez-vous.
-            </p>
-            <div className="mt-8 divide-y divide-charcoal/10 rounded-2xl border border-charcoal/10 bg-white">
-              {service.tarifs.map((tarif, i) => (
-                <div key={i} className="flex items-start justify-between px-6 py-4">
-                  <div>
-                    <p className="font-medium text-charcoal">{tarif.label}</p>
-                    {tarif.disclaimer && (
-                      <p className="mt-0.5 text-xs text-charcoal/40">{tarif.disclaimer}</p>
-                    )}
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
+              <p className="mt-2 text-sm text-charcoal/50">
+                Tarifs indicatifs — notre équipe vous confirmera le prix exact lors de notre
+                rencontre avec votre chien.
+              </p>
+              <div className="mt-8 divide-y divide-charcoal/10 rounded-2xl border border-charcoal/10 bg-white">
+                {service.tarifs.map((tarif, i) => (
+                  <div key={i} className="flex items-start justify-between px-6 py-4">
+                    <div>
+                      <p className="font-medium text-charcoal">{tarif.label}</p>
+                      {tarif.disclaimer && (
+                        <p className="mt-0.5 text-xs text-charcoal/40">{tarif.disclaimer}</p>
+                      )}
+                    </div>
+                    <p className="ml-4 shrink-0 font-semibold text-terracotta">{tarif.prix}</p>
                   </div>
-                  <p className="ml-4 shrink-0 font-semibold text-terracotta">{tarif.prix}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </Reveal>
           </Container>
         </Section>
       )}
@@ -162,12 +173,14 @@ export default async function ServicePage({ params }: Props) {
       {service.faq && service.faq.length > 0 && (
         <Section className="bg-rose/20">
           <Container className="max-w-3xl">
-            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-              Questions fréquentes
-            </h2>
-            <div className="mt-8">
-              <FaqAccordion items={service.faq} />
-            </div>
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+                Questions fréquentes
+              </h2>
+              <div className="mt-8">
+                <FaqAccordion items={service.faq} />
+              </div>
+            </Reveal>
           </Container>
         </Section>
       )}
@@ -175,31 +188,37 @@ export default async function ServicePage({ params }: Props) {
       {/* CTA desktop */}
       <Section className="bg-charcoal text-cream">
         <Container className="max-w-2xl text-center">
-          <h2 className="font-display text-2xl font-bold sm:text-3xl">
-            Prêt à prendre rendez-vous ?
-          </h2>
-          <p className="mt-4 text-cream/70">
-            {service.calendlyUrl
-              ? 'Réservez directement en ligne ou demandez à être rappelé·e.'
-              : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
-          </p>
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            {service.calendlyUrl && (
-              <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
-                <a href={service.calendlyUrl} target="_blank" rel="noopener noreferrer">
-                  {service.cta?.label ?? 'Réserver en ligne'}
-                </a>
+          <Reveal>
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">
+              Prêt à prendre rendez-vous ?
+            </h2>
+            <p className="mt-4 text-cream/70">
+              {service.calendlyUrl
+                ? 'Réservez directement en ligne ou demandez à être rappelé·e.'
+                : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
+            </p>
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              {service.calendlyUrl && (
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-terracotta text-white hover:bg-terracotta/90"
+                >
+                  <a href={service.calendlyUrl} target="_blank" rel="noopener noreferrer">
+                    {service.cta?.label ?? 'Réserver en ligne'}
+                  </a>
+                </Button>
+              )}
+              <Button
+                asChild
+                size="lg"
+                variant="ghost"
+                className="border-2 border-cream text-cream hover:bg-cream hover:text-charcoal"
+              >
+                <Link href="/compte/inscription">Être rappelé·e</Link>
               </Button>
-            )}
-            <Button
-              asChild
-              size="lg"
-              variant="ghost"
-              className="border-2 border-cream text-cream hover:bg-cream hover:text-charcoal"
-            >
-              <Link href="/compte/inscription">Être rappelé·e</Link>
-            </Button>
-          </div>
+            </div>
+          </Reveal>
         </Container>
       </Section>
 

@@ -36,9 +36,6 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
       {/* After (base layer) */}
       <div className="absolute inset-0">
         <Image src={after.src} alt={after.alt ?? 'Après'} fill className="object-cover" />
-        <span className="absolute bottom-3 right-3 rounded-full bg-black/40 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-          Après
-        </span>
       </div>
 
       {/* Before (clipped layer) */}
@@ -49,9 +46,6 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
         >
           <Image src={before.src} alt={before.alt ?? 'Avant'} fill className="object-cover" />
         </div>
-        <span className="absolute bottom-3 left-3 rounded-full bg-black/40 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-          Avant
-        </span>
       </div>
 
       {/* Divider */}
@@ -80,15 +74,6 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l-4 3 4 3M16 9l4 3-4 3" />
         </svg>
       </div>
-
-      {/* Hint on idle */}
-      {!active && (
-        <div className="absolute inset-0 z-10 flex items-end justify-center pb-4 pointer-events-none">
-          <span className="rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-            Passez la souris pour révéler
-          </span>
-        </div>
-      )}
     </div>
   )
 }
