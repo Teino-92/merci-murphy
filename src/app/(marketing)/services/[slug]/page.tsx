@@ -10,6 +10,27 @@ import { Button } from '@/components/ui/button'
 import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
 import { MobileCta } from '@/components/sections/mobile-cta'
+import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
+
+// Avant/après pour Maison Poilus — remplacer les src par les vraies photos
+const BEFORE_AFTER_PAIRS = [
+  {
+    before: { src: '/placeholder-before-1.jpg', alt: 'Avant toilettage 1' },
+    after: { src: '/placeholder-after-1.jpg', alt: 'Après toilettage 1' },
+  },
+  {
+    before: { src: '/placeholder-before-2.jpg', alt: 'Avant toilettage 2' },
+    after: { src: '/placeholder-after-2.jpg', alt: 'Après toilettage 2' },
+  },
+  {
+    before: { src: '/placeholder-before-3.jpg', alt: 'Avant toilettage 3' },
+    after: { src: '/placeholder-after-3.jpg', alt: 'Après toilettage 3' },
+  },
+  {
+    before: { src: '/placeholder-before-4.jpg', alt: 'Avant toilettage 4' },
+    after: { src: '/placeholder-after-4.jpg', alt: 'Après toilettage 4' },
+  },
+]
 
 interface Props {
   params: { slug: string }
@@ -88,6 +109,25 @@ export default async function ServicePage({ params }: Props) {
               Le déroulé du rendez-vous
             </h2>
             <PortableText value={service.deroule} className="mt-6" />
+          </Container>
+        </Section>
+      )}
+
+      {/* Avant / Après — Maison Poilus uniquement */}
+      {params.slug === 'maison-poilus-r' && (
+        <Section className="bg-cream">
+          <Container>
+            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl text-center">
+              Avant & après
+            </h2>
+            <p className="mt-2 text-center text-charcoal/50 text-sm">
+              Glissez le curseur pour découvrir la transformation.
+            </p>
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {BEFORE_AFTER_PAIRS.map((pair, i) => (
+                <BeforeAfterSlider key={i} before={pair.before} after={pair.after} />
+              ))}
+            </div>
           </Container>
         </Section>
       )}
