@@ -2,7 +2,6 @@
 
 import { useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
-import { GripVertical } from 'lucide-react'
 
 interface BeforeAfterSliderProps {
   before: { src: string; alt?: string }
@@ -11,10 +10,10 @@ interface BeforeAfterSliderProps {
 
 export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50)
+  const [active, setActive] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const dragging = useRef(false)
 
-  const updatePosition = useCallback((clientX: number) => {
+  const updateFromClient = useCallback((clientX: number) => {
     const el = containerRef.current
     if (!el) return
     const rect = el.getBoundingClientRect()
@@ -22,28 +21,16 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
     setPosition((x / rect.width) * 100)
   }, [])
 
-  const onMouseDown = () => {
-    dragging.current = true
-  }
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!dragging.current) return
-    updatePosition(e.clientX)
-  }
-  const onMouseUp = () => {
-    dragging.current = false
-  }
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    updatePosition(e.touches[0].clientX)
-  }
+  const onMouseMove = (e: React.MouseEvent) => updateFromClient(e.clientX)
+  const onTouchMove = (e: React.TouchEvent) => updateFromClient(e.touches[0].clientX)
 
   return (
     <div
       ref={containerRef}
-      className="relative aspect-square w-full overflow-hidden rounded-2xl cursor-col-resize select-none"
+      className="relative aspect-square w-full overflow-hidden rounded-2xl cursor-none select-none"
       onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp}
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
       onTouchMove={onTouchMove}
     >
       {/* After (base layer) */}
@@ -67,18 +54,41 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
         </span>
       </div>
 
-      {/* Divider line */}
+      {/* Divider */}
       <div
-        className="absolute inset-y-0 z-10 flex items-center"
+        className="absolute inset-y-0 z-10 w-0.5 bg-white/80 pointer-events-none"
         style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
-        onMouseDown={onMouseDown}
-        onTouchStart={onMouseDown}
+      />
+
+      {/* Custom cursor dot */}
+      <div
+        className="absolute z-20 pointer-events-none flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-lg transition-opacity duration-200"
+        style={{
+          left: `${position}%`,
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          opacity: active ? 1 : 0,
+        }}
       >
-        <div className="w-0.5 h-full bg-white/80" />
-        <div className="absolute flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-lg -translate-x-1/2 left-0">
-          <GripVertical className="h-4 w-4 text-charcoal" />
-        </div>
+        <svg
+          className="h-4 w-4 text-charcoal"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l-4 3 4 3M16 9l4 3-4 3" />
+        </svg>
       </div>
+
+      {/* Hint on idle */}
+      {!active && (
+        <div className="absolute inset-0 z-10 flex items-end justify-center pb-4 pointer-events-none">
+          <span className="rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+            Passez la souris pour révéler
+          </span>
+        </div>
+      )}
     </div>
   )
 }
