@@ -1,5 +1,8 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { SITE_CONFIG } from '@/config/site'
 import { cn } from '@/lib/utils'
@@ -26,11 +29,28 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-charcoal/20 to-transparent" />
 
       <div className="relative flex h-full min-h-[85vh] flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-        <h1 className="font-display text-4xl font-bold leading-tight text-cream sm:text-5xl lg:text-6xl">
+        <motion.h1
+          className="font-display text-4xl font-bold leading-tight text-cream sm:text-5xl lg:text-6xl"
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        >
           {title}
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/80">{subtitle}</p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        </motion.h1>
+        <motion.p
+          className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/80"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.2 }}
+        >
+          {subtitle}
+        </motion.p>
+        <motion.div
+          className="mt-8 flex flex-col gap-3 sm:flex-row"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
+        >
           <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
             <Link href="/reservation">Prendre rendez-vous</Link>
           </Button>
@@ -44,7 +64,7 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
               <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler</a>
             </Button>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

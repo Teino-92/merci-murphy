@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getAllServices } from '@/sanity/queries/services'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { Section, Container } from '@/components/ui/section'
+import { Reveal } from '@/components/ui/reveal'
 
 export const metadata: Metadata = {
   title: 'Nos services',
@@ -15,12 +16,12 @@ export default async function ServicesPage() {
     <>
       <Section className="bg-charcoal text-cream py-20">
         <Container>
-          <div className="text-center">
+          <Reveal className="text-center">
             <h1 className="font-display text-4xl font-bold sm:text-5xl">Nos services</h1>
             <p className="mt-4 text-lg text-cream/70">
               Tout ce dont votre chien a besoin, sous un même toit.
             </p>
-          </div>
+          </Reveal>
         </Container>
       </Section>
       {services.length > 0 ? (

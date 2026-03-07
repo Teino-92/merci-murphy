@@ -138,21 +138,27 @@ export default async function ServicePage({ params }: Props) {
           <h2 className="font-display text-2xl font-bold sm:text-3xl">
             Prêt à prendre rendez-vous ?
           </h2>
-          <p className="mt-4 text-cream/70">Contactez-nous ou réservez directement en ligne.</p>
+          <p className="mt-4 text-cream/70">
+            {service.calendlyUrl
+              ? 'Réservez directement en ligne ou demandez à être rappelé·e.'
+              : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
+          </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
-              <Link href="/reservation">{service.cta?.label ?? 'Prendre rendez-vous'}</Link>
-            </Button>
-            {settings?.telephone && (
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-cream text-cream hover:bg-cream hover:text-charcoal"
-              >
-                <a href={`tel:${settings.telephone}`}>Nous appeler</a>
+            {service.calendlyUrl && (
+              <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
+                <a href={service.calendlyUrl} target="_blank" rel="noopener noreferrer">
+                  {service.cta?.label ?? 'Réserver en ligne'}
+                </a>
               </Button>
             )}
+            <Button
+              asChild
+              size="lg"
+              variant="ghost"
+              className="border-2 border-cream text-cream hover:bg-cream hover:text-charcoal"
+            >
+              <Link href="/compte/inscription">Être rappelé·e</Link>
+            </Button>
           </div>
         </Container>
       </Section>
@@ -162,6 +168,7 @@ export default async function ServicePage({ params }: Props) {
         phone={settings?.telephone}
         type={service.cta?.type ?? 'reservation'}
         label={service.cta?.label}
+        calendlyUrl={service.calendlyUrl ?? undefined}
       />
 
       {/* Spacer for mobile CTA */}

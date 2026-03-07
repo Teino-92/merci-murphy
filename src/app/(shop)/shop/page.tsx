@@ -35,7 +35,7 @@ export default async function ShopPage({
         <Container className="max-w-6xl">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch">
             {/* Left — full text */}
-            <div>
+            <Reveal>
               <p className="text-xs font-medium uppercase tracking-widest text-terracotta">
                 Une seule planète
               </p>
@@ -96,10 +96,10 @@ export default async function ShopPage({
                   marques dirigées par des femmes.
                 </p>
               </div>
-            </div>
+            </Reveal>
 
             {/* Right — mosaic, matches text column height */}
-            <div className="flex h-full flex-col gap-3">
+            <Reveal delay={150} className="flex h-full flex-col gap-3">
               {/* Top row — shelves + bulk side by side */}
               <div className="flex flex-1 gap-3">
                 <div className="relative flex-1 overflow-hidden rounded-xl">
@@ -131,7 +131,7 @@ export default async function ShopPage({
                   sizes="50vw"
                 />
               </div>
-            </div>
+            </Reveal>
           </div>
         </Container>
       </Section>

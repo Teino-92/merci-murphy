@@ -15,6 +15,7 @@ export interface ServiceDetail extends ServiceSummary {
   tarifs: { label: string; prix: string; disclaimer: string }[]
   faq: { question: string; reponse: PortableTextBlock[] }[]
   cta: { label: string; type: 'reservation' | 'telephone' } | null
+  calendlyUrl: string | null
 }
 
 const SERVICE_SUMMARY_FIELDS = `
@@ -39,7 +40,8 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetail | nu
       deroule,
       tarifs,
       faq,
-      cta
+      cta,
+      calendlyUrl
     }`,
     { slug }
   )
