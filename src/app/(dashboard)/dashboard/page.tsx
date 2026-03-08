@@ -11,7 +11,7 @@ function formatCurrency(amount: number, currency: string) {
 
 export default async function DashboardPage() {
   const [revenue, dailyRevenue, topProducts, leads, profiles] = await Promise.all([
-    getRevenueStats(30),
+    getRevenueStats(),
     getDailyRevenue(),
     getTopProducts(),
     getLeads(),
