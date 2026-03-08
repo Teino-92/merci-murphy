@@ -9,9 +9,32 @@ create table public.profiles (
   race_chien text,
   poids_chien text,
   etat_poil text,
+  -- groomer notes (internal, staff only)
+  notes text,
   -- team toggle: when true the customer can self-book (Phase 2)
   can_book boolean not null default false
 );
+
+-- visit history
+create table public.visits (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamp with time zone default now(),
+  profile_id uuid not null references public.profiles(id) on delete cascade,
+  service text not null check (service in ('toilettage', 'bains', 'creche', 'education', 'osteo', 'autre')),
+  date date not null,
+  notes text,
+  staff text
+);
+
+alter table public.visits enable row level security;
+
+create policy "visits_all_service_role" on public.visits
+  for all to service_role using (true);
+
+create policy "visits_select_own" on public.visits
+  for select to authenticated using (
+    profile_id = auth.uid()
+  );
 
 alter table public.profiles enable row level security;
 
