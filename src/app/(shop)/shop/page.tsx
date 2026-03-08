@@ -35,7 +35,7 @@ export default async function ShopPage({
         <Container className="max-w-6xl">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch">
             {/* Left — full text */}
-            <Reveal>
+            <Reveal className="text-center lg:text-left">
               <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
                 Boutique éthique & éco-responsable pour chiens
               </h1>

@@ -17,7 +17,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
     <Section className="bg-cream">
       <Container>
         <Reveal>
-          <div className="flex items-end justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
                 Nos services
@@ -29,7 +29,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             {preview && (
               <Link
                 href="/services"
-                className="flex items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all"
+                className="flex items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all shrink-0"
               >
                 Voir tout <ArrowRight className="h-4 w-4" />
               </Link>
