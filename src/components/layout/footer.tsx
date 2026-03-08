@@ -26,8 +26,8 @@ export function Footer() {
             <Image
               src="/logo.avif"
               alt="Merci Murphy"
-              width={120}
-              height={40}
+              width={280}
+              height={96}
               className="h-9 w-auto brightness-0 invert"
             />
             <p className="mt-3 text-sm text-cream/60">

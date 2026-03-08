@@ -89,8 +89,8 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
                 <button
                   key={item.href}
                   onClick={() => {
-                    setOpen(false)
                     router.push(item.href)
+                    setTimeout(() => setOpen(false), 10)
                   }}
                   className={cn(
                     'group flex items-center py-3 text-base font-medium transition-colors hover:text-terracotta text-left w-full',
