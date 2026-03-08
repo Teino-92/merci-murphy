@@ -36,12 +36,12 @@ export default async function ShopPage({
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch">
             {/* Left — full text */}
             <Reveal>
-              <p className="text-xs font-medium uppercase tracking-widest text-terracotta">
-                Une seule planète
-              </p>
               <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
                 Boutique éthique & éco-responsable pour chiens
               </h1>
+              <h2 className="mt-2 text-sm font-medium uppercase tracking-widest text-terracotta">
+                Une seule planète
+              </h2>
               <p className="mt-3 text-cream/50 text-sm">
                 merci murphy®, c&apos;est aussi un dog shop engagé. Nos achats ont un sens — pour
                 nos poilus et pour la planète.
