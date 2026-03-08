@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SITE_CONFIG } from '@/config/site'
@@ -20,6 +20,7 @@ interface NavbarProps {
 export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-charcoal/10 bg-cream/95 backdrop-blur-sm">
@@ -85,18 +86,20 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
               const isActive =
                 pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
               return (
-                <Link
+                <button
                   key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    setOpen(false)
+                    router.push(item.href)
+                  }}
                   className={cn(
-                    'group relative flex items-center py-3 text-base font-medium transition-colors hover:text-terracotta',
+                    'group flex items-center py-3 text-base font-medium transition-colors hover:text-terracotta text-left w-full',
                     isActive ? 'text-terracotta' : 'text-charcoal/70'
                   )}
                 >
                   {item.label}
-                  <PawStamp active={isActive} />
-                </Link>
+                  <PawStamp active={isActive} inline />
+                </button>
               )
             })}
             <Button asChild className="mt-4 bg-terracotta text-white hover:bg-terracotta/90">

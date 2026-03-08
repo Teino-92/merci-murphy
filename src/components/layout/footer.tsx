@@ -9,7 +9,7 @@ export function Footer() {
     <footer className="border-t border-charcoal/10 bg-charcoal text-cream">
       {/* Newsletter band */}
       <div className="border-b border-cream/10">
-        <Container className="py-5">
+        <Container className="py-5 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-display text-base font-semibold shrink-0">Restez informé(e)</p>
             <div className="w-full sm:max-w-xs">
@@ -19,7 +19,7 @@ export function Footer() {
         </Container>
       </div>
 
-      <Container className="py-8">
+      <Container className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <Image

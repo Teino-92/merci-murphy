@@ -5,15 +5,18 @@ import { cn } from '@/lib/utils'
 interface PawStampProps {
   active?: boolean
   className?: string
+  inline?: boolean
 }
 
-export function PawStamp({ active, className }: PawStampProps) {
+export function PawStamp({ active, className, inline }: PawStampProps) {
   return (
     <span
       aria-hidden
       className={cn(
-        'pointer-events-none absolute top-1/2 -translate-y-1/2 -right-11',
-        'transition-all duration-300',
+        'pointer-events-none transition-all duration-300',
+        inline
+          ? 'inline-flex items-center ml-2 shrink-0'
+          : 'absolute top-1/2 -translate-y-1/2 -right-11',
         active
           ? 'opacity-100 scale-100'
           : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100',

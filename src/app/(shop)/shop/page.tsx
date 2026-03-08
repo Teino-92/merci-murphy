@@ -98,38 +98,70 @@ export default async function ShopPage({
               </div>
             </Reveal>
 
-            {/* Right — mosaic, matches text column height */}
-            <Reveal delay={150} className="flex h-full flex-col gap-3">
-              {/* Top row — shelves + bulk side by side */}
-              <div className="flex flex-1 gap-3">
-                <div className="relative flex-1 overflow-hidden rounded-xl">
+            {/* Right — mosaic */}
+            <Reveal delay={150}>
+              {/* Mobile: 3 cols in one row */}
+              <div className="flex gap-2 lg:hidden">
+                <div className="relative h-32 flex-1 overflow-hidden rounded-xl">
                   <Image
                     src="/shop-shelves.webp"
                     alt="Sélection merci murphy"
                     fill
                     className="object-cover object-center"
-                    sizes="25vw"
+                    sizes="33vw"
                   />
                 </div>
-                <div className="relative flex-1 overflow-hidden rounded-xl">
+                <div className="relative h-32 flex-1 overflow-hidden rounded-xl">
                   <Image
                     src="/shop-bulk.webp"
                     alt="Vrac merci murphy"
                     fill
                     className="object-cover object-center"
-                    sizes="25vw"
+                    sizes="33vw"
+                  />
+                </div>
+                <div className="relative h-32 flex-1 overflow-hidden rounded-xl">
+                  <Image
+                    src="/shop-candles.webp"
+                    alt="Bougies merci murphy"
+                    fill
+                    className="object-cover object-center"
+                    sizes="33vw"
                   />
                 </div>
               </div>
-              {/* Bottom — candles full width */}
-              <div className="relative h-36 overflow-hidden rounded-xl">
-                <Image
-                  src="/shop-candles.webp"
-                  alt="Bougies merci murphy"
-                  fill
-                  className="object-cover object-center"
-                  sizes="50vw"
-                />
+
+              {/* Desktop: tall mosaic */}
+              <div className="hidden lg:flex h-full flex-col gap-3">
+                <div className="flex flex-1 gap-3">
+                  <div className="relative flex-1 overflow-hidden rounded-xl">
+                    <Image
+                      src="/shop-shelves.webp"
+                      alt="Sélection merci murphy"
+                      fill
+                      className="object-cover object-center"
+                      sizes="25vw"
+                    />
+                  </div>
+                  <div className="relative flex-1 overflow-hidden rounded-xl">
+                    <Image
+                      src="/shop-bulk.webp"
+                      alt="Vrac merci murphy"
+                      fill
+                      className="object-cover object-center"
+                      sizes="25vw"
+                    />
+                  </div>
+                </div>
+                <div className="relative h-36 overflow-hidden rounded-xl">
+                  <Image
+                    src="/shop-candles.webp"
+                    alt="Bougies merci murphy"
+                    fill
+                    className="object-cover object-center"
+                    sizes="50vw"
+                  />
+                </div>
               </div>
             </Reveal>
           </div>
