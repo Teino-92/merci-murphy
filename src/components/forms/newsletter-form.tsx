@@ -22,11 +22,15 @@ export function NewsletterForm() {
   }
 
   if (submitted) {
-    return <p className="text-sm font-medium text-cream">Merci ! Vous êtes bien inscrit(e).</p>
+    return (
+      <div className="min-h-[40px] flex items-center">
+        <p className="text-sm font-medium text-cream">Merci ! Vous êtes bien inscrit(e).</p>
+      </div>
+    )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
+    <form onSubmit={handleSubmit} className="flex min-h-[40px] flex-col gap-2 sm:flex-row">
       <Input
         type="email"
         required

@@ -126,7 +126,7 @@ export function Footer() {
             </p>
 
             {/* Payment icons */}
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex min-h-[24px] items-center gap-1.5 flex-wrap">
               {[
                 { src: '/payments/visa.svg', alt: 'Visa' },
                 { src: '/payments/mastercard.svg', alt: 'Mastercard' },
