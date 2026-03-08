@@ -5,6 +5,7 @@ import { Reveal } from '@/components/ui/reveal'
 import { ContactForm } from '@/components/forms/contact-form'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { HorairesAccordion } from '@/components/sections/horaires-accordion'
+import { MapboxMap } from '@/components/sections/mapbox-map'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -90,18 +91,9 @@ export default async function ContactPage() {
                   </div>
                 )}
 
-                {settings?.google_maps_url && (
-                  <div className="mt-8 overflow-hidden rounded-2xl bg-rose/20 h-48 flex items-center justify-center">
-                    <a
-                      href={settings.google_maps_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-charcoal/50 hover:text-terracotta"
-                    >
-                      Voir sur Google Maps →
-                    </a>
-                  </div>
-                )}
+                <div className="mt-8 h-64 rounded-2xl overflow-hidden">
+                  <MapboxMap lat={48.880805} lng={2.338646} />
+                </div>
               </div>
             </Reveal>
 

@@ -30,9 +30,11 @@ export function ServiceCard({ title, description, slug, imageSrc, className }: S
           />
         )}
       </div>
-      <div className="flex flex-1 flex-col p-6">
+      <div className="p-6">
         <h3 className="font-display text-xl font-semibold text-charcoal">{title}</h3>
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-charcoal/60">{description}</p>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal/60 h-10 line-clamp-2">
+          {description}
+        </p>
         <span className="mt-4 flex items-center gap-1 text-sm font-medium text-terracotta transition-gap group-hover:gap-2">
           En savoir plus <ArrowRight className="h-4 w-4" />
         </span>
