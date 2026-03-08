@@ -36,7 +36,7 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav className="hidden items-center gap-12 lg:flex">
           {SITE_CONFIG.nav.map((item) => {
             const isActive =
               pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
@@ -90,67 +90,12 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'group relative flex items-center gap-2 py-3 text-base font-medium transition-colors hover:text-terracotta',
+                    'group relative flex items-center py-3 text-base font-medium transition-colors hover:text-terracotta',
                     isActive ? 'text-terracotta' : 'text-charcoal/70'
                   )}
                 >
                   {item.label}
-                  {isActive && (
-                    <span aria-hidden style={{ rotate: '-8deg', display: 'inline-block' }}>
-                      <svg
-                        width="20"
-                        height="16"
-                        viewBox="0 0 28 22"
-                        fill="none"
-                        className="text-terracotta"
-                      >
-                        <ellipse
-                          cx="14"
-                          cy="15"
-                          rx="7.5"
-                          ry="6"
-                          fill="currentColor"
-                          opacity="0.85"
-                        />
-                        <ellipse
-                          cx="5.5"
-                          cy="8"
-                          rx="2.8"
-                          ry="2.2"
-                          fill="currentColor"
-                          opacity="0.85"
-                          transform="rotate(-15 5.5 8)"
-                        />
-                        <ellipse
-                          cx="10.5"
-                          cy="5.5"
-                          rx="2.6"
-                          ry="2.1"
-                          fill="currentColor"
-                          opacity="0.85"
-                          transform="rotate(-5 10.5 5.5)"
-                        />
-                        <ellipse
-                          cx="17"
-                          cy="5.5"
-                          rx="2.6"
-                          ry="2.1"
-                          fill="currentColor"
-                          opacity="0.85"
-                          transform="rotate(5 17 5.5)"
-                        />
-                        <ellipse
-                          cx="22.5"
-                          cy="8"
-                          rx="2.8"
-                          ry="2.2"
-                          fill="currentColor"
-                          opacity="0.85"
-                          transform="rotate(15 22.5 8)"
-                        />
-                      </svg>
-                    </span>
-                  )}
+                  <PawStamp active={isActive} />
                 </Link>
               )
             })}

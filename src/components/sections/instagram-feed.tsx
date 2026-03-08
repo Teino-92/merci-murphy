@@ -1,22 +1,8 @@
-import Image from 'next/image'
-import Link from 'next/link'
 import { Instagram } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
-import { Reveal } from '@/components/ui/reveal'
+import { InstagramGrid, type FeedPost } from './instagram-grid'
 
-interface BeholdPost {
-  id: string
-  mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM'
-  mediaUrl: string
-  thumbnailUrl?: string
-  permalink: string
-  caption?: string
-  sizes?: {
-    medium?: { mediaUrl: string }
-  }
-}
-
-async function getInstagramPosts(feedId: string): Promise<BeholdPost[]> {
+async function getInstagramPosts(feedId: string): Promise<FeedPost[]> {
   try {
     const res = await fetch(`https://feeds.behold.so/${feedId}`, {
       next: { revalidate: 3600 },
@@ -42,7 +28,7 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
   return (
     <Section className="bg-[#1D164E]">
       <Container>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="font-display text-3xl font-bold text-cream sm:text-4xl">
               Sur Instagram
@@ -59,39 +45,8 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
             Nous suivre
           </a>
         </div>
-        <div className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
-          {posts.map((post, i) => {
-            const imgSrc = post.sizes?.medium?.mediaUrl ?? post.mediaUrl
-            if (!imgSrc) return null
-            return (
-              <Reveal key={post.id} delay={i * 80}>
-                <Link
-                  href={post.permalink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative aspect-square block overflow-hidden rounded-xl bg-rose/20"
-                >
-                  <Image
-                    src={imgSrc}
-                    alt={post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram'}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 640px) 33vw, 16vw"
-                  />
-                  {post.mediaType === 'VIDEO' && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="rounded-full bg-black/30 p-2">
-                        <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-                </Link>
-              </Reveal>
-            )
-          })}
-        </div>
+
+        <InstagramGrid posts={posts} />
       </Container>
     </Section>
   )

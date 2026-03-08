@@ -13,24 +13,12 @@ import { MobileCta } from '@/components/sections/mobile-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
 
-// Avant/après pour Maison Poilus — remplacer les src par les vraies photos
+// Avant/après pour Maison Poilus — remplacer beforeColor/afterColor par les vraies photos (src)
 const BEFORE_AFTER_PAIRS = [
-  {
-    before: { src: '/placeholder-before-1.jpg', alt: 'Avant toilettage 1' },
-    after: { src: '/placeholder-after-1.jpg', alt: 'Après toilettage 1' },
-  },
-  {
-    before: { src: '/placeholder-before-2.jpg', alt: 'Avant toilettage 2' },
-    after: { src: '/placeholder-after-2.jpg', alt: 'Après toilettage 2' },
-  },
-  {
-    before: { src: '/placeholder-before-3.jpg', alt: 'Avant toilettage 3' },
-    after: { src: '/placeholder-after-3.jpg', alt: 'Après toilettage 3' },
-  },
-  {
-    before: { src: '/placeholder-before-4.jpg', alt: 'Avant toilettage 4' },
-    after: { src: '/placeholder-after-4.jpg', alt: 'Après toilettage 4' },
-  },
+  { beforeColor: '#C9A882', afterColor: '#1D164E' },
+  { beforeColor: '#C9A882', afterColor: '#1D164E' },
+  { beforeColor: '#C9A882', afterColor: '#1D164E' },
+  { beforeColor: '#C9A882', afterColor: '#1D164E' },
 ]
 
 interface Props {
@@ -133,7 +121,7 @@ export default async function ServicePage({ params }: Props) {
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {BEFORE_AFTER_PAIRS.map((pair, i) => (
                 <Reveal key={i} delay={i * 100}>
-                  <BeforeAfterSlider before={pair.before} after={pair.after} />
+                  <BeforeAfterSlider beforeColor={pair.beforeColor} afterColor={pair.afterColor} />
                 </Reveal>
               ))}
             </div>

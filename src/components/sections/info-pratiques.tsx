@@ -17,7 +17,7 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
   return (
     <Section className="bg-charcoal text-cream">
       <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
           <div>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">Nous trouver</h2>
             <div className="mt-8 space-y-5">
@@ -69,10 +69,12 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
           </div>
 
           {settings.horairesGroupes && settings.horairesGroupes.length > 0 && (
-            <div>
+            <div className="self-start">
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="h-5 w-5 text-terracotta" />
-                <h3 className="font-display text-xl font-semibold">Horaires d&apos;ouverture</h3>
+                <h3 className="font-display text-3xl font-bold sm:text-4xl">
+                  Horaires d&apos;ouverture
+                </h3>
               </div>
               <HorairesAccordion groupes={settings.horairesGroupes} />
             </div>

@@ -4,11 +4,18 @@ import { useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
 
 interface BeforeAfterSliderProps {
-  before: { src: string; alt?: string }
-  after: { src: string; alt?: string }
+  before?: { src: string; alt?: string }
+  after?: { src: string; alt?: string }
+  beforeColor?: string
+  afterColor?: string
 }
 
-export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
+export function BeforeAfterSlider({
+  before,
+  after,
+  beforeColor,
+  afterColor,
+}: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50)
   const [active, setActive] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -35,7 +42,16 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
     >
       {/* After (base layer) */}
       <div className="absolute inset-0">
-        <Image src={after.src} alt={after.alt ?? 'Après'} fill className="object-cover" />
+        {after ? (
+          <Image src={after.src} alt={after.alt ?? 'Après'} fill className="object-cover" />
+        ) : (
+          <div
+            className="h-full w-full flex items-center justify-center"
+            style={{ background: afterColor }}
+          >
+            <span className="text-white/60 text-sm font-medium">Après</span>
+          </div>
+        )}
       </div>
 
       {/* Before (clipped layer) */}
@@ -44,7 +60,16 @@ export function BeforeAfterSlider({ before, after }: BeforeAfterSliderProps) {
           className="absolute inset-0"
           style={{ width: containerRef.current?.offsetWidth ?? 400 }}
         >
-          <Image src={before.src} alt={before.alt ?? 'Avant'} fill className="object-cover" />
+          {before ? (
+            <Image src={before.src} alt={before.alt ?? 'Avant'} fill className="object-cover" />
+          ) : (
+            <div
+              className="h-full w-full flex items-center justify-center"
+              style={{ background: beforeColor }}
+            >
+              <span className="text-white/60 text-sm font-medium">Avant</span>
+            </div>
+          )}
         </div>
       </div>
 
