@@ -139,8 +139,8 @@ export default async function ServicePage({ params }: Props) {
                   <BeforeAfterSlider
                     before={'before' in pair ? pair.before : undefined}
                     after={'after' in pair ? pair.after : undefined}
-                    beforeColor={'beforeColor' in pair ? pair.beforeColor : undefined}
-                    afterColor={'afterColor' in pair ? pair.afterColor : undefined}
+                    beforeColor={'beforeColor' in pair ? (pair.beforeColor as string) : undefined}
+                    afterColor={'afterColor' in pair ? (pair.afterColor as string) : undefined}
                   />
                 </Reveal>
               ))}
