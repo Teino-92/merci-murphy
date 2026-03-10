@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import type React from 'react'
+import Image from 'next/image'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { TeamMemberCard } from '@/components/sections/team-member-card'
@@ -44,18 +46,35 @@ export default async function ConceptPage() {
 
   return (
     <>
-      {/* Hero */}
-      <Section className="bg-charcoal text-cream py-24">
-        <Container className="max-w-3xl text-center">
+      {/* Hero — full-width landscape photo, text overlay bottom-left */}
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden">
+        <Image
+          src="/concept-hero.jpg"
+          alt="L'intérieur de la boutique merci murphy®"
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+        {/* Gradient: strong at bottom-left, fades out */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
+        {/* Text — bottom-left */}
+        <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
           <Reveal>
-            <h1 className="font-display text-4xl font-bold sm:text-5xl">Le concept</h1>
-            <p className="mt-6 text-lg leading-relaxed text-cream/70">
+            <p className="text-xs font-semibold uppercase tracking-widest text-terracotta mb-3">
+              Paris, France
+            </p>
+            <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl leading-tight drop-shadow-sm">
+              Le concept
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg max-w-md drop-shadow-sm">
               Merci Murphy est née d&apos;une conviction simple : votre chien mérite les meilleurs
               soins, dans un espace chaleureux et bienveillant, au cœur de Paris.
             </p>
           </Reveal>
-        </Container>
-      </Section>
+        </div>
+      </div>
 
       {/* Histoire */}
       <Section className="bg-cream">
@@ -86,8 +105,14 @@ export default async function ConceptPage() {
             </Reveal>
             <Reveal delay={150}>
               <div className="flex items-center justify-center">
-                <div className="flex h-72 w-72 items-center justify-center rounded-full bg-rose/30">
-                  <p className="font-display text-2xl font-bold text-charcoal/30">Murphy 🐾</p>
+                <div className="relative h-80 w-80 overflow-hidden rounded-full shadow-md ring-4 ring-rose/40">
+                  <Image
+                    src="/murphy-2.jpg"
+                    alt="Murphy, le carlin mascotte de merci murphy®"
+                    fill
+                    className="object-cover object-[center_20%]"
+                    sizes="160px"
+                  />
                 </div>
               </div>
             </Reveal>
@@ -109,6 +134,11 @@ export default async function ConceptPage() {
             {[
               {
                 icon: Heart,
+                photo: '/valeurs-1.jpg',
+                photoAlt: 'La crèche merci murphy® — du lien, de la joie',
+                photoAspect: 'aspect-[4/3]',
+                photoPosition: 'object-[center_20%]',
+                photoFilter: 'saturate-[0.85] brightness-[1.05] hue-rotate-[-10deg]',
                 text: (
                   <p className="leading-relaxed text-cream/80">
                     Un chien est un être sensible et un membre à part entière de votre famille.{' '}
@@ -120,6 +150,9 @@ export default async function ConceptPage() {
               },
               {
                 icon: Users,
+                photo: '/valeurs-2.jpg',
+                photoAlt: 'La crèche merci murphy® — un espace pensé pour les chiens',
+                photoAspect: 'aspect-[4/3]',
                 text: (
                   <p className="leading-relaxed text-cream/80">
                     Dans tout ce qui est entrepris pour la relation entre les chiens et leur
@@ -133,6 +166,8 @@ export default async function ConceptPage() {
               },
               {
                 icon: Leaf,
+                photo: '/valeurs-3.jpg',
+                photoAlt: 'Produits naturels merci murphy® — shampoings et bougies',
                 text: (
                   <p className="leading-relaxed text-cream/80">
                     <span className="text-cream font-medium">merci murphy®</span> est engagé pour
@@ -145,6 +180,10 @@ export default async function ConceptPage() {
               },
               {
                 icon: Recycle,
+                photo: '/valeurs-4.jpg',
+                photoAlt: "L'ecoshop merci murphy® — consommer autrement",
+                photoAspect: 'aspect-[4/3]',
+                photoContain: true,
                 text: (
                   <p className="leading-relaxed text-cream/80">
                     Souhaiter le meilleur pour son chien, c&apos;est aussi consommer différemment.{' '}
@@ -157,36 +196,67 @@ export default async function ConceptPage() {
                 ),
                 reverse: true,
               },
-            ].map(({ icon: Icon, text, reverse }, i) => (
-              <Reveal key={i} delay={100}>
-                <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
-                  <div className={reverse ? 'order-2 lg:order-1' : ''}>
-                    {reverse ? (
-                      <div className="flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
-                        <p className="text-sm text-cream/20">Photo à venir</p>
-                      </div>
-                    ) : (
-                      <div className="border-l-2 border-terracotta pl-6">
-                        <Icon className="h-6 w-6 text-terracotta mb-4" />
-                        {text}
-                      </div>
-                    )}
+            ].map(
+              (
+                {
+                  icon: Icon,
+                  text,
+                  reverse,
+                  photo,
+                  photoAlt,
+                  photoAspect,
+                  photoPosition,
+                  photoContain,
+                  photoFilter,
+                }: {
+                  icon: React.ElementType
+                  text: React.ReactNode
+                  reverse: boolean
+                  photo?: string
+                  photoAlt?: string
+                  photoAspect?: string
+                  photoPosition?: string
+                  photoContain?: boolean
+                  photoFilter?: string
+                },
+                i
+              ) => {
+                const aspect = photoAspect ?? 'aspect-[4/3]'
+                const pos = photoPosition ?? 'object-center'
+                const fit = photoContain ? 'object-contain' : `object-cover ${pos}`
+                const photoBlock = photo ? (
+                  <div
+                    className={`relative w-full ${aspect} overflow-hidden rounded-2xl bg-cream/5 border border-cream/10`}
+                  >
+                    <Image
+                      src={photo}
+                      alt={photoAlt ?? ''}
+                      fill
+                      className={`${fit} ${photoFilter ?? ''}`}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
                   </div>
-                  <div className={reverse ? 'order-1 lg:order-2' : ''}>
-                    {reverse ? (
-                      <div className="border-l-2 border-terracotta pl-6">
-                        <Icon className="h-6 w-6 text-terracotta mb-4" />
-                        {text}
-                      </div>
-                    ) : (
-                      <div className="flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
-                        <p className="text-sm text-cream/20">Photo à venir</p>
-                      </div>
-                    )}
+                ) : (
+                  <div className="flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
+                    <p className="text-sm text-cream/20">Photo à venir</p>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                )
+                const textBlock = (
+                  <div className="border-l-2 border-terracotta pl-6">
+                    <Icon className="h-6 w-6 text-terracotta mb-4" />
+                    {text}
+                  </div>
+                )
+                return (
+                  <Reveal key={i} delay={100}>
+                    <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+                      <div>{reverse ? textBlock : photoBlock}</div>
+                      <div>{reverse ? photoBlock : textBlock}</div>
+                    </div>
+                  </Reveal>
+                )
+              }
+            )}
           </div>
         </Container>
       </Section>

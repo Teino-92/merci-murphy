@@ -16,11 +16,12 @@ export function ServiceCard({ title, description, slug, imageSrc, className }: S
     <Link
       href={`/services/${slug}`}
       className={cn(
-        'group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md',
+        'group block overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md',
         className
       )}
     >
-      <div className="relative h-48 w-full bg-rose">
+      <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
+        {/* Image */}
         {imageSrc && (
           <Image
             src={imageSrc}
@@ -29,15 +30,18 @@ export function ServiceCard({ title, description, slug, imageSrc, className }: S
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         )}
-      </div>
-      <div className="p-6">
-        <h3 className="font-display text-xl font-semibold text-charcoal">{title}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-charcoal/60 h-10 line-clamp-2">
-          {description}
-        </p>
-        <span className="mt-4 flex items-center gap-1 text-sm font-medium text-terracotta transition-gap group-hover:gap-2">
-          En savoir plus <ArrowRight className="h-4 w-4" />
-        </span>
+        {/* Gradient overlay — bottom half fades to charcoal */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
+        {/* Text on top of image — fixed height so all cards align */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end min-h-[120px]">
+          <h3 className="font-display text-xl font-semibold text-cream">{title}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
+            {description}
+          </p>
+          <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta transition-all group-hover:gap-2">
+            En savoir plus <ArrowRight className="h-4 w-4" />
+          </span>
+        </div>
       </div>
     </Link>
   )

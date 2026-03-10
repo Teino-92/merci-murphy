@@ -13,12 +13,24 @@ import { MobileCta } from '@/components/sections/mobile-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
 
-// Avant/après pour Maison Poilus — remplacer beforeColor/afterColor par les vraies photos (src)
+// Avant/après pour Maison Poilus
 const BEFORE_AFTER_PAIRS = [
-  { beforeColor: '#C9A882', afterColor: '#1D164E' },
-  { beforeColor: '#C9A882', afterColor: '#1D164E' },
-  { beforeColor: '#C9A882', afterColor: '#1D164E' },
-  { beforeColor: '#C9A882', afterColor: '#1D164E' },
+  {
+    before: { src: '/avant-apres-1-avant.jpg', alt: 'Avant toilettage' },
+    after: { src: '/avant-apres-1-apres.jpg', alt: 'Après toilettage' },
+  },
+  {
+    before: { src: '/avant-apres-2-avant.jpg', alt: 'Avant toilettage' },
+    after: { src: '/avant-apres-2-apres.jpg', alt: 'Après toilettage' },
+  },
+  {
+    before: { src: '/avant-apres-3-avant.jpg', alt: 'Avant toilettage' },
+    after: { src: '/avant-apres-3-apres.jpg', alt: 'Après toilettage' },
+  },
+  {
+    before: { src: '/avant-apres-4-avant.jpg', alt: 'Avant toilettage' },
+    after: { src: '/avant-apres-4-apres.jpg', alt: 'Après toilettage' },
+  },
 ]
 
 interface Props {
@@ -59,7 +71,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <>
       {/* Header */}
-      <div className="relative h-[50vh] min-h-72 w-full overflow-hidden bg-charcoal">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal">
         {imageUrl && (
           <Image
             src={imageUrl}
@@ -69,12 +81,15 @@ export default async function ServicePage({ params }: Props) {
             className="object-cover opacity-60"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 to-transparent" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-          <h1 className="font-display text-4xl font-bold text-cream sm:text-5xl">
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
+          <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
             {service.title}
           </h1>
-          <p className="mt-4 max-w-xl text-lg text-cream/80">{service.description}</p>
+          <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
+            {service.description}
+          </p>
         </div>
       </div>
 
@@ -118,10 +133,15 @@ export default async function ServicePage({ params }: Props) {
                 Glissez le curseur pour découvrir la transformation.
               </p>
             </Reveal>
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {BEFORE_AFTER_PAIRS.map((pair, i) => (
                 <Reveal key={i} delay={i * 100}>
-                  <BeforeAfterSlider beforeColor={pair.beforeColor} afterColor={pair.afterColor} />
+                  <BeforeAfterSlider
+                    before={'before' in pair ? pair.before : undefined}
+                    after={'after' in pair ? pair.after : undefined}
+                    beforeColor={'beforeColor' in pair ? pair.beforeColor : undefined}
+                    afterColor={'afterColor' in pair ? pair.afterColor : undefined}
+                  />
                 </Reveal>
               ))}
             </div>

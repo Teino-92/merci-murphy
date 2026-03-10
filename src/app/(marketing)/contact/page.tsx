@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -21,16 +22,28 @@ export default async function ContactPage() {
 
   return (
     <>
-      <Section className="bg-charcoal text-cream py-20">
-        <Container className="max-w-2xl text-center">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal">
+        <Image
+          src="/contact-hero.jpg"
+          alt="merci murphy® — vitrine"
+          fill
+          priority
+          className="object-cover opacity-80"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
           <Reveal>
-            <h1 className="font-display text-4xl font-bold sm:text-5xl">Contact</h1>
-            <p className="mt-4 text-lg text-cream/70">
+            <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
+              Contact
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
               Une question ? N&apos;hésitez pas à nous écrire ou nous appeler.
             </p>
           </Reveal>
-        </Container>
-      </Section>
+        </div>
+      </div>
 
       <Section className="bg-cream">
         <Container>

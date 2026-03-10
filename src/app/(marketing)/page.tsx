@@ -123,6 +123,7 @@ export default async function HomePage() {
       <Hero
         title="Le bien-être de votre chien, au cœur de Paris"
         subtitle="Toilettage, spa, crèche, éducation et ostéopathie — tout ce dont votre compagnon a besoin, dans un espace chaleureux et bienveillant."
+        imageSrc="/hero-home-2.jpg"
       />
       {services.length > 0 && <ServicesGrid services={services} preview />}
       <Values />

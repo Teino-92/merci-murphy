@@ -33,10 +33,34 @@ export default async function ShopPage({
       {/* Manifesto */}
       <Section className="bg-charcoal text-cream py-12">
         <Container className="max-w-6xl">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
+            {/* Right — stacked photos */}
+            <Reveal className="hidden lg:flex lg:flex-col lg:gap-3 lg:order-2">
+              {/* Tall portrait */}
+              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl">
+                <Image
+                  src="/boutique-hero.jpg"
+                  alt="La boutique merci murphy®"
+                  fill
+                  className="object-cover object-center"
+                  sizes="25vw"
+                />
+              </div>
+              {/* Short landscape — exact 3:2 ratio, no crop */}
+              <div className="relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
+                <Image
+                  src="/boutique-products.jpg"
+                  alt="Produits merci murphy®"
+                  fill
+                  className="object-cover object-[center_calc(50%+40px)]"
+                  sizes="25vw"
+                />
+              </div>
+            </Reveal>
+
             {/* Left — full text */}
-            <Reveal className="text-center lg:text-left">
-              <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
+            <Reveal className="text-center lg:text-left lg:order-1">
+              <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
                 Boutique éthique & éco-responsable pour chiens
               </h1>
               <h2 className="mt-2 text-sm font-medium uppercase tracking-widest text-terracotta">
@@ -95,73 +119,6 @@ export default async function ShopPage({
                   engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
                   marques dirigées par des femmes.
                 </p>
-              </div>
-            </Reveal>
-
-            {/* Right — mosaic */}
-            <Reveal delay={150}>
-              {/* Mobile: 3 cols in one row */}
-              <div className="flex gap-2 lg:hidden">
-                <div className="relative h-32 flex-1 overflow-hidden rounded-xl">
-                  <Image
-                    src="/shop-shelves.webp"
-                    alt="Sélection merci murphy"
-                    fill
-                    className="object-cover object-center"
-                    sizes="33vw"
-                  />
-                </div>
-                <div className="relative h-32 flex-1 overflow-hidden rounded-xl">
-                  <Image
-                    src="/shop-bulk.webp"
-                    alt="Vrac merci murphy"
-                    fill
-                    className="object-cover object-center"
-                    sizes="33vw"
-                  />
-                </div>
-                <div className="relative h-32 flex-1 overflow-hidden rounded-xl">
-                  <Image
-                    src="/shop-candles.webp"
-                    alt="Bougies merci murphy"
-                    fill
-                    className="object-cover object-center"
-                    sizes="33vw"
-                  />
-                </div>
-              </div>
-
-              {/* Desktop: tall mosaic */}
-              <div className="hidden lg:flex h-full flex-col gap-3">
-                <div className="flex flex-1 gap-3">
-                  <div className="relative flex-1 overflow-hidden rounded-xl">
-                    <Image
-                      src="/shop-shelves.webp"
-                      alt="Sélection merci murphy"
-                      fill
-                      className="object-cover object-center"
-                      sizes="25vw"
-                    />
-                  </div>
-                  <div className="relative flex-1 overflow-hidden rounded-xl">
-                    <Image
-                      src="/shop-bulk.webp"
-                      alt="Vrac merci murphy"
-                      fill
-                      className="object-cover object-center"
-                      sizes="25vw"
-                    />
-                  </div>
-                </div>
-                <div className="relative h-36 overflow-hidden rounded-xl">
-                  <Image
-                    src="/shop-candles.webp"
-                    alt="Bougies merci murphy"
-                    fill
-                    className="object-cover object-center"
-                    sizes="50vw"
-                  />
-                </div>
               </div>
             </Reveal>
           </div>

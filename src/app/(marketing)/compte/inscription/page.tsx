@@ -25,7 +25,7 @@ export default async function InscriptionPage({
     <>
       <Section className="bg-charcoal text-cream py-20">
         <Container className="max-w-2xl text-center">
-          <h1 className="font-display text-4xl font-bold sm:text-5xl">Créer un compte</h1>
+          <h1 className="font-display text-4xl font-bold sm:text-6xl">Créer un compte</h1>
           <p className="mt-4 text-lg text-cream/70">
             Enregistrez les informations de votre chien pour simplifier vos prises de rendez-vous.
           </p>
