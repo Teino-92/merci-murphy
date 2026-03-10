@@ -37,6 +37,8 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       instagram,
       google_maps_url,
       calendly_url
-    }`
+    }`,
+    {},
+    { next: { revalidate: 3600 } }
   )
 }

@@ -19,6 +19,7 @@ export async function getTestimonials(limit = 6): Promise<Testimonial[]> {
       service->{ title, slug },
       date
     }`,
-    { limit }
+    { limit },
+    { next: { revalidate: 3600 } }
   )
 }

@@ -28,7 +28,9 @@ const SERVICE_SUMMARY_FIELDS = `
 
 export async function getAllServices(): Promise<ServiceSummary[]> {
   return sanityClient.fetch(
-    `*[_type == "service"] | order(_createdAt asc) { ${SERVICE_SUMMARY_FIELDS} }`
+    `*[_type == "service"] | order(_createdAt asc) { ${SERVICE_SUMMARY_FIELDS} }`,
+    {},
+    { next: { revalidate: 3600 } }
   )
 }
 
@@ -43,6 +45,7 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetail | nu
       cta,
       calendlyUrl
     }`,
-    { slug }
+    { slug },
+    { next: { revalidate: 3600 } }
   )
 }

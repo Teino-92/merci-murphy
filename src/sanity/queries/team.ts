@@ -18,6 +18,8 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
       bio,
       photo,
       ordre
-    }`
+    }`,
+    {},
+    { next: { revalidate: 3600 } }
   )
 }
