@@ -34,12 +34,11 @@ export function Footer() {
               Boutique premium de bien-être pour chiens à Paris.
             </p>
             <Image
-              src="/chien-chat.webp"
+              src="/chien-chat-white.png"
               alt="Chien et chat Merci Murphy"
               width={200}
               height={100}
               className="mt-4 w-40 h-auto"
-              style={{ filter: 'grayscale(1) invert(1)', mixBlendMode: 'screen' }}
             />
           </div>
 
