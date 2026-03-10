@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getAllCollections, getAllProducts } from '@/lib/shopify'
-import { ProductCard } from '@/components/shop/product-card'
 import { Section, Container } from '@/components/ui/section'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { Leaf, Heart, Globe, RefreshCw } from 'lucide-react'
 import { Reveal } from '@/components/ui/reveal'
+import { ShopCatalog } from '@/components/shop/shop-catalog'
 
 export const metadata: Metadata = {
   title: 'Boutique éthique pour chiens à Paris',
@@ -14,19 +12,8 @@ export const metadata: Metadata = {
     'Produits éco-responsables et éthiques pour chiens — fabrication française, matières biologiques, second-hand. La boutique Merci Murphy à Paris.',
 }
 
-export default async function ShopPage({
-  searchParams,
-}: {
-  searchParams: { collection?: string }
-}) {
+export default async function ShopPage() {
   const [collections, allProducts] = await Promise.all([getAllCollections(), getAllProducts()])
-
-  const HIDDEN_COLLECTIONS = ['homepage', 'all', 'frontpage']
-  const visibleCollections = collections.filter((c) => !HIDDEN_COLLECTIONS.includes(c.handle))
-
-  const activeCollection = searchParams.collection
-  const collection = collections.find((c) => c.handle === activeCollection)
-  const products = collection ? collection.products.nodes : allProducts
 
   return (
     <>
@@ -127,49 +114,7 @@ export default async function ShopPage({
 
       <Section className="bg-cream">
         <Container>
-          {/* Collection filters */}
-          {visibleCollections.length > 0 && (
-            <div className="mb-10 flex flex-wrap gap-2">
-              <Link
-                href="/shop"
-                className={cn(
-                  'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
-                  !activeCollection
-                    ? 'border-terracotta bg-terracotta text-white'
-                    : 'border-charcoal/20 text-charcoal hover:border-terracotta hover:text-terracotta'
-                )}
-              >
-                Tout voir
-              </Link>
-              {visibleCollections.map((c) => (
-                <Link
-                  key={c.handle}
-                  href={`/shop?collection=${c.handle}`}
-                  className={cn(
-                    'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
-                    activeCollection === c.handle
-                      ? 'border-terracotta bg-terracotta text-white'
-                      : 'border-charcoal/20 text-charcoal hover:border-terracotta hover:text-terracotta'
-                  )}
-                >
-                  {c.title}
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Products grid */}
-          {products.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-              {products.map((product, i) => (
-                <Reveal key={product.id} delay={(i % 4) * 80}>
-                  <ProductCard product={product} />
-                </Reveal>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-charcoal/50">Aucun produit disponible.</p>
-          )}
+          <ShopCatalog collections={collections} allProducts={allProducts} />
         </Container>
       </Section>
     </>
