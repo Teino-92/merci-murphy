@@ -11,7 +11,7 @@ import { Leaf, Heart, Recycle, ShieldCheck, Users } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Le concept',
   description:
-    "Découvrez l'histoire de Merci Murphy, notre équipe et nos engagements pour le bien-être animal à Paris.",
+    "Découvrez l'histoire de merci murphy®, notre équipe et nos engagements pour le bien-être animal à Paris.",
 }
 
 const ENGAGEMENTS = [
@@ -69,7 +69,7 @@ export default async function ConceptPage() {
               Le concept
             </h1>
             <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg max-w-md drop-shadow-sm">
-              Merci Murphy est née d&apos;une conviction simple : votre chien mérite les meilleurs
+              merci murphy® est née d&apos;une conviction simple : votre chien mérite les meilleurs
               soins, dans un espace chaleureux et bienveillant, au cœur de Paris.
             </p>
           </Reveal>
@@ -91,7 +91,7 @@ export default async function ConceptPage() {
                     bien-être global des chiens.
                   </p>
                   <p>
-                    Merci Murphy est né de cette idée : créer une boutique-concept où toilettage,
+                    merci murphy® est né de cette idée : créer une boutique-concept où toilettage,
                     éducation, ostéopathie et produits premium coexistent sous un même toit, dans
                     une atmosphère à la fois professionnelle et chaleureuse.
                   </p>

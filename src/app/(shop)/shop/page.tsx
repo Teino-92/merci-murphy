@@ -9,7 +9,7 @@ import { ShopCatalog } from '@/components/shop/shop-catalog'
 export const metadata: Metadata = {
   title: 'Boutique éthique pour chiens à Paris',
   description:
-    'Produits éco-responsables et éthiques pour chiens — fabrication française, matières biologiques, second-hand. La boutique Merci Murphy à Paris.',
+    'Produits éco-responsables et éthiques pour chiens — fabrication française, matières biologiques, second-hand. La boutique merci murphy® à Paris.',
 }
 
 export default async function ShopPage() {
@@ -21,40 +21,18 @@ export default async function ShopPage() {
       <Section className="bg-charcoal text-cream py-12">
         <Container className="max-w-6xl">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
-            {/* Right — stacked photos */}
-            <Reveal className="hidden lg:flex lg:flex-col lg:gap-3 lg:order-2">
-              {/* Tall portrait */}
-              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl">
+            {/* Right — desktop only: boutique-hero full height */}
+            <Reveal className="hidden lg:block lg:order-2 lg:self-stretch">
+              <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
                 <Image
                   src="/boutique-hero.jpg"
                   alt="La boutique merci murphy®"
                   fill
                   className="object-cover object-center"
-                  sizes="25vw"
-                />
-              </div>
-              {/* Short landscape — exact 3:2 ratio, no crop */}
-              <div className="relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
-                <Image
-                  src="/boutique-products.jpg"
-                  alt="Produits merci murphy®"
-                  fill
-                  className="object-cover object-[center_calc(50%+40px)]"
-                  sizes="25vw"
+                  sizes="33vw"
                 />
               </div>
             </Reveal>
-
-            {/* Mobile only — products shelf */}
-            <div className="lg:hidden relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
-              <Image
-                src="/boutique-products.jpg"
-                alt="Produits merci murphy®"
-                fill
-                className="object-cover object-[center_calc(50%+40px)]"
-                sizes="100vw"
-              />
-            </div>
 
             {/* Left — full text */}
             <Reveal className="text-center lg:text-left lg:order-1">
@@ -86,7 +64,11 @@ export default async function ShopPage() {
                     <span className="text-cream font-medium">merci murphy®</span> aime le vrai et
                     les savoir-faire des passionnés. La plupart de nos fournisseurs-partenaires sont
                     des artisans locaux. Nos produits voyagent le moins possible — fabrication
-                    française ou dans certains pays européens voisins.
+                    engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
+                    marques dirigées par des femmes.{' '}
+                    <span className="not-italic font-medium text-cream">merci murphy®</span> est
+                    engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
+                    marques dirigées par des femmes.
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -111,12 +93,15 @@ export default async function ShopPage() {
                 </div>
               </div>
 
-              <div className="mt-6 rounded-xl border border-cream/10 bg-cream/5 px-5 py-4">
-                <p className="text-xs text-cream/50 italic">
-                  <span className="not-italic font-medium text-cream">merci murphy®</span> est
-                  engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
-                  marques dirigées par des femmes.
-                </p>
+              {/* Mobile only — products shelf below manifesto */}
+              <div className="lg:hidden mt-6 relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
+                <Image
+                  src="/boutique-products.jpg"
+                  alt="Produits merci murphy®"
+                  fill
+                  className="object-cover object-[center_calc(50%+40px)]"
+                  sizes="100vw"
+                />
               </div>
             </Reveal>
           </div>

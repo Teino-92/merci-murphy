@@ -10,7 +10,7 @@ import { MapboxMap } from '@/components/sections/mapbox-map'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Contactez Merci Murphy — adresse, horaires et formulaire de contact.',
+  description: 'Contactez merci murphy® — adresse, horaires et formulaire de contact.',
 }
 
 export default async function ContactPage() {

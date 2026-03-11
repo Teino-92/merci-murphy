@@ -110,7 +110,7 @@ export function Footer() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {/* Legal links */}
             <p className="text-xs text-cream/40">
-              © {new Date().getFullYear()} Merci Murphy.{' '}
+              © {new Date().getFullYear()} merci murphy®.{' '}
               <Link href="/mentions-legales" className="hover:text-cream/60">
                 Mentions légales
               </Link>{' '}

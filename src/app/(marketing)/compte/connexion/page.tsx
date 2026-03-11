@@ -6,7 +6,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 export const metadata: Metadata = {
   title: 'Connexion',
-  description: 'Connectez-vous à votre compte Merci Murphy.',
+  description: 'Connectez-vous à votre compte merci murphy®.',
 }
 
 export default async function ConnexionPage({

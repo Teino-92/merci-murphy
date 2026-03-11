@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getAllServices } from '@/sanity/queries/services'
+import { getTestimonials } from '@/sanity/queries/testimonials'
 import { ServicesGrid } from '@/components/sections/services-grid'
+import { TestimonialsSection } from '@/components/sections/testimonials-section'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 
@@ -11,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ServicesPage() {
-  const services = await getAllServices()
+  const [services, testimonials] = await Promise.all([getAllServices(), getTestimonials(6)])
 
   return (
     <>
@@ -47,6 +49,7 @@ export default async function ServicesPage() {
           </Container>
         </Section>
       )}
+      {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
     </>
   )
 }

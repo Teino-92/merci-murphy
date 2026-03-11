@@ -112,19 +112,19 @@ export async function subscribeNewsletter(data: { email: string }) {
     .send({
       from: `Merci Murphy <${process.env.RESEND_NEWSLETTER_FROM}>`,
       to: parsed.data.email,
-      subject: 'Bienvenue dans la communauté Merci Murphy 🐾',
+      subject: 'Bienvenue dans la communauté merci murphy® 🐾',
       text: [
         `Bonjour,`,
         ``,
-        `Merci de rejoindre la communauté Merci Murphy !`,
+        `merci de rejoindre la communauté merci murphy® !`,
         ``,
         `Vous serez parmi les premiers à recevoir nos actualités, conseils bien-être pour votre chien, et offres exclusives.`,
         ``,
         `À très bientôt,`,
-        `L'équipe Merci Murphy`,
+        `L'équipe merci murphy®`,
         ``,
         `---`,
-        `Merci Murphy — Boutique premium de bien-être pour chiens`,
+        `merci murphy® — Boutique premium de bien-être pour chiens`,
         `Paris | mercimurphy.com`,
       ].join('\n'),
     })

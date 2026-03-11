@@ -1,10 +1,23 @@
+'use client'
+
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowRight, ChevronDown } from 'lucide-react'
 import { ServiceCard } from './service-card'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import type { ServiceSummary } from '@/sanity/queries/services'
 import { urlFor } from '@/sanity/client'
+
+const SPA_SLUG = 'spa-maison-poilus-r'
+const SPA_CHILDREN_SLUGS = [
+  'toilettage-maison-poilus-r',
+  'les-bains-maison-poilus-r',
+  'balneo-maison-poilus-r',
+  'massage-maison-poilus-r',
+]
+const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'education']
 
 interface ServicesGridProps {
   services: ServiceSummary[]
@@ -12,7 +25,20 @@ interface ServicesGridProps {
 }
 
 export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
-  const displayed = preview ? services.slice(0, 3) : services
+  const [spaOpen, setSpaOpen] = useState(false)
+  const displayed = preview
+    ? (PREVIEW_SLUGS.map((slug) => services.find((s) => s.slug.current === slug)).filter(
+        Boolean
+      ) as ServiceSummary[])
+    : services
+
+  const spaChildren = SPA_CHILDREN_SLUGS.map((slug) =>
+    services.find((s) => s.slug.current === slug)
+  ).filter(Boolean) as ServiceSummary[]
+
+  // Remove children from main list — they appear inline after SPA
+  const mainServices = displayed.filter((s) => !SPA_CHILDREN_SLUGS.includes(s.slug.current))
+
   return (
     <Section className="bg-cream">
       <Container>
@@ -36,19 +62,101 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             )}
           </div>
         </Reveal>
+
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {displayed.map((service, i) => (
-            <Reveal key={service._id} delay={i * 100}>
-              <ServiceCard
-                title={service.title}
-                description={service.description}
-                slug={service.slug.current}
-                imageSrc={
-                  service.image ? urlFor(service.image).width(600).height(400).url() : undefined
-                }
-              />
-            </Reveal>
-          ))}
+          {mainServices.map((service, i) => {
+            const imageSrc = service.image
+              ? urlFor(service.image).width(600).height(400).url()
+              : undefined
+
+            if (service.slug.current === SPA_SLUG) {
+              // In preview mode — SPA is a normal link to /services
+              if (preview) {
+                return (
+                  <Reveal key={service._id} delay={i * 100}>
+                    <ServiceCard
+                      title={service.title}
+                      description={service.description}
+                      slug="__services__"
+                      imageSrc={imageSrc}
+                    />
+                  </Reveal>
+                )
+              }
+
+              // In full mode — SPA expands sub-cards
+              return (
+                <>
+                  <Reveal key={service._id} delay={i * 100}>
+                    <button
+                      onClick={() => setSpaOpen((o) => !o)}
+                      className="group w-full text-left block overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md"
+                    >
+                      <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
+                        {imageSrc && (
+                          <img
+                            src={imageSrc}
+                            alt={service.title}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end min-h-[120px]">
+                          <h3 className="font-display text-xl font-semibold text-cream">
+                            {service.title}
+                          </h3>
+                          <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
+                            {service.description}
+                          </p>
+                          <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta">
+                            {spaOpen ? 'Fermer' : 'Découvrir'}
+                            <ChevronDown
+                              className={`h-4 w-4 transition-transform duration-300 ${spaOpen ? 'rotate-180' : ''}`}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  </Reveal>
+
+                  <AnimatePresence>
+                    {spaOpen &&
+                      spaChildren.map((child, j) => (
+                        <motion.div
+                          key={child._id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 20 }}
+                          transition={{ duration: 0.25, ease: 'easeOut', delay: j * 0.08 }}
+                        >
+                          <ServiceCard
+                            title={child.title}
+                            description={child.description}
+                            slug={child.slug.current}
+                            imageSrc={
+                              child.image
+                                ? urlFor(child.image).width(600).height(400).url()
+                                : undefined
+                            }
+                          />
+                        </motion.div>
+                      ))}
+                  </AnimatePresence>
+                </>
+              )
+            }
+
+            return (
+              <Reveal key={service._id} delay={i * 100}>
+                <ServiceCard
+                  title={service.title}
+                  description={service.description}
+                  slug={service.slug.current}
+                  imageSrc={imageSrc}
+                />
+              </Reveal>
+            )
+          })}
         </div>
       </Container>
     </Section>

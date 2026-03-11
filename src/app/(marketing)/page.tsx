@@ -1,18 +1,16 @@
 import { Hero } from '@/components/sections/hero'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { Values } from '@/components/sections/values'
-import { TestimonialsSection } from '@/components/sections/testimonials-section'
 import { ShopTeaser } from '@/components/sections/shop-teaser'
 import { InstagramFeed } from '@/components/sections/instagram-feed'
 import { InfoPratiques } from '@/components/sections/info-pratiques'
 import { getAllServices } from '@/sanity/queries/services'
-import { getTestimonials } from '@/sanity/queries/testimonials'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { getProductsByHandles } from '@/lib/shopify'
 
 // Handles in the exact order you want them in the carousel
 const SHOP_TEASER_HANDLES = [
-  'bougie-merci-murphy-grand-format-copy', // Bougie grand format
+  'bonnet-cat-mom-marine', // Bonnet cat mom marine
   'le-murphy-week-end-cabas-ecru-its-never-just-a-dog', // Cabas écru
   'bougie-merci-murphy-sans-un-mot-grand-format-copy', // Bougie petit format
   'mug-dog-mom', // Mug dog mom
@@ -21,9 +19,8 @@ const SHOP_TEASER_HANDLES = [
 ]
 
 export default async function HomePage() {
-  const [services, testimonials, settings, shopProducts] = await Promise.all([
+  const [services, settings, shopProducts] = await Promise.all([
     getAllServices(),
-    getTestimonials(3),
     getSiteSettings(),
     getProductsByHandles(SHOP_TEASER_HANDLES),
   ])
@@ -127,7 +124,6 @@ export default async function HomePage() {
       />
       {services.length > 0 && <ServicesGrid services={services} preview />}
       <Values />
-      {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
       {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
         <InstagramFeed feedId={process.env.NEXT_PUBLIC_BEHOLD_FEED_ID} />
       )}

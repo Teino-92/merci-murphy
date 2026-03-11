@@ -79,7 +79,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
           const handleClick = () => {
             setActive({
               src: getImgSrc(post, 'large'),
-              alt: post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram',
+              alt: post.caption?.slice(0, 80) ?? 'merci murphy® Instagram',
               permalink: post.permalink,
               isVideo: post.mediaType === 'VIDEO',
               videoSrc: post.mediaType === 'VIDEO' ? post.mediaUrl : undefined,
@@ -120,7 +120,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                 >
                   <Image
                     src={imgSrc}
-                    alt={post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram'}
+                    alt={post.caption?.slice(0, 80) ?? 'merci murphy® Instagram'}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="50vw"
@@ -148,7 +148,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
           const handleClick = () => {
             setActive({
               src: getImgSrc(post, 'large'),
-              alt: post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram',
+              alt: post.caption?.slice(0, 80) ?? 'merci murphy® Instagram',
               permalink: post.permalink,
               isVideo: post.mediaType === 'VIDEO',
               videoSrc: post.mediaType === 'VIDEO' ? post.mediaUrl : undefined,
@@ -197,7 +197,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                 >
                   <Image
                     src={imgSrc}
-                    alt={post.caption?.slice(0, 80) ?? 'Merci Murphy Instagram'}
+                    alt={post.caption?.slice(0, 80) ?? 'merci murphy® Instagram'}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 640px) 50vw, 25vw"

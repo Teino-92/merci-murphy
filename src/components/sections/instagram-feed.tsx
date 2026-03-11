@@ -33,7 +33,7 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
             <h2 className="font-display text-3xl font-bold text-cream sm:text-4xl">
               Sur Instagram
             </h2>
-            <p className="mt-2 text-cream/60">La vie de Merci Murphy au quotidien.</p>
+            <p className="mt-2 text-cream/60">La vie de merci murphy® au quotidien.</p>
           </div>
           <a
             href="https://instagram.com/mercimurphy"

@@ -7,7 +7,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 export const metadata: Metadata = {
   title: 'Créer un compte',
   description:
-    'Créez votre compte Merci Murphy pour gérer les informations de votre chien et faciliter vos réservations.',
+    'Créez votre compte merci murphy® pour gérer les informations de votre chien et faciliter vos réservations.',
 }
 
 export default async function InscriptionPage({

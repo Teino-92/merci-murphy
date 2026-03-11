@@ -25,10 +25,10 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
           <div className="flex items-end justify-between">
             <div>
               <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-                La boutique
+                Eco-shop
               </h2>
               <p className="mt-2 text-charcoal/60">
-                Produits premium sélectionnés pour votre chien.
+                Produits premium sélectionnés pour votre chien et chat.
               </p>
             </div>
             <Link
@@ -41,16 +41,18 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
         </Reveal>
       </Container>
 
-      {/* Scrollable carousel — full width, no Container clipping */}
-      <div className="mt-10 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-4 px-4 sm:px-6 lg:px-8 xl:px-[max(2rem,calc((100vw-1280px)/2+2rem))]">
-          {products.map((product, i) => (
-            <Reveal key={product.id} delay={i * 80} className="w-64 shrink-0 sm:w-80">
-              <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
-            </Reveal>
-          ))}
+      {/* Scrollable carousel — aligned with Container */}
+      <Container>
+        <div className="mt-10 overflow-x-auto scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8">
+          <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
+            {products.map((product, i) => (
+              <Reveal key={product.id} delay={i * 80} className="w-64 shrink-0 sm:w-72">
+                <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </div>
+      </Container>
 
       <Container>
         <div className="mt-8 text-center sm:hidden">

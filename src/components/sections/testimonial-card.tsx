@@ -11,7 +11,7 @@ interface TestimonialCardProps {
 
 export function TestimonialCard({ auteur, note, texte, service, className }: TestimonialCardProps) {
   return (
-    <div className={cn('rounded-2xl bg-white p-6 shadow-sm', className)}>
+    <div className={cn('rounded-2xl bg-cream p-6', className)}>
       <div className="flex gap-0.5">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star

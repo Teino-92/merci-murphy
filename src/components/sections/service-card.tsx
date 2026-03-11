@@ -14,7 +14,7 @@ interface ServiceCardProps {
 export function ServiceCard({ title, description, slug, imageSrc, className }: ServiceCardProps) {
   return (
     <Link
-      href={`/services/${slug}`}
+      href={slug === '__services__' ? '/services' : `/services/${slug}`}
       className={cn(
         'group block overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md',
         className

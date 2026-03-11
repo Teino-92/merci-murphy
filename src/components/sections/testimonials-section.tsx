@@ -11,25 +11,25 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
   if (testimonials.length === 0) return null
 
   return (
-    <Section className="bg-cream">
+    <Section className="bg-[#1D164E]">
       <Container>
         <Reveal>
           <div className="text-center">
-            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
+            <h2 className="font-display text-3xl font-bold text-cream sm:text-4xl">
               Ils nous font confiance
             </h2>
           </div>
         </Reveal>
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <Reveal key={t._id} delay={i * 100}>
+        <div className="mt-12 columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+          {testimonials.map((t) => (
+            <div key={t._id} className="break-inside-avoid">
               <TestimonialCard
                 auteur={t.auteur}
                 note={t.note}
                 texte={t.texte}
                 service={t.service?.title}
               />
-            </Reveal>
+            </div>
           ))}
         </div>
       </Container>
