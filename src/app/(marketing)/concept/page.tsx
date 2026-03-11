@@ -250,8 +250,8 @@ export default async function ConceptPage() {
                 return (
                   <Reveal key={i} delay={100}>
                     <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
-                      <div>{reverse ? textBlock : photoBlock}</div>
-                      <div>{reverse ? photoBlock : textBlock}</div>
+                      <div className={reverse ? 'lg:order-2' : ''}>{photoBlock}</div>
+                      <div className={reverse ? 'lg:order-1' : ''}>{textBlock}</div>
                     </div>
                   </Reveal>
                 )
