@@ -45,6 +45,17 @@ export default async function ShopPage() {
               </div>
             </Reveal>
 
+            {/* Mobile only — products shelf */}
+            <div className="lg:hidden relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
+              <Image
+                src="/boutique-products.jpg"
+                alt="Produits merci murphy®"
+                fill
+                className="object-cover object-[center_calc(50%+40px)]"
+                sizes="100vw"
+              />
+            </div>
+
             {/* Left — full text */}
             <Reveal className="text-center lg:text-left lg:order-1">
               <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
