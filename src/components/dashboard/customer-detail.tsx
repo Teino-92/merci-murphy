@@ -31,6 +31,7 @@ export function CustomerDetail({
   const [deleting, setDeleting] = useState(false)
 
   // Edit profile state
+  const [togglingBook, setTogglingBook] = useState(false)
   const [editing, setEditing] = useState(false)
   const [editData, setEditData] = useState({
     nom: initial.nom,
@@ -49,6 +50,18 @@ export function CustomerDetail({
   const [visitNotes, setVisitNotes] = useState('')
   const [visitStaff, setVisitStaff] = useState('')
   const [addingVisit, setAddingVisit] = useState(false)
+
+  async function toggleCanBook() {
+    setTogglingBook(true)
+    const next = !profile.can_book
+    await fetch(`/api/dashboard/customers/${profile.id}/profile`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ can_book: next }),
+    })
+    setProfile((p) => ({ ...p, can_book: next }))
+    setTogglingBook(false)
+  }
 
   async function saveNotes() {
     setSaving(true)
@@ -134,6 +147,29 @@ export function CustomerDetail({
                 className="text-gray-400 hover:text-[#1D164E] transition-colors"
               >
                 {editing ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              </button>
+            </div>
+
+            {/* can_book toggle */}
+            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-[#1D164E]">Autoriser les réservations</p>
+                <p className="text-xs text-gray-400">
+                  {profile.can_book ? 'Ce client peut réserver en ligne' : 'Réservation désactivée'}
+                </p>
+              </div>
+              <button
+                onClick={toggleCanBook}
+                disabled={togglingBook}
+                className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${
+                  profile.can_book ? 'bg-[#1D164E]' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${
+                    profile.can_book ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                />
               </button>
             </div>
 
