@@ -93,3 +93,21 @@ export async function addVisit(visit: Omit<Visit, 'id' | 'created_at'>): Promise
   const { error } = await supabaseAdmin.from('visits').insert(visit)
   if (error) throw error
 }
+
+export async function updateProfile(
+  id: string,
+  data: Partial<Omit<Profile, 'id' | 'created_at'>>
+): Promise<void> {
+  const { error } = await supabaseAdmin.from('profiles').update(data).eq('id', id)
+  if (error) throw error
+}
+
+export async function deleteProfile(id: string): Promise<void> {
+  const { error } = await supabaseAdmin.from('profiles').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function deleteVisit(id: string): Promise<void> {
+  const { error } = await supabaseAdmin.from('visits').delete().eq('id', id)
+  if (error) throw error
+}

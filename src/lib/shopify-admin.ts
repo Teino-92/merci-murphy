@@ -163,3 +163,146 @@ export async function getTopProducts(from?: string, to?: string): Promise<TopPro
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 5)
 }
+
+export interface ShopifyCustomer {
+  id: string
+  firstName: string | null
+  lastName: string | null
+  email: string
+  phone: string | null
+  ordersCount: number
+  totalSpent: string
+  createdAt: string
+  note: string | null
+}
+
+export interface ShopifyCustomerOrder {
+  id: string
+  name: string
+  createdAt: string
+  totalPrice: string
+  financialStatus: string
+  lineItems: { title: string; quantity: number }[]
+}
+
+type ShopifyCustomerNode = {
+  id: string
+  firstName: string | null
+  lastName: string | null
+  email: string
+  phone: string | null
+  numberOfOrders: string
+  amountSpent: { amount: string; currencyCode: string }
+  createdAt: string
+  note: string | null
+}
+
+export async function getShopifyCustomers(limit = 50): Promise<ShopifyCustomer[]> {
+  if (!SHOPIFY_ADMIN_TOKEN) return []
+  try {
+    const data = await adminFetch<{ customers: { edges: { node: ShopifyCustomerNode }[] } }>(`
+      query {
+        customers(first: ${limit}, sortKey: CREATED_AT, reverse: true) {
+          edges {
+            node {
+              id firstName lastName email phone
+              numberOfOrders
+              amountSpent { amount currencyCode }
+              createdAt note
+            }
+          }
+        }
+      }
+    `)
+    return data.customers.edges.map(({ node }) => ({
+      id: node.id,
+      firstName: node.firstName,
+      lastName: node.lastName,
+      email: node.email,
+      phone: node.phone,
+      ordersCount: parseInt(node.numberOfOrders),
+      totalSpent: node.amountSpent.amount,
+      createdAt: node.createdAt,
+      note: node.note,
+    }))
+  } catch {
+    return []
+  }
+}
+
+export async function getShopifyCustomerById(
+  id: string
+): Promise<{ customer: ShopifyCustomer; orders: ShopifyCustomerOrder[] } | null> {
+  if (!SHOPIFY_ADMIN_TOKEN) return null
+  try {
+    const gid = id.startsWith('gid://') ? id : `gid://shopify/Customer/${id}`
+    const data = await adminFetch<{
+      customer: ShopifyCustomerNode & {
+        orders: {
+          edges: {
+            node: {
+              id: string
+              name: string
+              createdAt: string
+              totalPriceSet: { shopMoney: { amount: string } }
+              displayFinancialStatus: string
+              lineItems: { edges: { node: { title: string; quantity: number } }[] }
+            }
+          }[]
+        }
+      }
+    }>(
+      `
+      query($id: ID!) {
+        customer(id: $id) {
+          id firstName lastName email phone
+          numberOfOrders
+          amountSpent { amount currencyCode }
+          createdAt note
+          orders(first: 20, sortKey: CREATED_AT, reverse: true) {
+            edges {
+              node {
+                id name createdAt
+                totalPriceSet { shopMoney { amount } }
+                displayFinancialStatus
+                lineItems(first: 5) {
+                  edges { node { title quantity } }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+      { id: gid }
+    )
+    if (!data.customer) return null
+    const c = data.customer
+    return {
+      customer: {
+        id: c.id,
+        firstName: c.firstName,
+        lastName: c.lastName,
+        email: c.email,
+        phone: c.phone,
+        ordersCount: parseInt(c.numberOfOrders),
+        totalSpent: c.amountSpent.amount,
+        createdAt: c.createdAt,
+        note: c.note,
+      },
+      orders: c.orders.edges.map(({ node }) => ({
+        id: node.id,
+        name: node.name,
+        createdAt: node.createdAt,
+        totalPrice: node.totalPriceSet.shopMoney.amount,
+        financialStatus: node.displayFinancialStatus,
+        lineItems: node.lineItems.edges.map(({ node: li }) => ({
+          title: li.title,
+          quantity: li.quantity,
+        })),
+      })),
+    }
+  } catch {
+    return null
+  }
+}
