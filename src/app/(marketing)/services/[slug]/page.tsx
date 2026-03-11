@@ -12,6 +12,7 @@ import { FaqAccordion } from '@/components/sections/faq-accordion'
 import { MobileCta } from '@/components/sections/mobile-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
+import { getProfile } from '@/lib/auth-actions'
 
 // Avant/après pour Maison Poilus
 const BEFORE_AFTER_PAIRS = [
@@ -62,7 +63,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ServicePage({ params }: Props) {
-  const [service, settings] = await Promise.all([getServiceBySlug(params.slug), getSiteSettings()])
+  const [service, settings, profile] = await Promise.all([
+    getServiceBySlug(params.slug),
+    getSiteSettings(),
+    getProfile(),
+  ])
+  const canBook = profile?.can_book === true
 
   if (!service) notFound()
 
@@ -206,7 +212,7 @@ export default async function ServicePage({ params }: Props) {
                 : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
             </p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              {service.calendlyUrl && (
+              {service.calendlyUrl && canBook && (
                 <Button
                   asChild
                   size="lg"
@@ -235,7 +241,7 @@ export default async function ServicePage({ params }: Props) {
         phone={settings?.telephone}
         type={service.cta?.type ?? 'reservation'}
         label={service.cta?.label}
-        calendlyUrl={service.calendlyUrl ?? undefined}
+        calendlyUrl={canBook ? (service.calendlyUrl ?? undefined) : undefined}
       />
 
       {/* Spacer for mobile CTA */}
