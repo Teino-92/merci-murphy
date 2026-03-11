@@ -43,12 +43,15 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
 
       {/* Scrollable carousel — aligned with Container */}
       <Container>
-        <div className="mt-10 overflow-x-auto scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8">
+        <div
+          className="mt-10 overflow-x-auto overflow-y-hidden scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8"
+          style={{ touchAction: 'pan-x' }}
+        >
           <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
-            {products.map((product, i) => (
-              <Reveal key={product.id} delay={i * 80} className="w-64 shrink-0 sm:w-72">
+            {products.map((product) => (
+              <div key={product.id} className="w-64 shrink-0 sm:w-72">
                 <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
-              </Reveal>
+              </div>
             ))}
           </div>
         </div>
