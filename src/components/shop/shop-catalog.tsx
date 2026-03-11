@@ -14,8 +14,26 @@ interface ShopCatalogProps {
 export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
   const [activeHandle, setActiveHandle] = useState<string | null>(null)
 
-  const HIDDEN_COLLECTIONS = ['homepage', 'all', 'frontpage']
-  const visibleCollections = collections.filter((c) => !HIDDEN_COLLECTIONS.includes(c.handle))
+  const HIDDEN_HANDLES = [
+    'homepage',
+    'all',
+    'frontpage',
+    'all-products',
+    'tous-les-produits',
+    'tout-voir',
+    'all-collection',
+  ]
+  const HIDDEN_TITLES = ['all collection', 'tout voir', 'all products', 'tous les produits']
+  const COLLECTION_ORDER = ['merci murphy®', 'chien', 'chat', 'petshop']
+  const visibleCollections = collections
+    .filter(
+      (c) => !HIDDEN_HANDLES.includes(c.handle) && !HIDDEN_TITLES.includes(c.title.toLowerCase())
+    )
+    .sort((a, b) => {
+      const ai = COLLECTION_ORDER.findIndex((t) => a.title.toLowerCase().includes(t.toLowerCase()))
+      const bi = COLLECTION_ORDER.findIndex((t) => b.title.toLowerCase().includes(t.toLowerCase()))
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+    })
 
   const activeCollection = collections.find((c) => c.handle === activeHandle)
   const products = activeCollection ? activeCollection.products.nodes : allProducts
