@@ -3,6 +3,7 @@
 import { z } from 'zod'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +13,7 @@ export interface Profile {
   telephone: string
   nom_chien: string | null
   race_chien: string | null
+  age_chien: string | null
   poids_chien: string | null
   etat_poil: string | null
   can_book: boolean
@@ -21,11 +23,17 @@ export interface Profile {
 
 const SignUpSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, 'Le mot de passe doit faire au moins 8 caractères'),
+  password: z
+    .string()
+    .min(8, 'Le mot de passe doit faire au moins 8 caractères')
+    .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
+    .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
+    .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
   nom: z.string().min(2),
   telephone: z.string().min(8),
   nom_chien: z.string().optional(),
   race_chien: z.string().optional(),
+  age_chien: z.string().optional(),
   poids_chien: z.string().optional(),
   etat_poil: z.string().optional(),
 })
@@ -34,33 +42,40 @@ export type SignUpData = z.infer<typeof SignUpSchema>
 
 export async function signUp(data: SignUpData) {
   const parsed = SignUpSchema.safeParse(data)
-  if (!parsed.success) return { success: false, error: 'Données invalides.' }
+  if (!parsed.success)
+    return { success: false, error: parsed.error.issues[0]?.message ?? 'Données invalides.' }
 
-  const supabase = await createSupabaseServerClient()
-
-  const { data: authData, error: authError } = await supabase.auth.signUp({
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
     email: parsed.data.email,
     password: parsed.data.password,
+    email_confirm: true,
   })
 
   if (authError || !authData.user) {
-    if (authError?.message.includes('already registered')) {
+    if (
+      authError?.message.includes('already registered') ||
+      authError?.message.includes('already been registered')
+    ) {
       return { success: false, error: 'Cet email est déjà utilisé. Veuillez vous connecter.' }
     }
     return { success: false, error: 'Erreur lors de la création du compte.' }
   }
 
-  const { error: profileError } = await supabase.from('profiles').insert({
+  const { error: profileError } = await supabaseAdmin.from('profiles').insert({
     id: authData.user.id,
     nom: parsed.data.nom,
     telephone: parsed.data.telephone,
     nom_chien: parsed.data.nom_chien ?? null,
     race_chien: parsed.data.race_chien ?? null,
+    age_chien: parsed.data.age_chien ?? null,
     poids_chien: parsed.data.poids_chien ?? null,
     etat_poil: parsed.data.etat_poil ?? null,
   })
 
-  if (profileError) return { success: false, error: 'Erreur lors de la création du profil.' }
+  if (profileError) {
+    console.error('Profile insert error:', profileError)
+    return { success: false, error: `Erreur profil: ${profileError.message}` }
+  }
 
   return { success: true }
 }
@@ -119,6 +134,7 @@ const UpdateProfileSchema = z.object({
   telephone: z.string().min(8),
   nom_chien: z.string().optional(),
   race_chien: z.string().optional(),
+  age_chien: z.string().optional(),
   poids_chien: z.string().optional(),
   etat_poil: z.string().optional(),
 })

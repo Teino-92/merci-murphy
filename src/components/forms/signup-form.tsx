@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { signUp, type SignUpData } from '@/lib/auth-actions'
+import { BreedCombobox } from '@/components/ui/breed-combobox'
 import { CheckCircle } from 'lucide-react'
 
 const POIDS = [
@@ -104,11 +105,29 @@ export function SignUpForm() {
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Race</label>
-            <Input
-              placeholder="Ex: Labrador, Caniche..."
-              value={form.race_chien ?? ''}
-              onChange={(e) => set('race_chien', e.target.value)}
-            />
+            <BreedCombobox value={form.race_chien ?? ''} onChange={(v) => set('race_chien', v)} />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Âge</label>
+            <Select value={form.age_chien} onValueChange={(v) => set('age_chien', v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Âge de votre chien" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="moins-de-1-an">Moins d&apos;1 an</SelectItem>
+                <SelectItem value="1-an">1 an</SelectItem>
+                <SelectItem value="2-ans">2 ans</SelectItem>
+                <SelectItem value="3-ans">3 ans</SelectItem>
+                <SelectItem value="4-ans">4 ans</SelectItem>
+                <SelectItem value="5-ans">5 ans</SelectItem>
+                <SelectItem value="6-ans">6 ans</SelectItem>
+                <SelectItem value="7-ans">7 ans</SelectItem>
+                <SelectItem value="8-ans">8 ans</SelectItem>
+                <SelectItem value="9-ans">9 ans</SelectItem>
+                <SelectItem value="10-ans">10 ans</SelectItem>
+                <SelectItem value="plus-de-10-ans">Plus de 10 ans</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Poids</label>
@@ -201,6 +220,9 @@ export function SignUpForm() {
               value={form.password ?? ''}
               onChange={(e) => set('password', e.target.value)}
             />
+            <p className="mt-1.5 text-xs text-charcoal/50">
+              8 caractères minimum · majuscule, minuscule et chiffre requis
+            </p>
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <div className="flex gap-3">
