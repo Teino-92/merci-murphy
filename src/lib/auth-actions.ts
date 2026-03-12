@@ -4,6 +4,10 @@ import { z } from 'zod'
 import { redirect } from 'next/navigation'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { Resend } from 'resend'
+import { accountWelcomeHtml } from '@/lib/emails/account-welcome'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -76,6 +80,17 @@ export async function signUp(data: SignUpData) {
     console.error('Profile insert error:', profileError)
     return { success: false, error: `Erreur profil: ${profileError.message}` }
   }
+
+  // Welcome email
+  const prenom = parsed.data.nom.split(' ')[0] ?? parsed.data.nom
+  await resend.emails
+    .send({
+      from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM}>`,
+      to: parsed.data.email,
+      subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
+      html: accountWelcomeHtml(prenom, parsed.data.nom_chien),
+    })
+    .catch(() => {})
 
   return { success: true }
 }

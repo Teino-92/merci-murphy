@@ -4,6 +4,7 @@ import { z } from 'zod'
 import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { newsletterWelcomeHtml } from '@/lib/emails/newsletter-welcome'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -110,27 +111,12 @@ export async function subscribeNewsletter(data: { email: string }) {
   // Welcome email via Resend
   await resend.emails
     .send({
-      from: `Merci Murphy <${process.env.RESEND_NEWSLETTER_FROM}>`,
+      from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM}>`,
       to: parsed.data.email,
       subject: 'Bienvenue dans la communauté merci murphy® 🐾',
-      text: [
-        `Bonjour,`,
-        ``,
-        `merci de rejoindre la communauté merci murphy® !`,
-        ``,
-        `Vous serez parmi les premiers à recevoir nos actualités, conseils bien-être pour votre chien, et offres exclusives.`,
-        ``,
-        `À très bientôt,`,
-        `L'équipe merci murphy®`,
-        ``,
-        `---`,
-        `merci murphy® — Boutique premium de bien-être pour chiens`,
-        `Paris | mercimurphy.com`,
-      ].join('\n'),
+      html: newsletterWelcomeHtml(),
     })
-    .catch(() => {
-      // Ne pas bloquer si l'email échoue
-    })
+    .catch(() => {})
 
   return { success: true }
 }
