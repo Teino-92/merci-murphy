@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -46,7 +46,7 @@ export async function submitLead(data: LeadFormData) {
   const parsed = LeadSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: 'Données invalides.' }
 
-  const { error } = await supabase.from('leads').insert([parsed.data])
+  const { error } = await supabaseAdmin.from('leads').insert([parsed.data])
   if (error) return { success: false, error: 'Une erreur est survenue. Veuillez réessayer.' }
 
   // Notification interne via OVH
@@ -101,7 +101,7 @@ export async function subscribeNewsletter(data: { email: string }) {
   const parsed = NewsletterSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: 'Email invalide.' }
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('newsletter_subscribers')
     .upsert([{ email: parsed.data.email, active: true }], { onConflict: 'email' })
 
