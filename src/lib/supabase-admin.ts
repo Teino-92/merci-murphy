@@ -111,3 +111,27 @@ export async function deleteVisit(id: string): Promise<void> {
   const { error } = await supabaseAdmin.from('visits').delete().eq('id', id)
   if (error) throw error
 }
+
+export interface NewsletterSubscriber {
+  id: string
+  created_at: string
+  email: string
+  active: boolean
+}
+
+export async function getNewsletterSubscribers(): Promise<NewsletterSubscriber[]> {
+  const { data, error } = await supabaseAdmin
+    .from('newsletter_subscribers')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data ?? []
+}
+
+export async function setNewsletterActive(id: string, active: boolean): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from('newsletter_subscribers')
+    .update({ active })
+    .eq('id', id)
+  if (error) throw error
+}
