@@ -48,7 +48,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
               <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
                 Nos services
               </h2>
-              <p className="mt-2 text-charcoal/60">
+              <p className="mt-2 text-charcoal/70">
                 Tout ce dont votre chien a besoin, sous un même toit.
               </p>
             </div>
