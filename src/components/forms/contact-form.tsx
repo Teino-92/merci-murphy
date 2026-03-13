@@ -87,7 +87,7 @@ export function ContactForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-terracotta text-white hover:bg-terracotta/90"
+        className="w-full bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
       >
         {loading ? 'Envoi...' : 'Envoyer'}
       </Button>

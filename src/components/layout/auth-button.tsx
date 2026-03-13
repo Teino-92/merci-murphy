@@ -12,10 +12,13 @@ export function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
     return (
       <Link
         href="/compte/connexion"
+        aria-label="Se connecter"
         className="flex items-center gap-1.5 text-sm font-medium text-charcoal/70 hover:text-terracotta transition-colors"
       >
-        <User className="h-4 w-4" />
-        <span className="hidden sm:inline">Se connecter</span>
+        <User className="h-4 w-4" aria-hidden="true" />
+        <span className="hidden sm:inline" aria-hidden="true">
+          Se connecter
+        </span>
       </Link>
     )
   }

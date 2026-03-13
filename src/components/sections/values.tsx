@@ -44,7 +44,7 @@ export function Values() {
             <Reveal key={value.title} delay={i * 100}>
               <div className="flex flex-col items-center text-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose">
-                  <value.icon className="h-6 w-6 text-terracotta" />
+                  <value.icon className="h-6 w-6 text-terracotta-dark" />
                 </div>
                 <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">
                   {value.title}

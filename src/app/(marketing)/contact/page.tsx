@@ -54,7 +54,7 @@ export default async function ContactPage() {
                 <div className="mt-6 space-y-5">
                   {adresse && (
                     <div className="flex gap-3">
-                      <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+                      <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-terracotta-dark" />
                       <div>
                         <p className="text-charcoal/80">{adresse}</p>
                         {settings?.google_maps_url && (
@@ -62,7 +62,7 @@ export default async function ContactPage() {
                             href={settings.google_maps_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-1 text-sm text-terracotta hover:underline"
+                            className="mt-1 text-sm text-terracotta-dark hover:underline"
                           >
                             Voir sur Google Maps →
                           </a>
@@ -72,7 +72,7 @@ export default async function ContactPage() {
                   )}
                   {settings?.telephone && (
                     <div className="flex gap-3">
-                      <Phone className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+                      <Phone className="mt-0.5 h-5 w-5 shrink-0 text-terracotta-dark" />
                       <a
                         href={`tel:${settings.telephone}`}
                         className="text-charcoal/80 hover:text-charcoal"
@@ -83,7 +83,7 @@ export default async function ContactPage() {
                   )}
                   {settings?.email && (
                     <div className="flex gap-3">
-                      <Mail className="mt-0.5 h-5 w-5 shrink-0 text-terracotta" />
+                      <Mail className="mt-0.5 h-5 w-5 shrink-0 text-terracotta-dark" />
                       <a
                         href={`mailto:${settings.email}`}
                         className="text-charcoal/80 hover:text-charcoal"
@@ -97,7 +97,7 @@ export default async function ContactPage() {
                 {settings?.horairesGroupes && settings.horairesGroupes.length > 0 && (
                   <div className="mt-8">
                     <div className="flex items-center gap-2 mb-3">
-                      <Clock className="h-5 w-5 text-terracotta" />
+                      <Clock className="h-5 w-5 text-terracotta-dark" />
                       <h3 className="font-display text-lg font-semibold text-charcoal">Horaires</h3>
                     </div>
                     <HorairesAccordion groupes={settings.horairesGroupes} variant="light" />

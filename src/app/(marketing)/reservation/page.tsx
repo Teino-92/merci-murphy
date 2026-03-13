@@ -51,7 +51,7 @@ export default async function ReservationPage() {
                 {SITE_CONFIG.phone && (
                   <a
                     href={`tel:${SITE_CONFIG.phone}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-terracotta px-6 py-3 text-sm font-medium text-white hover:bg-terracotta/90 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-terracotta-dark px-6 py-3 text-sm font-medium text-white hover:bg-terracotta-dark/90 transition-colors"
                   >
                     Nous appeler
                   </a>

@@ -276,7 +276,7 @@ export default async function ConceptPage() {
               <Reveal key={e.title} delay={i * 100}>
                 <div className="flex flex-col items-center text-center">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose">
-                    <e.icon className="h-6 w-6 text-terracotta" />
+                    <e.icon className="h-6 w-6 text-terracotta-dark" />
                   </div>
                   <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">
                     {e.title}

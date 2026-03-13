@@ -110,6 +110,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     href={post.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Voir sur Instagram"
                     className="absolute inset-0 bg-[#1D164E]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
                   />
                 </div>
@@ -181,6 +182,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     href={post.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Voir sur Instagram"
                     className="absolute inset-0 bg-[#1D164E]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
                   >
                     {post.caption && (

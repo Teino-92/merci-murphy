@@ -13,6 +13,7 @@ const config: Config = {
         cream: '#F5F0E8',
         rose: '#FFDAD4',
         terracotta: '#C4845A',
+        'terracotta-dark': '#8B5A3A',
         charcoal: '#1A1A1A',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

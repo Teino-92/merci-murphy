@@ -31,6 +31,7 @@ export function PawStamp({ active, className, inline }: PawStampProps) {
         width={36}
         height={36}
         style={{
+          aspectRatio: 'auto',
           filter:
             'brightness(0) saturate(100%) invert(9%) sepia(47%) saturate(1200%) hue-rotate(220deg) brightness(80%) contrast(110%)',
         }}

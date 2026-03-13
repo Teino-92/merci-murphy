@@ -44,7 +44,7 @@ export function CartDrawer() {
             <Button
               onClick={closeCart}
               variant="outline"
-              className="border-terracotta text-terracotta hover:bg-terracotta hover:text-white"
+              className="border-terracotta-dark text-terracotta-dark hover:bg-terracotta-dark hover:text-white"
             >
               Continuer mes achats
             </Button>
@@ -74,7 +74,9 @@ export function CartDrawer() {
                     {line.variantTitle !== 'Default Title' && (
                       <p className="mt-0.5 text-sm text-charcoal/50">{line.variantTitle}</p>
                     )}
-                    <p className="mt-1 font-semibold text-terracotta">{formatPrice(line.price)}</p>
+                    <p className="mt-1 font-semibold text-terracotta-dark">
+                      {formatPrice(line.price)}
+                    </p>
 
                     {/* Qty controls */}
                     <div className="mt-3 flex items-center gap-3">
@@ -124,7 +126,7 @@ export function CartDrawer() {
               </p>
               <a
                 href={cart?.checkoutUrl}
-                className="block w-full rounded-xl bg-terracotta py-3.5 text-center font-semibold text-white transition-colors hover:bg-terracotta/90"
+                className="block w-full rounded-xl bg-terracotta-dark py-3.5 text-center font-semibold text-white transition-colors hover:bg-terracotta-dark/90"
               >
                 Passer la commande
               </a>

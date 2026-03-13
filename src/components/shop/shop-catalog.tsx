@@ -47,7 +47,7 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
             className={cn(
               'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
               !activeHandle
-                ? 'border-terracotta bg-terracotta text-white'
+                ? 'border-terracotta-dark bg-terracotta-dark text-white'
                 : 'border-charcoal/20 text-charcoal hover:border-terracotta hover:text-terracotta'
             )}
           >
@@ -60,7 +60,7 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
               className={cn(
                 'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
                 activeHandle === c.handle
-                  ? 'border-terracotta bg-terracotta text-white'
+                  ? 'border-terracotta-dark bg-terracotta-dark text-white'
                   : 'border-charcoal/20 text-charcoal hover:border-terracotta hover:text-terracotta'
               )}
             >

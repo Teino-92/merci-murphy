@@ -33,7 +33,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
             </div>
             <Link
               href="/shop"
-              className="hidden items-center gap-1 text-sm font-medium text-terracotta hover:gap-2 transition-all sm:flex"
+              className="hidden items-center gap-1 text-sm font-medium text-terracotta-dark hover:gap-2 transition-all sm:flex"
             >
               Voir tout <ArrowRight className="h-4 w-4" />
             </Link>
@@ -59,7 +59,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
 
       <Container>
         <div className="mt-8 text-center sm:hidden">
-          <Link href="/shop" className="text-sm font-medium text-terracotta hover:underline">
+          <Link href="/shop" className="text-sm font-medium text-terracotta-dark hover:underline">
             Voir toute la boutique →
           </Link>
         </div>

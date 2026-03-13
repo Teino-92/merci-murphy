@@ -62,7 +62,7 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
               )}
             </div>
             <div className="mt-8">
-              <Button asChild className="bg-terracotta text-white hover:bg-terracotta/90">
+              <Button asChild className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
                 <Link href="/reservation">Prendre rendez-vous</Link>
               </Button>
             </div>

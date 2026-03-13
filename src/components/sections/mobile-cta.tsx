@@ -24,7 +24,10 @@ export function MobileCta({ phone, type = 'reservation', label, calendlyUrl }: M
           </Button>
         )}
         {type === 'reservation' && calendlyUrl && (
-          <Button asChild className="flex-1 bg-terracotta text-white hover:bg-terracotta/90">
+          <Button
+            asChild
+            className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
+          >
             <a
               href={calendlyUrl}
               target="_blank"
@@ -37,7 +40,10 @@ export function MobileCta({ phone, type = 'reservation', label, calendlyUrl }: M
           </Button>
         )}
         {type === 'reservation' && !calendlyUrl && (
-          <Button asChild className="flex-1 bg-terracotta text-white hover:bg-terracotta/90">
+          <Button
+            asChild
+            className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
+          >
             <Link href="/compte/inscription" className="flex items-center justify-center gap-2">
               <Calendar className="h-4 w-4" />
               Être rappelé·e

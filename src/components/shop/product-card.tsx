@@ -56,7 +56,7 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
         <p className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-terracotta transition-colors">
           {product.title}
         </p>
-        <p className="mt-1 text-sm font-semibold text-terracotta">{formatPrice(price)}</p>
+        <p className="mt-1 text-sm font-semibold text-terracotta-dark">{formatPrice(price)}</p>
       </div>
     </Link>
   )

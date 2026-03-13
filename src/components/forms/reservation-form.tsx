@@ -112,7 +112,7 @@ export function ReservationForm({
               className={`h-1 rounded-full transition-colors ${i <= step ? 'bg-terracotta' : 'bg-charcoal/10'}`}
             />
             <p
-              className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta' : 'text-charcoal/40'}`}
+              className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta-dark' : 'text-charcoal/40'}`}
             >
               {label}
             </p>
@@ -143,7 +143,7 @@ export function ReservationForm({
           <Button
             onClick={next}
             disabled={!form.service}
-            className="w-full bg-terracotta text-white hover:bg-terracotta/90"
+            className="w-full bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
           >
             Continuer
           </Button>
@@ -197,7 +197,7 @@ export function ReservationForm({
             </Button>
             <Button
               onClick={next}
-              className="flex-1 bg-terracotta text-white hover:bg-terracotta/90"
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
             >
               Continuer
             </Button>
@@ -241,7 +241,7 @@ export function ReservationForm({
             <Button
               onClick={next}
               disabled={!form.nom || !form.email || !form.telephone}
-              className="flex-1 bg-terracotta text-white hover:bg-terracotta/90"
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
             >
               Continuer
             </Button>
@@ -271,7 +271,7 @@ export function ReservationForm({
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 bg-terracotta text-white hover:bg-terracotta/90"
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
             >
               {loading ? 'Envoi…' : 'Demander à être rappelé.e'}
             </Button>

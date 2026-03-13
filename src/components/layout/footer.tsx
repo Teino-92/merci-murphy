@@ -44,7 +44,7 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-cream/40">
+            <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
               Navigation
             </p>
             <ul className="mt-4 space-y-2">
@@ -52,7 +52,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-cream/70 transition-colors hover:text-cream"
+                    className="text-sm text-cream/80 transition-colors hover:text-cream"
                   >
                     {item.label}
                   </Link>
@@ -63,7 +63,7 @@ export function Footer() {
 
           {/* Boutique */}
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-cream/40">
+            <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
               Boutique
             </p>
             <ul className="mt-4 space-y-2">
@@ -76,7 +76,7 @@ export function Footer() {
                 <li key={cat.handle}>
                   <Link
                     href={`/shop?collection=${cat.handle}`}
-                    className="text-sm text-cream/70 transition-colors hover:text-cream"
+                    className="text-sm text-cream/80 transition-colors hover:text-cream"
                   >
                     {cat.label}
                   </Link>
@@ -87,7 +87,7 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-cream/40">
+            <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
               Services
             </p>
             <ul className="mt-4 space-y-2">
@@ -95,7 +95,7 @@ export function Footer() {
                 <li key={s}>
                   <Link
                     href={`/services/${s.toLowerCase().replace('é', 'e')}`}
-                    className="text-sm text-cream/70 transition-colors hover:text-cream"
+                    className="text-sm text-cream/80 transition-colors hover:text-cream"
                   >
                     {s}
                   </Link>
@@ -109,7 +109,7 @@ export function Footer() {
         <div className="mt-8 border-t border-cream/10 pt-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {/* Legal links */}
-            <p className="text-xs text-cream/40">
+            <p className="text-xs text-cream/60">
               © {new Date().getFullYear()} merci murphy®.{' '}
               <Link href="/mentions-legales" className="hover:text-cream/60">
                 Mentions légales

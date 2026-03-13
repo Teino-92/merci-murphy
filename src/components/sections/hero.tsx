@@ -45,7 +45,11 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
             >
-              <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
+              <Button
+                asChild
+                size="lg"
+                className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
+              >
                 <Link href="/reservation">Prendre rendez-vous</Link>
               </Button>
               {SITE_CONFIG.phone && (
@@ -83,7 +87,11 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
             >
-              <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
+              <Button
+                asChild
+                size="lg"
+                className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
+              >
                 <Link href="/reservation">Prendre rendez-vous</Link>
               </Button>
               {SITE_CONFIG.phone && (

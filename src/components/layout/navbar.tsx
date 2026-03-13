@@ -46,8 +46,8 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'group relative text-sm font-medium transition-colors hover:text-terracotta',
-                  isActive ? 'text-terracotta' : 'text-charcoal/70'
+                  'group relative text-sm font-medium transition-colors hover:text-terracotta-dark',
+                  isActive ? 'text-terracotta-dark' : 'text-charcoal/70'
                 )}
               >
                 {item.label}
@@ -60,7 +60,7 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
         <div className="hidden items-center gap-3 lg:flex">
           {showCart && <CartIcon />}
           <AuthButton isLoggedIn={isLoggedIn} />
-          <Button asChild className="bg-terracotta text-white hover:bg-terracotta/90">
+          <Button asChild className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
             <Link href="/reservation">Réserver</Link>
           </Button>
         </div>
@@ -93,8 +93,8 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
                     setTimeout(() => setOpen(false), 10)
                   }}
                   className={cn(
-                    'group flex items-center py-3 text-base font-medium transition-colors hover:text-terracotta text-left w-full',
-                    isActive ? 'text-terracotta' : 'text-charcoal/70'
+                    'group flex items-center py-3 text-base font-medium transition-colors hover:text-terracotta-dark text-left w-full',
+                    isActive ? 'text-terracotta-dark' : 'text-charcoal/70'
                   )}
                 >
                   {item.label}
@@ -102,7 +102,10 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
                 </button>
               )
             })}
-            <Button asChild className="mt-4 bg-terracotta text-white hover:bg-terracotta/90">
+            <Button
+              asChild
+              className="mt-4 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
+            >
               <Link href="/reservation" onClick={() => setOpen(false)}>
                 Réserver
               </Link>

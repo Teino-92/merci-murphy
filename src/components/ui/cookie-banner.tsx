@@ -45,7 +45,7 @@ export function CookieBanner() {
           <div className="mt-4 flex gap-2">
             <Button
               size="sm"
-              className="flex-1 bg-terracotta text-white hover:bg-terracotta/90"
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
               onClick={accept}
             >
               Accepter

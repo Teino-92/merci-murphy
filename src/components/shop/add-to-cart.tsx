@@ -46,7 +46,7 @@ export function AddToCart({ variant }: AddToCartProps) {
         onClick={handleAdd}
         disabled={!variant.availableForSale || isLoading}
         size="lg"
-        className="flex-1 bg-terracotta text-white hover:bg-terracotta/90 disabled:opacity-50"
+        className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90 disabled:opacity-50"
       >
         <ShoppingBag className="mr-2 h-5 w-5" />
         {!variant.availableForSale
