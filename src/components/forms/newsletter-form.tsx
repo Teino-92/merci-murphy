@@ -42,7 +42,7 @@ export function NewsletterForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="shrink-0 bg-terracotta text-white hover:bg-terracotta/90"
+        className="shrink-0 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
       >
         {loading ? '...' : "S'inscrire"}
       </Button>

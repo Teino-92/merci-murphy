@@ -53,7 +53,7 @@ export function CookieBanner() {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 border-cream/40 text-cream hover:bg-cream/10"
+              className="flex-1 border-cream/40 bg-transparent text-cream hover:bg-cream/10"
               onClick={decline}
             >
               Refuser
