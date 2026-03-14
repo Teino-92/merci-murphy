@@ -25,16 +25,7 @@ export function PawStamp({ active, className, inline }: PawStampProps) {
       style={{ rotate: '-15deg' }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/paw.png"
-        alt=""
-        width={36}
-        height={29}
-        style={{
-          filter:
-            'brightness(0) saturate(100%) invert(9%) sepia(47%) saturate(1200%) hue-rotate(220deg) brightness(80%) contrast(110%)',
-        }}
-      />
+      <img src="/cursor-dog-sm.png" alt="" width={32} height={32} />
     </span>
   )
 }

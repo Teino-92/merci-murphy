@@ -118,8 +118,8 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksBreadcrumbLd) }}
       />
       <Hero
-        title="Le bien-être de votre chien, au cœur de Paris"
-        subtitle="Toilettage, spa, crèche, éducation et ostéopathie — tout ce dont votre compagnon a besoin, dans un espace chaleureux et bienveillant."
+        title="Vivre heureux avec son chien et son chat à Paris."
+        subtitle="Toilettage et spa, crèche, éducation – toute l'attention et l'expertise que votre chien et votre chat méritent, dans un lieu responsable, éducatif, chaleureux et bienveillant."
         imageSrc="/hero-home-2.jpg"
       />
       {services.length > 0 && <ServicesGrid services={services} preview />}
