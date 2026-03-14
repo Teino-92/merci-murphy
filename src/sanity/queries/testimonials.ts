@@ -9,7 +9,7 @@ export interface Testimonial {
   date: string | null
 }
 
-export async function getTestimonials(limit = 6): Promise<Testimonial[]> {
+export async function getTestimonials(limit = 50): Promise<Testimonial[]> {
   return sanityClient.fetch(
     `*[_type == "testimonial"] | order(date desc) [0...$limit] {
       _id,

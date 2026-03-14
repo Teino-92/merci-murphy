@@ -10,14 +10,14 @@ import { Reveal } from '@/components/ui/reveal'
 import type { ServiceSummary } from '@/sanity/queries/services'
 import { urlFor } from '@/sanity/client'
 
-const SPA_SLUG = 'spa-maison-poilus-r'
+const SPA_SLUG = 'le-spa-maison-poilus-r'
 const SPA_CHILDREN_SLUGS = [
-  'toilettage-maison-poilus-r',
-  'les-bains-maison-poilus-r',
+  'le-toilettage-maison-poilus-r',
+  'les-bains-en-libre-service-maison-poilus-r',
   'balneo-maison-poilus-r',
-  'massage-maison-poilus-r',
+  'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
 ]
-const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'education']
+const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'l-education']
 
 interface ServicesGridProps {
   services: ServiceSummary[]
@@ -46,10 +46,10 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-                Nos services
+                Nos prestations
               </h2>
               <p className="mt-2 text-charcoal/70">
-                Tout ce dont votre chien a besoin, sous un même toit.
+                Par un collectif d&apos;experts passionnés et engagés
               </p>
             </div>
             {preview && (
@@ -101,8 +101,8 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end min-h-[120px]">
-                          <h3 className="font-display text-xl font-semibold text-cream">
+                        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end h-[160px]">
+                          <h3 className="font-display text-xl font-semibold text-cream line-clamp-2 min-h-[56px]">
                             {service.title}
                           </h3>
                           <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">

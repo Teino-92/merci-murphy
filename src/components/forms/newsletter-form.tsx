@@ -37,14 +37,14 @@ export function NewsletterForm() {
         placeholder="Votre email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border-cream/20 bg-cream/10 text-cream placeholder:text-cream/40 focus-visible:ring-cream/30"
+        className="w-72 border-cream/20 bg-cream/10 text-cream placeholder:text-cream/40 focus-visible:ring-cream/30"
       />
       <Button
         type="submit"
         disabled={loading}
         className="shrink-0 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
       >
-        {loading ? '...' : "S'inscrire"}
+        {loading ? '...' : "S'inscrire à notre newsletter"}
       </Button>
       {error && <p className="text-xs text-red-400">{error}</p>}
     </form>

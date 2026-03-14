@@ -28,7 +28,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
                 Eco-shop
               </h2>
               <p className="mt-2 text-charcoal/60">
-                Produits premium sélectionnés pour votre chien et chat.
+                Notre sélection de produits pour votre chien, votre chat, et vous.
               </p>
             </div>
             <Link

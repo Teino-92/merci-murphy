@@ -33,8 +33,10 @@ export function ServiceCard({ title, description, slug, imageSrc, className }: S
         {/* Gradient overlay — bottom half fades to charcoal */}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
         {/* Text on top of image — fixed height so all cards align */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end min-h-[120px]">
-          <h3 className="font-display text-xl font-semibold text-cream">{title}</h3>
+        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end h-[160px]">
+          <h3 className="font-display text-xl font-semibold text-cream line-clamp-2 min-h-[56px]">
+            {title}
+          </h3>
           <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
             {description}
           </p>

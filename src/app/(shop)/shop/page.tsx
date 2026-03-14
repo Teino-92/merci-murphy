@@ -37,7 +37,7 @@ export default async function ShopPage() {
             {/* Left — full text */}
             <Reveal className="text-center lg:text-left lg:order-1">
               <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
-                Boutique éthique & éco-responsable pour chiens
+                Boutique éthique & éco-responsable pour chiens et chats
               </h1>
               <h2 className="mt-2 text-sm font-medium uppercase tracking-widest text-terracotta">
                 Une seule planète

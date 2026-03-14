@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ServicesPage() {
-  const [services, testimonials] = await Promise.all([getAllServices(), getTestimonials(6)])
+  const [services, testimonials] = await Promise.all([getAllServices(), getTestimonials()])
 
   return (
     <>
@@ -35,7 +35,8 @@ export default async function ServicesPage() {
               Nos services
             </h1>
             <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-              Tout ce dont votre chien a besoin, sous un même toit.
+              Toute l&apos;attention et l&apos;expertise que votre chien mérite, dans un lieu
+              unique.
             </p>
           </Reveal>
         </div>

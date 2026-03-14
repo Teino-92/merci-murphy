@@ -111,12 +111,12 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
         {/* Right — full image, rounded corners */}
         {imageSrc && (
           <div className="flex items-stretch">
-            <div className="relative w-full overflow-hidden rounded-tl-3xl rounded-bl-3xl">
+            <div className="relative w-full overflow-hidden">
               <Image
                 src={imageSrc}
                 alt="Merci Murphy"
-                width={3017}
-                height={3278}
+                width={1024}
+                height={1218}
                 priority
                 className="w-full h-auto object-contain"
                 sizes="60vw"

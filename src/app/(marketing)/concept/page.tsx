@@ -69,8 +69,7 @@ export default async function ConceptPage() {
               Le concept
             </h1>
             <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg max-w-md drop-shadow-sm">
-              merci murphy® est née d&apos;une conviction simple : votre chien mérite les meilleurs
-              soins, dans un espace chaleureux et bienveillant, au cœur de Paris.
+              ambassadeur d&apos;un art de vivre partagé entre l&apos;humain et son animal.
             </p>
           </Reveal>
         </div>
@@ -82,23 +81,13 @@ export default async function ConceptPage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
             <Reveal>
               <div>
-                <h2 className="font-display text-3xl font-bold text-charcoal">Notre histoire</h2>
+                <h2 className="font-display text-3xl font-bold text-charcoal">Le concept</h2>
+                <p className="font-display">Vivre heureux avec son chien et son chat à Paris</p>
                 <div className="mt-6 space-y-4 text-charcoal/70 leading-relaxed">
                   <p>
-                    Tout a commencé avec Murphy — notre chien, notre mascotte, et l&apos;inspiration
-                    derrière tout ce que nous faisons. En cherchant des soins de qualité pour lui à
-                    Paris, nous avons réalisé qu&apos;il manquait un espace vraiment dédié au
-                    bien-être global des chiens.
-                  </p>
-                  <p>
-                    merci murphy® est né de cette idée : créer une boutique-concept où toilettage,
-                    éducation, ostéopathie et produits premium coexistent sous un même toit, dans
-                    une atmosphère à la fois professionnelle et chaleureuse.
-                  </p>
-                  <p>
-                    Aujourd&apos;hui, nous accueillons chaque jour des chiens de tous gabarits et
-                    leurs familles, avec la même attention et la même passion qu&apos;au premier
-                    jour.
+                    Un collectif engagé d’experts et de passionnés répond eux besoins de votre
+                    compagnon urbain et vous facilite la vie, dans un lieu unique, chaleureux et
+                    bienveillant.
                   </p>
                 </div>
               </div>
@@ -125,7 +114,7 @@ export default async function ConceptPage() {
         <Container className="max-w-4xl">
           <Reveal>
             <div className="text-center mb-16">
-              <h2 className="font-display text-3xl font-bold sm:text-4xl">Nos Valeurs</h2>
+              <h2 className="font-display text-3xl font-bold sm:text-4xl">Nos valeurs</h2>
               <p className="mt-3 text-cream/60">Des convictions ancrées et des actions engagées.</p>
             </div>
           </Reveal>
@@ -295,9 +284,7 @@ export default async function ConceptPage() {
           <Container>
             <Reveal>
               <div className="text-center">
-                <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-                  Notre équipe
-                </h2>
+                <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">WIP</h2>
                 <p className="mt-4 text-charcoal/60">
                   Des passionnés au service du bien-être de votre chien.
                 </p>
