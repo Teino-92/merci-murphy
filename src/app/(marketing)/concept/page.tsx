@@ -82,7 +82,9 @@ export default async function ConceptPage() {
             <Reveal>
               <div>
                 <h2 className="font-display text-3xl font-bold text-charcoal">Le concept</h2>
-                <p className="font-display">Vivre heureux avec son chien et son chat à Paris</p>
+                <p className="mt-2 font-display text-xl font-semibold text-charcoal/80">
+                  Vivre heureux avec son chien et son chat à Paris
+                </p>
                 <div className="mt-6 space-y-4 text-charcoal/70 leading-relaxed">
                   <p>
                     Un collectif engagé d’experts et de passionnés répond eux besoins de votre

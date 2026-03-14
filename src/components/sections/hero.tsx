@@ -19,7 +19,7 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
     <div className={cn('w-full bg-charcoal overflow-hidden', className)}>
       {/* Mobile — full-bleed image with text overlay */}
       {imageSrc && (
-        <div className="relative lg:hidden w-full" style={{ aspectRatio: '3017/3278' }}>
+        <div className="relative lg:hidden w-full" style={{ aspectRatio: '4/5' }}>
           <Image
             src={imageSrc}
             alt="Merci Murphy"

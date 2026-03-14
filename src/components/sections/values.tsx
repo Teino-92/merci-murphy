@@ -19,7 +19,7 @@ const VALUES = [
     icon: Recycle,
     title: 'Ecoresponsabilité',
     description:
-      'Emballages recyclés, produits écoresponsables, consomation d&apos;eau raisonée - nous agissons à notre échelle.',
+      "Emballages recyclés, produits écoresponsables, consomation d'eau raisonée - nous agissons à notre échelle.",
   },
   {
     icon: Sparkles,
