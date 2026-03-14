@@ -57,7 +57,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${playfair.variable} font-sans antialiased overflow-x-hidden`}
+      >
         {children}
         <CookieBanner />
         <Analytics />
