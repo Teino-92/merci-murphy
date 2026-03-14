@@ -44,7 +44,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
       {/* Scrollable carousel — aligned with Container */}
       <Container>
         <div
-          className="mt-10 overflow-x-auto overflow-y-hidden scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8"
+          className="mt-10 overflow-x-auto overflow-y-hidden scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 [clip-path:inset(0)]"
           style={{ touchAction: 'pan-x' }}
         >
           <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
