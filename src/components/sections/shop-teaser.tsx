@@ -41,21 +41,19 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
         </Reveal>
       </Container>
 
-      {/* Scrollable carousel — aligned with Container */}
-      <Container>
-        <div
-          className="mt-10 overflow-x-auto overflow-y-hidden scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 [clip-path:inset(0)]"
-          style={{ touchAction: 'pan-x' }}
-        >
-          <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
-            {products.map((product) => (
-              <div key={product.id} className="w-64 shrink-0 sm:w-72">
-                <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
-              </div>
-            ))}
-          </div>
+      {/* Scrollable carousel — full width, no negative margins */}
+      <div
+        className="mt-10 w-full overflow-x-auto overflow-y-hidden scrollbar-hide"
+        style={{ touchAction: 'pan-x' }}
+      >
+        <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
+          {products.map((product) => (
+            <div key={product.id} className="w-64 shrink-0 sm:w-72">
+              <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
+            </div>
+          ))}
         </div>
-      </Container>
+      </div>
 
       <Container>
         <div className="mt-8 text-center sm:hidden">

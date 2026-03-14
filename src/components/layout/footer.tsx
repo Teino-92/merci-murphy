@@ -39,7 +39,7 @@ export function Footer() {
             </div>
 
             {/* Center 3 cols */}
-            <div className="flex gap-16">
+            <div className="grid grid-cols-3 gap-6 lg:flex lg:gap-16">
               {/* Navigation */}
               <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
