@@ -41,19 +41,22 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
         </Reveal>
       </Container>
 
-      {/* Scrollable carousel — break out of Section's right padding only */}
-      <div
-        className="mt-10 -mr-4 sm:-mr-6 lg:-mr-8 overflow-x-auto overflow-y-hidden scrollbar-hide"
-        style={{ touchAction: 'pan-x' }}
-      >
-        <div className="flex gap-4 pr-4">
-          {products.map((product) => (
-            <div key={product.id} className="w-64 shrink-0 sm:w-72">
-              <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
-            </div>
-          ))}
+      {/* Scrollable carousel — overflow wrapper sits outside padded flow */}
+      {/* We escape Section's right padding via negative margin, keep left as-is */}
+      <Container className="mt-10 !overflow-visible">
+        <div
+          className="-mr-4 sm:-mr-6 lg:-mr-8 overflow-x-auto overflow-y-hidden scrollbar-hide"
+          style={{ touchAction: 'pan-x' }}
+        >
+          <div className="flex gap-4 pr-4">
+            {products.map((product) => (
+              <div key={product.id} className="w-64 shrink-0 sm:w-72">
+                <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </Container>
 
       <Container>
         <div className="mt-8 text-center sm:hidden">
