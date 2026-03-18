@@ -59,6 +59,11 @@ export function SignInForm({ redirectTo = '/reservation' }: { redirectTo?: strin
         {loading ? 'Connexion…' : 'Se connecter'}
       </Button>
       <p className="text-center text-sm text-charcoal/50">
+        <Link href="/compte/mot-de-passe-oublie" className="text-terracotta-dark hover:underline">
+          Mot de passe oublié ?
+        </Link>
+      </p>
+      <p className="text-center text-sm text-charcoal/50">
         Pas encore de compte ?{' '}
         <Link href="/compte/inscription" className="text-terracotta hover:underline">
           Créer un compte
