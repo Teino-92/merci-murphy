@@ -1,5 +1,5 @@
 import { getRevenueStats, getDailyRevenue, getTopProducts } from '@/lib/shopify-admin'
-import { getLeads, getProfiles } from '@/lib/supabase-admin'
+import { getLeads, getProfiles, supabaseAdmin } from '@/lib/supabase-admin'
 import { StatCard } from '@/components/dashboard/stat-card'
 import { RevenueChart } from '@/components/dashboard/revenue-chart'
 
@@ -9,23 +9,73 @@ function formatCurrency(amount: number, currency: string) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(amount)
 }
 
+interface SumUpCacheKPI {
+  total_revenue: number
+}
+
+async function getSumUpCurrentMonth(): Promise<number> {
+  try {
+    const period = new Date().toISOString().slice(0, 7)
+    const { data } = await supabaseAdmin
+      .from('sumup_cache')
+      .select('total_revenue')
+      .eq('period', period)
+      .maybeSingle<SumUpCacheKPI>()
+    return data?.total_revenue ?? 0
+  } catch {
+    return 0
+  }
+}
+
 export default async function DashboardPage() {
-  const [revenue, dailyRevenue, topProducts, leads, profiles] = await Promise.all([
+  const [revenue, dailyRevenue, topProducts, leads, profiles, sumupRevenue] = await Promise.all([
     getRevenueStats(),
     getDailyRevenue(),
     getTopProducts(),
     getLeads(),
     getProfiles(),
+    getSumUpCurrentMonth(),
   ])
 
   const newLeads = leads.filter((l) => l.status === 'new').length
   const confirmedLeads = leads.filter((l) => l.status === 'confirmed').length
 
+  const totalCombined = revenue.totalRevenue + sumupRevenue
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-[#1D164E] mb-8">Vue d&apos;ensemble</h1>
 
-      {/* Stat cards */}
+      {/* Revenus combinés */}
+      <section className="mb-6">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
+          Revenus combinés — mois en cours
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <StatCard
+            label="Shopify (en ligne)"
+            value={
+              revenue.totalRevenue > 0
+                ? formatCurrency(revenue.totalRevenue, revenue.currency)
+                : '—'
+            }
+            sub="Boutique en ligne"
+          />
+          <StatCard
+            label="SumUp (boutique)"
+            value={sumupRevenue > 0 ? formatCurrency(sumupRevenue, 'EUR') : '—'}
+            sub={sumupRevenue === 0 ? 'Actualiser dans Ventes' : 'Paiements en boutique'}
+          />
+          <StatCard
+            label="Total"
+            value={totalCombined > 0 ? formatCurrency(totalCombined, 'EUR') : '—'}
+            highlight={totalCombined > 0}
+            sub="Shopify + SumUp"
+          />
+        </div>
+      </section>
+
+      {/* Shopify stat cards */}
       <section className="mb-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
           Shopify — 30 derniers jours

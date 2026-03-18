@@ -4,20 +4,48 @@
 
 ### leads
 
-| Column      | Type      | Notes                                                       |
-| ----------- | --------- | ----------------------------------------------------------- |
-| id          | uuid      | PK, default gen_random_uuid()                               |
-| created_at  | timestamp | default now()                                               |
-| nom         | text      | required                                                    |
-| email       | text      | required                                                    |
-| telephone   | text      | required                                                    |
-| service     | text      | enum: toilettage, bains, creche, education, osteo, autre    |
-| race_chien  | text      | nullable                                                    |
-| poids_chien | text      | nullable (ex: "5-10kg")                                     |
-| etat_poil   | text      | nullable (ex: "normal", "emmêlé", "long")                   |
-| message     | text      | nullable                                                    |
-| source      | text      | enum: reservation, contact, newsletter                      |
-| status      | text      | default: 'new' — enum: new, contacted, confirmed, cancelled |
+| Column                | Type        | Notes                                                       |
+| --------------------- | ----------- | ----------------------------------------------------------- |
+| id                    | uuid        | PK, default gen_random_uuid()                               |
+| created_at            | timestamp   | default now()                                               |
+| nom                   | text        | required                                                    |
+| email                 | text        | required                                                    |
+| telephone             | text        | required                                                    |
+| service               | text        | enum: toilettage, bains, creche, education, osteo, autre    |
+| race_chien            | text        | nullable                                                    |
+| poids_chien           | text        | nullable (ex: "5-10kg")                                     |
+| etat_poil             | text        | nullable (ex: "normal", "emmêlé", "long")                   |
+| message               | text        | nullable                                                    |
+| source                | text        | enum: reservation, contact, newsletter                      |
+| status                | text        | default: 'new' — enum: new, contacted, confirmed, cancelled |
+| dog_id                | uuid        | FK → dogs (nullable — for online bookings)                  |
+| calendly_event_uuid   | text        | nullable — set after Calendly booking created               |
+| calendly_invitee_uuid | text        | nullable                                                    |
+| sumup_checkout_id     | text        | nullable                                                    |
+| deposit_amount        | numeric     | nullable — 60.00 for Toilettage V1                          |
+| deposit_paid_at       | timestamptz | nullable — when SumUp confirmed payment                     |
+| scheduled_at          | timestamptz | nullable — booked appointment date/time                     |
+
+### dogs
+
+| Column            | Type      | Notes                                                                         |
+| ----------------- | --------- | ----------------------------------------------------------------------------- |
+| id                | uuid      | PK, default gen_random_uuid()                                                 |
+| created_at        | timestamp | default now()                                                                 |
+| owner_id          | uuid      | FK → auth.users, required                                                     |
+| name              | text      | Dog's name, required                                                          |
+| breed             | text      | nullable                                                                      |
+| grooming_duration | integer   | Duration in minutes — set by team only, never by client                       |
+| notes             | text      | Internal team notes (coat condition, behaviour, etc.) — not visible to client |
+| can_book_online   | boolean   | default false — team sets to true after first visit                           |
+
+**RLS:**
+
+- SELECT: authenticated user where `owner_id = auth.uid()`
+- INSERT: authenticated user (creates their own dog profile)
+- UPDATE `grooming_duration`, `notes`, `can_book_online`: service role only (team dashboard)
+
+---
 
 ### newsletter_subscribers
 
