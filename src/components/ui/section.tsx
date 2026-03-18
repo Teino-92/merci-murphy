@@ -7,7 +7,7 @@ interface SectionProps {
 }
 
 export function Section({ children, className, as: Tag = 'section' }: SectionProps) {
-  return <Tag className={cn('px-4 py-16 sm:px-6 lg:px-8 lg:py-24', className)}>{children}</Tag>
+  return <Tag className={cn('px-4 py-12 sm:px-6 lg:px-8 lg:py-16', className)}>{children}</Tag>
 }
 
 export function Container({
