@@ -128,7 +128,7 @@ export default async function ServicePage({ params }: Props) {
       )}
 
       {/* Avant / Après — Maison Poilus uniquement */}
-      {params.slug === 'maison-poilus-r' && (
+      {params.slug === 'le-toilettage-maison-poilus-r' && (
         <Section className="bg-cream py-8 lg:py-12">
           <Container>
             <Reveal>
