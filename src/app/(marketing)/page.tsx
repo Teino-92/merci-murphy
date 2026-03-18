@@ -122,12 +122,12 @@ export default async function HomePage() {
         subtitle="Toilettage et spa, crèche, éducation – toute l'attention et l'expertise que votre chien et votre chat méritent, dans un lieu responsable, éducatif, chaleureux et bienveillant."
         imageSrc="/hero-vitrine.jpg"
       />
+      <ShopTeaser products={shopProducts} />
       {services.length > 0 && <ServicesGrid services={services} preview />}
       <Values />
       {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
         <InstagramFeed feedId={process.env.NEXT_PUBLIC_BEHOLD_FEED_ID} />
       )}
-      <ShopTeaser products={shopProducts} />
       {settings && <InfoPratiques settings={settings} />}
     </>
   )

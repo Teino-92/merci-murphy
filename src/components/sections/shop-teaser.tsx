@@ -41,12 +41,12 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
         </Reveal>
       </Container>
 
-      {/* Scrollable carousel — full width, no negative margins */}
+      {/* Scrollable carousel — break out of Section's right padding only */}
       <div
-        className="mt-10 w-full overflow-x-auto overflow-y-hidden scrollbar-hide"
+        className="mt-10 -mr-4 sm:-mr-6 lg:-mr-8 overflow-x-auto overflow-y-hidden scrollbar-hide"
         style={{ touchAction: 'pan-x' }}
       >
-        <div className="flex gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-4 pr-4">
           {products.map((product) => (
             <div key={product.id} className="w-64 shrink-0 sm:w-72">
               <ProductCard product={product} imageOverride={IMAGE_OVERRIDES[product.handle]} />

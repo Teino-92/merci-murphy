@@ -10,9 +10,9 @@ export const SITE_CONFIG = {
   address: '',
   nav: [
     { label: 'Accueil', href: '/' },
+    { label: 'Eco-shop', href: '/shop' },
     { label: 'Nos services', href: '/services' },
     { label: 'Le concept', href: '/concept' },
-    { label: 'Boutique', href: '/shop' },
     { label: 'Contact', href: '/contact' },
   ],
 }
