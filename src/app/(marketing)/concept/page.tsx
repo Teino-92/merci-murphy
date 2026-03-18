@@ -81,10 +81,9 @@ export default async function ConceptPage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
             <Reveal>
               <div>
-                <h2 className="font-display text-3xl font-bold text-charcoal">Le concept</h2>
-                <p className="mt-2 font-display text-xl font-semibold text-charcoal/80">
+                <h2 className="font-display text-3xl font-bold text-charcoal">
                   Vivre heureux avec son chien et son chat à Paris
-                </p>
+                </h2>
                 <div className="mt-6 space-y-4 text-charcoal/70 leading-relaxed">
                   <p>
                     Un collectif engagé d’experts et de passionnés répond eux besoins de votre
