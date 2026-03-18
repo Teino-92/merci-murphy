@@ -99,8 +99,8 @@ export async function getTransactions(from: Date, to: Date): Promise<SumUpTransa
       newest_time: toStr,
       limit: '1000',
     })
-    params.append('statuses[]', 'SUCCESSFUL')
-    params.append('statuses[]', 'REFUNDED')
+    // Note: SumUp API does not reliably filter by multiple statuses —
+    // FAILED transactions are filtered out during aggregation instead
     const data = await sumupFetch<SumUpTransactionHistoryResponse>(
       `/v2.1/merchants/${merchantCode}/transactions/history?${params.toString()}`
     )
