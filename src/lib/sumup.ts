@@ -97,9 +97,10 @@ export async function getTransactions(from: Date, to: Date): Promise<SumUpTransa
     const params = new URLSearchParams({
       oldest_time: fromStr,
       newest_time: toStr,
-      statuses: 'SUCCESSFUL,REFUNDED',
       limit: '1000',
     })
+    params.append('statuses[]', 'SUCCESSFUL')
+    params.append('statuses[]', 'REFUNDED')
     const data = await sumupFetch<SumUpTransactionHistoryResponse>(
       `/v2.1/merchants/${merchantCode}/transactions/history?${params.toString()}`
     )

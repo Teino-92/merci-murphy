@@ -9,30 +9,20 @@ interface Props {
 
 function buildPeriods(): { label: string; value: string }[] {
   const now = new Date()
-  const periods = []
+  const periods: { label: string; value: string }[] = []
 
-  // Mois en cours
-  const curr = now.toISOString().slice(0, 7)
-  periods.push({
-    label: 'Mois en cours',
-    value: curr,
-  })
+  // Generate all months from 2023-01 to current month
+  let d = new Date(2023, 0, 1)
+  const limit = new Date(now.getFullYear(), now.getMonth() + 1, 1)
 
-  // Mois dernier
-  const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-  periods.push({
-    label: 'Mois dernier',
-    value: lastMonthDate.toISOString().slice(0, 7),
-  })
+  while (d < limit) {
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    const label = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+    periods.push({ label: label.charAt(0).toUpperCase() + label.slice(1), value })
+    d = new Date(d.getFullYear(), d.getMonth() + 1, 1)
+  }
 
-  // Il y a 2 mois
-  const twoMonthsDate = new Date(now.getFullYear(), now.getMonth() - 2, 1)
-  periods.push({
-    label: twoMonthsDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
-    value: twoMonthsDate.toISOString().slice(0, 7),
-  })
-
-  return periods
+  return periods.reverse() // most recent first
 }
 
 export function VentesPeriodControls({ currentPeriod }: Props) {
@@ -71,21 +61,17 @@ export function VentesPeriodControls({ currentPeriod }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-3">
       {/* Period selector */}
-      <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+      <select
+        value={currentPeriod}
+        onChange={(e) => handlePeriodChange(e.target.value)}
+        className="rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+      >
         {periods.map((p) => (
-          <button
-            key={p.value}
-            onClick={() => handlePeriodChange(p.value)}
-            className={`px-3 py-1.5 font-medium transition-colors ${
-              currentPeriod === p.value
-                ? 'bg-[#1D164E] text-white'
-                : 'text-gray-500 hover:bg-gray-50'
-            }`}
-          >
+          <option key={p.value} value={p.value}>
             {p.label}
-          </button>
+          </option>
         ))}
-      </div>
+      </select>
 
       {/* Sync button */}
       <button
