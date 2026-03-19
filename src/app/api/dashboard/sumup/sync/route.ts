@@ -25,33 +25,83 @@ interface ByPaymentType {
   revenue: number
 }
 
-// ─── Service name normalizer ──────────────────────────────────────────────────
-// Collapses SumUp product_summary variants into a canonical service name.
-// Patterns observed:
-//   "merci murphy - maison POILUS - A{n}" → "Toilettage maison POILUS"
-//   "{dog} - acompte toilettage {date}"   → "Acompte toilettage"
-//   "{dog} - acompte bains {date}"        → "Acompte bains"
-//   "{dog} - acompte creche {date}"       → "Acompte crèche"
+// ─── Product → Category mapping ───────────────────────────────────────────────
+// Maps real SumUp product names to their catalog category.
+// Based on the SumUp catalog structure observed in the back-office.
+
+function productToCategory(productName: string): string {
+  const n = productName.trim().toLowerCase()
+
+  // SPA MAISON POILUS
+  if (
+    n.includes('bain') ||
+    n.includes('épilation') ||
+    n.includes('epilation') ||
+    n.includes('brossage') ||
+    n.includes('coupe griffes') ||
+    n.includes('soins spécifiques') ||
+    n.includes('soins specifiques') ||
+    n.includes('atelier comme à la maison') ||
+    n.includes('atelier comme a la maison')
+  )
+    return 'Spa maison POILUS'
+
+  // BICHONNER (toilettage)
+  if (n.includes('toilettage') || n.includes('coupe') || n.includes('bichon')) return 'Bichonner'
+
+  // MASSAGE
+  if (n.includes('massage') || n.includes('pack 3 massages')) return 'Massage'
+
+  // SOIGNER
+  if (
+    n.includes('ostéopathe') ||
+    n.includes('osteopathe') ||
+    n.includes('ostéo') ||
+    n.includes('osteo')
+  )
+    return 'Soigner'
+
+  // CRÈCHE & EDUCATION
+  if (
+    n.includes('crèche') ||
+    n.includes('creche') ||
+    n.includes('éducation') ||
+    n.includes('education') ||
+    n.includes('cours')
+  )
+    return 'Crèche & Éducation'
+
+  // CHILLER (balnéo)
+  if (n.includes('balnéo') || n.includes('balneo') || n.includes('spa')) return 'Chiller'
+
+  // Acomptes
+  if (n.includes('acompte')) return 'Acomptes'
+
+  return 'Autre'
+}
+
+// ─── product_summary normalizer ───────────────────────────────────────────────
+// Used only when no products[] detail is available (fallback).
 
 function normalizeServiceName(summary: string): string {
   const s = summary.trim().toLowerCase()
 
-  if (s.includes('maison poilus')) return 'Toilettage maison POILUS'
-  if (s.includes('acompte toilettage')) return 'Acompte toilettage'
-  if (s.includes('acompte bains')) return 'Acompte bains'
-  if (s.includes('acompte creche') || s.includes('acompte crèche')) return 'Acompte crèche'
-  if (s.includes('acompte education') || s.includes('acompte éducation')) return 'Acompte éducation'
-  if (s.includes('acompte massage')) return 'Acompte massage'
-  if (s.includes('acompte balnéo') || s.includes('acompte balneo')) return 'Acompte balnéo'
-  if (s.includes('bains')) return 'Bains'
-  if (s.includes('creche') || s.includes('crèche')) return 'Crèche'
-  if (s.includes('education') || s.includes('éducation')) return 'Éducation'
-  if (s.includes('osteo') || s.includes('ostéo')) return 'Ostéopathie'
+  if (s.includes('maison poilus')) return 'Spa maison POILUS'
+  if (s.includes('acompte toilettage')) return 'Acomptes'
+  if (s.includes('acompte bains')) return 'Acomptes'
+  if (s.includes('acompte creche') || s.includes('acompte crèche')) return 'Acomptes'
+  if (s.includes('acompte education') || s.includes('acompte éducation')) return 'Acomptes'
+  if (s.includes('acompte massage')) return 'Acomptes'
+  if (s.includes('acompte balnéo') || s.includes('acompte balneo')) return 'Acomptes'
+  if (s.includes('acompte')) return 'Acomptes'
+  if (s.includes('bains')) return 'Spa maison POILUS'
+  if (s.includes('creche') || s.includes('crèche')) return 'Crèche & Éducation'
+  if (s.includes('education') || s.includes('éducation')) return 'Crèche & Éducation'
+  if (s.includes('osteo') || s.includes('ostéo')) return 'Soigner'
   if (s.includes('massage')) return 'Massage'
-  if (s.includes('toilettage')) return 'Toilettage'
+  if (s.includes('toilettage')) return 'Bichonner'
 
-  // Fallback: return original trimmed
-  return summary.trim()
+  return 'Autre'
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -137,13 +187,11 @@ function aggregateData(
     payEntry.revenue += isSuccessful ? amount : 0
     paymentMap.set(payType, payEntry)
 
-    // Category from product_summary (used to group real products)
-    const category = tx.product_summary ? normalizeServiceName(tx.product_summary) : 'Autre'
-
-    // By product — use real product names from detail API, fall back to category
+    // By product — use real product names from detail API, fall back to product_summary
     const products = productsMap.get(tx.id) ?? []
     if (products.length > 0) {
       for (const p of products) {
+        const category = productToCategory(p.name)
         const key = `${category}::${p.name}`
         const entry = productMap.get(key) ?? { category, name: p.name, revenue: 0, quantity: 0 }
         entry.revenue += p.total_price ?? p.price * p.quantity
@@ -151,8 +199,10 @@ function aggregateData(
         productMap.set(key, entry)
       }
     } else if (tx.product_summary) {
-      const key = `${category}::${category}`
-      const entry = productMap.get(key) ?? { category, name: category, revenue: 0, quantity: 0 }
+      const category = normalizeServiceName(tx.product_summary)
+      const name = tx.product_summary.trim()
+      const key = `${category}::${name}`
+      const entry = productMap.get(key) ?? { category, name, revenue: 0, quantity: 0 }
       entry.revenue += isSuccessful ? amount : 0
       entry.quantity += 1
       productMap.set(key, entry)
