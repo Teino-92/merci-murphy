@@ -22,13 +22,27 @@ async function getSumUpCurrentMonth(): Promise<{
     const now = new Date()
     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
     const to = now.toISOString().slice(0, 10)
-    const period = `${from}_${to}`
-    const { data } = await supabaseAdmin
-      .from('sumup_cache')
-      .select('total_revenue,by_day')
-      .eq('period', period)
-      .maybeSingle<SumUpCacheDay>()
-    return { revenue: data?.total_revenue ?? 0, byDay: data?.by_day ?? [] }
+    // Collect all cache rows and filter by_day entries within the current month
+    const { data: rows } = await supabaseAdmin.from('sumup_cache').select('total_revenue,by_day')
+    if (!rows || rows.length === 0) return { revenue: 0, byDay: [] }
+    const map = new Map<string, number>()
+    let totalRevenue = 0
+    for (const row of rows as SumUpCacheDay[]) {
+      const byDay = row.by_day ?? []
+      for (const entry of byDay) {
+        if (entry.date >= from && entry.date <= to) {
+          const prev = map.get(entry.date) ?? 0
+          map.set(entry.date, prev + entry.revenue)
+          totalRevenue += entry.revenue - prev // add only the delta to avoid double-counting
+        }
+      }
+    }
+    // Recompute totalRevenue cleanly from the map
+    totalRevenue = Array.from(map.values()).reduce((s, v) => s + v, 0)
+    const byDay = Array.from(map.entries())
+      .map(([date, revenue]) => ({ date, revenue, count: 0 }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+    return { revenue: totalRevenue, byDay }
   } catch {
     return { revenue: 0, byDay: [] }
   }
