@@ -62,11 +62,18 @@ function formatDateRange(from: string, to: string) {
   return from === to ? f : `${f} — ${t}`
 }
 
+function localDateStr(d: Date) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 const PRESETS = [
   {
     label: "Aujourd'hui",
     getDates: () => {
-      const t = new Date().toISOString().slice(0, 10)
+      const t = localDateStr(new Date())
       return { from: t, to: t }
     },
   },
@@ -77,7 +84,7 @@ const PRESETS = [
       const day = now.getDay() === 0 ? 6 : now.getDay() - 1
       const from = new Date(now)
       from.setDate(now.getDate() - day)
-      return { from: from.toISOString().slice(0, 10), to: now.toISOString().slice(0, 10) }
+      return { from: localDateStr(from), to: localDateStr(now) }
     },
   },
   {
@@ -85,8 +92,8 @@ const PRESETS = [
     getDates: () => {
       const now = new Date()
       return {
-        from: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10),
-        to: now.toISOString().slice(0, 10),
+        from: localDateStr(new Date(now.getFullYear(), now.getMonth(), 1)),
+        to: localDateStr(now),
       }
     },
   },
@@ -94,7 +101,7 @@ const PRESETS = [
     label: 'Cette année',
     getDates: () => ({
       from: `${new Date().getFullYear()}-01-01`,
-      to: new Date().toISOString().slice(0, 10),
+      to: localDateStr(new Date()),
     }),
   },
 ]

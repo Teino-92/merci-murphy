@@ -13,10 +13,17 @@ function formatCurrency(amount: number, currency: string) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(amount)
 }
 
+function localDateStr(d: Date) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function currentMonthRange() {
   const now = new Date()
-  const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-  const to = now.toISOString().slice(0, 10)
+  const from = localDateStr(new Date(now.getFullYear(), now.getMonth(), 1))
+  const to = localDateStr(now)
   return { from, to }
 }
 
