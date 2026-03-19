@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data: rows } = await supabaseAdmin
     .from('sumup_cache')
-    .select('period, total_revenue, transaction_count, refreshed_at, by_payment_type')
+    .select('period, total_revenue, transaction_count, refreshed_at, by_payment_type, by_product')
     .order('refreshed_at', { ascending: false })
 
   return NextResponse.json({ rows })
