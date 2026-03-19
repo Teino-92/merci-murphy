@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import {
   AreaChart,
   Area,
@@ -24,29 +24,6 @@ interface SumUpDay {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function today() {
-  return new Date().toISOString().slice(0, 10)
-}
-function daysAgo(n: number) {
-  const d = new Date()
-  d.setDate(d.getDate() - n)
-  return d.toISOString().slice(0, 10)
-}
-function startOfWeek() {
-  const now = new Date()
-  const day = now.getDay() === 0 ? 6 : now.getDay() - 1
-  const from = new Date(now)
-  from.setDate(now.getDate() - day)
-  return from.toISOString().slice(0, 10)
-}
-function startOfMonth() {
-  const now = new Date()
-  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-}
-function startOfYear() {
-  return `${new Date().getFullYear()}-01-01`
-}
-
 function formatEUR(v: number) {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
@@ -59,14 +36,6 @@ function formatLabel(dateStr: string, totalDays: number) {
   if (totalDays <= 7) return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })
   return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 }
-
-const PRESETS = [
-  { label: "Aujourd'hui", from: today, to: today },
-  { label: 'Semaine', from: startOfWeek, to: today },
-  { label: 'Mois', from: startOfMonth, to: today },
-  { label: 'Année', from: startOfYear, to: today },
-  { label: '30j', from: () => daysAgo(30), to: today },
-]
 
 const CHART_TYPES = [
   { label: 'Courbe', value: 'area' as const },
@@ -134,55 +103,31 @@ interface Props {
   initialDaily: DailyRevenue[]
   initialTop: TopProduct[]
   initialSumupDaily?: SumUpDay[]
+  from: string
+  to: string
+  loading?: boolean
 }
 
-export function RevenueChart({ initialDaily, initialTop, initialSumupDaily = [] }: Props) {
+export function RevenueChart({
+  initialDaily,
+  initialTop,
+  initialSumupDaily = [],
+  from,
+  to,
+  loading = false,
+}: Props) {
   const [chartType, setChartType] = useState<'area' | 'bar'>('area')
-  const [activePreset, setActivePreset] = useState<number>(4) // 30j default
-  const [customFrom, setCustomFrom] = useState(daysAgo(30))
-  const [customTo, setCustomTo] = useState(today())
-  const [showCustom, setShowCustom] = useState(false)
-  const [daily, setDaily] = useState<DailyRevenue[]>(initialDaily)
-  const [sumupDaily, setSumupDaily] = useState<SumUpDay[]>(initialSumupDaily)
-  const [top, setTop] = useState<TopProduct[]>(initialTop)
-  const [loading, setLoading] = useState(false)
   const [showShopify, setShowShopify] = useState(true)
   const [showSumup, setShowSumup] = useState(true)
 
-  const fetchData = useCallback(async (from: string, to: string) => {
-    setLoading(true)
-    try {
-      const res = await fetch(`/api/dashboard/revenue?from=${from}&to=${to}`)
-      const json = await res.json()
-      setDaily(json.daily ?? [])
-      setTop(json.top ?? [])
-      setSumupDaily(json.sumupDaily ?? [])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  function applyPreset(idx: number) {
-    setActivePreset(idx)
-    setShowCustom(false)
-    const p = PRESETS[idx]
-    fetchData(p.from(), p.to())
-  }
-
-  function applyCustom() {
-    if (!customFrom || !customTo || customFrom > customTo) return
-    setActivePreset(-1)
-    fetchData(customFrom, customTo)
-  }
-
   const totalDays = useMemo(() => {
-    const diff = new Date(customTo).getTime() - new Date(customFrom).getTime()
+    const diff = new Date(to).getTime() - new Date(from).getTime()
     return Math.ceil(diff / 86400000) + 1
-  }, [customFrom, customTo])
+  }, [from, to])
 
   const merged = useMemo(
-    () => mergeDaily(daily, sumupDaily, showShopify, showSumup),
-    [daily, sumupDaily, showShopify, showSumup]
+    () => mergeDaily(initialDaily, initialSumupDaily, showShopify, showSumup),
+    [initialDaily, initialSumupDaily, showShopify, showSumup]
   )
 
   const chartData = useMemo(
@@ -190,8 +135,14 @@ export function RevenueChart({ initialDaily, initialTop, initialSumupDaily = [] 
     [merged, totalDays]
   )
 
-  const totalShopify = useMemo(() => daily.reduce((s, d) => s + d.revenue, 0), [daily])
-  const totalSumup = useMemo(() => sumupDaily.reduce((s, d) => s + d.revenue, 0), [sumupDaily])
+  const totalShopify = useMemo(
+    () => initialDaily.reduce((s, d) => s + d.revenue, 0),
+    [initialDaily]
+  )
+  const totalSumup = useMemo(
+    () => initialSumupDaily.reduce((s, d) => s + d.revenue, 0),
+    [initialSumupDaily]
+  )
   const displayTotal = (showShopify ? totalShopify : 0) + (showSumup ? totalSumup : 0)
 
   const yFormatter = (v: number) => formatEUR(v)
@@ -239,81 +190,23 @@ export function RevenueChart({ initialDaily, initialTop, initialSumupDaily = [] 
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex flex-wrap gap-2">
-            <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
-              {PRESETS.map((p, i) => (
-                <button
-                  key={p.label}
-                  onClick={() => applyPreset(i)}
-                  className={`px-3 py-1.5 font-medium transition-colors ${
-                    activePreset === i
-                      ? 'bg-[#1D164E] text-white'
-                      : 'text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
+          {/* Chart type toggle */}
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+            {CHART_TYPES.map((c) => (
               <button
-                onClick={() => setShowCustom(!showCustom)}
-                className={`px-3 py-1.5 font-medium transition-colors border-l border-gray-200 ${
-                  activePreset === -1 ? 'bg-[#1D164E] text-white' : 'text-gray-500 hover:bg-gray-50'
+                key={c.value}
+                onClick={() => setChartType(c.value)}
+                className={`px-3 py-1.5 font-medium transition-colors ${
+                  chartType === c.value
+                    ? 'bg-[#1D164E] text-white'
+                    : 'text-gray-500 hover:bg-gray-50'
                 }`}
               >
-                Perso
+                {c.label}
               </button>
-            </div>
-            <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
-              {CHART_TYPES.map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setChartType(c.value)}
-                  className={`px-3 py-1.5 font-medium transition-colors ${
-                    chartType === c.value
-                      ? 'bg-[#1D164E] text-white'
-                      : 'text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  {c.label}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
-
-        {/* Custom date picker */}
-        {showCustom && (
-          <div className="flex flex-wrap items-end gap-3 mb-6 p-4 rounded-xl bg-gray-50 border border-gray-200">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Du</label>
-              <input
-                type="date"
-                value={customFrom}
-                max={customTo}
-                onChange={(e) => setCustomFrom(e.target.value)}
-                className="text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Au</label>
-              <input
-                type="date"
-                value={customTo}
-                min={customFrom}
-                max={today()}
-                onChange={(e) => setCustomTo(e.target.value)}
-                className="text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-              />
-            </div>
-            <button
-              onClick={applyCustom}
-              className="bg-[#1D164E] text-white text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-[#1D164E]/90 transition-colors"
-            >
-              Appliquer
-            </button>
-          </div>
-        )}
 
         {/* Chart */}
         {empty ? (
@@ -433,7 +326,7 @@ export function RevenueChart({ initialDaily, initialTop, initialSumupDaily = [] 
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5">
           Top 5 produits Shopify — même période
         </p>
-        <TopProducts items={top} />
+        <TopProducts items={initialTop} />
       </div>
     </div>
   )

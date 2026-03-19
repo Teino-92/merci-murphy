@@ -4,22 +4,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
-import {
-  LayoutDashboard,
-  Users,
-  ClipboardList,
-  ShoppingBag,
-  Mail,
-  LogOut,
-  TrendingUp,
-} from 'lucide-react'
+import { LayoutDashboard, Users, ClipboardList, ShoppingBag, Mail, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const supabase = createSupabaseBrowserClient()
 
 const NAV = [
   { href: '/dashboard', label: "Vue d'ensemble", icon: LayoutDashboard },
-  { href: '/dashboard/ventes', label: 'Ventes', icon: TrendingUp },
   { href: '/dashboard/customers', label: 'Clients', icon: Users },
   { href: '/dashboard/shopify-customers', label: 'Clients Shopify', icon: ShoppingBag },
   { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList },
