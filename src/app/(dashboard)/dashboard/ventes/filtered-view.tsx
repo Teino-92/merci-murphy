@@ -40,6 +40,38 @@ function formatPercent(v: number) {
   }).format(v)
 }
 
+// ─── productToCategory ────────────────────────────────────────────────────────
+// Mirrors server-side productToCategory — used to fill missing category on old cache entries.
+
+function productToCategory(name: string): string {
+  const n = name.trim().toLowerCase()
+  if (
+    n.includes('bain') ||
+    n.includes('épilation') ||
+    n.includes('epilation') ||
+    n.includes('brossage') ||
+    n.includes('coupe griffes') ||
+    n.includes('soins spécifiques') ||
+    n.includes('soins specifiques') ||
+    n.includes('atelier comme')
+  )
+    return 'Spa maison POILUS'
+  if (n.includes('toilettage') || n.includes('maison poilus')) return 'Spa maison POILUS'
+  if (n.includes('massage') || n.includes('pack 3')) return 'Massage'
+  if (n.includes('ostéo') || n.includes('osteo')) return 'Soigner'
+  if (
+    n.includes('crèche') ||
+    n.includes('creche') ||
+    n.includes('éducation') ||
+    n.includes('education') ||
+    n.includes('cours')
+  )
+    return 'Crèche & Éducation'
+  if (n.includes('balnéo') || n.includes('balneo')) return 'Chiller'
+  if (n.includes('acompte')) return 'Acomptes'
+  return 'Autre'
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const ALL = '__all__'
@@ -56,22 +88,28 @@ export function VentesFilteredView({
   const [category, setCategory] = useState<string>(ALL)
   const [product, setProduct] = useState<string>(ALL)
 
+  // Normalize products: fill in category if missing (old cache format)
+  const products = useMemo(
+    () => byProduct.map((p) => ({ ...p, category: p.category ?? productToCategory(p.name) })),
+    [byProduct]
+  )
+
   // Unique categories sorted by total revenue
   const categories = useMemo(() => {
     const map = new Map<string, number>()
-    for (const p of byProduct) {
+    for (const p of products) {
       map.set(p.category, (map.get(p.category) ?? 0) + p.revenue)
     }
     return Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
       .map(([name]) => name)
-  }, [byProduct])
+  }, [products])
 
   // Products for the selected category, sorted by revenue
   const productsForCategory = useMemo(() => {
     if (category === ALL) return []
-    return byProduct.filter((p) => p.category === category).sort((a, b) => b.revenue - a.revenue)
-  }, [category, byProduct])
+    return products.filter((p) => p.category === category).sort((a, b) => b.revenue - a.revenue)
+  }, [category, products])
 
   // Reset product when category changes
   function handleCategoryChange(val: string) {
@@ -92,7 +130,7 @@ export function VentesFilteredView({
     if (category === ALL) {
       return {
         displayByDay: byDay,
-        displayByProduct: byProduct,
+        displayByProduct: products,
         displayTotalRevenue: totalRevenue,
         displayCount: transactionCount,
         displayAvg: avgTicket,
@@ -103,8 +141,8 @@ export function VentesFilteredView({
     // Filter by_product entries
     const filtered =
       product !== ALL
-        ? byProduct.filter((p) => p.category === category && p.name === product)
-        : byProduct.filter((p) => p.category === category)
+        ? products.filter((p) => p.category === category && p.name === product)
+        : products.filter((p) => p.category === category)
 
     const filteredRevenue = filtered.reduce((s, p) => s + p.revenue, 0)
     const filteredQty = filtered.reduce((s, p) => s + p.quantity, 0)
@@ -128,7 +166,7 @@ export function VentesFilteredView({
       displayAvg: filteredAvg,
       displayRate: refundRate, // refund rate stays global (no per-product breakdown)
     }
-  }, [category, product, byDay, byProduct, totalRevenue, transactionCount, avgTicket, refundRate])
+  }, [category, product, byDay, products, totalRevenue, transactionCount, avgTicket, refundRate])
 
   const isFiltered = category !== ALL
 
