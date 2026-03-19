@@ -10,39 +10,35 @@ interface Props {
 
 const PRESETS = [
   {
-    label: 'Mois en cours',
+    label: "Aujourd'hui",
+    getDates: () => {
+      const to = new Date().toISOString().slice(0, 10)
+      return { from: to, to }
+    },
+  },
+  {
+    label: 'Cette semaine',
+    getDates: () => {
+      const now = new Date()
+      const day = now.getDay() === 0 ? 6 : now.getDay() - 1
+      const from = new Date(now)
+      from.setDate(now.getDate() - day)
+      return { from: from.toISOString().slice(0, 10), to: now.toISOString().slice(0, 10) }
+    },
+  },
+  {
+    label: 'Ce mois',
     getDates: () => {
       const now = new Date()
       const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-      const to = now.toISOString().slice(0, 10)
-      return { from, to }
-    },
-  },
-  {
-    label: 'Mois dernier',
-    getDates: () => {
-      const now = new Date()
-      const first = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-      const last = new Date(now.getFullYear(), now.getMonth(), 0)
-      return { from: first.toISOString().slice(0, 10), to: last.toISOString().slice(0, 10) }
-    },
-  },
-  {
-    label: '3 derniers mois',
-    getDates: () => {
-      const now = new Date()
-      const from = new Date(now.getFullYear(), now.getMonth() - 2, 1).toISOString().slice(0, 10)
-      const to = now.toISOString().slice(0, 10)
-      return { from, to }
+      return { from, to: now.toISOString().slice(0, 10) }
     },
   },
   {
     label: 'Cette année',
     getDates: () => {
       const now = new Date()
-      const from = `${now.getFullYear()}-01-01`
-      const to = now.toISOString().slice(0, 10)
-      return { from, to }
+      return { from: `${now.getFullYear()}-01-01`, to: now.toISOString().slice(0, 10) }
     },
   },
 ]

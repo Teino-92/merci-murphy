@@ -9,11 +9,15 @@ function formatCurrency(amount: number, currency: string) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(amount)
 }
 
-interface SumUpCacheKPI {
+interface SumUpCacheDay {
   total_revenue: number
+  by_day: { date: string; revenue: number; count: number }[]
 }
 
-async function getSumUpCurrentMonth(): Promise<number> {
+async function getSumUpCurrentMonth(): Promise<{
+  revenue: number
+  byDay: { date: string; revenue: number; count: number }[]
+}> {
   try {
     const now = new Date()
     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
@@ -21,17 +25,17 @@ async function getSumUpCurrentMonth(): Promise<number> {
     const period = `${from}_${to}`
     const { data } = await supabaseAdmin
       .from('sumup_cache')
-      .select('total_revenue')
+      .select('total_revenue,by_day')
       .eq('period', period)
-      .maybeSingle<SumUpCacheKPI>()
-    return data?.total_revenue ?? 0
+      .maybeSingle<SumUpCacheDay>()
+    return { revenue: data?.total_revenue ?? 0, byDay: data?.by_day ?? [] }
   } catch {
-    return 0
+    return { revenue: 0, byDay: [] }
   }
 }
 
 export default async function DashboardPage() {
-  const [revenue, dailyRevenue, topProducts, leads, profiles, sumupRevenue] = await Promise.all([
+  const [revenue, dailyRevenue, topProducts, leads, profiles, sumup] = await Promise.all([
     getRevenueStats(),
     getDailyRevenue(),
     getTopProducts(),
@@ -43,7 +47,7 @@ export default async function DashboardPage() {
   const newLeads = leads.filter((l) => l.status === 'new').length
   const confirmedLeads = leads.filter((l) => l.status === 'confirmed').length
 
-  const totalCombined = revenue.totalRevenue + sumupRevenue
+  const totalCombined = revenue.totalRevenue + sumup.revenue
 
   return (
     <div>
@@ -66,8 +70,8 @@ export default async function DashboardPage() {
           />
           <StatCard
             label="SumUp (boutique)"
-            value={sumupRevenue > 0 ? formatCurrency(sumupRevenue, 'EUR') : '—'}
-            sub={sumupRevenue === 0 ? 'Actualiser dans Ventes' : 'Paiements en boutique'}
+            value={sumup.revenue > 0 ? formatCurrency(sumup.revenue, 'EUR') : '—'}
+            sub={sumup.revenue === 0 ? 'Actualiser dans Ventes' : 'Paiements en boutique'}
           />
           <StatCard
             label="Total"
@@ -110,7 +114,11 @@ export default async function DashboardPage() {
 
       {/* Chart + top products */}
       <section className="mb-10">
-        <RevenueChart initialDaily={dailyRevenue} initialTop={topProducts} />
+        <RevenueChart
+          initialDaily={dailyRevenue}
+          initialTop={topProducts}
+          initialSumupDaily={sumup.byDay}
+        />
       </section>
 
       {/* CRM stats */}
