@@ -40,68 +40,38 @@ interface SumUpCacheRow {
 
 async function getSumUpData(from: string, to: string) {
   try {
-    const { data: rows } = await supabaseAdmin.from('sumup_cache').select('*')
+    const { data: rows } = await supabaseAdmin
+      .from('sumup_cache')
+      .select('*')
+      .order('refreshed_at', { ascending: false })
     if (!rows?.length) return null
 
-    // Merge by_day entries within range across all cache rows
-    const dayMap = new Map<string, number>()
-    const productMap = new Map<
-      string,
-      { name: string; category: string; revenue: number; quantity: number }
-    >()
-    let latestPayouts: SumUpCacheRow['payouts'] = []
-    let latestRefreshedAt: string | null = null
+    // Pick the best single row to avoid double-counting overlapping synced periods.
+    // Priority: exact match > row whose period fully contains the range > most recent.
+    const best =
+      rows.find((r) => r.period === `${from}_${to}`) ??
+      rows.find((r) => {
+        const [rFrom, rTo] = r.period.split('_')
+        return rFrom <= from && rTo >= to
+      }) ??
+      rows[0]
 
-    for (const row of rows as (SumUpCacheRow & { refreshed_at?: string })[]) {
-      // by_day
-      for (const entry of row.by_day ?? []) {
-        if (entry.date >= from && entry.date <= to) {
-          dayMap.set(entry.date, (dayMap.get(entry.date) ?? 0) + entry.revenue)
-        }
-      }
-      // by_product — merge, prefer most recent for same key
-      for (const p of row.by_product ?? []) {
-        const key = p.name
-        const existing = productMap.get(key)
-        if (!existing) {
-          productMap.set(key, { ...p })
-        } else {
-          productMap.set(key, {
-            ...existing,
-            revenue: existing.revenue + p.revenue,
-            quantity: existing.quantity + p.quantity,
-          })
-        }
-      }
-      // payouts — use the most recently refreshed row
-      if (!latestRefreshedAt || (row.refreshed_at && row.refreshed_at > latestRefreshedAt)) {
-        latestRefreshedAt = row.refreshed_at ?? null
-        latestPayouts = row.payouts ?? []
-      }
-    }
-
-    const byDay = Array.from(dayMap.entries())
-      .map(([date, revenue]) => ({ date, revenue, count: 0 }))
+    const byDay = ((best.by_day ?? []) as SumUpCacheRow['by_day'])
+      .filter((e) => e.date >= from && e.date <= to)
       .sort((a, b) => a.date.localeCompare(b.date))
 
     const totalRevenue = byDay.reduce((s, d) => s + d.revenue, 0)
-    const byProduct = Array.from(productMap.values()).sort((a, b) => b.revenue - a.revenue)
-
-    // Approximate avg_ticket and refund_rate from the matching cache row
-    const exactRow = (rows as (SumUpCacheRow & { period: string })[]).find(
-      (r) => r.period === `${from}_${to}`
-    )
+    const byProduct = [...(best.by_product ?? [])].sort((a, b) => b.revenue - a.revenue)
 
     return {
       byDay,
       byProduct,
-      payouts: latestPayouts,
+      payouts: (best.payouts ?? []) as SumUpCacheRow['payouts'],
       totalRevenue,
-      transactionCount: exactRow?.transaction_count ?? 0,
-      avgTicket:
-        exactRow?.avg_ticket ?? (totalRevenue > 0 ? totalRevenue / Math.max(byDay.length, 1) : 0),
-      refundRate: exactRow?.refund_rate ?? 0,
-      refreshedAt: latestRefreshedAt,
+      transactionCount: best.transaction_count ?? 0,
+      avgTicket: best.avg_ticket ?? 0,
+      refundRate: best.refund_rate ?? 0,
+      refreshedAt: (best.refreshed_at as string | null) ?? null,
     }
   } catch {
     return null

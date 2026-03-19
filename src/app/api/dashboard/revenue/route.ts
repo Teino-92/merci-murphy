@@ -22,23 +22,26 @@ export async function GET(req: NextRequest) {
     (async () => {
       if (!from || !to) return []
       try {
-        // Fetch all cache rows and merge by_day entries that fall within [from, to].
-        // This handles cases where the cached period is wider than the requested range
-        // (e.g. cache has 2026-03-01_2026-03-19 but user requests today only).
-        const { data: rows } = await supabaseAdmin.from('sumup_cache').select('by_day')
-        if (!rows) return []
-        const map = new Map<string, number>()
-        for (const row of rows) {
-          const byDay: { date: string; revenue: number; count: number }[] = row.by_day ?? []
-          for (const entry of byDay) {
-            if (entry.date >= from && entry.date <= to) {
-              map.set(entry.date, (map.get(entry.date) ?? 0) + entry.revenue)
-            }
-          }
-        }
-        return Array.from(map.entries())
-          .map(([date, revenue]) => ({ date, revenue }))
-          .sort((a, b) => a.date.localeCompare(b.date))
+        const { data: rows } = await supabaseAdmin
+          .from('sumup_cache')
+          .select('period, by_day, refreshed_at')
+          .order('refreshed_at', { ascending: false })
+        if (!rows?.length) return []
+
+        // Pick the best single row: exact match > row whose period contains the range > most recent
+        const best =
+          rows.find((r) => r.period === `${from}_${to}`) ??
+          rows.find((r) => {
+            const [rFrom, rTo] = r.period.split('_')
+            return rFrom <= from && rTo >= to
+          }) ??
+          rows[0]
+
+        const byDay: { date: string; revenue: number }[] = (best.by_day ?? [])
+          .filter((e: { date: string }) => e.date >= from && e.date <= to)
+          .sort((a: { date: string }, b: { date: string }) => a.date.localeCompare(b.date))
+
+        return byDay
       } catch {
         return []
       }
