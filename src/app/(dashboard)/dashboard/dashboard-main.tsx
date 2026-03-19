@@ -3,7 +3,6 @@
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { RevenueChart } from '@/components/dashboard/revenue-chart'
-import { SumUpTopServices } from '@/components/dashboard/sumup-top-services'
 import { SumUpPayouts } from '@/components/dashboard/sumup-payouts'
 import { StatCard } from '@/components/dashboard/stat-card'
 import type { DailyRevenue, TopProduct } from '@/lib/shopify-admin'
@@ -338,12 +337,7 @@ export function DashboardMain({
         />
       </section>
 
-      {/* SumUp top services */}
-      {sumup && sumup.byProduct.length > 0 && (
-        <section className="mb-6">
-          <SumUpTopServices byProduct={sumup.byProduct} />
-        </section>
-      )}
+      {/* SumUp top services — hidden until A-code → product name mapping is available */}
 
       {/* SumUp payouts */}
       {sumup && sumup.payouts.length > 0 && (

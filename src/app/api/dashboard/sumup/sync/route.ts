@@ -271,7 +271,18 @@ export async function POST(req: NextRequest) {
     const to = new Date(`${toParam}T23:59:59Z`)
 
     // Fetch all transactions for the period
-    const transactions = await getTransactions(from, to)
+    const rawTransactions = await getTransactions(from, to)
+
+    // Deduplicate by transaction ID — cash transactions sometimes appear twice
+    // (once as ACCEPTED, once as SUCCESSFUL). Keep SUCCESSFUL over ACCEPTED.
+    const txMap = new Map<string, (typeof rawTransactions)[0]>()
+    for (const tx of rawTransactions) {
+      const existing = txMap.get(tx.id)
+      if (!existing || tx.status === 'SUCCESSFUL') {
+        txMap.set(tx.id, tx)
+      }
+    }
+    const transactions = Array.from(txMap.values())
 
     // Batch fetch transaction details (for products array)
     const productsMap = await batchFetchDetails(transactions, 10)
