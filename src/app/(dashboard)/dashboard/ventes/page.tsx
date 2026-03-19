@@ -6,7 +6,6 @@ import { VentesFilteredView } from './filtered-view'
 import type { ByDayEntry } from '@/components/dashboard/sumup-revenue-chart'
 import type { ByProductEntry } from '@/components/dashboard/sumup-top-services'
 import type { PayoutEntry } from '@/components/dashboard/sumup-payouts'
-import type { SumUpTransaction } from '@/lib/sumup'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,7 +13,6 @@ export const dynamic = 'force-dynamic'
 
 interface SumUpCacheRow {
   period: string
-  transactions: SumUpTransaction[]
   by_day: ByDayEntry[]
   by_product: ByProductEntry[]
   by_payment_type: { type: string; count: number; revenue: number }[]
@@ -117,7 +115,6 @@ export default async function VentesPage({ searchParams }: PageProps) {
           transactionCount={cacheRow.transaction_count}
           avgTicket={cacheRow.avg_ticket}
           refundRate={cacheRow.refund_rate}
-          transactions={cacheRow.transactions ?? []}
         />
       )}
     </div>

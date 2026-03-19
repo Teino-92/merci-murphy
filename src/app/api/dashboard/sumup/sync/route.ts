@@ -14,6 +14,7 @@ interface ByDay {
 
 interface ByProduct {
   name: string
+  category: string
   revenue: number
   quantity: number
 }
@@ -94,7 +95,11 @@ function aggregateData(
   refundRate: number
 } {
   const dayMap = new Map<string, { revenue: number; count: number }>()
-  const productMap = new Map<string, { revenue: number; quantity: number }>()
+  // key = "category::productName"
+  const productMap = new Map<
+    string,
+    { category: string; name: string; revenue: number; quantity: number }
+  >()
   const paymentMap = new Map<string, { count: number; revenue: number }>()
 
   let totalRevenue = 0
@@ -132,22 +137,25 @@ function aggregateData(
     payEntry.revenue += isSuccessful ? amount : 0
     paymentMap.set(payType, payEntry)
 
-    // By product — normalize names to group variants into canonical service names
+    // Category from product_summary (used to group real products)
+    const category = tx.product_summary ? normalizeServiceName(tx.product_summary) : 'Autre'
+
+    // By product — use real product names from detail API, fall back to category
     const products = productsMap.get(tx.id) ?? []
     if (products.length > 0) {
       for (const p of products) {
-        const name = normalizeServiceName(p.name)
-        const productEntry = productMap.get(name) ?? { revenue: 0, quantity: 0 }
-        productEntry.revenue += p.total_price ?? p.price * p.quantity
-        productEntry.quantity += p.quantity
-        productMap.set(name, productEntry)
+        const key = `${category}::${p.name}`
+        const entry = productMap.get(key) ?? { category, name: p.name, revenue: 0, quantity: 0 }
+        entry.revenue += p.total_price ?? p.price * p.quantity
+        entry.quantity += p.quantity
+        productMap.set(key, entry)
       }
     } else if (tx.product_summary) {
-      const name = normalizeServiceName(tx.product_summary)
-      const productEntry = productMap.get(name) ?? { revenue: 0, quantity: 0 }
-      productEntry.revenue += isSuccessful ? amount : 0
-      productEntry.quantity += 1
-      productMap.set(name, productEntry)
+      const key = `${category}::${category}`
+      const entry = productMap.get(key) ?? { category, name: category, revenue: 0, quantity: 0 }
+      entry.revenue += isSuccessful ? amount : 0
+      entry.quantity += 1
+      productMap.set(key, entry)
     }
   }
 
@@ -155,10 +163,9 @@ function aggregateData(
     .map(([date, v]) => ({ date, revenue: v.revenue, count: v.count }))
     .sort((a, b) => a.date.localeCompare(b.date))
 
-  const byProduct: ByProduct[] = Array.from(productMap.entries())
-    .map(([name, v]) => ({ name, revenue: v.revenue, quantity: v.quantity }))
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 10)
+  const byProduct: ByProduct[] = Array.from(productMap.values()).sort(
+    (a, b) => b.revenue - a.revenue
+  )
 
   const byPaymentType: ByPaymentType[] = Array.from(paymentMap.entries()).map(([type, v]) => ({
     type,

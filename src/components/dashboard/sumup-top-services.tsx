@@ -16,6 +16,7 @@ import {
 
 export interface ByProductEntry {
   name: string
+  category: string
   revenue: number
   quantity: number
 }

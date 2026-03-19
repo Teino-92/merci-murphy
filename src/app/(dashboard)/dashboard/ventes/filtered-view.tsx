@@ -8,7 +8,6 @@ import { SumUpPayouts } from '@/components/dashboard/sumup-payouts'
 import type { ByDayEntry } from '@/components/dashboard/sumup-revenue-chart'
 import type { ByProductEntry } from '@/components/dashboard/sumup-top-services'
 import type { PayoutEntry } from '@/components/dashboard/sumup-payouts'
-import type { SumUpTransaction } from '@/lib/sumup'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -21,7 +20,6 @@ interface Props {
   transactionCount: number
   avgTicket: number
   refundRate: number
-  transactions: SumUpTransaction[]
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -42,22 +40,6 @@ function formatPercent(v: number) {
   }).format(v)
 }
 
-// Derive by_day from a filtered set of transactions
-function deriveByDay(txs: SumUpTransaction[]): ByDayEntry[] {
-  const map = new Map<string, { revenue: number; count: number }>()
-  for (const tx of txs) {
-    if (tx.status !== 'SUCCESSFUL' && tx.status !== 'REFUNDED') continue
-    const day = tx.timestamp.slice(0, 10)
-    const entry = map.get(day) ?? { revenue: 0, count: 0 }
-    entry.revenue += tx.status === 'SUCCESSFUL' ? (tx.amount ?? 0) : 0
-    entry.count += 1
-    map.set(day, entry)
-  }
-  return Array.from(map.entries())
-    .map(([date, v]) => ({ date, revenue: v.revenue, count: v.count }))
-    .sort((a, b) => a.date.localeCompare(b.date))
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const ALL = '__all__'
@@ -70,87 +52,136 @@ export function VentesFilteredView({
   transactionCount,
   avgTicket,
   refundRate,
-  transactions,
 }: Props) {
-  const [service, setService] = useState<string>(ALL)
+  const [category, setCategory] = useState<string>(ALL)
+  const [product, setProduct] = useState<string>(ALL)
 
-  // All unique normalized service names from every transaction (not just top 10)
-  const serviceOptions = useMemo(() => {
-    const seen = new Map<string, number>() // name → total revenue
-    for (const tx of transactions) {
-      if (tx.status !== 'SUCCESSFUL' && tx.status !== 'REFUNDED') continue
-      if (!tx.product_summary) continue
-      const name = normalizeServiceName(tx.product_summary)
-      seen.set(name, (seen.get(name) ?? 0) + (tx.status === 'SUCCESSFUL' ? (tx.amount ?? 0) : 0))
+  // Unique categories sorted by total revenue
+  const categories = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const p of byProduct) {
+      map.set(p.category, (map.get(p.category) ?? 0) + p.revenue)
     }
-    return Array.from(seen.entries())
-      .sort((a, b) => b[1] - a[1]) // sort by revenue desc
+    return Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
       .map(([name]) => name)
-  }, [transactions])
+  }, [byProduct])
 
-  // When a service is selected, filter transactions by product_summary match
-  const filtered = useMemo(() => {
-    if (service === ALL) return null
+  // Products for the selected category, sorted by revenue
+  const productsForCategory = useMemo(() => {
+    if (category === ALL) return []
+    return byProduct.filter((p) => p.category === category).sort((a, b) => b.revenue - a.revenue)
+  }, [category, byProduct])
 
-    const matchingTxs = transactions.filter((tx) => {
-      if (!tx.product_summary) return false
-      return normalizeServiceName(tx.product_summary) === service
-    })
+  // Reset product when category changes
+  function handleCategoryChange(val: string) {
+    setCategory(val)
+    setProduct(ALL)
+  }
 
-    const filteredByDay = deriveByDay(matchingTxs)
+  // Filtered data
+  const {
+    displayByDay,
+    displayByProduct,
+    displayTotalRevenue,
+    displayCount,
+    displayAvg,
+    displayRate,
+  } = useMemo(() => {
+    // No filter
+    if (category === ALL) {
+      return {
+        displayByDay: byDay,
+        displayByProduct: byProduct,
+        displayTotalRevenue: totalRevenue,
+        displayCount: transactionCount,
+        displayAvg: avgTicket,
+        displayRate: refundRate,
+      }
+    }
 
-    const totalRev = matchingTxs
-      .filter((tx) => tx.status === 'SUCCESSFUL')
-      .reduce((sum, tx) => sum + (tx.amount ?? 0), 0)
+    // Filter by_product entries
+    const filtered =
+      product !== ALL
+        ? byProduct.filter((p) => p.category === category && p.name === product)
+        : byProduct.filter((p) => p.category === category)
 
-    const count = matchingTxs.filter(
-      (tx) => tx.status === 'SUCCESSFUL' || tx.status === 'REFUNDED'
-    ).length
+    const filteredRevenue = filtered.reduce((s, p) => s + p.revenue, 0)
+    const filteredQty = filtered.reduce((s, p) => s + p.quantity, 0)
+    const filteredAvg = filteredQty > 0 ? filteredRevenue / filteredQty : 0
 
-    const avg = count > 0 ? totalRev / count : 0
+    // by_day: sum only entries that match — we don't have per-product daily data
+    // so we scale by_day proportionally if a specific product is chosen,
+    // otherwise show full category day distribution (approximation via ratio)
+    const ratio = totalRevenue > 0 ? filteredRevenue / totalRevenue : 0
+    const scaledByDay: ByDayEntry[] = byDay.map((d) => ({
+      ...d,
+      revenue: Math.round(d.revenue * ratio),
+      count: Math.round(d.count * ratio),
+    }))
 
-    const refunded = matchingTxs
-      .filter((tx) => tx.status === 'REFUNDED')
-      .reduce((sum, tx) => sum + (tx.refunded_amount ?? tx.amount ?? 0), 0)
+    return {
+      displayByDay: scaledByDay,
+      displayByProduct: filtered,
+      displayTotalRevenue: filteredRevenue,
+      displayCount: filteredQty,
+      displayAvg: filteredAvg,
+      displayRate: refundRate, // refund rate stays global (no per-product breakdown)
+    }
+  }, [category, product, byDay, byProduct, totalRevenue, transactionCount, avgTicket, refundRate])
 
-    const rate = totalRev > 0 ? refunded / totalRev : 0
-
-    // Product breakdown for this service
-    const filteredByProduct: ByProductEntry[] =
-      totalRev > 0 ? [{ name: service, revenue: totalRev, quantity: count }] : []
-
-    return { filteredByDay, totalRev, count, avg, rate, filteredByProduct }
-  }, [service, transactions, byProduct])
-
-  const displayByDay = filtered ? filtered.filteredByDay : byDay
-  const displayByProduct = filtered ? filtered.filteredByProduct : byProduct
-  const displayTotalRevenue = filtered ? filtered.totalRev : totalRevenue
-  const displayCount = filtered ? filtered.count : transactionCount
-  const displayAvg = filtered ? filtered.avg : avgTicket
-  const displayRate = filtered ? filtered.rate : refundRate
+  const isFiltered = category !== ALL
 
   return (
     <>
-      {/* Service filter */}
-      <div className="flex items-center gap-3 mb-6">
-        <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 shrink-0">
-          Service
-        </span>
-        <select
-          value={service}
-          onChange={(e) => setService(e.target.value)}
-          className="rounded-lg border border-gray-200 bg-white text-sm text-gray-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E] min-w-[200px]"
-        >
-          <option value={ALL}>Tous les services</option>
-          {serviceOptions.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-        {service !== ALL && (
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        {/* Category */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 shrink-0">
+            Catégorie
+          </span>
+          <select
+            value={category}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            className="rounded-lg border border-gray-200 bg-white text-sm text-gray-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E] min-w-[180px]"
+          >
+            <option value={ALL}>Toutes</option>
+            {categories.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Product — only shown when a category is selected */}
+        {category !== ALL && productsForCategory.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 shrink-0">
+              Produit
+            </span>
+            <select
+              value={product}
+              onChange={(e) => setProduct(e.target.value)}
+              className="rounded-lg border border-gray-200 bg-white text-sm text-gray-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E] min-w-[220px]"
+            >
+              <option value={ALL}>Tous les produits</option>
+              {productsForCategory.map((p) => (
+                <option key={p.name} value={p.name}>
+                  {p.name} — {formatEUR(p.revenue)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {isFiltered && (
           <button
-            onClick={() => setService(ALL)}
+            onClick={() => {
+              setCategory(ALL)
+              setProduct(ALL)
+            }}
             className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
             Réinitialiser
@@ -192,25 +223,4 @@ export function VentesFilteredView({
       </section>
     </>
   )
-}
-
-// ─── normalizeServiceName ─────────────────────────────────────────────────────
-// Mirrors server-side normalizeServiceName in sync/route.ts
-
-function normalizeServiceName(summary: string): string {
-  const s = summary.trim().toLowerCase()
-  if (s.includes('maison poilus')) return 'Toilettage maison POILUS'
-  if (s.includes('acompte toilettage')) return 'Acompte toilettage'
-  if (s.includes('acompte bains')) return 'Acompte bains'
-  if (s.includes('acompte creche') || s.includes('acompte crèche')) return 'Acompte crèche'
-  if (s.includes('acompte education') || s.includes('acompte éducation')) return 'Acompte éducation'
-  if (s.includes('acompte massage')) return 'Acompte massage'
-  if (s.includes('acompte balnéo') || s.includes('acompte balneo')) return 'Acompte balnéo'
-  if (s.includes('bains')) return 'Bains'
-  if (s.includes('creche') || s.includes('crèche')) return 'Crèche'
-  if (s.includes('education') || s.includes('éducation')) return 'Éducation'
-  if (s.includes('osteo') || s.includes('ostéo')) return 'Ostéopathie'
-  if (s.includes('massage')) return 'Massage'
-  if (s.includes('toilettage')) return 'Toilettage'
-  return summary.trim()
 }
