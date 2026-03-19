@@ -104,7 +104,7 @@ export default async function VentesPage({ searchParams }: PageProps) {
       </p>
 
       {!hasData ? (
-        <EmptyState from={from} to={to} />
+        <EmptyState />
       ) : (
         <VentesFilteredView
           byDay={cacheRow.by_day ?? []}
@@ -123,21 +123,14 @@ export default async function VentesPage({ searchParams }: PageProps) {
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
 
-function EmptyState({ from, to }: { from: string; to: string }) {
+function EmptyState() {
   return (
     <div className="bg-white rounded-2xl p-12 shadow-sm flex flex-col items-center gap-4 text-center">
       <p className="text-lg font-semibold text-[#1D164E]">Aucune donnée pour cette période</p>
       <p className="text-sm text-gray-400">
-        Les données SumUp doivent être synchronisées avant d&apos;apparaître ici.
+        Cliquez sur <span className="font-semibold text-[#C4714A]">Actualiser</span> pour
+        synchroniser les données SumUp.
       </p>
-      <form action={`/api/dashboard/sumup/sync?from=${from}&to=${to}`} method="POST">
-        <button
-          type="submit"
-          className="mt-2 bg-[#1D164E] text-white text-sm font-medium px-6 py-2.5 rounded-xl hover:bg-[#1D164E]/90 transition-colors"
-        >
-          Actualiser les données
-        </button>
-      </form>
     </div>
   )
 }
