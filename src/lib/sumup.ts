@@ -99,9 +99,9 @@ export async function getTransactions(from: Date, to: Date): Promise<SumUpTransa
       newest_time: toStr,
       limit: '1000',
     })
-    // Explicitly request all payment types including CASH, which may not be
-    // returned by default. Card types (POS, ECOM, etc.) are also included.
-    const paymentTypes = ['CASH', 'POS', 'ECOM', 'RECURRING', 'MOTO', 'BALANCE', 'APM']
+    // Explicitly request all customer-facing payment types including CASH.
+    // Excludes BALANCE (internal SumUp credits) to avoid counting non-revenue entries.
+    const paymentTypes = ['CASH', 'POS', 'ECOM', 'RECURRING', 'MOTO', 'APM']
     paymentTypes.forEach((t) => params.append('payment_types[]', t))
 
     // Note: SumUp API does not reliably filter by multiple statuses —
