@@ -164,31 +164,39 @@ function aggregateData(
 
     if (!isSuccessful && !isRefunded) continue
 
+    // Detect acomptes — deposits for future appointments, not counted as revenue
+    const products = productsMap.get(tx.id) ?? []
+    const isAcompte =
+      products.length > 0
+        ? products.every((p) => productToCategory(p.name) === 'Acomptes')
+        : tx.product_summary
+          ? normalizeServiceName(tx.product_summary) === 'Acomptes'
+          : false
+
     transactionCount++
 
-    if (isSuccessful) {
+    if (isSuccessful && !isAcompte) {
       totalRevenue += amount
     }
     if (isRefunded || refunded > 0) {
       refundedRevenue += refunded > 0 ? refunded : amount
     }
 
-    // By day
+    // By day — exclude acomptes
     const day = tx.timestamp.slice(0, 10)
     const dayEntry = dayMap.get(day) ?? { revenue: 0, count: 0 }
-    dayEntry.revenue += isSuccessful ? amount : 0
+    dayEntry.revenue += isSuccessful && !isAcompte ? amount : 0
     dayEntry.count += 1
     dayMap.set(day, dayEntry)
 
-    // By payment type
+    // By payment type — exclude acomptes
     const payType = tx.payment_type ?? 'UNKNOWN'
     const payEntry = paymentMap.get(payType) ?? { count: 0, revenue: 0 }
     payEntry.count += 1
-    payEntry.revenue += isSuccessful ? amount : 0
+    payEntry.revenue += isSuccessful && !isAcompte ? amount : 0
     paymentMap.set(payType, payEntry)
 
-    // By product — use real product names from detail API, fall back to product_summary
-    const products = productsMap.get(tx.id) ?? []
+    // By product — always record for reference
     if (products.length > 0) {
       for (const p of products) {
         const category = productToCategory(p.name)
