@@ -11,11 +11,18 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = req.nextUrl
-  const period = searchParams.get('period') ?? new Date().toISOString().slice(0, 7)
+  const fromParam = searchParams.get('from')
+  const toParam = searchParams.get('to')
 
-  if (!/^\d{4}-\d{2}$/.test(period)) {
-    return NextResponse.json({ error: 'Invalid period format. Use YYYY-MM' }, { status: 400 })
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/
+  if (!fromParam || !toParam || !dateRe.test(fromParam) || !dateRe.test(toParam)) {
+    return NextResponse.json(
+      { error: 'Invalid params. Use ?from=YYYY-MM-DD&to=YYYY-MM-DD' },
+      { status: 400 }
+    )
   }
+
+  const period = `${fromParam}_${toParam}`
 
   const { data, error } = await supabaseAdmin
     .from('sumup_cache')
@@ -27,9 +34,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  if (!data) {
-    return NextResponse.json({ data: null, period })
-  }
-
-  return NextResponse.json({ data, period })
+  return NextResponse.json({ data: data ?? null, period })
 }

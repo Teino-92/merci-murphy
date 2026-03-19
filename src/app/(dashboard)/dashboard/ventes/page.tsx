@@ -30,8 +30,11 @@ interface SumUpCacheRow {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function currentPeriod(): string {
-  return new Date().toISOString().slice(0, 7)
+function defaultDateRange(): { from: string; to: string } {
+  const now = new Date()
+  const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+  const to = now.toISOString().slice(0, 10)
+  return { from, to }
 }
 
 function formatEUR(v: number) {
@@ -50,17 +53,27 @@ function formatPercent(v: number) {
   }).format(v)
 }
 
-function formatPeriodLabel(period: string): string {
-  const [yearStr, monthStr] = period.split('-')
-  const d = new Date(parseInt(yearStr), parseInt(monthStr) - 1, 1)
-  return d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+function formatDateRange(from: string, to: string): string {
+  const f = new Date(from).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+  const t = new Date(to).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+  return `${f} — ${t}`
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 interface PageProps {
-  searchParams: Promise<{ period?: string }>
+  searchParams: Promise<{ from?: string; to?: string }>
 }
+
+const dateRe = /^\d{4}-\d{2}-\d{2}$/
 
 export default async function VentesPage({ searchParams }: PageProps) {
   const supabase = await createSupabaseServerClient()
@@ -69,17 +82,19 @@ export default async function VentesPage({ searchParams }: PageProps) {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const resolvedParams = await searchParams
-  const period = resolvedParams.period ?? currentPeriod()
+  const resolved = await searchParams
+  const defaults = defaultDateRange()
 
-  // Validate period format
-  const validPeriod = /^\d{4}-\d{2}$/.test(period) ? period : currentPeriod()
+  const from = resolved.from && dateRe.test(resolved.from) ? resolved.from : defaults.from
+  const to = resolved.to && dateRe.test(resolved.to) ? resolved.to : defaults.to
+
+  const period = `${from}_${to}`
 
   // Read from cache
   const { data: cacheRow, error } = await supabaseAdmin
     .from('sumup_cache')
     .select('*')
-    .eq('period', validPeriod)
+    .eq('period', period)
     .maybeSingle<SumUpCacheRow>()
 
   const hasData = !error && cacheRow !== null
@@ -100,16 +115,16 @@ export default async function VentesPage({ searchParams }: PageProps) {
           <h1 className="text-2xl font-bold text-[#1D164E]">Ventes — SumUp</h1>
           {refreshedAt && <p className="text-xs text-gray-400 mt-1">Actualisé le {refreshedAt}</p>}
         </div>
-        <VentesPeriodControls currentPeriod={validPeriod} />
+        <VentesPeriodControls currentFrom={from} currentTo={to} />
       </div>
 
       {/* Period label */}
       <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
-        {formatPeriodLabel(validPeriod)}
+        {formatDateRange(from, to)}
       </p>
 
       {!hasData ? (
-        <EmptyState period={validPeriod} />
+        <EmptyState from={from} to={to} />
       ) : (
         <Suspense fallback={<div className="text-gray-400 text-sm">Chargement…</div>}>
           {/* KPI stat cards */}
@@ -155,14 +170,14 @@ export default async function VentesPage({ searchParams }: PageProps) {
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
 
-function EmptyState({ period }: { period: string }) {
+function EmptyState({ from, to }: { from: string; to: string }) {
   return (
     <div className="bg-white rounded-2xl p-12 shadow-sm flex flex-col items-center gap-4 text-center">
       <p className="text-lg font-semibold text-[#1D164E]">Aucune donnée pour cette période</p>
       <p className="text-sm text-gray-400">
         Les données SumUp doivent être synchronisées avant d&apos;apparaître ici.
       </p>
-      <form action={`/api/dashboard/sumup/sync?period=${period}`} method="POST">
+      <form action={`/api/dashboard/sumup/sync?from=${from}&to=${to}`} method="POST">
         <button
           type="submit"
           className="mt-2 bg-[#1D164E] text-white text-sm font-medium px-6 py-2.5 rounded-xl hover:bg-[#1D164E]/90 transition-colors"

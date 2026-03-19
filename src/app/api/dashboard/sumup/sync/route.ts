@@ -55,15 +55,6 @@ function normalizeServiceName(summary: string): string {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function periodToDateRange(period: string): { from: Date; to: Date } {
-  const [yearStr, monthStr] = period.split('-')
-  const year = parseInt(yearStr, 10)
-  const month = parseInt(monthStr, 10) - 1 // 0-indexed
-  const from = new Date(Date.UTC(year, month, 1, 0, 0, 0))
-  const to = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59))
-  return { from, to }
-}
-
 async function batchFetchDetails(
   transactions: SumUpTransaction[],
   concurrency = 10
@@ -200,15 +191,27 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = req.nextUrl
-  const period = searchParams.get('period') ?? new Date().toISOString().slice(0, 7)
+  const fromParam = searchParams.get('from')
+  const toParam = searchParams.get('to')
 
-  // Validate period format YYYY-MM
-  if (!/^\d{4}-\d{2}$/.test(period)) {
-    return NextResponse.json({ error: 'Invalid period format. Use YYYY-MM' }, { status: 400 })
+  // Validate date params
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/
+  if (!fromParam || !toParam || !dateRe.test(fromParam) || !dateRe.test(toParam)) {
+    return NextResponse.json(
+      { error: 'Invalid params. Use ?from=YYYY-MM-DD&to=YYYY-MM-DD' },
+      { status: 400 }
+    )
+  }
+  if (fromParam > toParam) {
+    return NextResponse.json({ error: 'from must be <= to' }, { status: 400 })
   }
 
+  // Cache key
+  const period = `${fromParam}_${toParam}`
+
   try {
-    const { from, to } = periodToDateRange(period)
+    const from = new Date(`${fromParam}T00:00:00Z`)
+    const to = new Date(`${toParam}T23:59:59Z`)
 
     // Fetch all transactions for the period
     const transactions = await getTransactions(from, to)

@@ -4,37 +4,72 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
 interface Props {
-  currentPeriod: string
+  currentFrom: string
+  currentTo: string
 }
 
-function buildPeriods(): { label: string; value: string }[] {
-  const now = new Date()
-  const periods: { label: string; value: string }[] = []
+const PRESETS = [
+  {
+    label: 'Mois en cours',
+    getDates: () => {
+      const now = new Date()
+      const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+      const to = now.toISOString().slice(0, 10)
+      return { from, to }
+    },
+  },
+  {
+    label: 'Mois dernier',
+    getDates: () => {
+      const now = new Date()
+      const first = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      const last = new Date(now.getFullYear(), now.getMonth(), 0)
+      return { from: first.toISOString().slice(0, 10), to: last.toISOString().slice(0, 10) }
+    },
+  },
+  {
+    label: '3 derniers mois',
+    getDates: () => {
+      const now = new Date()
+      const from = new Date(now.getFullYear(), now.getMonth() - 2, 1).toISOString().slice(0, 10)
+      const to = now.toISOString().slice(0, 10)
+      return { from, to }
+    },
+  },
+  {
+    label: 'Cette année',
+    getDates: () => {
+      const now = new Date()
+      const from = `${now.getFullYear()}-01-01`
+      const to = now.toISOString().slice(0, 10)
+      return { from, to }
+    },
+  },
+]
 
-  // Generate all months from 2023-01 to current month
-  let d = new Date(2023, 0, 1)
-  const limit = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-
-  while (d < limit) {
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    const label = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-    periods.push({ label: label.charAt(0).toUpperCase() + label.slice(1), value })
-    d = new Date(d.getFullYear(), d.getMonth() + 1, 1)
-  }
-
-  return periods.reverse() // most recent first
-}
-
-export function VentesPeriodControls({ currentPeriod }: Props) {
+export function VentesPeriodControls({ currentFrom, currentTo }: Props) {
   const router = useRouter()
   const [syncing, startSync] = useTransition()
   const [syncError, setSyncError] = useState<string | null>(null)
   const [syncOk, setSyncOk] = useState(false)
+  const [customFrom, setCustomFrom] = useState(currentFrom)
+  const [customTo, setCustomTo] = useState(currentTo)
 
-  const periods = buildPeriods()
+  function navigate(from: string, to: string) {
+    router.push(`/dashboard/ventes?from=${from}&to=${to}`)
+  }
 
-  function handlePeriodChange(period: string) {
-    router.push(`/dashboard/ventes?period=${period}`)
+  function handlePreset(preset: (typeof PRESETS)[0]) {
+    const { from, to } = preset.getDates()
+    setCustomFrom(from)
+    setCustomTo(to)
+    navigate(from, to)
+  }
+
+  function handleCustomApply() {
+    if (customFrom && customTo && customFrom <= customTo) {
+      navigate(customFrom, customTo)
+    }
   }
 
   async function handleSync() {
@@ -42,7 +77,7 @@ export function VentesPeriodControls({ currentPeriod }: Props) {
     setSyncOk(false)
     startSync(async () => {
       try {
-        const res = await fetch(`/api/dashboard/sumup/sync?period=${currentPeriod}`, {
+        const res = await fetch(`/api/dashboard/sumup/sync?from=${currentFrom}&to=${currentTo}`, {
           method: 'POST',
         })
         if (!res.ok) {
@@ -59,19 +94,49 @@ export function VentesPeriodControls({ currentPeriod }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      {/* Period selector */}
-      <select
-        value={currentPeriod}
-        onChange={(e) => handlePeriodChange(e.target.value)}
-        className="rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-      >
-        {periods.map((p) => (
-          <option key={p.value} value={p.value}>
-            {p.label}
-          </option>
-        ))}
-      </select>
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Quick presets */}
+      <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+        {PRESETS.map((p) => {
+          const { from, to } = p.getDates()
+          const active = from === currentFrom && to === currentTo
+          return (
+            <button
+              key={p.label}
+              onClick={() => handlePreset(p)}
+              className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
+                active ? 'bg-[#1D164E] text-white' : 'text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              {p.label}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Custom date range */}
+      <div className="flex items-center gap-1.5 text-sm">
+        <input
+          type="date"
+          value={customFrom}
+          onChange={(e) => setCustomFrom(e.target.value)}
+          className="rounded-lg border border-gray-200 bg-white text-sm text-gray-700 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+        />
+        <span className="text-gray-400">→</span>
+        <input
+          type="date"
+          value={customTo}
+          onChange={(e) => setCustomTo(e.target.value)}
+          className="rounded-lg border border-gray-200 bg-white text-sm text-gray-700 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+        />
+        <button
+          onClick={handleCustomApply}
+          disabled={!customFrom || !customTo || customFrom > customTo}
+          className="bg-[#1D164E] text-white text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-40 transition-colors"
+        >
+          OK
+        </button>
+      </div>
 
       {/* Sync button */}
       <button

@@ -15,7 +15,10 @@ interface SumUpCacheKPI {
 
 async function getSumUpCurrentMonth(): Promise<number> {
   try {
-    const period = new Date().toISOString().slice(0, 7)
+    const now = new Date()
+    const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+    const to = now.toISOString().slice(0, 10)
+    const period = `${from}_${to}`
     const { data } = await supabaseAdmin
       .from('sumup_cache')
       .select('total_revenue')
