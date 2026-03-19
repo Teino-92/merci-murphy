@@ -24,6 +24,35 @@ interface ByPaymentType {
   revenue: number
 }
 
+// ─── Service name normalizer ──────────────────────────────────────────────────
+// Collapses SumUp product_summary variants into a canonical service name.
+// Patterns observed:
+//   "merci murphy - maison POILUS - A{n}" → "Toilettage maison POILUS"
+//   "{dog} - acompte toilettage {date}"   → "Acompte toilettage"
+//   "{dog} - acompte bains {date}"        → "Acompte bains"
+//   "{dog} - acompte creche {date}"       → "Acompte crèche"
+
+function normalizeServiceName(summary: string): string {
+  const s = summary.trim().toLowerCase()
+
+  if (s.includes('maison poilus')) return 'Toilettage maison POILUS'
+  if (s.includes('acompte toilettage')) return 'Acompte toilettage'
+  if (s.includes('acompte bains')) return 'Acompte bains'
+  if (s.includes('acompte creche') || s.includes('acompte crèche')) return 'Acompte crèche'
+  if (s.includes('acompte education') || s.includes('acompte éducation')) return 'Acompte éducation'
+  if (s.includes('acompte massage')) return 'Acompte massage'
+  if (s.includes('acompte balnéo') || s.includes('acompte balneo')) return 'Acompte balnéo'
+  if (s.includes('bains')) return 'Bains'
+  if (s.includes('creche') || s.includes('crèche')) return 'Crèche'
+  if (s.includes('education') || s.includes('éducation')) return 'Éducation'
+  if (s.includes('osteo') || s.includes('ostéo')) return 'Ostéopathie'
+  if (s.includes('massage')) return 'Massage'
+  if (s.includes('toilettage')) return 'Toilettage'
+
+  // Fallback: return original trimmed
+  return summary.trim()
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function periodToDateRange(period: string): { from: Date; to: Date } {
@@ -112,20 +141,22 @@ function aggregateData(
     payEntry.revenue += isSuccessful ? amount : 0
     paymentMap.set(payType, payEntry)
 
-    // By product
+    // By product — normalize names to group variants into canonical service names
     const products = productsMap.get(tx.id) ?? []
     if (products.length > 0) {
       for (const p of products) {
-        const productEntry = productMap.get(p.name) ?? { revenue: 0, quantity: 0 }
+        const name = normalizeServiceName(p.name)
+        const productEntry = productMap.get(name) ?? { revenue: 0, quantity: 0 }
         productEntry.revenue += p.total_price ?? p.price * p.quantity
         productEntry.quantity += p.quantity
-        productMap.set(p.name, productEntry)
+        productMap.set(name, productEntry)
       }
     } else if (tx.product_summary) {
-      const productEntry = productMap.get(tx.product_summary) ?? { revenue: 0, quantity: 0 }
+      const name = normalizeServiceName(tx.product_summary)
+      const productEntry = productMap.get(name) ?? { revenue: 0, quantity: 0 }
       productEntry.revenue += isSuccessful ? amount : 0
       productEntry.quantity += 1
-      productMap.set(tx.product_summary, productEntry)
+      productMap.set(name, productEntry)
     }
   }
 
