@@ -159,7 +159,7 @@ function aggregateData(
   for (const tx of transactions) {
     const amount = tx.amount ?? 0
     const refunded = tx.refunded_amount ?? 0
-    const isSuccessful = tx.status === 'SUCCESSFUL'
+    const isSuccessful = tx.status === 'SUCCESSFUL' || tx.status === 'ACCEPTED'
     const isRefunded = tx.status === 'REFUNDED'
 
     if (!isSuccessful && !isRefunded) continue
