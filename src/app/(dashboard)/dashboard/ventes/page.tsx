@@ -1,15 +1,12 @@
-import { Suspense } from 'react'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { StatCard } from '@/components/dashboard/stat-card'
-import { SumUpRevenueChart } from '@/components/dashboard/sumup-revenue-chart'
-import { SumUpTopServices } from '@/components/dashboard/sumup-top-services'
-import { SumUpPayouts } from '@/components/dashboard/sumup-payouts'
 import { VentesPeriodControls } from './period-controls'
+import { VentesFilteredView } from './filtered-view'
 import type { ByDayEntry } from '@/components/dashboard/sumup-revenue-chart'
 import type { ByProductEntry } from '@/components/dashboard/sumup-top-services'
 import type { PayoutEntry } from '@/components/dashboard/sumup-payouts'
+import type { SumUpTransaction } from '@/lib/sumup'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +14,7 @@ export const dynamic = 'force-dynamic'
 
 interface SumUpCacheRow {
   period: string
+  transactions: SumUpTransaction[]
   by_day: ByDayEntry[]
   by_product: ByProductEntry[]
   by_payment_type: { type: string; count: number; revenue: number }[]
@@ -35,22 +33,6 @@ function defaultDateRange(): { from: string; to: string } {
   const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
   const to = now.toISOString().slice(0, 10)
   return { from, to }
-}
-
-function formatEUR(v: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(v)
-}
-
-function formatPercent(v: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'percent',
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(v)
 }
 
 function formatDateRange(from: string, to: string): string {
@@ -126,43 +108,17 @@ export default async function VentesPage({ searchParams }: PageProps) {
       {!hasData ? (
         <EmptyState from={from} to={to} />
       ) : (
-        <Suspense fallback={<div className="text-gray-400 text-sm">Chargement…</div>}>
-          {/* KPI stat cards */}
-          <section className="mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard
-                label="Chiffre d'affaires"
-                value={formatEUR(cacheRow.total_revenue)}
-                highlight={cacheRow.total_revenue > 0}
-              />
-              <StatCard
-                label="Ticket moyen"
-                value={cacheRow.avg_ticket > 0 ? formatEUR(cacheRow.avg_ticket) : '—'}
-              />
-              <StatCard label="Transactions" value={String(cacheRow.transaction_count)} />
-              <StatCard
-                label="Taux de remboursement"
-                value={formatPercent(cacheRow.refund_rate)}
-                sub={cacheRow.refund_rate === 0 ? 'Aucun remboursement' : undefined}
-              />
-            </div>
-          </section>
-
-          {/* Revenue chart */}
-          <section className="mb-6">
-            <SumUpRevenueChart byDay={cacheRow.by_day ?? []} />
-          </section>
-
-          {/* Top services */}
-          <section className="mb-6">
-            <SumUpTopServices byProduct={cacheRow.by_product ?? []} />
-          </section>
-
-          {/* Payouts */}
-          <section className="mb-6">
-            <SumUpPayouts payouts={cacheRow.payouts ?? []} />
-          </section>
-        </Suspense>
+        <VentesFilteredView
+          byDay={cacheRow.by_day ?? []}
+          byProduct={cacheRow.by_product ?? []}
+          byPaymentType={cacheRow.by_payment_type ?? []}
+          payouts={cacheRow.payouts ?? []}
+          totalRevenue={cacheRow.total_revenue}
+          transactionCount={cacheRow.transaction_count}
+          avgTicket={cacheRow.avg_ticket}
+          refundRate={cacheRow.refund_rate}
+          transactions={cacheRow.transactions ?? []}
+        />
       )}
     </div>
   )
