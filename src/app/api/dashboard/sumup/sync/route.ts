@@ -163,29 +163,21 @@ function aggregateData(
     const isRefunded = tx.status === 'REFUNDED'
 
     if (!isSuccessful && !isRefunded) continue
-
-    // Detect acomptes — deposits for future appointments, not counted as revenue
-    const products = productsMap.get(tx.id) ?? []
-    const isAcompte =
-      products.length > 0
-        ? products.every((p) => productToCategory(p.name) === 'Acomptes')
-        : tx.product_summary
-          ? normalizeServiceName(tx.product_summary) === 'Acomptes'
-          : false
+    // Skip internal SumUp balance/credit transactions
+    if (tx.payment_type === 'BALANCE') continue
 
     transactionCount++
+    const products = productsMap.get(tx.id) ?? []
 
-    if (isSuccessful && !isAcompte) {
-      totalRevenue += amount
-    }
-    if (isRefunded || refunded > 0) {
-      refundedRevenue += refunded > 0 ? refunded : amount
-    }
+    const netAmount = isRefunded ? 0 : amount - refunded
+    if (isSuccessful) totalRevenue += netAmount
+    if (isRefunded) refundedRevenue += amount
+    else if (refunded > 0) refundedRevenue += refunded
 
-    // By day — exclude acomptes
+    // By day
     const day = tx.timestamp.slice(0, 10)
     const dayEntry = dayMap.get(day) ?? { revenue: 0, count: 0 }
-    dayEntry.revenue += isSuccessful && !isAcompte ? amount : 0
+    dayEntry.revenue += isSuccessful ? netAmount : 0
     dayEntry.count += 1
     dayMap.set(day, dayEntry)
 
@@ -193,7 +185,7 @@ function aggregateData(
     const payType = tx.payment_type ?? 'UNKNOWN'
     const payEntry = paymentMap.get(payType) ?? { count: 0, revenue: 0 }
     payEntry.count += 1
-    payEntry.revenue += isSuccessful && !isAcompte ? amount : 0
+    payEntry.revenue += isSuccessful ? netAmount : 0
     paymentMap.set(payType, payEntry)
 
     // By product — always record for reference
