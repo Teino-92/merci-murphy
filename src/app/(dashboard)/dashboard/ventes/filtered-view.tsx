@@ -74,18 +74,27 @@ export function VentesFilteredView({
 }: Props) {
   const [service, setService] = useState<string>(ALL)
 
-  // Service options derived from byProduct (already sorted by revenue)
-  const serviceOptions = useMemo(() => byProduct.map((p) => p.name), [byProduct])
+  // All unique normalized service names from every transaction (not just top 10)
+  const serviceOptions = useMemo(() => {
+    const seen = new Map<string, number>() // name → total revenue
+    for (const tx of transactions) {
+      if (tx.status !== 'SUCCESSFUL' && tx.status !== 'REFUNDED') continue
+      if (!tx.product_summary) continue
+      const name = normalizeServiceName(tx.product_summary)
+      seen.set(name, (seen.get(name) ?? 0) + (tx.status === 'SUCCESSFUL' ? (tx.amount ?? 0) : 0))
+    }
+    return Array.from(seen.entries())
+      .sort((a, b) => b[1] - a[1]) // sort by revenue desc
+      .map(([name]) => name)
+  }, [transactions])
 
   // When a service is selected, filter transactions by product_summary match
   const filtered = useMemo(() => {
     if (service === ALL) return null
 
     const matchingTxs = transactions.filter((tx) => {
-      const summary = (tx.product_summary ?? '').toLowerCase()
-      const target = service.toLowerCase()
-      // Match normalized name variants
-      return summary.includes(target) || normalizeMatch(summary, service)
+      if (!tx.product_summary) return false
+      return normalizeServiceName(tx.product_summary) === service
     })
 
     const filteredByDay = deriveByDay(matchingTxs)
@@ -107,8 +116,8 @@ export function VentesFilteredView({
     const rate = totalRev > 0 ? refunded / totalRev : 0
 
     // Product breakdown for this service
-    const productEntry = byProduct.find((p) => p.name === service)
-    const filteredByProduct: ByProductEntry[] = productEntry ? [productEntry] : []
+    const filteredByProduct: ByProductEntry[] =
+      totalRev > 0 ? [{ name: service, revenue: totalRev, quantity: count }] : []
 
     return { filteredByDay, totalRev, count, avg, rate, filteredByProduct }
   }, [service, transactions, byProduct])
@@ -125,33 +134,28 @@ export function VentesFilteredView({
       {/* Service filter */}
       <div className="flex items-center gap-3 mb-6">
         <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 shrink-0">
-          Filtrer par service
+          Service
         </span>
-        <div className="flex flex-wrap gap-2">
+        <select
+          value={service}
+          onChange={(e) => setService(e.target.value)}
+          className="rounded-lg border border-gray-200 bg-white text-sm text-gray-700 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E] min-w-[200px]"
+        >
+          <option value={ALL}>Tous les services</option>
+          {serviceOptions.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        {service !== ALL && (
           <button
             onClick={() => setService(ALL)}
-            className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
-              service === ALL
-                ? 'bg-[#1D164E] text-white border-[#1D164E]'
-                : 'text-gray-500 border-gray-200 hover:border-gray-300 bg-white'
-            }`}
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
-            Tous
+            Réinitialiser
           </button>
-          {serviceOptions.map((name) => (
-            <button
-              key={name}
-              onClick={() => setService(name === service ? ALL : name)}
-              className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
-                service === name
-                  ? 'bg-[#C4714A] text-white border-[#C4714A]'
-                  : 'text-gray-500 border-gray-200 hover:border-gray-300 bg-white'
-              }`}
-            >
-              {name}
-            </button>
-          ))}
-        </div>
+        )}
       </div>
 
       {/* KPI stat cards */}
@@ -190,38 +194,23 @@ export function VentesFilteredView({
   )
 }
 
-// ─── normalizeMatch ───────────────────────────────────────────────────────────
-// Maps canonical service names back to product_summary patterns
+// ─── normalizeServiceName ─────────────────────────────────────────────────────
+// Mirrors server-side normalizeServiceName in sync/route.ts
 
-function normalizeMatch(summary: string, canonicalName: string): boolean {
-  const n = canonicalName.toLowerCase()
-  if (n === 'toilettage maison poilus') return summary.includes('maison poilus')
-  if (n === 'acompte toilettage') return summary.includes('acompte toilettage')
-  if (n === 'acompte bains') return summary.includes('acompte bains')
-  if (n === 'acompte crèche')
-    return summary.includes('acompte creche') || summary.includes('acompte crèche')
-  if (n === 'acompte éducation')
-    return summary.includes('acompte education') || summary.includes('acompte éducation')
-  if (n === 'acompte massage') return summary.includes('acompte massage')
-  if (n === 'acompte balnéo')
-    return summary.includes('acompte balneo') || summary.includes('acompte balnéo')
-  if (n === 'bains') return summary.includes('bains') && !summary.includes('acompte')
-  if (n === 'crèche')
-    return (
-      (summary.includes('creche') || summary.includes('crèche')) && !summary.includes('acompte')
-    )
-  if (n === 'éducation')
-    return (
-      (summary.includes('education') || summary.includes('éducation')) &&
-      !summary.includes('acompte')
-    )
-  if (n === 'ostéopathie') return summary.includes('osteo') || summary.includes('ostéo')
-  if (n === 'massage') return summary.includes('massage') && !summary.includes('acompte')
-  if (n === 'toilettage')
-    return (
-      summary.includes('toilettage') &&
-      !summary.includes('acompte') &&
-      !summary.includes('maison poilus')
-    )
-  return false
+function normalizeServiceName(summary: string): string {
+  const s = summary.trim().toLowerCase()
+  if (s.includes('maison poilus')) return 'Toilettage maison POILUS'
+  if (s.includes('acompte toilettage')) return 'Acompte toilettage'
+  if (s.includes('acompte bains')) return 'Acompte bains'
+  if (s.includes('acompte creche') || s.includes('acompte crèche')) return 'Acompte crèche'
+  if (s.includes('acompte education') || s.includes('acompte éducation')) return 'Acompte éducation'
+  if (s.includes('acompte massage')) return 'Acompte massage'
+  if (s.includes('acompte balnéo') || s.includes('acompte balneo')) return 'Acompte balnéo'
+  if (s.includes('bains')) return 'Bains'
+  if (s.includes('creche') || s.includes('crèche')) return 'Crèche'
+  if (s.includes('education') || s.includes('éducation')) return 'Éducation'
+  if (s.includes('osteo') || s.includes('ostéo')) return 'Ostéopathie'
+  if (s.includes('massage')) return 'Massage'
+  if (s.includes('toilettage')) return 'Toilettage'
+  return summary.trim()
 }
