@@ -18,7 +18,7 @@ export default async function ShopPage() {
   return (
     <>
       {/* Manifesto */}
-      <Section className="bg-charcoal text-cream py-12">
+      <Section className="bg-charcoal-light text-cream py-12">
         <Container className="max-w-6xl">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
             {/* Right — desktop only: boutique-hero full height */}

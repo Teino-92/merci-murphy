@@ -22,7 +22,7 @@ export default async function ContactPage() {
 
   return (
     <>
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
         <Image
           src="/contact-hero.jpg"
           alt="merci murphy® — vitrine"

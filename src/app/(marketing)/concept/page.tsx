@@ -3,43 +3,17 @@ import type React from 'react'
 import Image from 'next/image'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
+import { Values } from '@/components/sections/values'
 import { TeamMemberCard } from '@/components/sections/team-member-card'
 import { getTeamMembers } from '@/sanity/queries/team'
 import { urlFor } from '@/sanity/client'
-import { Leaf, Heart, Recycle, ShieldCheck, Users } from 'lucide-react'
+import { Leaf, Heart, Recycle, Users } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Le concept',
   description:
     "Découvrez l'histoire de merci murphy®, notre équipe et nos engagements pour le bien-être animal à Paris.",
 }
-
-const ENGAGEMENTS = [
-  {
-    icon: Heart,
-    title: 'Bien-être animal',
-    description:
-      'Chaque soin est pensé pour respecter le rythme et le confort de votre chien. Pas de stress, pas de précipitation.',
-  },
-  {
-    icon: Leaf,
-    title: 'Produits naturels',
-    description:
-      'Nous sélectionnons des produits doux, naturels et adaptés à chaque type de pelage et de peau.',
-  },
-  {
-    icon: Recycle,
-    title: 'Écoresponsable',
-    description:
-      "Emballages recyclés, produits écoresponsables, consommation d'eau raisonnée — nous agissons à notre échelle.",
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Expertise certifiée',
-    description:
-      'Notre équipe est formée aux meilleures techniques de toilettage, éducation positive et ostéopathie animale.',
-  },
-]
 
 export default async function ConceptPage() {
   const team = await getTeamMembers()
@@ -66,7 +40,7 @@ export default async function ConceptPage() {
               Paris, France
             </p>
             <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl leading-tight drop-shadow-sm">
-              Le concept
+              merci murphy®
             </h1>
             <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg max-w-md drop-shadow-sm">
               ambassadeur d&apos;un art de vivre partagé entre l&apos;humain et son animal.
@@ -81,14 +55,31 @@ export default async function ConceptPage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
             <Reveal>
               <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-terracotta mb-3">
+                  Le concept
+                </p>
                 <h2 className="font-display text-3xl font-bold text-charcoal">
                   Vivre heureux avec son chien et son chat à Paris
                 </h2>
                 <div className="mt-6 space-y-4 text-charcoal/70 leading-relaxed">
                   <p>
-                    Un collectif engagé d’experts et de passionnés répond eux besoins de votre
-                    compagnon urbain et vous facilite la vie, dans un lieu unique, chaleureux et
-                    bienveillant.
+                    <span className="text-charcoal font-medium">merci murphy®</span> c&apos;est un
+                    lieu unique, chaleureux et bienveillant au cœur de Paris où l&apos;on peut
+                    confier son compagnon ou simplement échanger avec un expert ou entre
+                    &laquo;&nbsp;pet-parents&nbsp;&raquo;.
+                  </p>
+                  <p>
+                    <span className="text-charcoal font-medium">merci murphy®</span> c&apos;est un
+                    collectif engagé d&apos;experts et de passionnés pour répondre aux besoins de
+                    votre compagnon urbain et vous facilite la vie.
+                  </p>
+                  <p>
+                    <span className="text-charcoal font-medium">merci murphy®</span> c&apos;est le
+                    spot pour se retrouver entre copains chiens, entre
+                    &laquo;&nbsp;parents&nbsp;&raquo; de chiens, entre ceux qui aiment les chiens.
+                    Le temps d&apos;une journée à la crèche canine, pour un toilettage, pour un
+                    moment détente au spa maison POILUS pour profiter d&apos;un massage, d&apos;un
+                    bain, d&apos;une balnéo, ou même juste pour un conseil d&apos;éducation.
                   </p>
                 </div>
               </div>
@@ -111,7 +102,7 @@ export default async function ConceptPage() {
       </Section>
 
       {/* Valeurs */}
-      <Section className="bg-charcoal text-cream">
+      <Section className="bg-charcoal-light text-cream">
         <Container className="max-w-4xl">
           <Reveal>
             <div className="text-center mb-16">
@@ -251,33 +242,7 @@ export default async function ConceptPage() {
         </Container>
       </Section>
 
-      {/* Engagements */}
-      <Section className="bg-rose/20">
-        <Container>
-          <Reveal>
-            <div className="text-center">
-              <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-                Nos engagements
-              </h2>
-            </div>
-          </Reveal>
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {ENGAGEMENTS.map((e, i) => (
-              <Reveal key={e.title} delay={i * 100}>
-                <div className="flex flex-col items-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose">
-                    <e.icon className="h-6 w-6 text-terracotta-dark" />
-                  </div>
-                  <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">
-                    {e.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-charcoal/60">{e.description}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </Section>
+      <Values />
 
       {/* Équipe */}
       {team.length > 0 && (

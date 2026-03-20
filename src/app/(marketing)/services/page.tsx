@@ -18,7 +18,7 @@ export default async function ServicesPage() {
   return (
     <>
       {/* Hero */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
         <Image
           src="/services-hero.jpg"
           alt="Les services merci murphy®"

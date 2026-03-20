@@ -16,7 +16,7 @@ interface HeroProps {
 
 export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
   return (
-    <div className={cn('w-full bg-charcoal overflow-hidden', className)}>
+    <div className={cn('w-full bg-charcoal-light overflow-hidden', className)}>
       {/* Mobile — full-bleed image with text overlay */}
       {imageSrc && (
         <div className="relative lg:hidden w-full" style={{ aspectRatio: '4/5' }}>

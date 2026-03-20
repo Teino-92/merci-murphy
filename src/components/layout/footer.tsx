@@ -6,7 +6,7 @@ import { NewsletterForm } from '@/components/forms/newsletter-form'
 
 export function Footer() {
   return (
-    <footer className="border-t border-charcoal/10 bg-charcoal text-cream">
+    <footer className="border-t border-charcoal/10 bg-charcoal-light text-cream">
       {/* Newsletter band */}
       <div className="border-b border-cream/10 px-4 sm:px-6 lg:px-8">
         <Container className="py-5">
@@ -62,12 +62,12 @@ export function Footer() {
               {/* Boutique */}
               <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
-                  Boutique
+                  Éco-shop
                 </p>
                 <ul className="mt-4 space-y-2">
                   {[
-                    { label: 'Chien', handle: 'chien' },
                     { label: 'merci murphy®', handle: 'petlovers' },
+                    { label: 'Chien', handle: 'chien' },
                     { label: 'Chat', handle: 'chat' },
                     { label: 'Petshop', handle: 'petshop' },
                   ].map((cat) => (

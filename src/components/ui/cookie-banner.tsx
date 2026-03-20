@@ -33,7 +33,7 @@ export function CookieBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 24, opacity: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-lg rounded-2xl bg-charcoal px-6 py-5 shadow-2xl sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-sm"
+          className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-lg rounded-2xl bg-charcoal-light px-6 py-5 shadow-2xl sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-sm"
         >
           <p className="font-display text-sm font-semibold text-cream">
             merci murphy® utilise des cookies 🍪

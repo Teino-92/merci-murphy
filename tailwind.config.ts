@@ -15,6 +15,7 @@ const config: Config = {
         terracotta: '#C4845A',
         'terracotta-dark': '#8B5A3A',
         charcoal: '#1A1A1A',
+        'charcoal-light': '#424242',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

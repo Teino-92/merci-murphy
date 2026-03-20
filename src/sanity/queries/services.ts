@@ -9,10 +9,26 @@ export interface ServiceSummary {
   image: { asset: { _ref: string } } | null
 }
 
+export interface TarifsToilettage {
+  note?: string
+  surDevis?: string
+  gabarits?: {
+    label: string
+    lignes: {
+      type?: string
+      bain?: string
+      bainCoupe?: string
+      bainEpilation?: string
+    }[]
+  }[]
+  supplements?: { label: string; prix: string }[]
+}
+
 export interface ServiceDetail extends ServiceSummary {
   approche: PortableTextBlock[]
   deroule: PortableTextBlock[] | null
   tarifs: { label: string; prix: string; disclaimer: string }[]
+  tarifsToilettage: TarifsToilettage | null
   faq: { question: string; reponse: PortableTextBlock[] }[]
   cta: { label: string; type: 'reservation' | 'telephone' } | null
   calendlyUrl: string | null
@@ -28,7 +44,7 @@ const SERVICE_SUMMARY_FIELDS = `
 
 export async function getAllServices(): Promise<ServiceSummary[]> {
   return sanityClient.fetch(
-    `*[_type == "service"] | order(_createdAt asc) { ${SERVICE_SUMMARY_FIELDS} }`,
+    `*[_type == "service"] | order(ordre asc, _createdAt asc) { ${SERVICE_SUMMARY_FIELDS} }`,
     {},
     { next: { revalidate: 3600 } }
   )
@@ -41,6 +57,7 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetail | nu
       approche,
       deroule,
       tarifs,
+      tarifsToilettage,
       faq,
       cta,
       calendlyUrl

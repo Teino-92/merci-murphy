@@ -15,7 +15,7 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
     .join(', ')
 
   return (
-    <Section className="bg-charcoal text-cream">
+    <Section className="bg-charcoal-light text-cream">
       <Container>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
           <div>

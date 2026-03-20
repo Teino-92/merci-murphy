@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function ForgotPasswordPage() {
   return (
     <>
-      <Section className="bg-charcoal text-cream py-20">
+      <Section className="bg-charcoal-light text-cream py-20">
         <Container className="max-w-2xl text-center">
           <h1 className="font-display text-4xl font-bold sm:text-6xl">Mot de passe oublié</h1>
           <p className="mt-4 text-lg text-cream/70">

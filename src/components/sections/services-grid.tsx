@@ -13,7 +13,7 @@ import { urlFor } from '@/sanity/client'
 const SPA_SLUG = 'le-spa-maison-poilus-r'
 const SPA_CHILDREN_SLUGS = [
   'le-toilettage-maison-poilus-r',
-  'les-bains-en-libre-service-maison-poilus-r',
+  'le-bain-en-libre-service-maison-poilus-r',
   'balneo-maison-poilus-r',
   'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
 ]

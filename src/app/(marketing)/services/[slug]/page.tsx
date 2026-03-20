@@ -5,14 +5,25 @@ import type { Metadata } from 'next'
 import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { urlFor } from '@/sanity/client'
+import { getProductsByHandles } from '@/lib/shopify'
 import { Section, Container } from '@/components/ui/section'
 import { Button } from '@/components/ui/button'
 import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
+import { TarifsToilettageTable } from '@/components/sections/tarifs-toilettage'
+import { ServiceShopTeaser } from '@/components/sections/service-shop-teaser'
 import { MobileCta } from '@/components/sections/mobile-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
 import { getProfile } from '@/lib/auth-actions'
+
+const BAINS_SHOP_HANDLES = [
+  'shampoing',
+  'shampoing-sec',
+  'spray-demelant-pour-chiens-et-chats',
+  'apres-shampooing-adoucissant-et-demelant-pour-chiens-et-chats',
+  'dog-cologne',
+]
 
 // Avant/après pour Maison Poilus
 const BEFORE_AFTER_PAIRS = [
@@ -63,10 +74,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ServicePage({ params }: Props) {
-  const [service, settings, profile] = await Promise.all([
+  const isBains =
+    params.slug === 'le-bain-en-libre-service-maison-poilus-r' ||
+    params.slug === 'les-bains-en-libre-service-maison-poilus-r'
+
+  const [service, settings, profile, bainsProducts] = await Promise.all([
     getServiceBySlug(params.slug),
     getSiteSettings(),
     getProfile(),
+    isBains ? getProductsByHandles(BAINS_SHOP_HANDLES) : Promise.resolve([]),
   ])
   const canBook = profile?.can_book === true
 
@@ -77,7 +93,7 @@ export default async function ServicePage({ params }: Props) {
   return (
     <>
       {/* Header */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
         {imageUrl && (
           <Image
             src={imageUrl}
@@ -155,8 +171,20 @@ export default async function ServicePage({ params }: Props) {
         </Section>
       )}
 
-      {/* Tarifs */}
-      {service.tarifs && service.tarifs.length > 0 && (
+      {/* Tarifs toilettage — grouped table */}
+      {service.tarifsToilettage && (
+        <Section className="bg-cream">
+          <Container className="max-w-3xl">
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
+              <TarifsToilettageTable data={service.tarifsToilettage} />
+            </Reveal>
+          </Container>
+        </Section>
+      )}
+
+      {/* Tarifs standard (all other services) */}
+      {!service.tarifsToilettage && service.tarifs && service.tarifs.length > 0 && (
         <Section className="bg-cream">
           <Container className="max-w-3xl">
             <Reveal>
@@ -199,8 +227,11 @@ export default async function ServicePage({ params }: Props) {
         </Section>
       )}
 
+      {/* Shop teaser — bains only */}
+      {isBains && bainsProducts.length > 0 && <ServiceShopTeaser products={bainsProducts} />}
+
       {/* CTA desktop */}
-      <Section className="bg-charcoal text-cream">
+      <Section className="bg-charcoal-light text-cream">
         <Container className="max-w-2xl text-center">
           <Reveal>
             <h2 className="font-display text-2xl font-bold sm:text-3xl">

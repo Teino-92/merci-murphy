@@ -1,37 +1,25 @@
-import { Leaf, Heart, Sparkles, Recycle, Hand } from 'lucide-react'
+import { Leaf, Heart, Sparkles } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 
 const VALUES = [
   {
     icon: Heart,
-    title: 'Bien-être avant tout',
+    title: 'Bien-être animal',
     description:
       'Chaque service, chaque soin est pensé pour le confort de votre animal, dans le respect de ses besoins physiologiques, et de son tempérament.',
   },
   {
     icon: Leaf,
-    title: 'Produits naturels & éthiques',
-    description:
-      'Produits naturels, matières biologiques, recyclées, production artisanale française et européenne.',
-  },
-  {
-    icon: Recycle,
     title: 'Ecoresponsabilité',
     description:
-      "Emballages recyclés, produits écoresponsables, consomation d'eau raisonée - nous agissons à notre échelle.",
+      "Produits naturels, matières biologiques, recyclées, production artisanale française et européenne. consomation d'eau raisonée ",
   },
   {
     icon: Sparkles,
     title: 'Expertise certifiée',
     description:
-      'Une équipe passionnée et engagée, un collectif d’experts avec une approche bienveillante.',
-  },
-  {
-    icon: Hand,
-    title: 'Ecoute et bienveillance',
-    description:
-      'Un lieu unique et convivial au cœur de Paris,où l’on peut confier son compagnon ou simplement échanger avec un expert ou entre « pet-parents »',
+      'Une équipe passionnée et engagée, un collectif d’experts avec une approche bienveillante et positive',
   },
 ]
 
@@ -44,9 +32,12 @@ export function Values() {
             <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
               Nos engagements
             </h2>
+            <p className="mt-3 text-base text-charcoal/60">
+              Pour des chiens et des chats bien dans leurs pattes
+            </p>
           </div>
         </Reveal>
-        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
           {VALUES.map((value, i) => (
             <Reveal key={value.title} delay={i * 100}>
               <div className="flex flex-col items-center text-center">
