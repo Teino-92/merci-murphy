@@ -16,112 +16,150 @@ interface HeroProps {
 
 export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
   return (
-    <div className={cn('w-full bg-charcoal-light overflow-hidden', className)}>
-      {/* Mobile — full-bleed image with text overlay */}
-      {imageSrc && (
-        <div className="relative lg:hidden w-full" style={{ aspectRatio: '4/5' }}>
-          <Image
-            src={imageSrc}
-            alt="Merci Murphy"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 px-8 pb-12 max-w-lg">
-            <h1 className="font-display text-4xl font-bold leading-tight text-cream">{title}</h1>
-            <motion.p
-              className="mt-4 text-base leading-relaxed text-cream/80"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-            >
-              {subtitle}
-            </motion.p>
-            <motion.div
-              className="mt-6 flex flex-col gap-3"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
-            >
-              <Button
-                asChild
-                size="lg"
-                className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
-              >
-                <Link href="/reservation">Prendre rendez-vous</Link>
-              </Button>
-              {SITE_CONFIG.phone && (
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-cream text-cream hover:bg-cream hover:text-charcoal"
-                >
-                  <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler</a>
-                </Button>
-              )}
-            </motion.div>
-          </div>
-        </div>
-      )}
-
-      {/* Desktop — split layout */}
-      <div className="hidden lg:grid lg:grid-cols-[1fr_1.4fr] min-h-[85vh]">
-        {/* Left — text */}
-        <div className="flex items-center px-14">
-          <div>
-            <h1 className="font-display text-6xl font-bold leading-tight text-cream">{title}</h1>
-            <motion.p
-              className="mt-6 text-lg leading-relaxed text-cream/80 max-w-md"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-            >
-              {subtitle}
-            </motion.p>
-            <motion.div
-              className="mt-8 flex gap-3"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
-            >
-              <Button
-                asChild
-                size="lg"
-                className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
-              >
-                <Link href="/reservation">Prendre rendez-vous</Link>
-              </Button>
-              {SITE_CONFIG.phone && (
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-cream text-cream hover:bg-cream hover:text-charcoal"
-                >
-                  <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler</a>
-                </Button>
-              )}
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Right — full image, rounded corners */}
+    <div className={cn('w-full overflow-hidden', className)} style={{ backgroundColor: '#B5A89A' }}>
+      {/* Mobile — photo top, text below */}
+      <div className="lg:hidden">
         {imageSrc && (
-          <div className="flex items-stretch">
-            <div className="relative w-full overflow-hidden">
-              <Image
-                src={imageSrc}
-                alt="Merci Murphy"
-                width={1024}
-                height={1218}
-                priority
-                className="w-full h-auto object-contain"
-                sizes="60vw"
-              />
+          <div className="relative w-full" style={{ height: '55vw', minHeight: '220px' }}>
+            <Image
+              src={imageSrc}
+              alt="Merci Murphy"
+              fill
+              priority
+              className="object-cover object-top"
+              sizes="100vw"
+            />
+          </div>
+        )}
+        <div className="px-6 py-8" style={{ backgroundColor: '#B5A89A' }}>
+          {/* Eyebrow */}
+          <div className="flex items-center gap-3 mb-4">
+            <span className="block w-6 h-px bg-terracotta flex-shrink-0" />
+            <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-terracotta">
+              Paris · Toilettage &amp; Spa
+            </span>
+          </div>
+          <h1 className="font-display text-[7.5vw] font-normal leading-tight text-charcoal mb-4">
+            {title}
+          </h1>
+          <motion.p
+            className="text-sm leading-relaxed text-charcoal/60 mb-6"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+          >
+            {subtitle}
+          </motion.p>
+          <motion.div
+            className="flex flex-col gap-3"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
+          >
+            <Button
+              asChild
+              size="lg"
+              className="w-full bg-charcoal text-cream hover:bg-charcoal/90"
+            >
+              <Link href="/reservation">Prendre rendez-vous</Link>
+            </Button>
+            {SITE_CONFIG.phone && (
+              <Button
+                asChild
+                size="lg"
+                variant="ghost"
+                className="w-full text-charcoal/60 hover:text-charcoal"
+              >
+                <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler →</a>
+              </Button>
+            )}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Desktop — white split */}
+      <div className="hidden lg:grid lg:grid-cols-[48%_52%] lg:min-h-[88vh]">
+        {/* Left panel */}
+        <div className="relative flex flex-col justify-center px-14 py-14">
+          {/* Top: eyebrow + title */}
+          <div>
+            <div className="flex items-center gap-3 mb-7">
+              <span className="block w-7 h-px bg-terracotta flex-shrink-0" />
+              <span
+                className="text-[13px] font-semibold tracking-[0.18em] uppercase font-sans"
+                style={{ color: '#8B5A3A' }}
+              >
+                Paris · Toilettage &amp; Spa
+              </span>
             </div>
+            <h1 className="font-display text-[3.4vw] font-normal leading-[1.08] text-charcoal tracking-[-0.02em]">
+              Toilettage et spa,{' '}
+              <em className="not-italic" style={{ fontStyle: 'italic', color: '#8B5A3A' }}>
+                crèche canine
+              </em>{' '}
+              et éducation
+            </h1>
+          </div>
+
+          {/* Bottom: divider + subtitle + CTAs */}
+          <div className="mt-10">
+            <div
+              className="w-12 h-px mb-5"
+              style={{ background: 'linear-gradient(to right, #C4845A, transparent)' }}
+            />
+            <motion.p
+              className="text-[18px] leading-[1.7] text-charcoal/60 mb-8 max-w-[400px] font-sans"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+            >
+              {subtitle}
+            </motion.p>
+            <motion.div
+              className="flex items-center gap-6"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
+            >
+              <Button
+                asChild
+                size="lg"
+                className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
+              >
+                <Link href="/reservation">Prendre rendez-vous</Link>
+              </Button>
+              {SITE_CONFIG.phone && (
+                <a
+                  href={`tel:${SITE_CONFIG.phone}`}
+                  className="text-[13px] text-charcoal/50 hover:text-charcoal transition-colors font-sans after:content-['→'] after:ml-1.5 after:text-terracotta"
+                >
+                  Nous appeler
+                </a>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Vertical rule */}
+          <div
+            className="absolute right-0 top-12 bottom-12 w-px"
+            style={{
+              background:
+                'linear-gradient(to bottom, transparent, #e8dece 20%, #e8dece 80%, transparent)',
+            }}
+          />
+        </div>
+
+        {/* Right panel — photo */}
+        {imageSrc && (
+          <div className="relative overflow-hidden" style={{ backgroundColor: '#B5A89A' }}>
+            <Image
+              src={imageSrc}
+              alt="Merci Murphy — boutique intérieur"
+              fill
+              priority
+              className="object-cover object-center"
+              sizes="52vw"
+            />
           </div>
         )}
       </div>

@@ -18,95 +18,98 @@ export default async function ShopPage() {
   return (
     <>
       {/* Manifesto */}
-      <Section className="bg-charcoal-light text-cream py-12">
-        <Container className="max-w-6xl">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
-            {/* Right — desktop only: boutique-hero full height */}
-            <Reveal className="hidden lg:block lg:order-2 lg:self-stretch">
-              <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
-                <Image
-                  src="/boutique-hero.jpg"
-                  alt="La boutique merci murphy®"
-                  fill
-                  className="object-cover object-center"
-                  sizes="33vw"
-                />
-              </div>
-            </Reveal>
+      <div style={{ backgroundColor: '#B5A89A' }}>
+        <Section className="text-charcoal py-12">
+          <Container className="max-w-6xl">
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
+              {/* Right — desktop only: boutique-hero full height */}
+              <Reveal className="hidden lg:block lg:order-2 lg:self-stretch">
+                <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
+                  <Image
+                    src="/boutique-hero.jpg"
+                    alt="La boutique merci murphy®"
+                    fill
+                    className="object-cover object-center"
+                    sizes="33vw"
+                  />
+                </div>
+              </Reveal>
 
-            {/* Left — full text */}
-            <Reveal className="text-center lg:text-left lg:order-1">
-              <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
-                Boutique éthique & éco-responsable pour chiens et chats
-              </h1>
-              <h2 className="mt-2 text-sm font-medium uppercase tracking-widest text-terracotta">
-                Une seule planète
-              </h2>
-              <p className="mt-3 text-cream/50 text-sm">
-                merci murphy®, c&apos;est aussi un dog shop engagé. Nos achats ont un sens — pour
-                nos poilus et pour la planète.
-              </p>
+              {/* Left — full text */}
+              <Reveal className="text-center lg:text-left lg:order-1">
+                <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
+                  Boutique éthique & éco-responsable pour chiens et chats
+                </h1>
+                <h2 className="mt-2 text-sm font-medium uppercase tracking-widest text-terracotta-dark">
+                  Une seule planète
+                </h2>
+                <p className="mt-3 text-charcoal/50 text-sm">
+                  merci murphy®, c&apos;est aussi un dog shop engagé. Nos achats ont un sens — pour
+                  nos poilus et pour la planète.
+                </p>
 
-              <div className="mt-8 space-y-5 text-sm text-cream/70 leading-relaxed">
-                <div className="flex gap-3">
-                  <Globe className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-                  <p>
-                    Le collectif <span className="text-cream font-medium">merci murphy®</span> vous
-                    propose une offre resserrée de produits, choisis strictement pour leurs
-                    bénéfices pour votre chien et selon des critères exigeants éco-responsables et
-                    éthiques. Cela signifie questionner la composition, toutes les étapes de
-                    réalisation et la durabilité de chaque produit.
-                  </p>
+                <div className="mt-8 space-y-5 text-sm text-charcoal/70 leading-relaxed">
+                  <div className="flex gap-3">
+                    <Globe className="mt-0.5 h-4 w-4 shrink-0 text-terracotta-dark" />
+                    <p>
+                      Le collectif <span className="text-charcoal font-medium">merci murphy®</span>{' '}
+                      vous propose une offre resserrée de produits, choisis strictement pour leurs
+                      bénéfices pour votre chien et selon des critères exigeants éco-responsables et
+                      éthiques. Cela signifie questionner la composition, toutes les étapes de
+                      réalisation et la durabilité de chaque produit.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Heart className="mt-0.5 h-4 w-4 shrink-0 text-terracotta-dark" />
+                    <p>
+                      <span className="text-charcoal font-medium">merci murphy®</span> aime le vrai
+                      et les savoir-faire des passionnés. La plupart de nos fournisseurs-partenaires
+                      sont des artisans locaux. Nos produits voyagent le moins possible —
+                      fabrication engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous
+                      favorisons les marques dirigées par des femmes.{' '}
+                      <span className="not-italic font-medium text-charcoal">merci murphy®</span>{' '}
+                      est engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous
+                      favorisons les marques dirigées par des femmes.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Leaf className="mt-0.5 h-4 w-4 shrink-0 text-terracotta-dark" />
+                    <p>
+                      Seuls les produits éco-responsables — matières premières biologiques,
+                      recyclées et innovantes, sans compromis sur leur origine et leur traçabilité —
+                      entrent dans la sélection. Pas de souffrance animale : vous ne trouverez pas
+                      de cuir animal chez{' '}
+                      <span className="text-charcoal font-medium">merci murphy®</span>.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-terracotta-dark" />
+                    <p>
+                      La durabilité est un critère essentiel.{' '}
+                      <span className="text-charcoal font-medium">merci murphy®</span> est la
+                      première boutique pour chien à proposer du{' '}
+                      <span className="text-charcoal font-medium">second-hand</span> et une
+                      consommation en vrac. Réutiliser est la meilleure option pour la planète —
+                      pour une consommation éclairée et responsable.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex gap-3">
-                  <Heart className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-                  <p>
-                    <span className="text-cream font-medium">merci murphy®</span> aime le vrai et
-                    les savoir-faire des passionnés. La plupart de nos fournisseurs-partenaires sont
-                    des artisans locaux. Nos produits voyagent le moins possible — fabrication
-                    engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
-                    marques dirigées par des femmes.{' '}
-                    <span className="not-italic font-medium text-cream">merci murphy®</span> est
-                    engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
-                    marques dirigées par des femmes.
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <Leaf className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-                  <p>
-                    Seuls les produits éco-responsables — matières premières biologiques, recyclées
-                    et innovantes, sans compromis sur leur origine et leur traçabilité — entrent
-                    dans la sélection. Pas de souffrance animale : vous ne trouverez pas de cuir
-                    animal chez <span className="text-cream font-medium">merci murphy®</span>.
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-terracotta" />
-                  <p>
-                    La durabilité est un critère essentiel.{' '}
-                    <span className="text-cream font-medium">merci murphy®</span> est la première
-                    boutique pour chien à proposer du{' '}
-                    <span className="text-cream font-medium">second-hand</span> et une consommation
-                    en vrac. Réutiliser est la meilleure option pour la planète — pour une
-                    consommation éclairée et responsable.
-                  </p>
-                </div>
-              </div>
 
-              {/* Mobile only — products shelf below manifesto */}
-              <div className="lg:hidden mt-6 relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
-                <Image
-                  src="/boutique-products.jpg"
-                  alt="Produits merci murphy®"
-                  fill
-                  className="object-cover object-[center_calc(50%+40px)]"
-                  sizes="100vw"
-                />
-              </div>
-            </Reveal>
-          </div>
-        </Container>
-      </Section>
+                {/* Mobile only — products shelf below manifesto */}
+                <div className="lg:hidden mt-6 relative w-full aspect-[3/1] overflow-hidden rounded-2xl">
+                  <Image
+                    src="/boutique-products.jpg"
+                    alt="Produits merci murphy®"
+                    fill
+                    className="object-cover object-[center_calc(50%+40px)]"
+                    sizes="100vw"
+                  />
+                </div>
+              </Reveal>
+            </div>
+          </Container>
+        </Section>
+      </div>
 
       <Section className="bg-cream">
         <Container>

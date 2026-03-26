@@ -24,7 +24,7 @@ export function NewsletterForm() {
   if (submitted) {
     return (
       <div className="min-h-[40px] flex items-center">
-        <p className="text-sm font-medium text-cream">Merci ! Vous êtes bien inscrit(e).</p>
+        <p className="text-sm font-medium text-charcoal">Merci ! Vous êtes bien inscrit(e).</p>
       </div>
     )
   }
@@ -37,7 +37,7 @@ export function NewsletterForm() {
         placeholder="Votre email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-72 border-cream/20 bg-cream/10 text-cream placeholder:text-cream/40 focus-visible:ring-cream/30"
+        className="w-72 border-charcoal/30 bg-cream text-charcoal placeholder:text-charcoal/50 focus-visible:ring-terracotta-dark/30"
       />
       <Button
         type="submit"

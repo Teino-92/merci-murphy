@@ -6,9 +6,12 @@ import { NewsletterForm } from '@/components/forms/newsletter-form'
 
 export function Footer() {
   return (
-    <footer className="border-t border-charcoal/10 bg-charcoal-light text-cream">
+    <footer className="text-charcoal" style={{ backgroundColor: '#B5A89A' }}>
+      <div className="px-8 sm:px-12 lg:px-20">
+        <div className="border-t-2 border-charcoal/20" />
+      </div>
       {/* Newsletter band */}
-      <div className="border-b border-cream/10 px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         <Container className="py-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <p className="font-display text-base font-semibold shrink-0 lg:w-48">
@@ -21,6 +24,9 @@ export function Footer() {
         </Container>
       </div>
 
+      <div className="px-8 sm:px-12 lg:px-20">
+        <div className="border-t-2 border-charcoal/20" />
+      </div>
       <div className="px-4 sm:px-6 lg:px-8">
         <Container className="py-8">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
@@ -31,9 +37,9 @@ export function Footer() {
                 alt="merci murphy®"
                 width={280}
                 height={96}
-                className="h-9 w-auto brightness-0 invert"
+                className="h-9 w-auto brightness-0"
               />
-              <p className="mt-3 text-sm text-cream/60">
+              <p className="mt-3 text-sm text-charcoal/60">
                 Connecting pets (cats & dogs) wellness and city lifestyle.
               </p>
             </div>
@@ -42,7 +48,7 @@ export function Footer() {
             <div className="grid grid-cols-3 gap-6 lg:flex lg:gap-16">
               {/* Navigation */}
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
+                <p className="text-sm font-semibold uppercase tracking-widest text-charcoal/60">
                   Navigation
                 </p>
                 <ul className="mt-4 space-y-2">
@@ -50,7 +56,7 @@ export function Footer() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className="text-sm text-cream/80 transition-colors hover:text-cream"
+                        className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
                       >
                         {item.label}
                       </Link>
@@ -61,7 +67,7 @@ export function Footer() {
 
               {/* Boutique */}
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
+                <p className="text-sm font-semibold uppercase tracking-widest text-charcoal/60">
                   Éco-shop
                 </p>
                 <ul className="mt-4 space-y-2">
@@ -74,7 +80,7 @@ export function Footer() {
                     <li key={cat.handle}>
                       <Link
                         href={`/shop?collection=${cat.handle}`}
-                        className="text-sm text-cream/80 transition-colors hover:text-cream"
+                        className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
                       >
                         {cat.label}
                       </Link>
@@ -85,7 +91,7 @@ export function Footer() {
 
               {/* Services */}
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-cream/60">
+                <p className="text-sm font-semibold uppercase tracking-widest text-charcoal/60">
                   Services
                 </p>
                 <ul className="mt-4 space-y-2">
@@ -94,7 +100,7 @@ export function Footer() {
                       <li key={s}>
                         <Link
                           href={`/services/${s.toLowerCase().replace('é', 'e')}`}
-                          className="text-sm text-cream/80 transition-colors hover:text-cream"
+                          className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
                         >
                           {s}
                         </Link>
@@ -112,26 +118,26 @@ export function Footer() {
                 alt="Chien et chat merci murphy®"
                 width={200}
                 height={100}
-                className="w-36 h-auto"
+                className="w-36 h-auto brightness-0 opacity-70"
               />
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="mt-8 border-t border-cream/10 pt-6">
+          <div className="mt-8 pt-6" style={{ borderTop: '2px solid rgba(26,26,26,0.15)' }}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               {/* Legal links */}
-              <p className="text-xs text-cream/60">
+              <p className="text-xs text-charcoal/60">
                 © {new Date().getFullYear()} merci murphy®.{' '}
-                <Link href="/mentions-legales" className="hover:text-cream/60">
+                <Link href="/mentions-legales" className="hover:text-charcoal">
                   Mentions légales
                 </Link>{' '}
                 ·{' '}
-                <Link href="/cgv" className="hover:text-cream/60">
+                <Link href="/cgv" className="hover:text-charcoal">
                   CGV
                 </Link>{' '}
                 ·{' '}
-                <Link href="/confidentialite" className="hover:text-cream/60">
+                <Link href="/confidentialite" className="hover:text-charcoal">
                   Confidentialité
                 </Link>
               </p>

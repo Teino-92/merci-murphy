@@ -231,41 +231,42 @@ export default async function ServicePage({ params }: Props) {
       {isBains && bainsProducts.length > 0 && <ServiceShopTeaser products={bainsProducts} />}
 
       {/* CTA desktop */}
-      <Section className="bg-charcoal-light text-cream">
-        <Container className="max-w-2xl text-center">
-          <Reveal>
-            <h2 className="font-display text-2xl font-bold sm:text-3xl">
-              Prêt à prendre rendez-vous ?
-            </h2>
-            <p className="mt-4 text-cream/70">
-              {service.calendlyUrl
-                ? 'Réservez directement en ligne ou demandez à être rappelé·e.'
-                : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              {service.calendlyUrl && canBook && (
+      <div style={{ backgroundColor: '#B5A89A' }}>
+        <Section className="text-charcoal">
+          <Container className="max-w-2xl text-center">
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold sm:text-3xl">
+                Prêt à prendre rendez-vous ?
+              </h2>
+              <p className="mt-4 text-charcoal/70">
+                {service.calendlyUrl
+                  ? 'Réservez directement en ligne ou demandez à être rappelé·e.'
+                  : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
+              </p>
+              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                {service.calendlyUrl && canBook && (
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-terracotta text-white hover:bg-terracotta/90"
+                  >
+                    <a href={service.calendlyUrl} target="_blank" rel="noopener noreferrer">
+                      {service.cta?.label ?? 'Réserver en ligne'}
+                    </a>
+                  </Button>
+                )}
                 <Button
                   asChild
                   size="lg"
-                  className="bg-terracotta text-white hover:bg-terracotta/90"
+                  className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90 hover:text-white"
                 >
-                  <a href={service.calendlyUrl} target="_blank" rel="noopener noreferrer">
-                    {service.cta?.label ?? 'Réserver en ligne'}
-                  </a>
+                  <Link href="/compte/inscription">Être rappelé·e</Link>
                 </Button>
-              )}
-              <Button
-                asChild
-                size="lg"
-                variant="ghost"
-                className="border-2 border-cream text-cream hover:bg-cream hover:text-charcoal"
-              >
-                <Link href="/compte/inscription">Être rappelé·e</Link>
-              </Button>
-            </div>
-          </Reveal>
-        </Container>
-      </Section>
+              </div>
+            </Reveal>
+          </Container>
+        </Section>
+      </div>
 
       {/* Mobile sticky CTA */}
       <MobileCta
