@@ -1,22 +1,5 @@
 import type { Visit, Dog } from '@/lib/auth-actions'
-
-const SERVICE_LABELS: Record<string, string> = {
-  toilettage: 'Toilettage complet',
-  bains: 'Bain en libre-service',
-  creche: 'Crèche canine',
-  education: 'Éducation canine',
-  osteo: 'Ostéopathie',
-  autre: 'Autre',
-}
-
-const SERVICE_EMOJI: Record<string, string> = {
-  toilettage: '✂️',
-  bains: '🛁',
-  creche: '🐾',
-  education: '🎓',
-  osteo: '🤲',
-  autre: '📋',
-}
+import { SERVICE_LABELS, SERVICE_EMOJI } from '@/lib/dog-constants'
 
 interface VisitTimelineProps {
   visits: Visit[]

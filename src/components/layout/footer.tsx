@@ -34,6 +34,7 @@ export function Footer() {
                 alt="merci murphy®"
                 width={280}
                 height={96}
+                loading="lazy"
                 className="h-9 w-auto brightness-0"
               />
               <p className="mt-3 text-sm text-charcoal/60">
@@ -115,6 +116,7 @@ export function Footer() {
                 alt="Chien et chat merci murphy®"
                 width={200}
                 height={100}
+                loading="lazy"
                 className="w-36 h-auto brightness-0 opacity-70"
               />
             </div>
@@ -156,6 +158,7 @@ export function Footer() {
                     alt={pm.alt}
                     width={38}
                     height={24}
+                    loading="lazy"
                     className="h-6 w-auto"
                   />
                 ))}

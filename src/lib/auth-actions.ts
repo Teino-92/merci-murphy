@@ -77,7 +77,6 @@ export async function signUp(data: SignUpData) {
   })
 
   if (profileError) {
-    console.error('Profile insert error:', profileError)
     return { success: false, error: `Erreur profil: ${profileError.message}` }
   }
 

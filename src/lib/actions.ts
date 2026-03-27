@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { newsletterWelcomeHtml } from '@/lib/emails/newsletter-welcome'
+import { SERVICE_LABELS } from '@/lib/dog-constants'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -33,15 +34,6 @@ const LeadSchema = z.object({
 })
 
 export type LeadFormData = z.infer<typeof LeadSchema>
-
-const SERVICE_LABELS: Record<string, string> = {
-  toilettage: 'Toilettage',
-  bains: 'Bains self-service',
-  creche: 'Crèche',
-  education: 'Éducation',
-  osteo: 'Ostéopathie',
-  autre: 'Autre',
-}
 
 export async function submitLead(data: LeadFormData) {
   const parsed = LeadSchema.safeParse(data)

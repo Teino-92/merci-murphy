@@ -14,21 +14,7 @@ import {
 import { signUp, type SignUpData } from '@/lib/auth-actions'
 import { BreedCombobox } from '@/components/ui/breed-combobox'
 import { CheckCircle } from 'lucide-react'
-
-const POIDS = [
-  { value: '0-5kg', label: 'Moins de 5 kg' },
-  { value: '5-10kg', label: '5 – 10 kg' },
-  { value: '10-20kg', label: '10 – 20 kg' },
-  { value: '20-40kg', label: '20 – 40 kg' },
-  { value: '+40kg', label: 'Plus de 40 kg' },
-]
-
-const ETAT_POIL = [
-  { value: 'normal', label: 'Normal' },
-  { value: 'emmele', label: 'Emmêlé / Nœuds' },
-  { value: 'long', label: 'Long' },
-  { value: 'court', label: 'Court' },
-]
+import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 
 const STEPS = ['Votre chien', 'Vos coordonnées', 'Votre compte']
 

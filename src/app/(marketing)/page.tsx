@@ -118,7 +118,6 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksBreadcrumbLd) }}
       />
       <Hero
-        title="Toilettage et spa, crèche canine et éducation"
         subtitle="Vivre heureux avec son chien et son chat à Paris. Toute l'attention et l'expertise que votre animal mérite, dans un lieu responsable, chaleureux et bienveillant."
         imageSrc="/concept-hero.jpg"
       />

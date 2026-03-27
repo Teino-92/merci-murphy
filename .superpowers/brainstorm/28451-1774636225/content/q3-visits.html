@@ -1,0 +1,36 @@
+<div style="max-width: 640px; margin: 0 auto; font-family: 'Inter', sans-serif; padding: 16px;">
+  <p style="font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Mon Compte — Question 3</p>
+  <h2 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Visit history — how much detail?</h2>
+  <p style="font-size: 15px; color: #666; margin-bottom: 32px;">The <code>visits</code> table already exists with: service, date, notes, staff.</p>
+
+  <div style="display: flex; flex-direction: column; gap: 14px;">
+
+    <button onclick="select(this, 'A')" style="text-align:left; padding: 20px 24px; border-radius: 14px; border: 2px solid #e5e0d8; background: #fff; cursor: pointer;">
+      <div style="font-weight: 700; font-size: 16px; color: #1a1a1a; margin-bottom: 4px;">A — Simple timeline</div>
+      <div style="font-size: 14px; color: #666;">Date + service name + which dog. Clean and minimal. No groomer notes visible to client.</div>
+    </button>
+
+    <button onclick="select(this, 'B')" style="text-align:left; padding: 20px 24px; border-radius: 14px; border: 2px solid #e5e0d8; background: #fff; cursor: pointer;">
+      <div style="font-weight: 700; font-size: 16px; color: #1a1a1a; margin-bottom: 4px;">B — Rich history</div>
+      <div style="font-size: 14px; color: #666;">Date + service + dog + public groomer note (e.g. "Beau travail, poil emmêlé sur les oreilles"). Groomer writes a short note visible to the owner after each visit.</div>
+    </button>
+
+    <button onclick="select(this, 'C')" style="text-align:left; padding: 20px 24px; border-radius: 14px; border: 2px solid #e5e0d8; background: #fff; cursor: pointer;">
+      <div style="font-weight: 700; font-size: 16px; color: #1a1a1a; margin-bottom: 4px;">C — Simple now, rich later</div>
+      <div style="font-size: 14px; color: #666;">Ship the timeline now. Add groomer notes in a future iteration once the team is ready to write them.</div>
+    </button>
+
+  </div>
+</div>
+
+<script>
+function select(el, val) {
+  document.querySelectorAll('button').forEach(b => {
+    b.style.border = '2px solid #e5e0d8';
+    b.style.background = '#fff';
+  });
+  el.style.border = '2px solid #C4845A';
+  el.style.background = '#fdf8f4';
+  if (window.__companion_select) window.__companion_select(val);
+}
+</script>

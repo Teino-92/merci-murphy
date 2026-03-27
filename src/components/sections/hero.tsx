@@ -8,7 +8,6 @@ import { SITE_CONFIG } from '@/config/site'
 import { cn } from '@/lib/utils'
 
 interface HeroProps {
-  title: string
   subtitle: string
   imageSrc?: string
   className?: string

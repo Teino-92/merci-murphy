@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Lead } from '@/lib/supabase-admin'
+import { SERVICE_LABELS } from '@/lib/dog-constants'
 
 const STATUS_LABELS: Record<string, string> = {
   new: 'Nouveau',
@@ -15,15 +16,6 @@ const STATUS_COLORS: Record<string, string> = {
   contacted: 'bg-yellow-100 text-yellow-700',
   confirmed: 'bg-green-100 text-green-700',
   cancelled: 'bg-red-100 text-red-700',
-}
-
-const SERVICE_LABELS: Record<string, string> = {
-  toilettage: 'Toilettage',
-  bains: 'Bains',
-  creche: 'Crèche',
-  education: 'Éducation',
-  osteo: 'Ostéo',
-  autre: 'Autre',
 }
 
 export function LeadsTable({ leads }: { leads: Lead[] }) {

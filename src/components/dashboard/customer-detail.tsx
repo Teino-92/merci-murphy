@@ -5,15 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { Profile, Visit } from '@/lib/supabase-admin'
 import { ArrowLeft, Pencil, Trash2, X } from 'lucide-react'
 import Link from 'next/link'
-
-const SERVICE_LABELS: Record<string, string> = {
-  toilettage: 'Toilettage',
-  bains: 'Bains',
-  creche: 'Crèche',
-  education: 'Éducation',
-  osteo: 'Ostéo',
-  autre: 'Autre',
-}
+import { SERVICE_LABELS } from '@/lib/dog-constants'
 
 export function CustomerDetail({
   profile: initial,

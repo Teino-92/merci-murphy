@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select'
 import { submitLead, type LeadFormData } from '@/lib/actions'
 import { CheckCircle } from 'lucide-react'
+import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 
 const SERVICES = [
   { value: 'toilettage', label: 'Toilettage' },
@@ -21,21 +22,6 @@ const SERVICES = [
   { value: 'education', label: 'Éducation' },
   { value: 'osteo', label: 'Ostéopathie' },
   { value: 'autre', label: 'Autre' },
-]
-
-const POIDS = [
-  { value: '0-5kg', label: 'Moins de 5 kg' },
-  { value: '5-10kg', label: '5 – 10 kg' },
-  { value: '10-20kg', label: '10 – 20 kg' },
-  { value: '20-40kg', label: '20 – 40 kg' },
-  { value: '+40kg', label: 'Plus de 40 kg' },
-]
-
-const ETAT_POIL = [
-  { value: 'normal', label: 'Normal' },
-  { value: 'emmele', label: 'Emmêlé / Nœuds' },
-  { value: 'long', label: 'Long' },
-  { value: 'court', label: 'Court' },
 ]
 
 const STEPS = ['Service', 'Votre chien', 'Vos coordonnées', 'Message']

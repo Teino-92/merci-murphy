@@ -6,6 +6,8 @@ import { ServicesGrid } from '@/components/sections/services-grid'
 import { TestimonialsSection } from '@/components/sections/testimonials-section'
 import { Section, Container } from '@/components/ui/section'
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Nos services',
   description: 'Toilettage, bains, crèche, éducation et ostéopathie pour votre chien à Paris.',

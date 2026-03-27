@@ -10,12 +10,6 @@ export function createSupabaseBrowserClient() {
   return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
 
-// ─── Service role (server-side only, bypasses RLS) ───────────────────────────
-
-export function createServiceRoleClient() {
-  return createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY!)
-}
-
 // ─── Legacy export (used by newsletter action) ────────────────────────────────
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
