@@ -8,11 +8,13 @@ import './globals.css'
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
 })
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-playfair',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -50,6 +52,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="preconnect" href="https://cdn.shopify.com" />
+        <link rel="dns-prefetch" href="https://feeds.behold.so" />
         <script async src="https://plausible.io/js/pa-PYgdr6VtQ4YY6wh9emEkQ.js" />
         <script
           dangerouslySetInnerHTML={{
