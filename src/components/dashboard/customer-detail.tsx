@@ -49,6 +49,7 @@ export function CustomerDetail({
   const [visitDate, setVisitDate] = useState(new Date().toISOString().slice(0, 10))
   const [visitNotes, setVisitNotes] = useState('')
   const [visitStaff, setVisitStaff] = useState('')
+  const [visitPrice, setVisitPrice] = useState('')
   const [addingVisit, setAddingVisit] = useState(false)
 
   async function toggleCanBook() {
@@ -105,6 +106,7 @@ export function CustomerDetail({
         date: visitDate,
         notes: visitNotes,
         staff: visitStaff,
+        price: visitPrice,
       }),
     })
     const newVisit = await res.json()
@@ -113,6 +115,7 @@ export function CustomerDetail({
     setShowVisitForm(false)
     setVisitNotes('')
     setVisitStaff('')
+    setVisitPrice('')
   }
 
   async function deleteVisit(visitId: string) {
@@ -352,6 +355,18 @@ export function CustomerDetail({
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Prix (€)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={visitPrice}
+                    onChange={(e) => setVisitPrice(e.target.value)}
+                    placeholder="Ex: 75.00"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Notes</label>
                   <textarea
                     value={visitNotes}
@@ -400,6 +415,11 @@ export function CustomerDetail({
                           {SERVICE_LABELS[v.service] ?? v.service}
                         </span>
                         {v.staff && <span className="text-xs text-gray-400">· {v.staff}</span>}
+                        {v.price != null && (
+                          <span className="ml-auto text-sm font-semibold text-[#1D164E]">
+                            {v.price.toFixed(2)} €
+                          </span>
+                        )}
                       </div>
                       {v.notes && <p className="text-xs text-gray-500 mt-1">{v.notes}</p>}
                     </div>

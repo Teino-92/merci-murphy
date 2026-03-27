@@ -28,6 +28,7 @@ export interface Visit {
   date: string
   notes: string | null
   staff: string | null
+  price: number | null
 }
 
 export interface Lead {

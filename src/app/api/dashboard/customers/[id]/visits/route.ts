@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { service, date, notes, staff } = await req.json()
+  const { service, date, notes, staff, price } = await req.json()
   const { data, error } = await supabaseAdmin
     .from('visits')
     .insert({
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       date,
       notes: notes || null,
       staff: staff || null,
+      price: price != null && price !== '' ? Number(price) : null,
     })
     .select()
     .single()
