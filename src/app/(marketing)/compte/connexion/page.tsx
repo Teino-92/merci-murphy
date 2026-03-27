@@ -18,9 +18,9 @@ export default async function ConnexionPage({
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (user) redirect(searchParams.redirect ?? '/reservation')
+  if (user) redirect(searchParams.redirect ?? '/compte')
 
-  const redirectTo = searchParams.redirect ?? '/reservation'
+  const redirectTo = searchParams.redirect ?? '/compte'
 
   return (
     <>

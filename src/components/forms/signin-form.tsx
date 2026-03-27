@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { signIn } from '@/lib/auth-actions'
 
-export function SignInForm({ redirectTo = '/reservation' }: { redirectTo?: string }) {
+export function SignInForm({ redirectTo = '/compte' }: { redirectTo?: string }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
