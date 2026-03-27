@@ -1,8 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Phone, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 interface MobileCtaProps {
   phone?: string
@@ -12,6 +14,23 @@ interface MobileCtaProps {
 }
 
 export function MobileCta({ phone, type = 'reservation', label, calendlyUrl }: MobileCtaProps) {
+  const [canBook, setCanBook] = useState(false)
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient()
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) return
+      supabase
+        .from('profiles')
+        .select('can_book')
+        .eq('id', data.user.id)
+        .single()
+        .then(({ data: profile }) => {
+          if (profile?.can_book) setCanBook(true)
+        })
+    })
+  }, [])
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-charcoal/10 bg-cream p-4 lg:hidden">
       <div className="flex gap-3">
@@ -39,7 +58,7 @@ export function MobileCta({ phone, type = 'reservation', label, calendlyUrl }: M
             </a>
           </Button>
         )}
-        {type === 'reservation' && !calendlyUrl && (
+        {type === 'reservation' && !calendlyUrl && !canBook && (
           <Button
             asChild
             className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"

@@ -75,10 +75,11 @@ export function CalendlyCta({ calendlyUrl, label, mobile = false, phone }: Calen
     )
   }
 
+  // Desktop: Réserver (terracotta-dark) when can_book, hidden otherwise
   if (!canBook) return null
 
   return (
-    <Button asChild size="lg" className="bg-terracotta text-white hover:bg-terracotta/90">
+    <Button asChild size="lg" className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
       <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
         {label ?? 'Réserver en ligne'}
       </a>

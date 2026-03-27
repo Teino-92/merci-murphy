@@ -2,19 +2,18 @@ export const revalidate = 3600
 
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { urlFor } from '@/sanity/client'
 import { getProductsByHandles } from '@/lib/shopify'
 import { Section, Container } from '@/components/ui/section'
-import { Button } from '@/components/ui/button'
 import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
 import { TarifsToilettageTable } from '@/components/sections/tarifs-toilettage'
 import { ServiceShopTeaser } from '@/components/sections/service-shop-teaser'
 import { MobileCta } from '@/components/sections/mobile-cta'
+import { RappelButton } from '@/components/sections/rappel-button'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
 import { CalendlyCta } from '@/components/sections/calendly-cta'
@@ -247,13 +246,7 @@ export default async function ServicePage({ params }: Props) {
                 {service.calendlyUrl && (
                   <CalendlyCta calendlyUrl={service.calendlyUrl} label={service.cta?.label} />
                 )}
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90 hover:text-white"
-                >
-                  <Link href="/compte/inscription">Être rappelé·e</Link>
-                </Button>
+                <RappelButton />
               </div>
             </Reveal>
           </Container>
