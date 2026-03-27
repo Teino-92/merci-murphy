@@ -49,10 +49,18 @@ export function AuthButton() {
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-8 z-20 w-44 rounded-xl border border-charcoal/10 bg-cream shadow-lg">
+            <Link
+              href="/compte"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-terracotta transition-colors"
+            >
+              <User className="h-4 w-4" />
+              Mon compte
+            </Link>
             <form action={signOut}>
               <button
                 type="submit"
-                className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-red-500 transition-colors"
+                className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-red-500 transition-colors border-t border-charcoal/5"
               >
                 <LogOut className="h-4 w-4" />
                 Se déconnecter
