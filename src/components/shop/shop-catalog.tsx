@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { ProductCard } from '@/components/shop/product-card'
-import { Reveal } from '@/components/ui/reveal'
 import type { ShopifyCollection, ShopifyProduct } from '@/lib/shopify'
 
 interface ShopCatalogProps {
@@ -72,10 +71,8 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
 
       {products.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-          {products.map((product, i) => (
-            <Reveal key={product.id} delay={(i % 4) * 80}>
-              <ProductCard product={product} />
-            </Reveal>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (

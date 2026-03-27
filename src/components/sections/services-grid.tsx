@@ -64,7 +64,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
         </Reveal>
 
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {mainServices.map((service, i) => {
+          {mainServices.map((service) => {
             const imageSrc = service.image
               ? urlFor(service.image).width(600).height(400).url()
               : undefined
@@ -73,51 +73,49 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
               // In preview mode — SPA is a normal link to /services
               if (preview) {
                 return (
-                  <Reveal key={service._id} delay={i * 100}>
-                    <ServiceCard
-                      title={service.title}
-                      description={service.description}
-                      slug="__services__"
-                      imageSrc={imageSrc}
-                    />
-                  </Reveal>
+                  <ServiceCard
+                    key={service._id}
+                    title={service.title}
+                    description={service.description}
+                    slug="__services__"
+                    imageSrc={imageSrc}
+                  />
                 )
               }
 
               // In full mode — SPA expands sub-cards
               return (
                 <>
-                  <Reveal key={service._id} delay={i * 100}>
-                    <button
-                      onClick={() => setSpaOpen((o) => !o)}
-                      className="group w-full text-left block overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md"
-                    >
-                      <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
-                        {imageSrc && (
-                          <img
-                            src={imageSrc}
-                            alt={service.title}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  <button
+                    key={service._id}
+                    onClick={() => setSpaOpen((o) => !o)}
+                    className="group w-full text-left block overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
+                      {imageSrc && (
+                        <img
+                          src={imageSrc}
+                          alt={service.title}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end h-[160px]">
+                        <h3 className="font-display text-xl font-semibold text-cream line-clamp-2 min-h-[56px]">
+                          {service.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
+                          {service.description}
+                        </p>
+                        <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta">
+                          {spaOpen ? 'Fermer' : 'Découvrir'}
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-300 ${spaOpen ? 'rotate-180' : ''}`}
                           />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end h-[160px]">
-                          <h3 className="font-display text-xl font-semibold text-cream line-clamp-2 min-h-[56px]">
-                            {service.title}
-                          </h3>
-                          <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
-                            {service.description}
-                          </p>
-                          <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta">
-                            {spaOpen ? 'Fermer' : 'Découvrir'}
-                            <ChevronDown
-                              className={`h-4 w-4 transition-transform duration-300 ${spaOpen ? 'rotate-180' : ''}`}
-                            />
-                          </span>
-                        </div>
+                        </span>
                       </div>
-                    </button>
-                  </Reveal>
+                    </div>
+                  </button>
 
                   <AnimatePresence>
                     {spaOpen &&
@@ -147,14 +145,13 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             }
 
             return (
-              <Reveal key={service._id} delay={i * 100}>
-                <ServiceCard
-                  title={service.title}
-                  description={service.description}
-                  slug={service.slug.current}
-                  imageSrc={imageSrc}
-                />
-              </Reveal>
+              <ServiceCard
+                key={service._id}
+                title={service.title}
+                description={service.description}
+                slug={service.slug.current}
+                imageSrc={imageSrc}
+              />
             )
           })}
         </div>
