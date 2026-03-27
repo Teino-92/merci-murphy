@@ -5,6 +5,8 @@ import { Section, Container } from '@/components/ui/section'
 import { Leaf, Heart, Globe, RefreshCw } from 'lucide-react'
 import { ShopCatalog } from '@/components/shop/shop-catalog'
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Boutique éthique pour chiens à Paris',
   description:

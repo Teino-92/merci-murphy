@@ -14,10 +14,9 @@ import { PawStamp } from '@/components/ui/paw-stamp'
 
 interface NavbarProps {
   showCart?: boolean
-  isLoggedIn?: boolean
 }
 
-export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
+export function Navbar({ showCart = false }: NavbarProps) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
@@ -58,7 +57,7 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
 
         <div className="hidden items-center gap-3 lg:flex">
           {showCart && <CartIcon />}
-          <AuthButton isLoggedIn={isLoggedIn} />
+          <AuthButton />
           <Button asChild className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
             <Link href="/reservation">Réserver</Link>
           </Button>
@@ -67,7 +66,7 @@ export function Navbar({ showCart = false, isLoggedIn = false }: NavbarProps) {
         {/* Mobile right side */}
         <div className="flex items-center gap-2 lg:hidden">
           {showCart && <CartIcon />}
-          <AuthButton isLoggedIn={isLoggedIn} />
+          <AuthButton />
           <button
             onClick={() => setOpen(!open)}
             aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}

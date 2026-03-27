@@ -1,16 +1,10 @@
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
 
-export default async function MarketingLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createSupabaseServerClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Navbar isLoggedIn={!!user} />
+      <Navbar />
       <main>{children}</main>
       <Footer />
     </>

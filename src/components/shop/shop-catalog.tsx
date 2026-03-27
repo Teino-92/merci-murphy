@@ -34,8 +34,9 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
     })
 
-  const activeCollection = collections.find((c) => c.handle === activeHandle)
-  const products = activeCollection ? activeCollection.products.nodes : allProducts
+  const products = activeHandle
+    ? allProducts.filter((p) => p.collections.nodes.some((c) => c.handle === activeHandle))
+    : allProducts
 
   return (
     <>

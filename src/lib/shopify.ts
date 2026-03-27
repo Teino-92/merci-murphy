@@ -131,7 +131,7 @@ export async function getAllCollections(): Promise<ShopifyCollection[]> {
         nodes {
           id title handle description
           image { url altText width height }
-          products(first: 250, sortKey: BEST_SELLING) { nodes { ${PRODUCT_FRAGMENT} } }
+          products(first: 0) { nodes { id } }
         }
       }
     }`

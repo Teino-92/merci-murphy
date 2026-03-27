@@ -2,11 +2,20 @@
 
 import Link from 'next/link'
 import { User, LogOut } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth-actions'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
 
-export function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function AuthButton() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user)
+    })
+  }, [])
 
   if (!isLoggedIn) {
     return (
