@@ -81,6 +81,18 @@ export async function signUp(data: SignUpData) {
     return { success: false, error: `Erreur profil: ${profileError.message}` }
   }
 
+  // Insert dog row if dog info was provided
+  if (parsed.data.nom_chien) {
+    await supabaseAdmin.from('dogs').insert({
+      owner_id: authData.user.id,
+      name: parsed.data.nom_chien,
+      breed: parsed.data.race_chien ?? null,
+      age: parsed.data.age_chien ?? null,
+      poids: parsed.data.poids_chien ?? null,
+      etat_poil: parsed.data.etat_poil ?? null,
+    })
+  }
+
   // Welcome email
   const prenom = parsed.data.nom.split(' ')[0] ?? parsed.data.nom
   await resend.emails
