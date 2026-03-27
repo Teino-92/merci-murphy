@@ -34,8 +34,8 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
         <div className="px-6 py-8" style={{ backgroundColor: '#B5A89A' }}>
           {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-4">
-            <span className="block w-6 h-px bg-terracotta flex-shrink-0" />
-            <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-terracotta">
+            <span className="block w-6 h-px bg-terracotta-dark flex-shrink-0" />
+            <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-terracotta-dark">
               Paris · Toilettage &amp; Spa
             </span>
           </div>
