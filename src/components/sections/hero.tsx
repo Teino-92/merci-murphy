@@ -14,7 +14,7 @@ interface HeroProps {
   className?: string
 }
 
-export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
+export function Hero({ subtitle, imageSrc, className }: HeroProps) {
   return (
     <div className={cn('w-full overflow-hidden', className)} style={{ backgroundColor: '#B5A89A' }}>
       {/* Mobile — photo top, text below */}
@@ -40,7 +40,8 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
             </span>
           </div>
           <h1 className="font-display text-[7.5vw] font-normal leading-tight text-charcoal mb-4">
-            {title}
+            Toilettage et spa,{' '}
+            <em style={{ fontStyle: 'italic', color: '#8B5A3A' }}>crèche canine</em> et éducation
           </h1>
           <motion.p
             className="text-sm leading-relaxed text-charcoal/60 mb-6"
@@ -59,7 +60,7 @@ export function Hero({ title, subtitle, imageSrc, className }: HeroProps) {
             <Button
               asChild
               size="lg"
-              className="w-full bg-charcoal text-cream hover:bg-charcoal/90"
+              className="w-full bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
             >
               <Link href="/reservation">Prendre rendez-vous</Link>
             </Button>

@@ -277,7 +277,7 @@ export default async function ServicePage({ params }: Props) {
       />
 
       {/* Spacer for mobile CTA */}
-      <div className="h-20 lg:hidden" />
+      <div className="h-20 lg:hidden" style={{ backgroundColor: '#B5A89A' }} />
     </>
   )
 }
