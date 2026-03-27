@@ -34,14 +34,12 @@ export default async function ContactPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
         <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
-          <Reveal>
-            <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
-              Contact
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-              Une question ? N&apos;hésitez pas à nous écrire ou nous appeler.
-            </p>
-          </Reveal>
+          <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
+            Contact
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
+            Une question ? N&apos;hésitez pas à nous écrire ou nous appeler.
+          </p>
         </div>
       </div>
 

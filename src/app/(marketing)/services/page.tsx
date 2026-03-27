@@ -5,7 +5,6 @@ import { getTestimonials } from '@/sanity/queries/testimonials'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { TestimonialsSection } from '@/components/sections/testimonials-section'
 import { Section, Container } from '@/components/ui/section'
-import { Reveal } from '@/components/ui/reveal'
 
 export const metadata: Metadata = {
   title: 'Nos services',
@@ -30,15 +29,12 @@ export default async function ServicesPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
         <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
-          <Reveal>
-            <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
-              Nos services
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-              Toute l&apos;attention et l&apos;expertise que votre chien mérite, dans un lieu
-              unique.
-            </p>
-          </Reveal>
+          <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
+            Nos services
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
+            Toute l&apos;attention et l&apos;expertise que votre chien mérite, dans un lieu unique.
+          </p>
         </div>
       </div>
       {services.length > 0 ? (

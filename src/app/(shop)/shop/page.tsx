@@ -3,7 +3,6 @@ import Image from 'next/image'
 import { getAllCollections, getAllProducts } from '@/lib/shopify'
 import { Section, Container } from '@/components/ui/section'
 import { Leaf, Heart, Globe, RefreshCw } from 'lucide-react'
-import { Reveal } from '@/components/ui/reveal'
 import { ShopCatalog } from '@/components/shop/shop-catalog'
 
 export const metadata: Metadata = {
@@ -23,7 +22,7 @@ export default async function ShopPage() {
           <Container className="max-w-6xl">
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
               {/* Right — desktop only: boutique-hero full height */}
-              <Reveal className="hidden lg:block lg:order-2 lg:self-stretch">
+              <div className="hidden lg:block lg:order-2 lg:self-stretch">
                 <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
                   <Image
                     src="/boutique-hero.jpg"
@@ -33,10 +32,10 @@ export default async function ShopPage() {
                     sizes="33vw"
                   />
                 </div>
-              </Reveal>
+              </div>
 
               {/* Left — full text */}
-              <Reveal className="text-center lg:text-left lg:order-1">
+              <div className="text-center lg:text-left lg:order-1">
                 <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
                   Boutique éthique & éco-responsable pour chiens et chats
                 </h1>
@@ -105,7 +104,7 @@ export default async function ShopPage() {
                     sizes="100vw"
                   />
                 </div>
-              </Reveal>
+              </div>
             </div>
           </Container>
         </Section>

@@ -35,17 +35,15 @@ export default async function ConceptPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
         {/* Text — bottom-left */}
         <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
-          <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-widest text-terracotta mb-3">
-              Paris, France
-            </p>
-            <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl leading-tight drop-shadow-sm">
-              merci murphy®
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg max-w-md drop-shadow-sm">
-              ambassadeur d&apos;un art de vivre partagé entre l&apos;humain et son animal.
-            </p>
-          </Reveal>
+          <p className="text-xs font-semibold uppercase tracking-widest text-terracotta mb-3">
+            Paris, France
+          </p>
+          <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl leading-tight drop-shadow-sm">
+            merci murphy®
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg max-w-md drop-shadow-sm">
+            ambassadeur d&apos;un art de vivre partagé entre l&apos;humain et son animal.
+          </p>
         </div>
       </div>
 
