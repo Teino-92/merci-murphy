@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { MoreHorizontal } from 'lucide-react'
 import { DogForm } from '@/components/account/dog-form'
 import type { Dog } from '@/lib/auth-actions'
 
@@ -82,10 +83,10 @@ function DogSubCard({ dog, onEdit }: { dog: Dog; onEdit: () => void }) {
       </div>
       <button
         onClick={onEdit}
-        className="text-[#ccc] text-[18px] hover:text-[#8B5A3A] transition-colors flex-shrink-0"
+        className="p-1.5 rounded-lg text-[#999] hover:text-[#8B5A3A] hover:bg-[#f0ebe3] transition-colors flex-shrink-0"
         aria-label={`Modifier ${dog.name}`}
       >
-        ›
+        <MoreHorizontal className="w-5 h-5" />
       </button>
     </div>
   )
