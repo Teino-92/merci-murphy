@@ -15,7 +15,7 @@ import { ServiceShopTeaser } from '@/components/sections/service-shop-teaser'
 import { MobileCta } from '@/components/sections/mobile-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
-import { getProfile } from '@/lib/auth-actions'
+import { CalendlyCta } from '@/components/sections/calendly-cta'
 
 const BAINS_SHOP_HANDLES = [
   'shampoing',
@@ -78,13 +78,11 @@ export default async function ServicePage({ params }: Props) {
     params.slug === 'le-bain-en-libre-service-maison-poilus-r' ||
     params.slug === 'les-bains-en-libre-service-maison-poilus-r'
 
-  const [service, settings, profile, bainsProducts] = await Promise.all([
+  const [service, settings, bainsProducts] = await Promise.all([
     getServiceBySlug(params.slug),
     getSiteSettings(),
-    getProfile(),
     isBains ? getProductsByHandles(BAINS_SHOP_HANDLES) : Promise.resolve([]),
   ])
-  const canBook = profile?.can_book === true
 
   if (!service) notFound()
 
@@ -244,16 +242,8 @@ export default async function ServicePage({ params }: Props) {
                   : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                {service.calendlyUrl && canBook && (
-                  <Button
-                    asChild
-                    size="lg"
-                    className="bg-terracotta text-white hover:bg-terracotta/90"
-                  >
-                    <a href={service.calendlyUrl} target="_blank" rel="noopener noreferrer">
-                      {service.cta?.label ?? 'Réserver en ligne'}
-                    </a>
-                  </Button>
+                {service.calendlyUrl && (
+                  <CalendlyCta calendlyUrl={service.calendlyUrl} label={service.cta?.label} />
                 )}
                 <Button
                   asChild
@@ -269,12 +259,20 @@ export default async function ServicePage({ params }: Props) {
       </div>
 
       {/* Mobile sticky CTA */}
-      <MobileCta
-        phone={settings?.telephone}
-        type={service.cta?.type ?? 'reservation'}
-        label={service.cta?.label}
-        calendlyUrl={canBook ? (service.calendlyUrl ?? undefined) : undefined}
-      />
+      {service.calendlyUrl ? (
+        <CalendlyCta
+          mobile
+          calendlyUrl={service.calendlyUrl}
+          label={service.cta?.label}
+          phone={settings?.telephone}
+        />
+      ) : (
+        <MobileCta
+          phone={settings?.telephone}
+          type={service.cta?.type ?? 'reservation'}
+          label={service.cta?.label}
+        />
+      )}
 
       {/* Spacer for mobile CTA */}
       <div className="h-20 lg:hidden" style={{ backgroundColor: '#B5A89A' }} />
