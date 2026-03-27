@@ -56,9 +56,7 @@ export function Navbar({ showCart = false }: NavbarProps) {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <span className={showCart ? undefined : 'invisible pointer-events-none'}>
-            <CartIcon />
-          </span>
+          {showCart ? <CartIcon /> : <span className="w-9" />}
           <AuthButton />
           <Button asChild className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
             <Link href="/reservation">Réserver</Link>
@@ -67,9 +65,7 @@ export function Navbar({ showCart = false }: NavbarProps) {
 
         {/* Mobile right side */}
         <div className="flex items-center gap-2 lg:hidden">
-          <span className={showCart ? undefined : 'invisible pointer-events-none'}>
-            <CartIcon />
-          </span>
+          {showCart ? <CartIcon /> : <span className="w-9" />}
           <AuthButton />
           <button
             onClick={() => setOpen(!open)}
