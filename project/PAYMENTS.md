@@ -68,6 +68,7 @@ The team controls `can_book_online` and `grooming_duration` from the admin dashb
 9. Server confirms payment via webhook
    → Creates booking via Calendly Scheduling API (slot is now booked)
    → Creates lead in Supabase (status: confirmed)
+   → Creates visit row in Supabase (service, date, dog_id — price left null)
    → Sends confirmation email via Resend
 ```
 
@@ -177,10 +178,10 @@ Auth: Secret API key.
 
 ### POST /api/webhooks/sumup
 
-| Event                | Action                                                                    |
-| -------------------- | ------------------------------------------------------------------------- |
-| `checkout.completed` | Create Calendly booking, create lead (confirmed), send confirmation email |
-| `checkout.failed`    | Log — client already sees failure on SumUp redirect                       |
+| Event                | Action                                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------------------------- |
+| `checkout.completed` | Create Calendly booking, create lead (confirmed), create visit row (price: null), send confirmation email |
+| `checkout.failed`    | Log — client already sees failure on SumUp redirect                                                       |
 
 Security: validate SumUp webhook signature header.
 
@@ -229,6 +230,23 @@ Table of all dog profiles across all client accounts.
 - `notes` — internal free text (not visible to client)
 
 **RLS:** all reads and writes via service role (admin only — never exposed to clients).
+
+---
+
+## Visit row — auto-created on payment
+
+When `checkout.completed` fires, the webhook handler inserts a visit row immediately:
+
+```
+visits.service    = 'toilettage'
+visits.date       = scheduled_at (from Calendly booking response)
+visits.profile_id = client's auth user id
+visits.dog_id     = dog_id passed through the booking flow
+visits.price      = null  ← team fills this in after the service
+```
+
+The visit appears in the client's Mon Compte history from the day of the appointment.
+The team enters the final price in the dashboard after checkout.
 
 ---
 
