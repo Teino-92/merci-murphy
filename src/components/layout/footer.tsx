@@ -7,9 +7,6 @@ import { NewsletterForm } from '@/components/forms/newsletter-form'
 export function Footer() {
   return (
     <footer className="text-charcoal" style={{ backgroundColor: '#B5A89A' }}>
-      <div className="px-8 sm:px-12 lg:px-20">
-        <div className="border-t-2 border-charcoal/20" />
-      </div>
       {/* Newsletter band */}
       <div className="px-4 sm:px-6 lg:px-8">
         <Container className="py-5">
