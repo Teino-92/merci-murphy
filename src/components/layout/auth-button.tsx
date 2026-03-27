@@ -12,9 +12,12 @@ export function AuthButton() {
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
-    supabase.auth.getUser().then(({ data }) => {
-      setIsLoggedIn(!!data.user)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session)
     })
+    return () => subscription.unsubscribe()
   }, [])
 
   if (!isLoggedIn) {
