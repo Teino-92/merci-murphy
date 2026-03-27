@@ -169,3 +169,62 @@ export async function updateProfile(data: z.infer<typeof UpdateProfileSchema>) {
   if (error) return { success: false, error: 'Erreur lors de la mise à jour.' }
   return { success: true }
 }
+
+// ─── Dog types ────────────────────────────────────────────────────────────────
+
+export interface Dog {
+  id: string
+  owner_id: string
+  name: string
+  breed: string | null
+  age: string | null
+  poids: string | null
+  etat_poil: string | null
+  photo_url: string | null
+  can_book_online: boolean
+}
+
+// ─── Visit types ──────────────────────────────────────────────────────────────
+
+export interface Visit {
+  id: string
+  service: string
+  date: string
+  dog_id: string | null
+}
+
+// ─── Get dogs for current user ────────────────────────────────────────────────
+
+export async function getDogs(): Promise<Dog[]> {
+  const supabase = await createSupabaseServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data } = await supabase
+    .from('dogs')
+    .select('id, owner_id, name, breed, age, poids, etat_poil, photo_url, can_book_online')
+    .eq('owner_id', user.id)
+    .order('created_at', { ascending: true })
+
+  return data ?? []
+}
+
+// ─── Get visits for current user ─────────────────────────────────────────────
+
+export async function getVisits(): Promise<Visit[]> {
+  const supabase = await createSupabaseServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data } = await supabase
+    .from('visits')
+    .select('id, service, date, dog_id')
+    .eq('profile_id', user.id)
+    .order('date', { ascending: false })
+
+  return data ?? []
+}
