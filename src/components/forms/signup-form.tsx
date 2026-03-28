@@ -65,10 +65,10 @@ export function SignUpForm() {
         {STEPS.map((label, i) => (
           <div key={label} className="flex-1">
             <div
-              className={`h-1 rounded-full transition-colors ${i <= step ? 'bg-terracotta' : 'bg-charcoal/10'}`}
+              className={`h-1 rounded-full transition-colors ${i <= step ? 'bg-terracotta-dark' : 'bg-charcoal/10'}`}
             />
             <p
-              className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta' : 'text-charcoal/40'}`}
+              className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta-dark' : 'text-charcoal/40'}`}
             >
               {label}
             </p>
@@ -145,7 +145,10 @@ export function SignUpForm() {
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={next} className="w-full bg-terracotta text-white hover:bg-terracotta/90">
+          <Button
+            onClick={next}
+            className="w-full bg-terracotta-dark text-white hover:bg-terracotta/90"
+          >
             Continuer
           </Button>
         </div>
@@ -178,7 +181,7 @@ export function SignUpForm() {
             <Button
               onClick={next}
               disabled={!form.nom || !form.telephone}
-              className="flex-1 bg-terracotta text-white hover:bg-terracotta/90"
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta/90"
             >
               Continuer
             </Button>
@@ -218,14 +221,14 @@ export function SignUpForm() {
             <Button
               onClick={handleSubmit}
               disabled={loading || !form.email || !form.password}
-              className="flex-1 bg-terracotta text-white hover:bg-terracotta/90"
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta/90"
             >
               {loading ? 'Création…' : 'Créer mon compte'}
             </Button>
           </div>
           <p className="text-center text-sm text-charcoal/50">
             Déjà un compte ?{' '}
-            <Link href="/compte/connexion" className="text-terracotta hover:underline">
+            <Link href="/compte/connexion" className="text-terracotta-dark hover:underline">
               Se connecter
             </Link>
           </p>

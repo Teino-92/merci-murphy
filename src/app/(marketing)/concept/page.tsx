@@ -35,7 +35,7 @@ export default async function ConceptPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
         {/* Text — bottom-left */}
         <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-terracotta mb-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-terracotta-dark mb-3">
             Paris, France
           </p>
           <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl leading-tight drop-shadow-sm">
@@ -53,7 +53,7 @@ export default async function ConceptPage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
             <Reveal>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-terracotta mb-3">
+                <p className="text-xs font-semibold uppercase tracking-widest text-terracotta-dark mb-3">
                   Le concept
                 </p>
                 <h2 className="font-display text-3xl font-bold text-charcoal">

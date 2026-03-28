@@ -16,7 +16,7 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
 
   return (
     <div style={{ backgroundColor: '#B5A89A' }}>
-      <Section className="text-charcoal">
+      <Section className="text-charcoal pb-0">
         <Container>
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
             <div>
@@ -89,6 +89,9 @@ export function InfoPratiques({ settings }: InfoPratiquesProps) {
           </div>
         </Container>
       </Section>
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl border-t-2 border-charcoal/20" />
+      </div>
     </div>
   )
 }

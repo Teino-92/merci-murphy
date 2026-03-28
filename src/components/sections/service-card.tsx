@@ -41,7 +41,7 @@ export function ServiceCard({ title, description, slug, imageSrc, className }: S
           <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
             {description}
           </p>
-          <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta transition-all group-hover:gap-2">
+          <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta-dark transition-all group-hover:gap-2">
             En savoir plus <ArrowRight className="h-4 w-4" />
           </span>
         </div>

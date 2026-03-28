@@ -54,7 +54,7 @@ export function SignInForm({ redirectTo = '/compte' }: { redirectTo?: string }) 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-terracotta text-white hover:bg-terracotta/90"
+        className="w-full bg-terracotta-dark text-white hover:bg-terracotta/90"
       >
         {loading ? 'Connexion…' : 'Se connecter'}
       </Button>
@@ -65,7 +65,7 @@ export function SignInForm({ redirectTo = '/compte' }: { redirectTo?: string }) 
       </p>
       <p className="text-center text-sm text-charcoal/50">
         Pas encore de compte ?{' '}
-        <Link href="/compte/inscription" className="text-terracotta hover:underline">
+        <Link href="/compte/inscription" className="text-terracotta-dark hover:underline">
           Créer un compte
         </Link>
       </p>

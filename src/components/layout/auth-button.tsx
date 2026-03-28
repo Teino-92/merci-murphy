@@ -25,7 +25,7 @@ export function AuthButton() {
       <Link
         href="/compte/connexion"
         aria-label="Se connecter"
-        className="flex items-center gap-1.5 text-sm font-medium text-charcoal/70 hover:text-terracotta transition-colors"
+        className="flex items-center gap-1.5 text-sm font-medium text-charcoal/70 hover:text-terracotta-dark transition-colors"
       >
         <User className="h-4 w-4" aria-hidden="true" />
         <span className="hidden sm:inline" aria-hidden="true">
@@ -39,7 +39,7 @@ export function AuthButton() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 text-sm font-medium text-charcoal/70 hover:text-terracotta transition-colors"
+        className="flex items-center gap-1.5 text-sm font-medium text-charcoal/70 hover:text-terracotta-dark transition-colors"
       >
         <User className="h-4 w-4" />
         <span className="hidden sm:inline">Mon compte</span>
@@ -52,7 +52,7 @@ export function AuthButton() {
             <Link
               href="/compte"
               onClick={() => setOpen(false)}
-              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-terracotta transition-colors"
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-terracotta-dark transition-colors"
             >
               <User className="h-4 w-4" />
               Mon compte

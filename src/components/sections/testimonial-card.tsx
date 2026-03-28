@@ -18,7 +18,7 @@ export function TestimonialCard({ auteur, note, texte, service, className }: Tes
             key={i}
             className={cn(
               'h-4 w-4',
-              i < note ? 'fill-terracotta text-terracotta' : 'fill-charcoal/10 text-charcoal/10'
+              i < note ? 'fill-amber-400 text-amber-400' : 'fill-charcoal/10 text-charcoal/10'
             )}
           />
         ))}

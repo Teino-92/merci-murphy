@@ -74,7 +74,7 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
         <div className="relative flex flex-col justify-center px-14 py-14">
           <div>
             <div className="flex items-center gap-3 mb-7">
-              <span className="block w-7 h-px bg-terracotta flex-shrink-0" />
+              <span className="block w-7 h-px bg-terracotta-dark flex-shrink-0" />
               <span
                 className="text-[13px] font-semibold tracking-[0.18em] uppercase font-sans"
                 style={{ color: '#8B5A3A' }}
@@ -116,7 +116,7 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
               {SITE_CONFIG.phone && (
                 <a
                   href={`tel:${SITE_CONFIG.phone}`}
-                  className="text-[13px] text-charcoal/50 hover:text-charcoal transition-colors font-sans after:content-['→'] after:ml-1.5 after:text-terracotta"
+                  className="text-[13px] text-charcoal/50 hover:text-charcoal transition-colors font-sans after:content-['→'] after:ml-1.5 after:text-terracotta-dark"
                 >
                   Nous appeler
                 </a>

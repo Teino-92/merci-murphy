@@ -48,7 +48,7 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
               'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
               !activeHandle
                 ? 'border-terracotta-dark bg-terracotta-dark text-white'
-                : 'border-charcoal/20 text-charcoal hover:border-terracotta hover:text-terracotta'
+                : 'border-charcoal/20 text-charcoal hover:border-terracotta-dark hover:text-terracotta-dark'
             )}
           >
             Tout voir
@@ -61,7 +61,7 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
                 'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
                 activeHandle === c.handle
                   ? 'border-terracotta-dark bg-terracotta-dark text-white'
-                  : 'border-charcoal/20 text-charcoal hover:border-terracotta hover:text-terracotta'
+                  : 'border-charcoal/20 text-charcoal hover:border-terracotta-dark hover:text-terracotta-dark'
               )}
             >
               {c.title}

@@ -75,7 +75,7 @@ export default async function ProductPage({ params }: Props) {
         <Container>
           <Link
             href="/shop"
-            className="mb-8 inline-flex items-center gap-1 text-sm text-charcoal/50 hover:text-terracotta"
+            className="mb-8 inline-flex items-center gap-1 text-sm text-charcoal/50 hover:text-terracotta-dark"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour à la boutique
@@ -133,7 +133,7 @@ export default async function ProductPage({ params }: Props) {
               </h1>
 
               <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-2xl font-bold text-terracotta">
+                <span className="text-2xl font-bold text-terracotta-dark">
                   {formatPrice(firstVariant.price)}
                 </span>
                 {isOnSale && firstVariant.compareAtPrice && (
@@ -155,7 +155,7 @@ export default async function ProductPage({ params }: Props) {
                 {!firstVariant.availableForSale ? (
                   <p className="text-sm font-medium text-red-500">Rupture de stock</p>
                 ) : firstVariant.quantityAvailable <= 5 ? (
-                  <p className="text-sm font-medium text-terracotta">
+                  <p className="text-sm font-medium text-terracotta-dark">
                     Plus que {firstVariant.quantityAvailable} en stock
                   </p>
                 ) : (

@@ -18,7 +18,7 @@ export function TeamMemberCard({ nom, role, bio, photoSrc, className }: TeamMemb
         {photoSrc && <Image src={photoSrc} alt={nom} fill className="object-cover" />}
       </div>
       <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">{nom}</h3>
-      <p className="text-sm font-medium text-terracotta">{role}</p>
+      <p className="text-sm font-medium text-terracotta-dark">{role}</p>
       <p className="mt-2 text-sm leading-relaxed text-charcoal/60">{bio}</p>
     </div>
   )

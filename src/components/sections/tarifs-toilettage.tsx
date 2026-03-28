@@ -11,7 +11,7 @@ export function TarifsToilettageTable({ data }: Props) {
       {(data.note || data.surDevis) && (
         <div className="space-y-1">
           {data.note && <p className="text-sm text-charcoal/70">{data.note}</p>}
-          {data.surDevis && <p className="text-sm italic text-terracotta">{data.surDevis}</p>}
+          {data.surDevis && <p className="text-sm italic text-terracotta-dark">{data.surDevis}</p>}
         </div>
       )}
 
@@ -77,7 +77,7 @@ export function TarifsToilettageTable({ data }: Props) {
           {data.supplements.map((s, i) => (
             <div key={i} className="flex items-center justify-between px-5 py-3.5">
               <p className="text-sm text-charcoal">{s.label}</p>
-              <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta">{s.prix}</p>
+              <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">{s.prix}</p>
             </div>
           ))}
         </div>

@@ -30,7 +30,7 @@ export function FaqAccordion({ items }: FaqAccordionProps) {
             <span className="font-medium text-charcoal">{item.question}</span>
             <ChevronDown
               className={cn(
-                'ml-4 h-5 w-5 shrink-0 text-terracotta transition-transform duration-200',
+                'ml-4 h-5 w-5 shrink-0 text-terracotta-dark transition-transform duration-200',
                 open === i && 'rotate-180'
               )}
             />

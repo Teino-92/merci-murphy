@@ -26,7 +26,10 @@ export default function ConfidentialitePage() {
             </h2>
             <p>
               Le responsable du traitement des données collectées sur le site{' '}
-              <a href="https://www.mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="https://www.mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 www.mercimurphy.com
               </a>{' '}
               est :
@@ -43,7 +46,7 @@ export default function ConfidentialitePage() {
                 <span className="font-medium text-charcoal">Email :</span>{' '}
                 <a
                   href="mailto:bonjour@mercimurphy.com"
-                  className="text-terracotta hover:underline"
+                  className="text-terracotta-dark hover:underline"
                 >
                   bonjour@mercimurphy.com
                 </a>
@@ -191,7 +194,10 @@ export default function ConfidentialitePage() {
             </ul>
             <p className="mt-3">
               Pour exercer ces droits, contactez-nous à :{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>{' '}
               ou par courrier à Murphy Honsha, 18, rue Victor Massé, 75009 Paris — France.
@@ -202,7 +208,7 @@ export default function ConfidentialitePage() {
                 href="https://www.cnil.fr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-terracotta hover:underline"
+                className="text-terracotta-dark hover:underline"
               >
                 CNIL
               </a>{' '}
@@ -242,7 +248,7 @@ export default function ConfidentialitePage() {
                 <span className="font-medium text-charcoal">Email :</span>{' '}
                 <a
                   href="mailto:bonjour@mercimurphy.com"
-                  className="text-terracotta hover:underline"
+                  className="text-terracotta-dark hover:underline"
                 >
                   bonjour@mercimurphy.com
                 </a>

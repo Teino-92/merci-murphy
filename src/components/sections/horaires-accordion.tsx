@@ -28,7 +28,7 @@ export function HorairesAccordion({ groupes, variant = 'dark' }: HorairesAccordi
             </span>
             <ChevronDown
               className={cn(
-                'h-4 w-4 shrink-0 text-terracotta transition-transform duration-200',
+                'h-4 w-4 shrink-0 text-terracotta-dark transition-transform duration-200',
                 open === i && 'rotate-180'
               )}
             />

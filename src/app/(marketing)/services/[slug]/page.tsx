@@ -204,7 +204,7 @@ export default async function ServicePage({ params }: Props) {
                         <p className="mt-0.5 text-xs text-charcoal/40">{tarif.disclaimer}</p>
                       )}
                     </div>
-                    <p className="ml-4 shrink-0 font-semibold text-terracotta">{tarif.prix}</p>
+                    <p className="ml-4 shrink-0 font-semibold text-terracotta-dark">{tarif.prix}</p>
                   </div>
                 ))}
               </div>

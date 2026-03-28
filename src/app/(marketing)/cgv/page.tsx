@@ -22,7 +22,10 @@ export default function CGVPage() {
           </p>
           <p>
             Une question ? On est là ! Écrivez-nous à{' '}
-            <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+            <a
+              href="mailto:bonjour@mercimurphy.com"
+              className="text-terracotta-dark hover:underline"
+            >
               bonjour@mercimurphy.com
             </a>
             .
@@ -43,13 +46,16 @@ export default function CGVPage() {
             </p>
             <p className="mt-3">
               Les CGV s&apos;appliquent à toutes les commandes passées sur{' '}
-              <a href="https://www.mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="https://www.mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 www.mercimurphy.com
               </a>{' '}
               et/ou{' '}
               <a
                 href="https://mercimurphy.myshopify.com"
-                className="text-terracotta hover:underline"
+                className="text-terracotta-dark hover:underline"
               >
                 mercimurphy.myshopify.com
               </a>{' '}
@@ -116,7 +122,7 @@ export default function CGVPage() {
                 Par email :{' '}
                 <a
                   href="mailto:bonjour@mercimurphy.com"
-                  className="text-terracotta hover:underline"
+                  className="text-terracotta-dark hover:underline"
                 >
                   bonjour@mercimurphy.com
                 </a>
@@ -173,7 +179,10 @@ export default function CGVPage() {
             <p className="mt-3">
               Pour toute question relative au suivi d&apos;une commande, le client peut envoyer un
               mail à{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>
               .
@@ -232,7 +241,10 @@ export default function CGVPage() {
             </p>
             <p className="mt-3">
               Toute réclamation doit être adressée à{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>{' '}
               ou par courrier à Murphy Honsha, 18 rue Victor Massé, 75009 Paris — France, le jour
@@ -247,7 +259,10 @@ export default function CGVPage() {
             <p>
               En cas de produit non conforme, vous pourrez formuler vos réclamations auprès de notre
               service client (
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>
               ). En cas de vice apparent ou de non-conformité dûment constaté, le client pourra
@@ -272,7 +287,10 @@ export default function CGVPage() {
             </p>
             <p className="mt-3">
               La demande de retour peut s&apos;effectuer en contactant Murphy Honsha par email à{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>
               . Murphy Honsha s&apos;engage à rembourser le client dans un délai de 15 jours ouvrés
@@ -299,7 +317,7 @@ export default function CGVPage() {
             <p>
               Pour en savoir plus sur la manière dont nous traitons vos données, rendez-vous sur
               notre{' '}
-              <a href="/confidentialite" className="text-terracotta hover:underline">
+              <a href="/confidentialite" className="text-terracotta-dark hover:underline">
                 Politique de confidentialité
               </a>
               .
@@ -354,7 +372,10 @@ export default function CGVPage() {
             <p className="mt-3">
               Le client peut ouvrir un litige en adressant une demande écrite à Murphy Honsha, 18
               rue Victor Massé, 75009 Paris, ou par email à{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>
               .
@@ -367,7 +388,7 @@ export default function CGVPage() {
                 href="https://ec.europa.eu/consumers/odr/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-terracotta hover:underline"
+                className="text-terracotta-dark hover:underline"
               >
                 ec.europa.eu/consumers/odr
               </a>

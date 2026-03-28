@@ -55,7 +55,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             {preview && (
               <Link
                 href="/services"
-                className="flex items-center gap-1 text-sm font-medium text-terracotta-dark hover:gap-2 transition-all shrink-0"
+                className="flex items-center gap-1 text-sm font-medium text-terracotta-dark-dark hover:gap-2 transition-all shrink-0"
               >
                 Voir tout <ArrowRight className="h-4 w-4" />
               </Link>
@@ -109,7 +109,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                         <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
                           {service.description}
                         </p>
-                        <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta">
+                        <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta-dark">
                           {spaOpen ? 'Fermer' : 'Découvrir'}
                           <ChevronDown
                             className={`h-4 w-4 transition-transform duration-300 ${spaOpen ? 'rotate-180' : ''}`}

@@ -27,7 +27,7 @@ export function AddToCart({ variant }: AddToCartProps) {
         <button
           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
           disabled={quantity <= 1 || isLoading}
-          className="px-3 py-3 text-charcoal hover:text-terracotta disabled:opacity-30 transition-colors"
+          className="px-3 py-3 text-charcoal hover:text-terracotta-dark disabled:opacity-30 transition-colors"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -35,7 +35,7 @@ export function AddToCart({ variant }: AddToCartProps) {
         <button
           onClick={() => setQuantity((q) => q + 1)}
           disabled={isLoading}
-          className="px-3 py-3 text-charcoal hover:text-terracotta disabled:opacity-30 transition-colors"
+          className="px-3 py-3 text-charcoal hover:text-terracotta-dark disabled:opacity-30 transition-colors"
         >
           <Plus className="h-4 w-4" />
         </button>

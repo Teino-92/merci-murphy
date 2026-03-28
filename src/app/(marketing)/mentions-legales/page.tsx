@@ -43,7 +43,10 @@ export default function MentionsLegalesPage() {
               Vous disposez d&apos;un droit d&apos;accès, de rectification et de suppression des
               données personnelles vous concernant. Pour exercer ce droit, vous pouvez nous
               contacter à l&apos;adresse suivante :{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>
               .
@@ -96,7 +99,10 @@ export default function MentionsLegalesPage() {
             <p>
               Pour toute question relative aux mentions légales, vous pouvez nous contacter à
               l&apos;adresse suivante :{' '}
-              <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta hover:underline">
+              <a
+                href="mailto:bonjour@mercimurphy.com"
+                className="text-terracotta-dark hover:underline"
+              >
                 bonjour@mercimurphy.com
               </a>
               .

@@ -87,7 +87,7 @@ export function CartDrawer() {
                             : removeItem(line.id)
                         }
                         disabled={isLoading}
-                        className="rounded-full border border-charcoal/20 p-1 text-charcoal hover:border-terracotta hover:text-terracotta transition-colors disabled:opacity-40"
+                        className="rounded-full border border-charcoal/20 p-1 text-charcoal hover:border-terracotta-dark hover:text-terracotta-dark transition-colors disabled:opacity-40"
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
@@ -95,7 +95,7 @@ export function CartDrawer() {
                       <button
                         onClick={() => updateItem(line.id, line.quantity + 1)}
                         disabled={isLoading}
-                        className="rounded-full border border-charcoal/20 p-1 text-charcoal hover:border-terracotta hover:text-terracotta transition-colors disabled:opacity-40"
+                        className="rounded-full border border-charcoal/20 p-1 text-charcoal hover:border-terracotta-dark hover:text-terracotta-dark transition-colors disabled:opacity-40"
                       >
                         <Plus className="h-3.5 w-3.5" />
                       </button>

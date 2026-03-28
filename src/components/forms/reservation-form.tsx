@@ -95,7 +95,7 @@ export function ReservationForm({
         {STEPS.map((label, i) => (
           <div key={label} className="flex-1">
             <div
-              className={`h-1 rounded-full transition-colors ${i <= step ? 'bg-terracotta' : 'bg-charcoal/10'}`}
+              className={`h-1 rounded-full transition-colors ${i <= step ? 'bg-terracotta-dark' : 'bg-charcoal/10'}`}
             />
             <p
               className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta-dark' : 'text-charcoal/40'}`}
