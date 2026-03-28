@@ -87,7 +87,9 @@ export default async function ServicePage({ params }: Props) {
 
   if (!service) notFound()
 
-  const imageUrl = service.image ? urlFor(service.image).width(1600).height(800).url() : null
+  const imageUrl = service.image
+    ? urlFor(service.image).width(1200).height(600).auto('format').quality(80).url()
+    : null
 
   return (
     <>
@@ -99,6 +101,7 @@ export default async function ServicePage({ params }: Props) {
             alt={service.title}
             fill
             priority
+            sizes="100vw"
             className="object-cover opacity-60"
           />
         )}

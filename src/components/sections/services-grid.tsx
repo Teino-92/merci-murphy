@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import { ServiceCard } from './service-card'
 import { Section, Container } from '@/components/ui/section'
@@ -66,7 +66,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {mainServices.map((service) => {
             const imageSrc = service.image
-              ? urlFor(service.image).width(600).height(400).url()
+              ? urlFor(service.image).width(600).height(400).auto('format').quality(80).url()
               : undefined
 
             if (service.slug.current === SPA_SLUG) {
@@ -93,10 +93,12 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                   >
                     <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl">
                       {imageSrc && (
-                        <img
+                        <Image
                           src={imageSrc}
                           alt={service.title}
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
@@ -117,29 +119,30 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                     </div>
                   </button>
 
-                  <AnimatePresence>
-                    {spaOpen &&
-                      spaChildren.map((child, j) => (
-                        <motion.div
-                          key={child._id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 20 }}
-                          transition={{ duration: 0.25, ease: 'easeOut', delay: j * 0.08 }}
-                        >
-                          <ServiceCard
-                            title={child.title}
-                            description={child.description}
-                            slug={child.slug.current}
-                            imageSrc={
-                              child.image
-                                ? urlFor(child.image).width(600).height(400).url()
-                                : undefined
-                            }
-                          />
-                        </motion.div>
-                      ))}
-                  </AnimatePresence>
+                  {spaOpen &&
+                    spaChildren.map((child, j) => (
+                      <div
+                        key={child._id}
+                        className="reveal-anim"
+                        style={{ animationDelay: `${j * 80}ms`, animationPlayState: 'running' }}
+                      >
+                        <ServiceCard
+                          title={child.title}
+                          description={child.description}
+                          slug={child.slug.current}
+                          imageSrc={
+                            child.image
+                              ? urlFor(child.image)
+                                  .width(600)
+                                  .height(400)
+                                  .auto('format')
+                                  .quality(80)
+                                  .url()
+                              : undefined
+                          }
+                        />
+                      </div>
+                    ))}
                 </>
               )
             }

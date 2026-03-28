@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 
 interface RevealProps {
@@ -11,16 +11,34 @@ interface RevealProps {
 }
 
 export function Reveal({ children, className, delay = 0, style }: RevealProps) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.style.animationPlayState = 'running'
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '-50px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <motion.div
-      className={cn(className)}
-      style={style}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, ease: 'easeOut', delay: delay / 1000 }}
+    <div
+      ref={ref}
+      className={cn('reveal-anim', className)}
+      style={{
+        ...style,
+        animationDelay: delay ? `${delay}ms` : undefined,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }

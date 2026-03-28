@@ -267,7 +267,14 @@ export default async function ConceptPage() {
                     role={member.role}
                     bio={member.bio}
                     photoSrc={
-                      member.photo ? urlFor(member.photo).width(400).height(400).url() : undefined
+                      member.photo
+                        ? urlFor(member.photo)
+                            .width(400)
+                            .height(400)
+                            .auto('format')
+                            .quality(80)
+                            .url()
+                        : undefined
                     }
                   />
                 </Reveal>

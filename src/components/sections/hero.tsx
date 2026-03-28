@@ -1,8 +1,5 @@
-'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { SITE_CONFIG } from '@/config/site'
 import { cn } from '@/lib/utils'
@@ -31,7 +28,6 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
           </div>
         )}
         <div className="px-6 py-8" style={{ backgroundColor: '#B5A89A' }}>
-          {/* Eyebrow */}
           <div className="flex items-center gap-3 mb-4">
             <span className="block w-6 h-px bg-terracotta-dark flex-shrink-0" />
             <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-terracotta-dark">
@@ -42,19 +38,15 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
             Toilettage et spa,{' '}
             <em style={{ fontStyle: 'italic', color: '#8B5A3A' }}>crèche canine</em> et éducation
           </h1>
-          <motion.p
-            className="text-sm leading-relaxed text-charcoal/60 mb-6"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+          <p
+            className="text-sm leading-relaxed text-charcoal/60 mb-6 reveal-anim"
+            style={{ animationDelay: '100ms', animationPlayState: 'running' }}
           >
             {subtitle}
-          </motion.p>
-          <motion.div
-            className="flex flex-col gap-3"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
+          </p>
+          <div
+            className="flex flex-col gap-3 reveal-anim"
+            style={{ animationDelay: '250ms', animationPlayState: 'running' }}
           >
             <Button
               asChild
@@ -73,15 +65,13 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
                 <a href={`tel:${SITE_CONFIG.phone}`}>Nous appeler →</a>
               </Button>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Desktop — white split */}
+      {/* Desktop — split */}
       <div className="hidden lg:grid lg:grid-cols-[48%_52%] lg:min-h-[88vh]">
-        {/* Left panel */}
         <div className="relative flex flex-col justify-center px-14 py-14">
-          {/* Top: eyebrow + title */}
           <div>
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-7 h-px bg-terracotta flex-shrink-0" />
@@ -101,25 +91,20 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
             </h1>
           </div>
 
-          {/* Bottom: divider + subtitle + CTAs */}
           <div className="mt-10">
             <div
               className="w-12 h-px mb-5"
               style={{ background: 'linear-gradient(to right, #C4845A, transparent)' }}
             />
-            <motion.p
-              className="text-[18px] leading-[1.7] text-charcoal/60 mb-8 max-w-[400px] font-sans"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+            <p
+              className="text-[18px] leading-[1.7] text-charcoal/60 mb-8 max-w-[400px] font-sans reveal-anim"
+              style={{ animationDelay: '100ms', animationPlayState: 'running' }}
             >
               {subtitle}
-            </motion.p>
-            <motion.div
-              className="flex items-center gap-6"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut', delay: 0.25 }}
+            </p>
+            <div
+              className="flex items-center gap-6 reveal-anim"
+              style={{ animationDelay: '250ms', animationPlayState: 'running' }}
             >
               <Button
                 asChild
@@ -136,10 +121,9 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
                   Nous appeler
                 </a>
               )}
-            </motion.div>
+            </div>
           </div>
 
-          {/* Vertical rule */}
           <div
             className="absolute right-0 top-12 bottom-12 w-px"
             style={{
@@ -149,7 +133,6 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
           />
         </div>
 
-        {/* Right panel — photo */}
         {imageSrc && (
           <div className="relative overflow-hidden" style={{ backgroundColor: '#B5A89A' }}>
             <Image
