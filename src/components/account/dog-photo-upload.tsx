@@ -22,7 +22,6 @@ export function DogPhotoUpload({ currentUrl, dogName, onUpload }: DogPhotoUpload
       const formData = new FormData()
       formData.append('file', file)
       formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!)
-      formData.append('folder', 'dogs')
 
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -38,19 +37,26 @@ export function DogPhotoUpload({ currentUrl, dogName, onUpload }: DogPhotoUpload
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => inputRef.current?.click()}
-      className="relative w-[60px] h-[60px] rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center text-2xl"
-      style={{ backgroundColor: '#e8dece' }}
-      disabled={uploading}
-      title="Changer la photo"
-    >
-      {currentUrl ? (
-        <Image src={currentUrl} alt={dogName} fill className="object-cover" sizes="60px" />
-      ) : (
-        <span>{uploading ? '⏳' : '🐶'}</span>
-      )}
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="relative w-[60px] h-[60px] rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center text-2xl"
+        style={{ backgroundColor: '#e8dece' }}
+        disabled={uploading}
+        title="Changer la photo"
+      >
+        {currentUrl ? (
+          <Image src={currentUrl} alt={dogName} fill className="object-cover" sizes="60px" />
+        ) : (
+          <span>{uploading ? '⏳' : '🐶'}</span>
+        )}
+        {uploading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full">
+            <span className="text-lg">⏳</span>
+          </div>
+        )}
+      </button>
       <input
         ref={inputRef}
         type="file"
@@ -58,6 +64,6 @@ export function DogPhotoUpload({ currentUrl, dogName, onUpload }: DogPhotoUpload
         className="hidden"
         onChange={handleFileChange}
       />
-    </button>
+    </div>
   )
 }
