@@ -21,8 +21,10 @@ export function Footer() {
         </Container>
       </div>
 
-      <div className="px-8 sm:px-12 lg:px-20">
-        <div className="border-t-2 border-charcoal/20" />
+      <div className="px-4 sm:px-6 lg:px-8">
+        <Container>
+          <div className="border-t-2 border-charcoal/20" />
+        </Container>
       </div>
       <div className="px-4 sm:px-6 lg:px-8">
         <Container className="py-8">

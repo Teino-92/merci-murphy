@@ -275,8 +275,8 @@ export default async function ServicePage({ params }: Props) {
       {/* Spacer for mobile CTA + divider before footer (same bg color) */}
       <div style={{ backgroundColor: '#B5A89A' }}>
         <div className="h-20 lg:hidden" />
-        <div className="px-8 sm:px-12 lg:px-20">
-          <div className="border-t-2 border-charcoal/20" />
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-7xl border-t-2 border-charcoal/20" />
         </div>
       </div>
     </>
