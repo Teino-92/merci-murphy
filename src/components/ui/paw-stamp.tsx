@@ -14,7 +14,9 @@ export function PawStamp({ active, className, inline }: PawStampProps) {
       aria-hidden
       className={cn(
         'pointer-events-none transition-all duration-300',
-        inline ? 'inline-flex items-center ml-2 shrink-0' : 'absolute bottom-1.5 -right-9',
+        inline
+          ? 'inline-flex items-center ml-2 shrink-0 -translate-y-2'
+          : 'absolute bottom-6 sm:bottom-1.5 -right-9',
         active
           ? 'opacity-100 scale-100'
           : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100',
