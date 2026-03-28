@@ -1,3 +1,5 @@
+export const revalidate = 3600
+
 import { Hero } from '@/components/sections/hero'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { Values } from '@/components/sections/values'

@@ -1,3 +1,5 @@
+export const revalidate = 3600
+
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
