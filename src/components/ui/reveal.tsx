@@ -1,3 +1,6 @@
+'use client'
+
+import { useGsapReveal } from '@/hooks/use-gsap-reveal'
 import { cn } from '@/lib/utils'
 
 interface RevealProps {
@@ -8,14 +11,10 @@ interface RevealProps {
 }
 
 export function Reveal({ children, className, delay = 0, style }: RevealProps) {
+  const ref = useGsapReveal(delay)
+
   return (
-    <div
-      className={cn('reveal-anim', className)}
-      style={{
-        ...style,
-        animationDelay: delay ? `${delay}ms` : undefined,
-      }}
-    >
+    <div ref={ref} className={cn(className)} style={{ ...style, opacity: 0 }}>
       {children}
     </div>
   )
