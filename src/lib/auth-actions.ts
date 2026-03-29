@@ -21,6 +21,7 @@ export interface Profile {
   poids_chien: string | null
   etat_poil: string | null
   can_book: boolean
+  newsletter_subscribed: boolean
 }
 
 // ─── Sign up ─────────────────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ const SignUpSchema = z.object({
   age_chien: z.string().optional(),
   poids_chien: z.string().optional(),
   etat_poil: z.string().optional(),
+  newsletter_subscribed: z.boolean().optional(),
 })
 
 export type SignUpData = z.infer<typeof SignUpSchema>
@@ -65,6 +67,8 @@ export async function signUp(data: SignUpData) {
     return { success: false, error: 'Erreur lors de la création du compte.' }
   }
 
+  const newsletterSubscribed = parsed.data.newsletter_subscribed ?? false
+
   const { error: profileError } = await supabaseAdmin.from('profiles').insert({
     id: authData.user.id,
     nom: parsed.data.nom,
@@ -74,6 +78,7 @@ export async function signUp(data: SignUpData) {
     age_chien: parsed.data.age_chien ?? null,
     poids_chien: parsed.data.poids_chien ?? null,
     etat_poil: parsed.data.etat_poil ?? null,
+    newsletter_subscribed: newsletterSubscribed,
   })
 
   if (profileError) {
@@ -90,6 +95,15 @@ export async function signUp(data: SignUpData) {
       poids: parsed.data.poids_chien ?? null,
       etat_poil: parsed.data.etat_poil ?? null,
     })
+  }
+
+  // Subscribe to newsletter if opted in
+  if (newsletterSubscribed) {
+    await Promise.resolve(
+      supabaseAdmin
+        .from('newsletter_subscribers')
+        .upsert({ email: parsed.data.email, active: true }, { onConflict: 'email' })
+    ).catch(() => {})
   }
 
   // Welcome email
@@ -181,6 +195,41 @@ export async function updateProfile(data: z.infer<typeof UpdateProfileSchema>) {
   return { success: true }
 }
 
+// ─── Update newsletter subscription ──────────────────────────────────────────
+
+export async function updateNewsletter(subscribed: boolean) {
+  const supabase = await createSupabaseServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Non authentifié.' }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ newsletter_subscribed: subscribed })
+    .eq('id', user.id)
+
+  if (error) return { success: false, error: 'Erreur lors de la mise à jour.' }
+
+  // Sync with newsletter_subscribers table
+  if (subscribed) {
+    await Promise.resolve(
+      supabaseAdmin
+        .from('newsletter_subscribers')
+        .upsert({ email: user.email, active: true }, { onConflict: 'email' })
+    ).catch(() => {})
+  } else {
+    await Promise.resolve(
+      supabaseAdmin
+        .from('newsletter_subscribers')
+        .update({ active: false })
+        .eq('email', user.email!)
+    ).catch(() => {})
+  }
+
+  return { success: true }
+}
+
 // ─── Dog types ────────────────────────────────────────────────────────────────
 
 export interface Dog {
@@ -192,7 +241,6 @@ export interface Dog {
   poids: string | null
   etat_poil: string | null
   photo_url: string | null
-  can_book_online: boolean
 }
 
 // ─── Visit types ──────────────────────────────────────────────────────────────
@@ -215,7 +263,7 @@ export async function getDogs(): Promise<Dog[]> {
 
   const { data } = await supabase
     .from('dogs')
-    .select('id, owner_id, name, breed, age, poids, etat_poil, photo_url, can_book_online')
+    .select('id, owner_id, name, breed, age, poids, etat_poil, photo_url')
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
 

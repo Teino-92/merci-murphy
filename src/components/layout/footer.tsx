@@ -37,7 +37,7 @@ export function Footer() {
                 width={280}
                 height={96}
                 loading="lazy"
-                className="h-9 w-auto brightness-0"
+                className="h-9 w-auto brightness-0 opacity-80"
               />
               <p className="mt-3 text-sm text-charcoal/60">
                 Connecting pets (cats & dogs) wellness and city lifestyle.

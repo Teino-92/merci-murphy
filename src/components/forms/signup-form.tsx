@@ -25,6 +25,7 @@ export function SignUpForm() {
   const [done, setDone] = useState(false)
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
+  const [newsletter, setNewsletter] = useState(true)
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
@@ -34,7 +35,7 @@ export function SignUpForm() {
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
-    const result = await signUp(form as SignUpData)
+    const result = await signUp({ ...(form as SignUpData), newsletter_subscribed: newsletter })
     setLoading(false)
     if (result.success) {
       setDone(true)
@@ -213,6 +214,17 @@ export function SignUpForm() {
               8 caractères minimum · majuscule, minuscule et chiffre requis
             </p>
           </div>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={newsletter}
+              onChange={(e) => setNewsletter(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-charcoal/30 accent-[#8B5A3A]"
+            />
+            <span className="text-xs text-charcoal/60 leading-relaxed">
+              Je souhaite recevoir les actualités et offres de merci murphy® par email.
+            </span>
+          </label>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <div className="flex gap-3">
             <Button variant="outline" onClick={prev} className="flex-1">

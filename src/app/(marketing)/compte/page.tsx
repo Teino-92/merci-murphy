@@ -30,19 +30,17 @@ export default async function ComptePage() {
     year: 'numeric',
   })
 
-  const canBook = dogs.some((d) => d.can_book_online)
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f5f0eb' }}>
       <div className="mx-auto max-w-[480px] px-4 py-8 pb-20">
         <AccountWelcome
           prenom={profile.nom.split(' ')[0]}
           memberSince={memberSince}
-          canBook={canBook}
+          canBook={profile.can_book}
         />
         <ProfileCard profile={profile} email={user.email ?? ''} />
         <DogsCard dogs={dogs} />
-        {canBook && <BookingCta />}
+        {profile.can_book && <BookingCta />}
         <VisitTimeline visits={visits} dogs={dogs} />
       </div>
     </div>

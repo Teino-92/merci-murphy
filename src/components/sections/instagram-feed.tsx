@@ -39,7 +39,7 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
             href="https://instagram.com/mercimurphy"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm font-medium text-terracotta-dark hover:gap-2.5 transition-all"
+            className="flex items-center gap-1.5 text-sm font-medium text-cream hover:gap-2.5 transition-all"
           >
             <Instagram className="h-4 w-4" />
             Nous suivre

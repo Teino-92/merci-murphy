@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { updateProfile } from '@/lib/auth-actions'
+import { updateProfile, updateNewsletter } from '@/lib/auth-actions'
 import type { Profile } from '@/lib/auth-actions'
 
 interface ProfileCardProps {
@@ -17,6 +17,10 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
   const [telephone, setTelephone] = useState(profile.telephone)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(
+    profile.newsletter_subscribed ?? false
+  )
+  const [newsletterLoading, setNewsletterLoading] = useState(false)
 
   const handleSave = async () => {
     setLoading(true)
@@ -28,6 +32,14 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
     } else {
       setError(result.error ?? 'Erreur lors de la mise à jour.')
     }
+  }
+
+  const handleNewsletterToggle = async () => {
+    setNewsletterLoading(true)
+    const newValue = !newsletterSubscribed
+    const result = await updateNewsletter(newValue)
+    setNewsletterLoading(false)
+    if (result.success) setNewsletterSubscribed(newValue)
   }
 
   return (
@@ -89,6 +101,24 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
           <InfoRow label="Nom" value={profile.nom} />
           <InfoRow label="Téléphone" value={profile.telephone} />
           <InfoRow label="Email" value={email} />
+          <div className="flex justify-between items-center py-2.5">
+            <span className="text-[13px] text-[#888]">Newsletter</span>
+            <button
+              onClick={handleNewsletterToggle}
+              disabled={newsletterLoading}
+              className={`relative w-10 h-5.5 rounded-full transition-colors duration-200 ${
+                newsletterSubscribed ? 'bg-[#8B5A3A]' : 'bg-[#e0d8ce]'
+              }`}
+              style={{ height: '22px', width: '40px' }}
+              aria-label="Toggle newsletter"
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 w-[18px] h-[18px] rounded-full bg-white shadow transition-transform duration-200 ${
+                  newsletterSubscribed ? 'translate-x-[18px]' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
         </>
       )}
     </div>
