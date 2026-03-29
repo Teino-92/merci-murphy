@@ -17,7 +17,8 @@ const SPA_CHILDREN_SLUGS = [
   'balneo-maison-poilus-r',
   'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
 ]
-const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'l-education']
+const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'l-education', 'l-osteopathie']
+const MOBILE_ONLY_PREVIEW_SLUGS = ['l-osteopathie']
 
 interface ServicesGridProps {
   services: ServiceSummary[]
@@ -63,7 +64,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {mainServices.map((service) => {
             const imageSrc = service.image
               ? urlFor(service.image).width(600).height(400).auto('format').quality(80).url()
@@ -102,11 +103,11 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end h-[160px]">
-                        <h3 className="font-display text-xl font-semibold text-cream line-clamp-2 min-h-[56px]">
+                      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 flex flex-col justify-end h-[120px] sm:h-[160px]">
+                        <h3 className="font-display text-base sm:text-xl font-semibold text-cream line-clamp-2 min-h-[40px] sm:min-h-[56px]">
                           {service.title}
                         </h3>
-                        <p className="mt-1 text-sm leading-relaxed text-cream/70 line-clamp-2 min-h-[40px]">
+                        <p className="mt-1 text-xs sm:text-sm leading-relaxed text-cream/70 line-clamp-2 hidden sm:block min-h-[40px]">
                           {service.description}
                         </p>
                         <span className="mt-3 flex items-center gap-1 text-sm font-medium text-terracotta-dark">
@@ -147,6 +148,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
               )
             }
 
+            const mobileOnly = preview && MOBILE_ONLY_PREVIEW_SLUGS.includes(service.slug.current)
             return (
               <ServiceCard
                 key={service._id}
@@ -154,6 +156,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                 description={service.description}
                 slug={service.slug.current}
                 imageSrc={imageSrc}
+                className={mobileOnly ? 'sm:hidden' : undefined}
               />
             )
           })}
