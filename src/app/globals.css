@@ -15,9 +15,16 @@
   }
 
   .reveal-anim {
-    opacity: 0;
-    animation: reveal-in 0.5s ease-out forwards;
-    animation-play-state: paused;
+    opacity: 1;
+  }
+
+  @supports (animation-timeline: view()) {
+    .reveal-anim {
+      opacity: 0;
+      animation: reveal-in 0.5s ease-out forwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
   }
 }
 
