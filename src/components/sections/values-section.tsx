@@ -54,6 +54,7 @@ const VALUES = [
   {
     icon: Recycle,
     photo: '/valeurs-4.jpg',
+    photoMobile: '/valeurs-4-mobile.jpg',
     photoAlt: "L'ecoshop merci murphy® — consommer autrement",
     photoContain: true,
     text: (
@@ -107,10 +108,10 @@ export function ValuesSection() {
             {/* Card */}
             <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
               <Image
-                src={value.photo}
+                src={'photoMobile' in value && value.photoMobile ? value.photoMobile : value.photo}
                 alt={value.photoAlt}
                 fill
-                className={`${value.photoContain ? 'object-contain' : 'object-cover object-center'}`}
+                className="object-cover object-center"
                 sizes="100vw"
               />
               {/* Gradient overlay */}
@@ -121,7 +122,9 @@ export function ValuesSection() {
                   <Icon className="h-5 w-5 text-terracotta-dark shrink-0" />
                   <div className="h-px flex-1 bg-terracotta-dark/60" />
                 </div>
-                <div className="text-cream/90 text-sm leading-relaxed">{value.text}</div>
+                <div className="text-sm leading-relaxed [&_p]:!text-[#B5A89A] [&_span]:!text-[#B5A89A]">
+                  {value.text}
+                </div>
               </div>
             </div>
 
