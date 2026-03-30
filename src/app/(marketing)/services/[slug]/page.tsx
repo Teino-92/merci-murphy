@@ -111,7 +111,7 @@ export default async function ServicePage({ params }: Props) {
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-60"
+            className={`object-cover opacity-60 ${params.slug === 'le-toilettage-maison-poilus-r' ? 'object-[center_30%]' : 'object-center'}`}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
