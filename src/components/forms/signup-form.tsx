@@ -127,18 +127,11 @@ export function SignUpForm() {
                 <SelectValue placeholder="Âge de votre chien" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="moins-de-1-an">Moins d&apos;1 an</SelectItem>
-                <SelectItem value="1-an">1 an</SelectItem>
-                <SelectItem value="2-ans">2 ans</SelectItem>
-                <SelectItem value="3-ans">3 ans</SelectItem>
-                <SelectItem value="4-ans">4 ans</SelectItem>
-                <SelectItem value="5-ans">5 ans</SelectItem>
-                <SelectItem value="6-ans">6 ans</SelectItem>
-                <SelectItem value="7-ans">7 ans</SelectItem>
-                <SelectItem value="8-ans">8 ans</SelectItem>
-                <SelectItem value="9-ans">9 ans</SelectItem>
-                <SelectItem value="10-ans">10 ans</SelectItem>
-                <SelectItem value="plus-de-10-ans">Plus de 10 ans</SelectItem>
+                <SelectItem value="3-mois-1-an">3 mois à 1 an</SelectItem>
+                <SelectItem value="1-an-2-ans">1 an – 2 ans</SelectItem>
+                <SelectItem value="3-ans-10-ans">3 ans – 10 ans</SelectItem>
+                <SelectItem value="10-ans-14-ans">10 ans – 14 ans</SelectItem>
+                <SelectItem value="plus-de-14-ans">Plus de 14 ans</SelectItem>
               </SelectContent>
             </Select>
           </div>
