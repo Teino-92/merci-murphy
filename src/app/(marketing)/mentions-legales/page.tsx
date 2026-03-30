@@ -18,6 +18,46 @@ export default function MentionsLegalesPage() {
 
         <div className="mt-10 space-y-8 text-charcoal/80 leading-relaxed">
           <div>
+            <h2 className="font-display text-xl font-semibold text-charcoal mb-3">Coordonnées</h2>
+            <ul className="mt-3 space-y-2 text-charcoal/70">
+              <li>
+                <span className="font-medium text-charcoal">Nom commercial :</span> merci murphy®
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Société :</span> Murphy Honsha
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Adresse physique :</span> 18, rue Victor
+                Massé, 75009 Paris — France
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Numéro de téléphone :</span>{' '}
+                <a href="tel:+33978810421" className="text-terracotta-dark hover:underline">
+                  09 78 81 04 21
+                </a>
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Adresse e-mail :</span>{' '}
+                <a
+                  href="mailto:bonjour@mercimurphy.com"
+                  className="text-terracotta-dark hover:underline"
+                >
+                  bonjour@mercimurphy.com
+                </a>
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Numéro de TVA :</span> FR16948939426
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">
+                  Numéro d&apos;entreprise (SIRET) :
+                </span>{' '}
+                94893942600029
+              </li>
+            </ul>
+          </div>
+
+          <div>
             <h2 className="font-display text-xl font-semibold text-charcoal mb-3">
               Propriété intellectuelle
             </h2>
