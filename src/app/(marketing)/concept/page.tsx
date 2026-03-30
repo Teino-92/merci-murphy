@@ -119,10 +119,9 @@ export default async function ConceptPage() {
                 {
                   icon: Heart,
                   photo: '/valeurs-1.jpg',
-                  photoAlt: 'La crèche merci murphy® — du lien, de la joie',
+                  photoAlt: 'La boutique merci murphy® — rayons et créations florales',
                   photoAspect: 'aspect-[4/3]',
-                  photoPosition: 'object-[center_20%]',
-                  photoFilter: 'saturate-[0.85] brightness-[1.05] hue-rotate-[-10deg]',
+                  photoPosition: 'object-center',
                   text: (
                     <p className="leading-relaxed text-charcoal/70">
                       Un chien est un être sensible et un membre à part entière de votre famille.{' '}
@@ -135,8 +134,9 @@ export default async function ConceptPage() {
                 {
                   icon: Users,
                   photo: '/valeurs-2.jpg',
-                  photoAlt: 'La crèche merci murphy® — un espace pensé pour les chiens',
+                  photoAlt: "Tote bag merci murphy® — It's never just a dog",
                   photoAspect: 'aspect-[4/3]',
+                  photoPosition: 'object-center',
                   text: (
                     <p className="leading-relaxed text-charcoal/70">
                       Dans tout ce qui est entrepris pour la relation entre les chiens et leur
@@ -151,7 +151,9 @@ export default async function ConceptPage() {
                 {
                   icon: Leaf,
                   photo: '/valeurs-3.jpg',
-                  photoAlt: 'Produits naturels merci murphy® — shampoings et bougies',
+                  photoAlt: 'Chiens dans la boutique merci murphy® — un espace de vie partagé',
+                  photoAspect: 'aspect-[4/3]',
+                  photoPosition: 'object-center',
                   text: (
                     <p className="leading-relaxed text-charcoal/70">
                       <span className="text-charcoal font-medium">merci murphy®</span> est engagé
