@@ -16,7 +16,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
         <Reveal>
           <div className="text-center">
             <h2 className="font-display text-3xl font-bold text-cream sm:text-4xl">
-              Ils nous font confiance
+              Nos clients ont du chien
             </h2>
           </div>
         </Reveal>
