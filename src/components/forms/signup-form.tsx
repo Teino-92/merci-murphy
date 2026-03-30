@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -25,7 +24,7 @@ export function SignUpForm() {
   const [done, setDone] = useState(false)
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
-  const [newsletter, setNewsletter] = useState(true)
+  const [newsletter, setNewsletter] = useState(false)
   const [mixDetail, setMixDetail] = useState('')
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -257,12 +256,6 @@ export function SignUpForm() {
               {loading ? 'Création…' : 'Créer mon compte'}
             </Button>
           </div>
-          <p className="text-center text-sm text-charcoal/50">
-            Déjà un compte ?{' '}
-            <Link href="/compte/connexion" className="text-terracotta-dark hover:underline">
-              Se connecter
-            </Link>
-          </p>
         </div>
       )}
     </div>
