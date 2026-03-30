@@ -97,7 +97,7 @@ export function Footer() {
                 <ul className="mt-4 space-y-2">
                   {[
                     { label: 'Toilettage', slug: 'le-toilettage-maison-poilus-r' },
-                    { label: 'Bains', slug: 'le-spa-maison-poilus-r' },
+                    { label: 'Bains', slug: 'le-bain-en-libre-service-maison-poilus-r' },
                     { label: 'Balnéo', slug: 'balneo-maison-poilus-r' },
                     {
                       label: 'Massage',
