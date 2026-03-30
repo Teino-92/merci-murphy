@@ -7,10 +7,10 @@ export const POIDS = [
 ]
 
 export const ETAT_POIL = [
-  { value: 'normal', label: 'Normal' },
-  { value: 'emmele', label: 'Emmêlé / Nœuds' },
-  { value: 'long', label: 'Long' },
+  { value: 'ras', label: 'Ras' },
   { value: 'court', label: 'Court' },
+  { value: 'long', label: 'Long' },
+  { value: 'long-emmele', label: 'Long et emmêlé' },
 ]
 
 export const SERVICE_LABELS: Record<string, string> = {
