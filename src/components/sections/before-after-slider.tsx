@@ -4,8 +4,8 @@ import { useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
 
 interface BeforeAfterSliderProps {
-  before?: { src: string; alt?: string }
-  after?: { src: string; alt?: string }
+  before?: { src: string; alt?: string; position?: string }
+  after?: { src: string; alt?: string; position?: string }
   beforeColor?: string
   afterColor?: string
   zoom?: number
@@ -52,8 +52,8 @@ export function BeforeAfterSlider({
             src={after.src}
             alt={after.alt ?? 'Après'}
             fill
-            className="object-cover object-center"
-            style={{ transform: `scale(${zoom})` }}
+            className="object-cover"
+            style={{ transform: `scale(${zoom})`, objectPosition: after.position ?? 'center' }}
             sizes="(max-width: 640px) 100vw, 25vw"
           />
         ) : (
@@ -76,8 +76,8 @@ export function BeforeAfterSlider({
             src={before.src}
             alt={before.alt ?? 'Avant'}
             fill
-            className="object-cover object-center"
-            style={{ transform: `scale(${zoom})` }}
+            className="object-cover"
+            style={{ transform: `scale(${zoom})`, objectPosition: before.position ?? 'center' }}
             sizes="(max-width: 640px) 100vw, 25vw"
           />
         ) : (
