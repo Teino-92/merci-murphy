@@ -14,6 +14,7 @@ export interface Profile {
   telephone: string
   nom_chien: string | null
   race_chien: string | null
+  age_chien: string | null
   poids_chien: string | null
   etat_poil: string | null
   notes: string | null

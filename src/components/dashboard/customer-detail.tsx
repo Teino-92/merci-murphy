@@ -30,6 +30,7 @@ export function CustomerDetail({
     telephone: initial.telephone,
     nom_chien: initial.nom_chien ?? '',
     race_chien: initial.race_chien ?? '',
+    age_chien: initial.age_chien ?? '',
     poids_chien: initial.poids_chien ?? '',
     etat_poil: initial.etat_poil ?? '',
   })
@@ -205,6 +206,15 @@ export function CustomerDetail({
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Âge</label>
+                  <input
+                    className={inputCls}
+                    value={editData.age_chien}
+                    placeholder="Ex: 3 ans"
+                    onChange={(e) => setEditData((d) => ({ ...d, age_chien: e.target.value }))}
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Poids</label>
                   <input
                     className={inputCls}
@@ -244,6 +254,11 @@ export function CustomerDetail({
                     {profile.race_chien && (
                       <p>
                         <span className="text-gray-400">Race :</span> {profile.race_chien}
+                      </p>
+                    )}
+                    {profile.age_chien && (
+                      <p>
+                        <span className="text-gray-400">Âge :</span> {profile.age_chien}
                       </p>
                     )}
                     {profile.poids_chien && (
