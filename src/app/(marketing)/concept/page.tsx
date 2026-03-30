@@ -33,8 +33,8 @@ export default async function ConceptPage() {
           sizes="100vw"
         />
         {/* Gradient: strong at bottom-left, fades out */}
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-charcoal/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/20 to-transparent" />
         {/* Text — bottom-left */}
         <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-widest text-terracotta-dark mb-3">

@@ -28,8 +28,8 @@ export default async function ServicesPage() {
           className="object-cover opacity-70"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-charcoal/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/20 to-transparent" />
         <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
           <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
             Nos services
