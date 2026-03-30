@@ -56,7 +56,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             {preview && (
               <Link
                 href="/services"
-                className="flex items-center gap-1 text-sm font-medium text-terracotta-dark-dark hover:gap-2 transition-all shrink-0"
+                className="flex items-center gap-1 text-sm font-medium text-terracotta-dark hover:gap-2 transition-all shrink-0"
               >
                 Voir tout <ArrowRight className="h-4 w-4" />
               </Link>
