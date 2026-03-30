@@ -4,6 +4,7 @@ import { getRevenueStats, getDailyRevenue, getTopProducts } from '@/lib/shopify-
 import { getLeads, getProfiles, supabaseAdmin } from '@/lib/supabase-admin'
 import { StatCard } from '@/components/dashboard/stat-card'
 import { DashboardMain } from './dashboard-main'
+import type { VisitsStats } from './dashboard-main'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,61 +28,43 @@ function currentMonthRange() {
   return { from, to }
 }
 
-interface SumUpCacheRow {
-  by_day: { date: string; revenue: number; count: number }[]
-  by_product: { name: string; category: string; revenue: number; quantity: number }[]
-  payouts: {
-    id: string
-    date: string
-    amount: number
-    fee: number
-    net: number
-    status: string
-    currency: string
-  }[]
-  total_revenue: number
-  transaction_count: number
-  avg_ticket: number
-  refund_rate: number
-}
-
-async function getSumUpData(from: string, to: string) {
+async function getVisitsStats(from: string, to: string): Promise<VisitsStats> {
   try {
-    const { data: rows } = await supabaseAdmin
-      .from('sumup_cache')
-      .select('*')
-      .order('refreshed_at', { ascending: false })
-    if (!rows?.length) return null
+    const { data } = await supabaseAdmin
+      .from('visits')
+      .select('service, price, date')
+      .not('price', 'is', null)
+      .gte('date', from)
+      .lte('date', to)
 
-    // Pick the best single row to avoid double-counting overlapping synced periods.
-    // Priority: exact match > row whose period fully contains the range > most recent.
-    const best =
-      rows.find((r) => r.period === `${from}_${to}`) ??
-      rows.find((r) => {
-        const [rFrom, rTo] = r.period.split('_')
-        return rFrom <= from && rTo >= to
-      }) ??
-      rows[0]
+    const rows = data ?? []
+    const serviceMap = new Map<string, { revenue: number; count: number }>()
+    let totalRevenue = 0
+    let visitCount = 0
 
-    const byDay = ((best.by_day ?? []) as SumUpCacheRow['by_day'])
-      .filter((e) => e.date >= from && e.date <= to)
-      .sort((a, b) => a.date.localeCompare(b.date))
+    for (const row of rows) {
+      const price = Number(row.price ?? 0)
+      totalRevenue += price
+      visitCount++
+      const existing = serviceMap.get(row.service) ?? { revenue: 0, count: 0 }
+      serviceMap.set(row.service, {
+        revenue: existing.revenue + price,
+        count: existing.count + 1,
+      })
+    }
 
-    const totalRevenue = byDay.reduce((s, d) => s + d.revenue, 0)
-    const byProduct = [...(best.by_product ?? [])].sort((a, b) => b.revenue - a.revenue)
+    const byService = Array.from(serviceMap.entries())
+      .map(([service, { revenue, count }]) => ({ service, revenue, count }))
+      .sort((a, b) => b.revenue - a.revenue)
 
     return {
-      byDay,
-      byProduct,
-      payouts: (best.payouts ?? []) as SumUpCacheRow['payouts'],
       totalRevenue,
-      transactionCount: best.transaction_count ?? 0,
-      avgTicket: best.avg_ticket ?? 0,
-      refundRate: best.refund_rate ?? 0,
-      refreshedAt: (best.refreshed_at as string | null) ?? null,
+      visitCount,
+      avgTicket: visitCount > 0 ? totalRevenue / visitCount : 0,
+      byService,
     }
   } catch {
-    return null
+    return { totalRevenue: 0, visitCount: 0, avgTicket: 0, byService: [] }
   }
 }
 
@@ -96,46 +79,43 @@ export default async function DashboardPage() {
 
   const { from, to } = currentMonthRange()
 
-  const [revenue, dailyRevenue, topProducts, leads, profiles, sumup] = await Promise.all([
+  const [revenue, dailyRevenue, topProducts, leads, profiles, visits] = await Promise.all([
     getRevenueStats(),
     getDailyRevenue(),
     getTopProducts(),
     getLeads(),
     getProfiles(),
-    getSumUpData(from, to),
+    getVisitsStats(from, to),
   ])
 
   const newLeads = leads.filter((l) => l.status === 'new').length
   const confirmedLeads = leads.filter((l) => l.status === 'confirmed').length
-  const totalCombined = revenue.totalRevenue + (sumup?.totalRevenue ?? 0)
 
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <h1 className="text-2xl font-bold text-[#1D164E]">Vue d&apos;ensemble</h1>
+        <h1 className="text-2xl font-bold text-[#4F6072]">Vue d&apos;ensemble</h1>
       </div>
 
-      {/* Combined KPIs — current month */}
+      {/* KPIs — current month */}
       <section className="mb-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
           Mois en cours
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            label="Total combiné"
-            value={totalCombined > 0 ? formatCurrency(totalCombined, 'EUR') : '—'}
-            highlight={totalCombined > 0}
-            sub="Shopify + SumUp"
+            label="CA services"
+            value={visits.totalRevenue > 0 ? formatCurrency(visits.totalRevenue, 'EUR') : '—'}
+            highlight={visits.totalRevenue > 0}
+            sub="Visites enregistrées"
           />
           <StatCard
-            label="SumUp (boutique)"
-            value={
-              sumup && sumup.totalRevenue > 0 ? formatCurrency(sumup.totalRevenue, 'EUR') : '—'
-            }
-            sub={!sumup ? 'Aucune donnée — cliquez Actualiser' : 'Paiements en boutique'}
+            label="Visites"
+            value={visits.visitCount > 0 ? String(visits.visitCount) : '—'}
+            sub="Ce mois-ci"
           />
           <StatCard
-            label="Shopify (en ligne)"
+            label="CA Shopify"
             value={
               revenue.totalRevenue > 0
                 ? formatCurrency(revenue.totalRevenue, revenue.currency)
@@ -144,11 +124,11 @@ export default async function DashboardPage() {
             sub="Boutique en ligne"
           />
           <StatCard
-            label="Ticket moyen SumUp"
-            value={sumup && sumup.avgTicket > 0 ? formatCurrency(sumup.avgTicket, 'EUR') : '—'}
+            label="Ticket moyen"
+            value={visits.avgTicket > 0 ? formatCurrency(visits.avgTicket, 'EUR') : '—'}
             sub={
-              sumup && sumup.transactionCount > 0
-                ? `${sumup.transactionCount} transactions`
+              visits.visitCount > 0
+                ? `${visits.visitCount} visite${visits.visitCount > 1 ? 's' : ''}`
                 : undefined
             }
           />
@@ -161,7 +141,7 @@ export default async function DashboardPage() {
         initialTo={to}
         initialShopifyDaily={dailyRevenue}
         initialShopifyTop={topProducts}
-        initialSumup={sumup}
+        initialVisits={visits}
       />
 
       {/* CRM stats */}
