@@ -97,7 +97,7 @@ export default async function ServicePage({ params }: Props) {
   if (!service) notFound()
 
   const imageUrl = service.image
-    ? urlFor(service.image).width(1200).height(600).auto('format').quality(80).url()
+    ? urlFor(service.image).width(1200).auto('format').quality(80).url()
     : null
 
   return (
@@ -111,7 +111,7 @@ export default async function ServicePage({ params }: Props) {
             fill
             priority
             sizes="100vw"
-            className={`object-cover opacity-80 ${params.slug === 'le-toilettage-maison-poilus-r' ? 'object-[center_30%]' : 'object-center'}`}
+            className={`object-cover opacity-80 ${params.slug === 'le-toilettage-maison-poilus-r' ? 'object-top' : 'object-center'}`}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-charcoal/10 to-transparent" />
