@@ -95,18 +95,27 @@ export function Footer() {
                   Services
                 </p>
                 <ul className="mt-4 space-y-2">
-                  {['Toilettage', 'Bains', 'Massage', 'Crèche', 'Éducation', 'Ostéopathie'].map(
-                    (s) => (
-                      <li key={s}>
-                        <Link
-                          href={`/services/${s.toLowerCase().replace('é', 'e')}`}
-                          className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
-                        >
-                          {s}
-                        </Link>
-                      </li>
-                    )
-                  )}
+                  {[
+                    { label: 'Toilettage', slug: 'le-toilettage-maison-poilus-r' },
+                    { label: 'Bains', slug: 'le-spa-maison-poilus-r' },
+                    { label: 'Balnéo', slug: 'balneo-maison-poilus-r' },
+                    {
+                      label: 'Massage',
+                      slug: 'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
+                    },
+                    { label: 'Crèche', slug: 'la-creche' },
+                    { label: 'Éducation', slug: 'l-education' },
+                    { label: 'Ostéopathie', slug: 'l-osteopathie' },
+                  ].map((s) => (
+                    <li key={s.slug}>
+                      <Link
+                        href={`/services/${s.slug}`}
+                        className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
+                      >
+                        {s.label}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
