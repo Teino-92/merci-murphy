@@ -17,9 +17,7 @@ export default function ConfidentialitePage() {
           Politique de confidentialité
         </h1>
 
-        <div className="mt-4 text-sm text-charcoal/60 italic">
-          Dernière mise à jour : janvier 2025
-        </div>
+        <div className="mt-4 text-sm text-charcoal/60 italic">Dernière mise à jour : mars 2026</div>
 
         <div className="mt-10 space-y-8 text-charcoal/80 leading-relaxed">
           <div>
@@ -62,20 +60,58 @@ export default function ConfidentialitePage() {
             </h2>
             <p>
               Dans le cadre de l&apos;utilisation du site, nous sommes susceptibles de collecter les
-              données suivantes :
+              données suivantes selon les actions effectuées :
             </p>
-            <ul className="mt-3 ml-4 space-y-2 text-charcoal/70 list-disc list-inside">
-              <li>Nom et prénom</li>
-              <li>Adresse email</li>
-              <li>Adresse postale (pour la livraison)</li>
-              <li>Numéro de téléphone</li>
-              <li>Données de navigation (cookies, adresse IP)</li>
-              <li>Historique de commandes</li>
+            <ul className="mt-4 ml-4 space-y-4 text-charcoal/70">
+              <li>
+                <span className="font-medium text-charcoal">Création de compte client :</span>
+                <ul className="mt-1 ml-4 space-y-1 list-disc list-inside">
+                  <li>Nom et prénom</li>
+                  <li>Adresse email</li>
+                  <li>Numéro de téléphone</li>
+                  <li>Mot de passe (chiffré, jamais stocké en clair)</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Profil de votre chien :</span>
+                <ul className="mt-1 ml-4 space-y-1 list-disc list-inside">
+                  <li>Prénom du chien</li>
+                  <li>Race</li>
+                  <li>Âge</li>
+                  <li>Poids</li>
+                  <li>État du pelage</li>
+                  <li>Photo (optionnelle)</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">
+                  Formulaire de contact ou de demande de rendez-vous :
+                </span>
+                <ul className="mt-1 ml-4 space-y-1 list-disc list-inside">
+                  <li>Nom et prénom</li>
+                  <li>Adresse email</li>
+                  <li>Numéro de téléphone</li>
+                  <li>Service souhaité</li>
+                  <li>Informations sur le chien (race, poids, état du pelage)</li>
+                  <li>Message libre (optionnel)</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Newsletter :</span>
+                <ul className="mt-1 ml-4 space-y-1 list-disc list-inside">
+                  <li>Adresse email</li>
+                </ul>
+              </li>
+              <li>
+                <span className="font-medium text-charcoal">Navigation :</span>
+                <ul className="mt-1 ml-4 space-y-1 list-disc list-inside">
+                  <li>
+                    Données d&apos;audience anonymisées via Plausible Analytics (sans cookies tiers,
+                    sans tracking individuel)
+                  </li>
+                </ul>
+              </li>
             </ul>
-            <p className="mt-3">
-              Ces données sont collectées lorsque vous passez une commande, créez un compte,
-              remplissez le formulaire de contact ou vous inscrivez à notre newsletter.
-            </p>
           </div>
 
           <div>
