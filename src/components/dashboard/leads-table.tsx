@@ -18,16 +18,21 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-700',
 }
 
-export function LeadsTable({ leads }: { leads: Lead[] }) {
+export function LeadsTable({ leads }: { leads: (Lead & { has_account: boolean })[] }) {
   const [filter, setFilter] = useState<string>('all')
 
-  const filtered = filter === 'all' ? leads : leads.filter((l) => l.status === filter)
+  const filtered =
+    filter === 'all'
+      ? leads
+      : filter === 'no_account'
+        ? leads.filter((l) => !l.has_account)
+        : leads.filter((l) => l.status === filter)
 
   return (
     <div>
       {/* Filter tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {['all', 'new', 'contacted', 'confirmed', 'cancelled'].map((s) => (
+        {['all', 'new', 'contacted', 'confirmed', 'cancelled', 'no_account'].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -35,10 +40,12 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
               filter === s ? 'bg-[#1D164E] text-white' : 'bg-white text-gray-500 hover:bg-gray-100'
             }`}
           >
-            {s === 'all' ? 'Tout' : STATUS_LABELS[s]}
+            {s === 'all' ? 'Tout' : s === 'no_account' ? 'Sans compte' : STATUS_LABELS[s]}
             {s !== 'all' && (
               <span className="ml-1.5 text-xs opacity-70">
-                {leads.filter((l) => l.status === s).length}
+                {s === 'no_account'
+                  ? leads.filter((l) => !l.has_account).length
+                  : leads.filter((l) => l.status === s).length}
               </span>
             )}
           </button>
@@ -69,7 +76,20 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
               {filtered.map((lead) => (
                 <tr key={lead.id} className="border-b border-gray-50 hover:bg-gray-50">
                   <td className="px-5 py-4">
-                    <p className="font-medium text-[#1D164E]">{lead.nom}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-[#1D164E]">{lead.nom}</p>
+                      {lead.has_account ? (
+                        <span
+                          className="inline-block w-2 h-2 rounded-full bg-green-400 shrink-0"
+                          title="A un compte"
+                        />
+                      ) : (
+                        <span
+                          className="inline-block w-2 h-2 rounded-full bg-gray-300 shrink-0"
+                          title="Sans compte"
+                        />
+                      )}
+                    </div>
                     {lead.race_chien && (
                       <p className="text-xs text-gray-400">🐾 {lead.race_chien}</p>
                     )}

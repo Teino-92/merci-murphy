@@ -71,13 +71,19 @@ export async function getProfileWithVisits(
   return { profile: profileRes.data, visits: visitsRes.data ?? [] }
 }
 
-export async function getLeads(): Promise<Lead[]> {
+export async function getLeads(): Promise<(Lead & { has_account: boolean })[]> {
   const { data, error } = await supabaseAdmin
     .from('leads')
     .select('*')
     .order('created_at', { ascending: false })
   if (error) throw error
-  return data ?? []
+  const leads = data ?? []
+
+  // Cross-reference emails against auth users
+  const { data: users } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
+  const accountEmailsArr = (users?.users ?? []).map((u) => u.email)
+
+  return leads.map((l) => ({ ...l, has_account: accountEmailsArr.includes(l.email) }))
 }
 
 export async function updateLeadStatus(id: string, status: string) {
