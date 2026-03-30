@@ -43,7 +43,7 @@ const BEFORE_AFTER_PAIRS = [
   {
     before: { src: '/avant-apres-4-avant.jpg', alt: 'Avant toilettage' },
     after: { src: '/avant-apres-4-apres.jpg', alt: 'Après toilettage' },
-    zoom: 1.4,
+    zoom: 1.2,
   },
   {
     before: { src: '/avant-apres-5-avant.jpg', alt: 'Avant toilettage' },
