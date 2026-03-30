@@ -11,7 +11,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
   if (testimonials.length === 0) return null
 
   return (
-    <Section className="bg-[#1D164E]">
+    <Section className="bg-[#4F6072]">
       <Container>
         <Reveal>
           <div className="text-center">

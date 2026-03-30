@@ -26,7 +26,7 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
   if (posts.length === 0) return null
 
   return (
-    <Section className="bg-[#1D164E]">
+    <Section className="bg-[#4F6072]">
       <Container>
         <div className="flex items-center justify-between mb-8">
           <div>

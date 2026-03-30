@@ -142,7 +142,7 @@ export default async function ServicePage({ params }: Props) {
 
       {/* Déroulé */}
       {service.deroule && service.deroule.length > 0 && (
-        <Section className="bg-[#1D164E] pb-8 lg:pb-12">
+        <Section className="bg-[#4F6072] pb-8 lg:pb-12">
           <Container className="max-w-3xl">
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-cream sm:text-3xl">

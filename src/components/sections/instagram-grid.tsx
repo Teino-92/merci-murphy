@@ -111,7 +111,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Voir sur Instagram"
-                    className="absolute inset-0 bg-[#1D164E]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
+                    className="absolute inset-0 bg-[#4F6072]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
                   />
                 </div>
               ) : (
@@ -183,7 +183,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Voir sur Instagram"
-                    className="absolute inset-0 bg-[#1D164E]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
+                    className="absolute inset-0 bg-[#4F6072]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
                   >
                     {post.caption && (
                       <p className="text-cream text-xs leading-relaxed line-clamp-3">
@@ -204,7 +204,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 640px) 50vw, 25vw"
                   />
-                  <div className="absolute inset-0 bg-[#1D164E]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                  <div className="absolute inset-0 bg-[#4F6072]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
                     {post.caption && (
                       <p className="text-cream text-xs leading-relaxed line-clamp-3 text-left">
                         {post.caption.replace(/#\w+/g, '').trim()}
