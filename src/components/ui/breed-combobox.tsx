@@ -289,7 +289,7 @@ const DOG_BREEDS = [
   'Spitz Grand',
   'Spitz Petit',
   'Terrier Chasse au Renard',
-  'Mélange / Croisé',
+  'Mélange / Mix',
 ].sort()
 
 interface BreedComboboxProps {
@@ -304,8 +304,8 @@ export function BreedCombobox({ value, onChange }: BreedComboboxProps) {
 
   const filtered =
     query.trim().length === 0
-      ? DOG_BREEDS.slice(0, 8)
-      : DOG_BREEDS.filter((b) => b.toLowerCase().includes(query.toLowerCase())).slice(0, 10)
+      ? DOG_BREEDS
+      : DOG_BREEDS.filter((b) => b.toLowerCase().includes(query.toLowerCase()))
 
   // Sync external value → local query when form resets
   useEffect(() => {

@@ -12,6 +12,11 @@ export function AuthButton() {
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session)
+    })
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {

@@ -26,6 +26,7 @@ export function SignUpForm() {
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
   const [newsletter, setNewsletter] = useState(true)
+  const [mixDetail, setMixDetail] = useState('')
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
@@ -92,7 +93,32 @@ export function SignUpForm() {
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Race</label>
-            <BreedCombobox value={form.race_chien ?? ''} onChange={(v) => set('race_chien', v)} />
+            <BreedCombobox
+              value={
+                form.race_chien === 'Mélange / Mix' ||
+                form.race_chien?.startsWith('Mélange / Mix —')
+                  ? 'Mélange / Mix'
+                  : (form.race_chien ?? '')
+              }
+              onChange={(v) => {
+                set('race_chien', v)
+                if (v !== 'Mélange / Mix') setMixDetail('')
+              }}
+            />
+            {form.race_chien === 'Mélange / Mix' && (
+              <Input
+                className="mt-2"
+                placeholder="Ex: Labrador × Berger Australien..."
+                value={mixDetail}
+                onChange={(e) => {
+                  setMixDetail(e.target.value)
+                  set(
+                    'race_chien',
+                    e.target.value ? `Mélange / Mix — ${e.target.value}` : 'Mélange / Mix'
+                  )
+                }}
+              />
+            )}
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Âge</label>

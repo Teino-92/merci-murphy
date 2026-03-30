@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { Resend } from 'resend'
@@ -108,14 +109,16 @@ export async function signUp(data: SignUpData) {
 
   // Welcome email
   const prenom = parsed.data.nom.split(' ')[0] ?? parsed.data.nom
-  await resend.emails
-    .send({
-      from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM}>`,
-      to: parsed.data.email,
-      subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
-      html: accountWelcomeHtml(prenom, parsed.data.nom_chien),
-    })
-    .catch(() => {})
+  const { error: emailError } = await resend.emails.send({
+    from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
+    to: parsed.data.email,
+    subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
+    html: accountWelcomeHtml(prenom, parsed.data.nom_chien),
+  })
+
+  if (emailError) {
+    console.error('[signUp] welcome email failed:', emailError)
+  }
 
   return { success: true }
 }
@@ -150,6 +153,7 @@ export async function signIn(data: SignInData) {
 export async function signOut() {
   const supabase = await createSupabaseServerClient()
   await supabase.auth.signOut()
+  revalidatePath('/', 'layout')
   redirect('/')
 }
 

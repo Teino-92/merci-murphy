@@ -14,7 +14,7 @@ interface ServiceShopTeaserProps {
 export function ServiceShopTeaser({
   products,
   title = 'Vous avez aimé nos produits maison POILUS ?',
-  subtitle = 'Retrouvez-les dans notre éco-shop pour continuer le soin à la maison.',
+  subtitle = 'Retrouvez-les sur notre éco-shop et continuez les soins à la maison.',
 }: ServiceShopTeaserProps) {
   if (products.length === 0) return null
 

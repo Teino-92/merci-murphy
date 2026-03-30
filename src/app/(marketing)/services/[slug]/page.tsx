@@ -191,10 +191,6 @@ export default async function ServicePage({ params }: Props) {
           <Container className="max-w-3xl">
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
-              <p className="mt-2 text-sm text-charcoal/50">
-                Tarifs indicatifs — notre équipe vous confirmera le prix exact lors de notre
-                rencontre avec votre chien.
-              </p>
               <div className="mt-8 divide-y divide-charcoal/10 rounded-2xl border border-charcoal/10 bg-white">
                 {service.tarifs.map((tarif, i) => (
                   <div key={i} className="flex items-start justify-between px-6 py-4">

@@ -11,7 +11,9 @@ export function TarifsToilettageTable({ data }: Props) {
       {(data.note || data.surDevis) && (
         <div className="space-y-1">
           {data.note && <p className="text-sm text-charcoal/70">{data.note}</p>}
-          {data.surDevis && <p className="text-sm italic text-terracotta-dark">{data.surDevis}</p>}
+          {data.surDevis && (
+            <p className="text-sm italic font-bold text-terracotta-dark">{data.surDevis}</p>
+          )}
         </div>
       )}
 

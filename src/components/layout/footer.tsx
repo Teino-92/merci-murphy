@@ -101,7 +101,7 @@ export function Footer() {
                     { label: 'Balnéo', slug: 'balneo-maison-poilus-r' },
                     {
                       label: 'Massage',
-                      slug: 'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
+                      slug: 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
                     },
                     { label: 'Crèche', slug: 'la-creche' },
                     { label: 'Éducation', slug: 'l-education' },

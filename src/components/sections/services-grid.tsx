@@ -15,7 +15,7 @@ const SPA_CHILDREN_SLUGS = [
   'le-toilettage-maison-poilus-r',
   'le-bain-en-libre-service-maison-poilus-r',
   'balneo-maison-poilus-r',
-  'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
+  'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
 ]
 const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'l-education', 'l-osteopathie']
 const MOBILE_ONLY_PREVIEW_SLUGS: string[] = []
