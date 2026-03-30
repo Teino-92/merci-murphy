@@ -123,7 +123,7 @@ export default async function ServicePage({ params }: Props) {
           <Container className="max-w-3xl">
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                Notre approche
+                {isBains ? 'Prenez soin de votre loulou à votre rythme' : 'Notre approche'}
               </h2>
               <PortableText value={service.approche} className="mt-6" />
             </Reveal>
@@ -137,7 +137,9 @@ export default async function ServicePage({ params }: Props) {
           <Container className="max-w-3xl">
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-cream sm:text-3xl">
-                Le déroulé du rendez-vous
+                {isBains
+                  ? 'Partagez un vrai moment de complicité avec votre chien'
+                  : 'Le déroulé du rendez-vous'}
               </h2>
               <PortableText value={service.deroule} className="mt-6" light />
             </Reveal>
