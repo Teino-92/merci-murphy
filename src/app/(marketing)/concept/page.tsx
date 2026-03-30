@@ -1,15 +1,14 @@
 export const revalidate = 3600
 
 import type { Metadata } from 'next'
-import type React from 'react'
 import Image from 'next/image'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { Values } from '@/components/sections/values'
+import { ValuesSection } from '@/components/sections/values-section'
 import { TeamMemberCard } from '@/components/sections/team-member-card'
 import { getTeamMembers } from '@/sanity/queries/team'
 import { urlFor } from '@/sanity/client'
-import { Leaf, Heart, Recycle, Users } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Le concept',
@@ -101,153 +100,7 @@ export default async function ConceptPage() {
         </Container>
       </Section>
 
-      {/* Valeurs */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
-        <Section className="text-charcoal">
-          <Container className="max-w-4xl">
-            <Reveal>
-              <div className="text-center mb-16">
-                <h2 className="font-display text-3xl font-bold sm:text-4xl">Nos valeurs</h2>
-                <p className="mt-3 text-charcoal/60">
-                  Des convictions ancrées et des actions engagées.
-                </p>
-              </div>
-            </Reveal>
-
-            <div className="space-y-20">
-              {[
-                {
-                  icon: Heart,
-                  photo: '/valeurs-1.jpg',
-                  photoAlt: 'La boutique merci murphy® — rayons et créations florales',
-                  photoAspect: 'aspect-[4/3]',
-                  photoPosition: 'object-center',
-                  text: (
-                    <p className="leading-relaxed text-charcoal/70">
-                      Un chien est un être sensible et un membre à part entière de votre famille.{' '}
-                      <span className="text-charcoal font-medium">merci murphy®</span> a à cœur de
-                      le considérer comme tel et de répondre au mieux à ses besoins physiologiques.
-                    </p>
-                  ),
-                  reverse: false,
-                },
-                {
-                  icon: Users,
-                  photo: '/valeurs-2.jpg',
-                  photoAlt: "Tote bag merci murphy® — It's never just a dog",
-                  photoAspect: 'aspect-[4/3]',
-                  photoPosition: 'object-center',
-                  text: (
-                    <p className="leading-relaxed text-charcoal/70">
-                      Dans tout ce qui est entrepris pour la relation entre les chiens et leur
-                      famille, <span className="text-charcoal font-medium">merci murphy®</span>{' '}
-                      recherche un impact sociétal positif et significatif — amélioration des
-                      conditions de travail, recherche d&apos;une juste rémunération, insertion par
-                      le travail, soutien de l&apos;entreprenariat féminin.
-                    </p>
-                  ),
-                  reverse: true,
-                },
-                {
-                  icon: Leaf,
-                  photo: '/valeurs-3.jpg',
-                  photoAlt: 'Chiens dans la boutique merci murphy® — un espace de vie partagé',
-                  photoAspect: 'aspect-[4/3]',
-                  photoPosition: 'object-center',
-                  text: (
-                    <p className="leading-relaxed text-charcoal/70">
-                      <span className="text-charcoal font-medium">merci murphy®</span> est engagé
-                      pour réduire son impact environnemental — conception éco-responsable de la
-                      crèche et de l&apos;atelier de toilettage, pratiques quotidiennes visant la
-                      réduction de consommation énergétique et d&apos;eau, choix du matériel et
-                      produits utilisés.
-                    </p>
-                  ),
-                  reverse: false,
-                },
-                {
-                  icon: Recycle,
-                  photo: '/valeurs-4.jpg',
-                  photoAlt: "L'ecoshop merci murphy® — consommer autrement",
-                  photoAspect: 'aspect-[4/3]',
-                  photoContain: true,
-                  text: (
-                    <p className="leading-relaxed text-charcoal/70">
-                      Souhaiter le meilleur pour son chien, c&apos;est aussi consommer différemment.{' '}
-                      <span className="text-charcoal font-medium">merci murphy®</span> propose une
-                      consommation en vrac et une offre resserrée de produits éco-responsables et
-                      éthiques — et est la première boutique pour chien à proposer du{' '}
-                      <span className="text-charcoal font-medium">second-hand</span>. Réutiliser est
-                      la meilleure option pour la planète.
-                    </p>
-                  ),
-                  reverse: true,
-                },
-              ].map(
-                (
-                  {
-                    icon: Icon,
-                    text,
-                    reverse,
-                    photo,
-                    photoAlt,
-                    photoAspect,
-                    photoPosition,
-                    photoContain,
-                    photoFilter,
-                  }: {
-                    icon: React.ElementType
-                    text: React.ReactNode
-                    reverse: boolean
-                    photo?: string
-                    photoAlt?: string
-                    photoAspect?: string
-                    photoPosition?: string
-                    photoContain?: boolean
-                    photoFilter?: string
-                  },
-                  i
-                ) => {
-                  const aspect = photoAspect ?? 'aspect-[4/3]'
-                  const pos = photoPosition ?? 'object-center'
-                  const fit = photoContain ? 'object-contain' : `object-cover ${pos}`
-                  const photoBlock = photo ? (
-                    <div
-                      className={`relative w-full ${aspect} overflow-hidden rounded-2xl bg-charcoal/5 border border-charcoal/10`}
-                    >
-                      <Image
-                        src={photo}
-                        alt={photoAlt ?? ''}
-                        fill
-                        className={`${fit} ${photoFilter ?? ''}`}
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-64 items-center justify-center rounded-2xl bg-cream/5 border border-cream/10">
-                      <p className="text-sm text-charcoal/30">Photo à venir</p>
-                    </div>
-                  )
-                  const textBlock = (
-                    <div className="border-l-2 border-terracotta-dark pl-6">
-                      <Icon className="h-6 w-6 text-terracotta-dark mb-4" />
-                      {text}
-                    </div>
-                  )
-                  return (
-                    <Reveal key={i} delay={100}>
-                      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
-                        <div className={reverse ? 'lg:order-2' : ''}>{photoBlock}</div>
-                        <div className={reverse ? 'lg:order-1' : ''}>{textBlock}</div>
-                      </div>
-                    </Reveal>
-                  )
-                }
-              )}
-            </div>
-          </Container>
-        </Section>
-      </div>
+      <ValuesSection />
 
       <Values />
 
