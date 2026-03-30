@@ -116,7 +116,7 @@ export default async function ConceptPage() {
                 </p>
               </div>
             </Reveal>
-            <div className="mt-12 grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 grid grid-cols-1 gap-12 sm:grid-cols-2">
               {team.map((member, i) => (
                 <Reveal key={member._id} delay={i * 100}>
                   <TeamMemberCard
