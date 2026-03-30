@@ -43,6 +43,7 @@ const BEFORE_AFTER_PAIRS = [
   {
     before: { src: '/avant-apres-4-avant.jpg', alt: 'Avant toilettage' },
     after: { src: '/avant-apres-4-apres.jpg', alt: 'Après toilettage' },
+    zoom: 1.4,
   },
   {
     before: { src: '/avant-apres-5-avant.jpg', alt: 'Avant toilettage' },
@@ -175,6 +176,7 @@ export default async function ServicePage({ params }: Props) {
                     after={'after' in pair ? pair.after : undefined}
                     beforeColor={'beforeColor' in pair ? (pair.beforeColor as string) : undefined}
                     afterColor={'afterColor' in pair ? (pair.afterColor as string) : undefined}
+                    zoom={'zoom' in pair ? (pair.zoom as number) : undefined}
                   />
                 </Reveal>
               ))}
