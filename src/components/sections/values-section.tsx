@@ -114,7 +114,7 @@ export function ValuesSection() {
                 sizes="100vw"
               />
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/60 to-charcoal/10" />
               {/* Text */}
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 <div className="flex items-center gap-3 mb-3">
