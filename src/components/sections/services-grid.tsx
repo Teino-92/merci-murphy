@@ -18,7 +18,7 @@ const SPA_CHILDREN_SLUGS = [
   'le-massage-bien-etre-maison-poilus-r-and-petit-nenuphard',
 ]
 const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'l-education', 'l-osteopathie']
-const MOBILE_ONLY_PREVIEW_SLUGS = ['l-osteopathie']
+const MOBILE_ONLY_PREVIEW_SLUGS: string[] = []
 
 interface ServicesGridProps {
   services: ServiceSummary[]
@@ -64,7 +64,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {mainServices.map((service) => {
             const imageSrc = service.image
               ? urlFor(service.image).width(600).height(400).auto('format').quality(80).url()
@@ -98,7 +98,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                           src={imageSrc}
                           alt={service.title}
                           fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       )}
