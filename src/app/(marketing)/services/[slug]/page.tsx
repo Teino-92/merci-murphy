@@ -44,6 +44,14 @@ const BEFORE_AFTER_PAIRS = [
     before: { src: '/avant-apres-4-avant.jpg', alt: 'Avant toilettage' },
     after: { src: '/avant-apres-4-apres.jpg', alt: 'Après toilettage' },
   },
+  {
+    before: { src: '/avant-apres-5-avant.jpg', alt: 'Avant toilettage' },
+    after: { src: '/avant-apres-5-apres.jpg', alt: 'Après toilettage' },
+  },
+  {
+    before: { src: '/avant-apres-6-avant.jpg', alt: 'Avant toilettage' },
+    after: { src: '/avant-apres-6-apres.jpg', alt: 'Après toilettage' },
+  },
 ]
 
 interface Props {
@@ -159,7 +167,7 @@ export default async function ServicePage({ params }: Props) {
                 Glissez le curseur pour découvrir la transformation.
               </p>
             </Reveal>
-            <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {BEFORE_AFTER_PAIRS.map((pair, i) => (
                 <Reveal key={i} delay={i * 100}>
                   <BeforeAfterSlider
