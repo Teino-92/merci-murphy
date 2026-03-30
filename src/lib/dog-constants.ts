@@ -16,6 +16,8 @@ export const ETAT_POIL = [
 export const SERVICE_LABELS: Record<string, string> = {
   toilettage: 'Toilettage',
   bains: 'Bains',
+  balneo: 'Balnéo',
+  massage: 'Massage',
   creche: 'Crèche',
   education: 'Éducation',
   osteo: 'Ostéopathie',
@@ -25,6 +27,8 @@ export const SERVICE_LABELS: Record<string, string> = {
 export const SERVICE_EMOJI: Record<string, string> = {
   toilettage: '✂️',
   bains: '🛁',
+  balneo: '💧',
+  massage: '🤗',
   creche: '🐾',
   education: '🎓',
   osteo: '🤲',
