@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { User, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { signOut } from '@/lib/auth-actions'
+import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 export function AuthButton() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
@@ -21,10 +22,14 @@ export function AuthButton() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Still resolving — render placeholder to avoid layout shift
-  if (isLoggedIn === null) {
-    return <span className="w-9 h-9" />
+  async function handleSignOut() {
+    const supabase = createSupabaseBrowserClient()
+    await supabase.auth.signOut()
+    setOpen(false)
+    router.push('/')
   }
+
+  if (isLoggedIn === null) return <span className="w-9 h-9" />
 
   if (!isLoggedIn) {
     return (
@@ -63,15 +68,13 @@ export function AuthButton() {
               <User className="h-4 w-4" />
               Mon compte
             </Link>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-red-500 transition-colors border-t border-charcoal/5"
-              >
-                <LogOut className="h-4 w-4" />
-                Se déconnecter
-              </button>
-            </form>
+            <button
+              onClick={handleSignOut}
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-charcoal/70 hover:text-red-500 transition-colors border-t border-charcoal/5"
+            >
+              <LogOut className="h-4 w-4" />
+              Se déconnecter
+            </button>
           </div>
         </>
       )}

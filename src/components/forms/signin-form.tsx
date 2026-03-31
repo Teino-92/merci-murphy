@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { signIn } from '@/lib/auth-actions'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 export function SignInForm({ redirectTo = '/compte' }: { redirectTo?: string }) {
   const router = useRouter()
@@ -18,12 +18,13 @@ export function SignInForm({ redirectTo = '/compte' }: { redirectTo?: string }) 
     e.preventDefault()
     setLoading(true)
     setError(null)
-    const result = await signIn({ email, password })
+    const supabase = createSupabaseBrowserClient()
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
-    if (result.success) {
-      router.push(redirectTo)
+    if (authError) {
+      setError('Email ou mot de passe incorrect.')
     } else {
-      setError(result.error ?? 'Une erreur est survenue.')
+      router.push(redirectTo)
     }
   }
 
