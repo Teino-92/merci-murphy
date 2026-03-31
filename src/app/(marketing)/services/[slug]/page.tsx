@@ -39,19 +39,25 @@ const BEFORE_AFTER_PAIRS = [
   {
     before: { src: '/avant-apres-3-avant.jpg', alt: 'Avant toilettage' },
     after: { src: '/avant-apres-3-apres.jpg', alt: 'Après toilettage' },
+    zoom: 1.3,
+    afterZoom: 1.6,
   },
   {
     before: { src: '/avant-apres-4-avant.jpg', alt: 'Avant toilettage' },
     after: { src: '/avant-apres-4-apres.jpg', alt: 'Après toilettage' },
     zoom: 1.2,
+    beforeZoom: 1.5,
   },
   {
-    before: { src: '/avant-apres-5-avant.jpg', alt: 'Avant toilettage' },
+    before: { src: '/avant-apres-5-avant.jpg', alt: 'Avant toilettage', position: 'center 65%' },
     after: { src: '/avant-apres-5-apres.jpg', alt: 'Après toilettage' },
+    zoom: 1.3,
+    afterZoom: 1.5,
   },
   {
     before: { src: '/avant-apres-6-avant.jpg', alt: 'Avant toilettage' },
     after: { src: '/avant-apres-6-apres.jpg', alt: 'Après toilettage' },
+    zoom: 1.3,
   },
 ]
 
@@ -177,6 +183,8 @@ export default async function ServicePage({ params }: Props) {
                     beforeColor={'beforeColor' in pair ? (pair.beforeColor as string) : undefined}
                     afterColor={'afterColor' in pair ? (pair.afterColor as string) : undefined}
                     zoom={'zoom' in pair ? (pair.zoom as number) : undefined}
+                    beforeZoom={'beforeZoom' in pair ? (pair.beforeZoom as number) : undefined}
+                    afterZoom={'afterZoom' in pair ? (pair.afterZoom as number) : undefined}
                   />
                 </Reveal>
               ))}

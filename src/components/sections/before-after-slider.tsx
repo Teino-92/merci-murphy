@@ -9,6 +9,8 @@ interface BeforeAfterSliderProps {
   beforeColor?: string
   afterColor?: string
   zoom?: number
+  beforeZoom?: number
+  afterZoom?: number
 }
 
 export function BeforeAfterSlider({
@@ -17,6 +19,8 @@ export function BeforeAfterSlider({
   beforeColor,
   afterColor,
   zoom = 1,
+  beforeZoom,
+  afterZoom,
 }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50)
   const [active, setActive] = useState(false)
@@ -53,7 +57,10 @@ export function BeforeAfterSlider({
             alt={after.alt ?? 'Après'}
             fill
             className="object-cover"
-            style={{ transform: `scale(${zoom})`, objectPosition: after.position ?? 'center' }}
+            style={{
+              transform: `scale(${afterZoom ?? zoom})`,
+              objectPosition: after.position ?? 'center',
+            }}
             sizes="(max-width: 640px) 100vw, 25vw"
           />
         ) : (
@@ -77,7 +84,10 @@ export function BeforeAfterSlider({
             alt={before.alt ?? 'Avant'}
             fill
             className="object-cover"
-            style={{ transform: `scale(${zoom})`, objectPosition: before.position ?? 'center' }}
+            style={{
+              transform: `scale(${beforeZoom ?? zoom})`,
+              objectPosition: before.position ?? 'center',
+            }}
             sizes="(max-width: 640px) 100vw, 25vw"
           />
         ) : (

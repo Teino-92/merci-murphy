@@ -1,7 +1,0 @@
-{"type":"server-started","port":54696,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:54696","screen_dir":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/content","state_dir":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/state"}
-{"type":"screen-added","file":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/content/q1-scope.html"}
-{"type":"screen-added","file":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/content/q2-dogs.html"}
-{"type":"screen-added","file":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/content/q3-visits.html"}
-{"type":"screen-added","file":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/content/q4-layout.html"}
-{"type":"screen-added","file":"/Users/matteogarbugli/code/merci-murphy/.superpowers/brainstorm/28451-1774636225/content/design-mockup.html"}
-{"type":"server-stopped","reason":"idle timeout"}
