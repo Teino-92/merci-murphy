@@ -12,20 +12,19 @@ export function RappelButton() {
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
-    supabase.auth.getUser().then(({ data }) => {
+    void (async () => {
+      const { data } = await supabase.auth.getUser()
       if (!data.user) {
         setState('no-account')
         return
       }
-      supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('can_book')
         .eq('id', data.user.id)
         .single()
-        .then(({ data: profile }) => {
-          setState(profile ? 'has-account' : 'no-account')
-        })
-    })
+      setState(profile ? 'has-account' : 'no-account')
+    })()
   }, [])
 
   if (state === 'loading') return null

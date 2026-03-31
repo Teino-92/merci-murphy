@@ -117,6 +117,7 @@ export async function signUp(data: SignUpData) {
   })
 
   if (emailError) {
+    // eslint-disable-next-line no-console
     console.error('[signUp] welcome email failed:', emailError)
   }
 

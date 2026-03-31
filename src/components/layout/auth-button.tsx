@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { User, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 export function AuthButton() {
@@ -16,7 +17,7 @@ export function AuthButton() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setIsLoggedIn(!!session)
     })
     return () => subscription.unsubscribe()

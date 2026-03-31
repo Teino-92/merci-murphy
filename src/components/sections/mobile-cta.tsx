@@ -18,17 +18,16 @@ export function MobileCta({ phone, type = 'reservation', label, calendlyUrl }: M
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
-    supabase.auth.getUser().then(({ data }) => {
+    void (async () => {
+      const { data } = await supabase.auth.getUser()
       if (!data.user) return
-      supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('can_book')
         .eq('id', data.user.id)
         .single()
-        .then(({ data: profile }) => {
-          if (profile?.can_book) setCanBook(true)
-        })
-    })
+      if (profile?.can_book) setCanBook(true)
+    })()
   }, [])
 
   return (
