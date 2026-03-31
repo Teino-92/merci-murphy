@@ -3,6 +3,8 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CookieBanner } from '@/components/ui/cookie-banner'
+import { CartProvider } from '@/context/cart-context'
+import { SiteShell } from '@/components/layout/site-shell'
 import './globals.css'
 
 const inter = Inter({
@@ -65,7 +67,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased overflow-x-hidden`}
       >
-        {children}
+        <CartProvider>
+          <SiteShell>{children}</SiteShell>
+        </CartProvider>
         <CookieBanner />
         <Analytics />
         <SpeedInsights />

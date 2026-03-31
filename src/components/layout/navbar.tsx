@@ -12,14 +12,11 @@ import { CartIcon } from '@/components/shop/cart-icon'
 import { AuthButton } from '@/components/layout/auth-button'
 import { PawStamp } from '@/components/ui/paw-stamp'
 
-interface NavbarProps {
-  showCart?: boolean
-}
-
-export function Navbar({ showCart = false }: NavbarProps) {
+export function Navbar() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const showCart = pathname.startsWith('/shop')
 
   function navigate(href: string) {
     setOpen(false)
