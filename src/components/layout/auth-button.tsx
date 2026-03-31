@@ -7,15 +7,11 @@ import { signOut } from '@/lib/auth-actions'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 export function AuthButton() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session)
-    })
 
     const {
       data: { subscription },
@@ -24,6 +20,11 @@ export function AuthButton() {
     })
     return () => subscription.unsubscribe()
   }, [])
+
+  // Still resolving — render placeholder to avoid layout shift
+  if (isLoggedIn === null) {
+    return <span className="w-9 h-9" />
+  }
 
   if (!isLoggedIn) {
     return (
