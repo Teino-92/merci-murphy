@@ -5,14 +5,16 @@ import Link from 'next/link'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 
+type State = 'loading' | 'no-account' | 'has-account'
+
 export function RappelButton() {
-  const [canBook, setCanBook] = useState<boolean | null>(null)
+  const [state, setState] = useState<State>('loading')
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) {
-        setCanBook(false)
+        setState('no-account')
         return
       }
       supabase
@@ -21,13 +23,16 @@ export function RappelButton() {
         .eq('id', data.user.id)
         .single()
         .then(({ data: profile }) => {
-          setCanBook(profile?.can_book ?? false)
+          setState(profile ? 'has-account' : 'no-account')
         })
     })
   }, [])
 
-  // null = loading, hide to avoid flash
-  if (canBook === null || canBook === true) return null
+  if (state === 'loading') return null
+
+  // has-account (can_book false) → /reservation (autofilled form)
+  // no-account → /compte/inscription
+  const href = state === 'has-account' ? '/reservation' : '/compte/inscription'
 
   return (
     <Button
@@ -35,7 +40,7 @@ export function RappelButton() {
       size="lg"
       className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90 hover:text-white"
     >
-      <Link href="/compte/inscription">Être rappelé·e</Link>
+      <Link href={href}>Être rappelé·e</Link>
     </Button>
   )
 }
