@@ -22,7 +22,6 @@ export function SignInForm({ redirectTo = '/compte' }: { redirectTo?: string }) 
     setLoading(false)
     if (result.success) {
       router.push(redirectTo)
-      router.refresh()
     } else {
       setError(result.error ?? 'Une erreur est survenue.')
     }

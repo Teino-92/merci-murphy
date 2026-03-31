@@ -2,34 +2,28 @@
 
 import Link from 'next/link'
 import { User, LogOut } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth-actions'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 export function AuthButton() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const initialized = useRef(false)
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session)
-      initialized.current = true
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session)
-      // Refresh server components so the rest of the page reflects the new auth state
-      if (initialized.current) router.refresh()
     })
     return () => subscription.unsubscribe()
-  }, [router])
+  }, [])
 
   if (!isLoggedIn) {
     return (
