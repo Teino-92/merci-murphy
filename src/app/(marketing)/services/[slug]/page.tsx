@@ -7,6 +7,7 @@ import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { urlFor } from '@/sanity/client'
 import { getProductsByHandles } from '@/lib/shopify'
+import { BLUR_PLACEHOLDER } from '@/lib/utils'
 import { Section, Container } from '@/components/ui/section'
 import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
@@ -116,6 +117,8 @@ export default async function ServicePage({ params }: Props) {
             alt={service.title}
             fill
             priority
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER}
             sizes="100vw"
             className={`object-cover opacity-80 ${params.slug === 'le-toilettage-maison-poilus-r' ? 'object-top' : 'object-center'}`}
           />
@@ -254,7 +257,7 @@ export default async function ServicePage({ params }: Props) {
           <Container className="max-w-2xl text-center">
             <Reveal>
               <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                Prêt à prendre rendez-vous ?
+                Prêt.e à prendre rendez-vous ?
               </h2>
               <p className="mt-4 text-charcoal/70">
                 {service.calendlyUrl

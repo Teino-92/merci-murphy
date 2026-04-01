@@ -16,7 +16,7 @@ export function Footer({ showBlog = false }: FooterProps) {
         <Container className="py-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <p className="font-display text-base font-semibold shrink-0 lg:w-48">
-              Restez informé(e)
+              Restez informé.e
             </p>
             <div className="flex-1 flex lg:justify-end">
               <NewsletterForm />
@@ -82,7 +82,7 @@ export function Footer({ showBlog = false }: FooterProps) {
               {/* Boutique */}
               <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-charcoal/60">
-                  Éco-shop
+                  Eco-shop
                 </p>
                 <ul className="mt-4 space-y-2">
                   {[
