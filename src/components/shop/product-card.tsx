@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatPrice, type ShopifyProduct } from '@/lib/shopify'
-import { cn } from '@/lib/utils'
+import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 
 interface ProductCardProps {
   product: ShopifyProduct
@@ -28,6 +28,8 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
               src={firstImage.url}
               alt={firstImage.altText ?? product.title}
               fill
+              placeholder="blur"
+              blurDataURL={BLUR_PLACEHOLDER}
               className={cn(
                 'object-cover transition-opacity duration-500',
                 secondImage
@@ -41,6 +43,8 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
                 src={secondImage.url}
                 alt={secondImage.altText ?? product.title}
                 fill
+                placeholder="blur"
+                blurDataURL={BLUR_PLACEHOLDER}
                 className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                 sizes="(max-width: 640px) 256px, 320px"
               />

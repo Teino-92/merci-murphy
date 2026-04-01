@@ -9,10 +9,14 @@ import { ContactForm } from '@/components/forms/contact-form'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { HorairesAccordion } from '@/components/sections/horaires-accordion'
 import { MapboxMap } from '@/components/sections/mapbox-map'
+import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Contact',
   description: 'Contactez merci murphy® — adresse, horaires et formulaire de contact.',
+  openGraph: {
+    images: [{ url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Contact — Merci Murphy' }],
+  },
 }
 
 export default async function ContactPage() {
@@ -30,6 +34,8 @@ export default async function ContactPage() {
           alt="merci murphy® — vitrine"
           fill
           priority
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER}
           className="object-cover opacity-80"
           sizes="100vw"
         />

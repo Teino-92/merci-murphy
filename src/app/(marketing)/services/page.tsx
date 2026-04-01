@@ -5,12 +5,18 @@ import { getTestimonials } from '@/sanity/queries/testimonials'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { TestimonialsSection } from '@/components/sections/testimonials-section'
 import { Section, Container } from '@/components/ui/section'
+import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Nos services',
   description: 'Toilettage, bains, crèche, éducation et ostéopathie pour votre chien à Paris.',
+  openGraph: {
+    images: [
+      { url: '/og/og-services.jpg', width: 1200, height: 630, alt: 'Nos services — Merci Murphy' },
+    ],
+  },
 }
 
 export default async function ServicesPage() {
@@ -25,6 +31,8 @@ export default async function ServicesPage() {
           alt="Les services merci murphy®"
           fill
           priority
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER}
           className="object-cover opacity-70"
           sizes="100vw"
         />

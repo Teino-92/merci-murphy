@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 
 interface TeamMemberCardProps {
   nom: string
@@ -15,7 +15,16 @@ export function TeamMemberCard({ nom, role, bio, photoSrc, className }: TeamMemb
       <div
         className={cn('relative h-32 w-32 overflow-hidden rounded-full', photoSrc ? '' : 'hidden')}
       >
-        {photoSrc && <Image src={photoSrc} alt={nom} fill className="object-cover" />}
+        {photoSrc && (
+          <Image
+            src={photoSrc}
+            alt={nom}
+            fill
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER}
+            className="object-cover"
+          />
+        )}
       </div>
       <h3 className="mt-4 font-display text-lg font-semibold text-charcoal">{nom}</h3>
       <p className="text-sm font-medium text-terracotta-dark">{role}</p>

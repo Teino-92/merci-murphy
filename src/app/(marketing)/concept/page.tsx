@@ -9,11 +9,17 @@ import { ValuesSection } from '@/components/sections/values-section'
 import { TeamMemberCard } from '@/components/sections/team-member-card'
 import { getTeamMembers } from '@/sanity/queries/team'
 import { urlFor } from '@/sanity/client'
+import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Le concept',
   description:
     "Découvrez l'histoire de merci murphy®, notre équipe et nos engagements pour le bien-être animal à Paris.",
+  openGraph: {
+    images: [
+      { url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Le concept — Merci Murphy' },
+    ],
+  },
 }
 
 export default async function ConceptPage() {
@@ -28,6 +34,8 @@ export default async function ConceptPage() {
           alt="L'intérieur de la boutique merci murphy®"
           fill
           priority
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER}
           className="object-cover object-center"
           sizes="100vw"
         />

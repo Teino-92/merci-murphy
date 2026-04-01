@@ -4,6 +4,7 @@ import { getAllCollections, getAllProducts } from '@/lib/shopify'
 import { Section, Container } from '@/components/ui/section'
 import { ShopCatalog } from '@/components/shop/shop-catalog'
 import { ShopManifesto } from '@/components/shop/shop-manifesto'
+import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 export const revalidate = 3600
 
@@ -11,6 +12,9 @@ export const metadata: Metadata = {
   title: 'Boutique éthique pour chiens à Paris',
   description:
     'Produits éco-responsables et éthiques pour chiens — fabrication française, matières biologiques, second-hand. La boutique merci murphy® à Paris.',
+  openGraph: {
+    images: [{ url: '/og/og-shop.jpg', width: 1200, height: 630, alt: 'Boutique — Merci Murphy' }],
+  },
 }
 
 export default async function ShopPage() {
@@ -30,6 +34,8 @@ export default async function ShopPage() {
                     src="/boutique-hero.jpg"
                     alt="La boutique merci murphy®"
                     fill
+                    placeholder="blur"
+                    blurDataURL={BLUR_PLACEHOLDER}
                     className="object-cover object-center"
                     sizes="33vw"
                   />
@@ -44,6 +50,8 @@ export default async function ShopPage() {
                   src="/boutique-products.jpg"
                   alt="Produits merci murphy®"
                   fill
+                  placeholder="blur"
+                  blurDataURL={BLUR_PLACEHOLDER}
                   className="object-cover object-[center_calc(50%+40px)]"
                   sizes="100vw"
                 />

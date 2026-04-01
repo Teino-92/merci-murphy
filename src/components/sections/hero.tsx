@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { SITE_CONFIG } from '@/config/site'
-import { cn } from '@/lib/utils'
+import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 
 interface HeroProps {
   subtitle: string
@@ -22,6 +22,8 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
               alt="Merci Murphy"
               fill
               priority
+              placeholder="blur"
+              blurDataURL={BLUR_PLACEHOLDER}
               className="object-cover object-top"
               sizes="100vw"
             />
@@ -140,6 +142,8 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
               alt="Merci Murphy — boutique intérieur"
               fill
               priority
+              placeholder="blur"
+              blurDataURL={BLUR_PLACEHOLDER}
               className="object-cover object-center"
               sizes="52vw"
             />
