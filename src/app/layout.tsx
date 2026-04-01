@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CookieBanner } from '@/components/ui/cookie-banner'
 import { CartProvider } from '@/context/cart-context'
 import { SiteShell } from '@/components/layout/site-shell'
+import { getPublishedPostCount } from '@/sanity/queries/posts'
 import './globals.css'
 
 const inter = Inter({
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-default.jpg',
+        url: '/og/og-home.jpg',
         width: 1200,
         height: 630,
         alt: 'Merci Murphy — Boutique bien-être pour chiens à Paris',
@@ -46,11 +47,14 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const postCount = await getPublishedPostCount()
+  const showBlog = postCount > 0
+
   return (
     <html lang="fr">
       <head>
@@ -68,7 +72,7 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} font-sans antialiased overflow-x-hidden`}
       >
         <CartProvider>
-          <SiteShell>{children}</SiteShell>
+          <SiteShell showBlog={showBlog}>{children}</SiteShell>
         </CartProvider>
         <CookieBanner />
         <Analytics />

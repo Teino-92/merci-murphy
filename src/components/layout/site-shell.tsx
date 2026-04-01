@@ -5,7 +5,12 @@ import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { CartDrawer } from '@/components/shop/cart-drawer'
 
-export function SiteShell({ children }: { children: React.ReactNode }) {
+interface SiteShellProps {
+  children: React.ReactNode
+  showBlog?: boolean
+}
+
+export function SiteShell({ children, showBlog = false }: SiteShellProps) {
   const pathname = usePathname()
   const isDashboard = pathname.startsWith('/dashboard')
 
@@ -13,7 +18,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Navbar />
+      <Navbar showBlog={showBlog} />
       <CartDrawer />
       {children}
       <Footer />

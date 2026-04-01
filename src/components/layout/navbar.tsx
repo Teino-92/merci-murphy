@@ -12,7 +12,11 @@ import { CartIcon } from '@/components/shop/cart-icon'
 import { AuthButton } from '@/components/layout/auth-button'
 import { PawStamp } from '@/components/ui/paw-stamp'
 
-export function Navbar() {
+interface NavbarProps {
+  showBlog?: boolean
+}
+
+export function Navbar({ showBlog = false }: NavbarProps) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -22,6 +26,14 @@ export function Navbar() {
     setOpen(false)
     router.push(href)
   }
+
+  const navItems = showBlog
+    ? [
+        ...SITE_CONFIG.nav.slice(0, 4),
+        { label: 'Blog', href: '/blog' },
+        ...SITE_CONFIG.nav.slice(4),
+      ]
+    : SITE_CONFIG.nav
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-charcoal/10 bg-cream/95 backdrop-blur-sm">
@@ -39,7 +51,7 @@ export function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-12 lg:flex">
-          {SITE_CONFIG.nav.map((item) => {
+          {navItems.map((item) => {
             const isActive =
               pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
             return (
@@ -87,7 +99,7 @@ export function Navbar() {
       {open && (
         <div className="border-t border-charcoal/10 bg-cream lg:hidden">
           <nav className="flex flex-col px-4 py-4">
-            {SITE_CONFIG.nav.map((item) => {
+            {navItems.map((item) => {
               const isActive =
                 pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
               return (

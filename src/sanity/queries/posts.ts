@@ -54,3 +54,11 @@ export async function getRelatedPosts(currentSlug: string): Promise<PostSummary[
     { next: { revalidate: 3600 } }
   )
 }
+
+export async function getPublishedPostCount(): Promise<number> {
+  return sanityClient.fetch(
+    `count(*[_type == "post" && publishedAt <= now()])`,
+    {},
+    { next: { revalidate: 3600 } }
+  )
+}
