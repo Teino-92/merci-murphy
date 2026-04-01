@@ -4,7 +4,11 @@ import { SITE_CONFIG } from '@/config/site'
 import { Container } from '@/components/ui/section'
 import { NewsletterForm } from '@/components/forms/newsletter-form'
 
-export function Footer() {
+interface FooterProps {
+  showBlog?: boolean
+}
+
+export function Footer({ showBlog = false }: FooterProps) {
   return (
     <footer className="text-charcoal" style={{ backgroundColor: '#B5A89A' }}>
       {/* Newsletter band */}
@@ -62,6 +66,16 @@ export function Footer() {
                       </Link>
                     </li>
                   ))}
+                  {showBlog && (
+                    <li>
+                      <Link
+                        href="/blog"
+                        className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
+                      >
+                        Blog
+                      </Link>
+                    </li>
+                  )}
                 </ul>
               </div>
 

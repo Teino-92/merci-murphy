@@ -104,6 +104,13 @@
 - [ ] Redirects 301 depuis l'ancien site
 - [ ] README.md : guide de mise à jour Sanity pour l'équipe merci murphy
 
+## Phase 10: Mise en production
+
+- [ ] Cutover DNS vers Vercel
+- [ ] Monitoring Vercel (alertes erreurs)
+- [ ] Vérification Plausible actif en prod
+- [ ] Briefing équipe merci murphy : CMS, formulaires, Shopify
+
 ## Phase 10.5: Blog Sanity
 
 - [x] Schema Sanity `post` (titre, slug, coverImage, category, excerpt, body, publishedAt, readingTime)
@@ -111,14 +118,7 @@
 - [x] Composant `PostCard` (3 variantes : `featured`, `secondary`, `compact`)
 - [x] Page listing `/blog` — layout 2 colonnes asymétrique éditorial
 - [x] Page article `/blog/[slug]` — centré + "À lire aussi" (≥2 articles)
-- [x] Lien "Blog" dans la nav — visible uniquement si ≥1 article publié
-
-## Phase 10: Mise en production
-
-- [ ] Cutover DNS vers Vercel
-- [ ] Monitoring Vercel (alertes erreurs)
-- [ ] Vérification Plausible actif en prod
-- [ ] Briefing équipe merci murphy : CMS, formulaires, Shopify
+- [x] Lien "Blog" dans la nav et footer — visible uniquement si ≥1 article publié
 
 ---
 

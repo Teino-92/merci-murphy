@@ -1,10 +1,10 @@
 // src/app/(marketing)/blog/page.tsx
-export const revalidate = 3600
-
 import type { Metadata } from 'next'
 import { getAllPosts } from '@/sanity/queries/posts'
 import { PostCard } from '@/components/sections/post-card'
 import { Section, Container } from '@/components/ui/section'
+
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Blog — Conseils bien-être pour votre chien',
@@ -53,7 +53,7 @@ export default async function BlogPage() {
               {/* Left column */}
               <div className="flex flex-col gap-10">
                 <PostCard post={featured} variant="featured" />
-                {secondary && <PostCard post={secondary} variant="featured" />}
+                {secondary && <PostCard post={secondary} variant="secondary" />}
               </div>
 
               {/* Right column — compact list */}

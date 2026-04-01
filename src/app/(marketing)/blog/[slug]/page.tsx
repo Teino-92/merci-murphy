@@ -1,6 +1,4 @@
 // src/app/(marketing)/blog/[slug]/page.tsx
-export const revalidate = 3600
-
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import type { Metadata } from 'next'
@@ -10,6 +8,8 @@ import { PortableText } from '@/components/sections/portable-text'
 import { PostCard } from '@/components/sections/post-card'
 import { Section, Container } from '@/components/ui/section'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
+
+export const revalidate = 3600
 
 interface Props {
   params: { slug: string }

@@ -21,7 +21,7 @@ export function SiteShell({ children, showBlog = false }: SiteShellProps) {
       <Navbar showBlog={showBlog} />
       <CartDrawer />
       {children}
-      <Footer />
+      <Footer showBlog={showBlog} />
     </>
   )
 }
