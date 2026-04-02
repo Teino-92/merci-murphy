@@ -53,10 +53,9 @@ const VALUES = [
   },
   {
     icon: Recycle,
-    photo: '/valeurs-4.jpg',
-    photoMobile: '/valeurs-4-mobile.jpg',
-    photoAlt: "L'ecoshop merci murphy® — consommer autrement",
-    photoContain: true,
+    photo: '/vrac-snacks.jpg',
+    photoAlt: 'Distributeurs de snacks en vrac merci murphy®',
+    photoContain: false,
     text: (
       <p className="leading-relaxed text-charcoal/70">
         Souhaiter le meilleur pour son chien, c&apos;est aussi consommer différemment.{' '}
