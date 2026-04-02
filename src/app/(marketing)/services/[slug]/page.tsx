@@ -141,7 +141,11 @@ export default async function ServicePage({ params }: Props) {
           <Container className="max-w-3xl">
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                {isBains ? 'Prenez soin de votre loulou à votre rythme' : 'Notre approche'}
+                {isBains
+                  ? 'Prenez soin de votre loulou à votre rythme'
+                  : params.slug === 'la-creche'
+                    ? "Vous bossez, il s'éclate !"
+                    : 'Notre approche'}
               </h2>
               <PortableText value={service.approche} className="mt-6" />
             </Reveal>
