@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getAllProducts, getProductByHandle, formatPrice } from '@/lib/shopify'
 import { AddToCart } from '@/components/shop/add-to-cart'
+import { ProductGallery } from '@/components/shop/product-gallery'
 import { Section, Container } from '@/components/ui/section'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
@@ -83,38 +83,7 @@ export default async function ProductPage({ params }: Props) {
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             {/* Images */}
-            <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-2xl bg-rose/20">
-                {images[0] && (
-                  <Image
-                    src={images[0].url}
-                    alt={images[0].altText ?? product.title}
-                    fill
-                    priority
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                )}
-              </div>
-              {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
-                  {images.slice(1, 5).map((img, i) => (
-                    <div
-                      key={i}
-                      className="relative aspect-square overflow-hidden rounded-xl bg-rose/20"
-                    >
-                      <Image
-                        src={img.url}
-                        alt={img.altText ?? product.title}
-                        fill
-                        className="object-cover"
-                        sizes="25vw"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <ProductGallery images={images} title={product.title} />
 
             {/* Info */}
             <div className="flex flex-col">

@@ -55,6 +55,13 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
             <p className="text-sm text-charcoal/30">Pas de photo</p>
           </div>
         )}
+        {!product.availableForSale && (
+          <div className="absolute inset-0 bg-charcoal/40 flex items-center justify-center rounded-2xl">
+            <span className="bg-charcoal/80 text-cream text-xs font-semibold uppercase tracking-widest px-3 py-1.5 rounded-full">
+              Rupture de stock
+            </span>
+          </div>
+        )}
       </div>
       <div className="mt-3">
         <p className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-terracotta-dark transition-colors">

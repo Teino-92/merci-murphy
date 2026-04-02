@@ -52,6 +52,7 @@ export interface ShopifyProduct {
   handle: string
   description: string
   descriptionHtml: string
+  availableForSale: boolean
   featuredImage: ShopifyImage | null
   images: { nodes: ShopifyImage[] }
   priceRange: { minVariantPrice: ShopifyPrice }
@@ -75,6 +76,7 @@ const PRODUCT_FRAGMENT = `
   title
   handle
   description
+  availableForSale
   featuredImage { url altText width height }
   images(first: 3) { nodes { url altText width height } }
   priceRange { minVariantPrice { amount currencyCode } }
@@ -86,6 +88,7 @@ const PRODUCT_BASE_FRAGMENT = `
   title
   handle
   description
+  availableForSale
   featuredImage { url altText width height }
   priceRange { minVariantPrice { amount currencyCode } }
   collections(first: 3) { nodes { handle title } }
