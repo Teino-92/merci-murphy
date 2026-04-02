@@ -107,7 +107,13 @@ export function ValuesSection() {
             {/* Card */}
             <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
               <Image
-                src={'photoMobile' in value && value.photoMobile ? value.photoMobile : value.photo}
+                src={
+                  'photoMobile' in value &&
+                  typeof value.photoMobile === 'string' &&
+                  value.photoMobile
+                    ? value.photoMobile
+                    : value.photo
+                }
                 alt={value.photoAlt}
                 fill
                 className="object-cover object-center"
