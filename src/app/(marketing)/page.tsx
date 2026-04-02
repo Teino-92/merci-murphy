@@ -8,7 +8,7 @@ import { InstagramFeed } from '@/components/sections/instagram-feed'
 import { InfoPratiques } from '@/components/sections/info-pratiques'
 import { getAllServices } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
-import { getProductsByHandles } from '@/lib/shopify'
+import { getProductsByHandles, getCollectionByHandle } from '@/lib/shopify'
 
 // Handles in the exact order you want them in the carousel
 const SHOP_TEASER_HANDLES = [
@@ -21,11 +21,30 @@ const SHOP_TEASER_HANDLES = [
 ]
 
 export default async function HomePage() {
-  const [services, settings, shopProducts] = await Promise.all([
+  const [services, settings, shopProducts, petloversCollection] = await Promise.all([
     getAllServices(),
     getSiteSettings(),
     getProductsByHandles(SHOP_TEASER_HANDLES),
+    getCollectionByHandle('petlovers'),
   ])
+
+  // Replace out-of-stock items with random in-stock products from petlovers
+  const usedHandles = new Set(shopProducts.map((p) => p.handle))
+  const fallbackPool = (petloversCollection?.products.nodes ?? []).filter(
+    (p) => p.availableForSale && !usedHandles.has(p.handle)
+  )
+  // Shuffle fallback pool
+  for (let i = fallbackPool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[fallbackPool[i], fallbackPool[j]] = [fallbackPool[j], fallbackPool[i]]
+  }
+  let fallbackIndex = 0
+  const finalProducts = shopProducts.map((p) => {
+    if (!p.availableForSale && fallbackIndex < fallbackPool.length) {
+      return fallbackPool[fallbackIndex++]
+    }
+    return p
+  })
 
   const localBusinessLd = {
     '@context': 'https://schema.org',
@@ -123,7 +142,7 @@ export default async function HomePage() {
         subtitle="Vivre heureux avec son chien et son chat à Paris. Toute l'attention et l'expertise que votre animal mérite, dans un lieu responsable, chaleureux et bienveillant."
         imageSrc="/concept-hero.jpg"
       />
-      <ShopTeaser products={shopProducts} />
+      <ShopTeaser products={finalProducts} />
       {services.length > 0 && <ServicesGrid services={services} preview />}
       <Values />
       {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
