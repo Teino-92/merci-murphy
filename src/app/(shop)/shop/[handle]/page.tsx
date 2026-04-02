@@ -1,9 +1,15 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import { getAllProducts, getProductByHandle, formatPrice } from '@/lib/shopify'
+import {
+  getAllProducts,
+  getProductByHandle,
+  getCollectionByHandle,
+  formatPrice,
+} from '@/lib/shopify'
 import { AddToCart } from '@/components/shop/add-to-cart'
 import { ProductGallery } from '@/components/shop/product-gallery'
+import { ProductCard } from '@/components/shop/product-card'
 import { Section, Container } from '@/components/ui/section'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
@@ -39,6 +45,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const product = await getProductByHandle(params.handle)
   if (!product) notFound()
+
+  // Related products — from first collection, in-stock, excluding current
+  const firstCollectionHandle = product.collections.nodes[0]?.handle
+  const relatedCollection = firstCollectionHandle
+    ? await getCollectionByHandle(firstCollectionHandle)
+    : null
+  const relatedProducts = (relatedCollection?.products.nodes ?? [])
+    .filter((p) => p.handle !== product.handle && p.availableForSale)
+    .slice(0, 4)
 
   const firstVariant = product.variants.nodes[0]
   const images = product.images.nodes
@@ -144,6 +159,21 @@ export default async function ProductPage({ params }: Props) {
           </div>
         </Container>
       </Section>
+
+      {relatedProducts.length > 0 && (
+        <Section className="bg-rose/20">
+          <Container>
+            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+              Murphy aime aussi
+            </h2>
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p.handle} product={p} />
+              ))}
+            </div>
+          </Container>
+        </Section>
+      )}
     </>
   )
 }
