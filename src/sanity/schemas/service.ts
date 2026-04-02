@@ -134,6 +134,25 @@ export const service = defineType({
           ],
         }),
         defineField({
+          name: 'patticure',
+          title: 'Soin Patticure',
+          description:
+            'Bloc tarifaire indépendant affiché entre le tableau principal et les suppléments.',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              name: 'patticureLigne',
+              title: 'Ligne Patticure',
+              fields: [
+                defineField({ name: 'label', title: 'Prestation', type: 'string' }),
+                defineField({ name: 'prix', title: 'Prix (ex : 20€)', type: 'string' }),
+              ],
+              preview: { select: { title: 'label', subtitle: 'prix' } },
+            },
+          ],
+        }),
+        defineField({
           name: 'supplements',
           title: 'Suppléments & soins spécifiques',
           type: 'array',

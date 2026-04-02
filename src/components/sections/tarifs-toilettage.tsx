@@ -73,15 +73,35 @@ export function TarifsToilettageTable({ data }: Props) {
         </div>
       )}
 
+      {/* Patticure */}
+      {data.patticure && data.patticure.length > 0 && (
+        <div>
+          <h3 className="mb-3 text-base font-semibold text-charcoal">Soin Patticure</h3>
+          <div className="rounded-2xl border border-charcoal/10 bg-white divide-y divide-charcoal/10">
+            {data.patticure.map((s, i) => (
+              <div key={i} className="flex items-center justify-between px-5 py-3.5">
+                <p className="text-sm text-charcoal">{s.label}</p>
+                <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">{s.prix}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Supplements */}
       {data.supplements && data.supplements.length > 0 && (
-        <div className="rounded-2xl border border-charcoal/10 bg-white divide-y divide-charcoal/10">
-          {data.supplements.map((s, i) => (
-            <div key={i} className="flex items-center justify-between px-5 py-3.5">
-              <p className="text-sm text-charcoal">{s.label}</p>
-              <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">{s.prix}</p>
-            </div>
-          ))}
+        <div>
+          <h3 className="mb-3 text-base font-semibold text-charcoal">
+            Suppléments & soins spécifiques
+          </h3>
+          <div className="rounded-2xl border border-charcoal/10 bg-white divide-y divide-charcoal/10">
+            {data.supplements.map((s, i) => (
+              <div key={i} className="flex items-center justify-between px-5 py-3.5">
+                <p className="text-sm text-charcoal">{s.label}</p>
+                <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">{s.prix}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

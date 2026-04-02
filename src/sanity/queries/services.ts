@@ -21,6 +21,7 @@ export interface TarifsToilettage {
       bainEpilation?: string
     }[]
   }[]
+  patticure?: { label: string; prix: string }[]
   supplements?: { label: string; prix: string }[]
 }
 
