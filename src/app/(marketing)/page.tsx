@@ -28,22 +28,24 @@ export default async function HomePage() {
     getCollectionByHandle('petlovers'),
   ])
 
-  // Replace out-of-stock items with random in-stock products from petlovers
+  // Replace out-of-stock items with a stable fallback from petlovers.
+  // The replacement is deterministic: derived from the out-of-stock handle so
+  // it stays the same across renders until the original item is back in stock.
   const usedHandles = new Set(shopProducts.map((p) => p.handle))
   const fallbackPool = (petloversCollection?.products.nodes ?? []).filter(
     (p) => p.availableForSale && !usedHandles.has(p.handle)
   )
-  // Shuffle fallback pool
-  for (let i = fallbackPool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[fallbackPool[i], fallbackPool[j]] = [fallbackPool[j], fallbackPool[i]]
-  }
-  let fallbackIndex = 0
+  const pickedFallbackHandles = new Set<string>()
   const finalProducts = shopProducts.map((p) => {
-    if (!p.availableForSale && fallbackIndex < fallbackPool.length) {
-      return fallbackPool[fallbackIndex++]
-    }
-    return p
+    if (p.availableForSale) return p
+    if (fallbackPool.length === 0) return p
+    // Hash the out-of-stock handle to a stable index
+    const hash = p.handle.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+    const available = fallbackPool.filter((f) => !pickedFallbackHandles.has(f.handle))
+    if (available.length === 0) return p
+    const fallback = available[hash % available.length]
+    pickedFallbackHandles.add(fallback.handle)
+    return fallback
   })
 
   const localBusinessLd = {
