@@ -27,21 +27,6 @@ export default async function ShopPage() {
         <Section className="text-charcoal py-12">
           <Container className="max-w-6xl">
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
-              {/* Right — desktop only: boutique-hero full height */}
-              <div className="hidden lg:block lg:order-2 lg:self-stretch">
-                <div className="relative w-full h-full min-h-[600px] overflow-hidden rounded-2xl">
-                  <Image
-                    src="/boutique-hero.jpg"
-                    alt="La boutique merci murphy®"
-                    fill
-                    placeholder="blur"
-                    blurDataURL={BLUR_PLACEHOLDER}
-                    className="object-cover object-center"
-                    sizes="33vw"
-                  />
-                </div>
-              </div>
-
               <ShopManifesto />
 
               {/* Mobile only — products shelf below manifesto */}
