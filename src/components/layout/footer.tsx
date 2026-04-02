@@ -176,6 +176,9 @@ export function Footer({ showBlog = false }: FooterProps) {
                   { src: '/payments/paypal.svg', alt: 'PayPal' },
                   { src: '/payments/shop-pay.svg', alt: 'Shop Pay' },
                   { src: '/payments/google-pay.svg', alt: 'Google Pay' },
+                  { src: '/payments/cb.svg', alt: 'Carte Bleue' },
+                  { src: '/payments/discover.svg', alt: 'Discover' },
+                  { src: '/payments/jcb.svg', alt: 'JCB' },
                 ].map((pm) => (
                   <Image
                     key={pm.alt}
