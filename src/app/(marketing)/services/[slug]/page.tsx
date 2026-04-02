@@ -147,7 +147,9 @@ export default async function ServicePage({ params }: Props) {
                     ? "Vous bossez, il s'éclate !"
                     : params.slug === 'balneo-maison-poilus-r'
                       ? 'Offrez à votre chien un moment de bien-être profond grâce à la balnéothérapie'
-                      : 'Notre approche'}
+                      : params.slug === 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar'
+                        ? 'Offrez à votre chien un véritable moment de bien-être'
+                        : 'Notre approche'}
               </h2>
               <PortableText value={service.approche} className="mt-6" />
             </Reveal>
