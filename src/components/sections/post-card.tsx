@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/sanity/client'
-import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
+import { cn, BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 import type { PostSummary } from '@/sanity/queries/posts'
 
 interface PostCardProps {
@@ -15,6 +15,9 @@ export function PostCard({ post, variant, className }: PostCardProps) {
   const imageUrl = post.coverImage
     ? urlFor(post.coverImage).width(800).height(450).auto('format').quality(80).url()
     : null
+  const blur = post.coverImage?.dominantColor
+    ? blurDataURL(post.coverImage.dominantColor)
+    : BLUR_PLACEHOLDER
 
   if (variant === 'compact') {
     return (
@@ -26,7 +29,7 @@ export function PostCard({ post, variant, className }: PostCardProps) {
               alt={post.coverImage?.alt ?? post.title}
               fill
               placeholder="blur"
-              blurDataURL={BLUR_PLACEHOLDER}
+              blurDataURL={blur}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, 33vw"
             />
@@ -58,7 +61,7 @@ export function PostCard({ post, variant, className }: PostCardProps) {
               alt={post.coverImage?.alt ?? post.title}
               fill
               placeholder="blur"
-              blurDataURL={BLUR_PLACEHOLDER}
+              blurDataURL={blur}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="80px"
             />
@@ -87,7 +90,7 @@ export function PostCard({ post, variant, className }: PostCardProps) {
             alt={post.coverImage?.alt ?? post.title}
             fill
             placeholder="blur"
-            blurDataURL={BLUR_PLACEHOLDER}
+            blurDataURL={blur}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 1024px) 100vw, 60vw"
           />

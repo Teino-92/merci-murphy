@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// 1×1px cream (#FDF8F3) base64 placeholder for next/image blur
-export const BLUR_PLACEHOLDER =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI6QAAAABJRU5ErkJggg=='
+// Neutral gray fallback for non-Sanity images (Shopify, static)
+export const BLUR_PLACEHOLDER = blurDataURL('#E8E8E8')
+
+// Generate a 1×1 SVG base64 data URL from a hex color for next/image blur placeholder
+export function blurDataURL(hex: string): string {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='1' height='1' fill='${hex}'/></svg>`
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+}

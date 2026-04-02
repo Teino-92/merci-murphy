@@ -5,7 +5,7 @@ export interface TeamMember {
   nom: string
   role: string
   bio: string
-  photo: { asset: { _ref: string } } | null
+  photo: { asset: { _ref: string }; dominantColor: string | null } | null
   ordre: number
 }
 
@@ -16,7 +16,7 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
       nom,
       role,
       bio,
-      photo,
+      photo { asset, "dominantColor": asset->metadata.palette.dominant.background },
       ordre
     }`,
     {},

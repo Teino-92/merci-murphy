@@ -9,6 +9,7 @@ import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import type { ServiceSummary } from '@/sanity/queries/services'
 import { urlFor } from '@/sanity/client'
+import { BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 
 const SPA_SLUG = 'le-spa-maison-poilus-r'
 const SPA_CHILDREN_SLUGS = [
@@ -69,6 +70,9 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
             const imageSrc = service.image
               ? urlFor(service.image).width(600).height(400).auto('format').quality(80).url()
               : undefined
+            const blur = service.image?.dominantColor
+              ? blurDataURL(service.image.dominantColor)
+              : BLUR_PLACEHOLDER
 
             if (service.slug.current === SPA_SLUG) {
               // In preview mode — SPA is a normal link to /services
@@ -80,6 +84,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                     description={service.description}
                     slug="__services__"
                     imageSrc={imageSrc}
+                    dominantColor={service.image?.dominantColor}
                   />
                 )
               }
@@ -98,6 +103,8 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                           src={imageSrc}
                           alt={service.title}
                           fill
+                          placeholder="blur"
+                          blurDataURL={blur}
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
@@ -141,6 +148,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                                   .url()
                               : undefined
                           }
+                          dominantColor={child.image?.dominantColor}
                         />
                       </div>
                     ))}
@@ -156,6 +164,7 @@ export function ServicesGrid({ services, preview = false }: ServicesGridProps) {
                 description={service.description}
                 slug={service.slug.current}
                 imageSrc={imageSrc}
+                dominantColor={service.image?.dominantColor}
                 className={mobileOnly ? 'sm:hidden' : undefined}
               />
             )

@@ -1,17 +1,26 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 
 interface ServiceCardProps {
   title: string
   description: string
   slug: string
   imageSrc?: string
+  dominantColor?: string | null
   className?: string
 }
 
-export function ServiceCard({ title, description, slug, imageSrc, className }: ServiceCardProps) {
+export function ServiceCard({
+  title,
+  description,
+  slug,
+  imageSrc,
+  dominantColor,
+  className,
+}: ServiceCardProps) {
+  const blur = dominantColor ? blurDataURL(dominantColor) : BLUR_PLACEHOLDER
   return (
     <Link
       href={slug === '__services__' ? '/services' : `/services/${slug}`}
@@ -27,6 +36,8 @@ export function ServiceCard({ title, description, slug, imageSrc, className }: S
             src={imageSrc}
             alt={title}
             fill
+            placeholder="blur"
+            blurDataURL={blur}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />

@@ -6,7 +6,7 @@ export interface PostSummary {
   _id: string
   title: string
   slug: { current: string }
-  coverImage: { asset: { _ref: string }; alt?: string } | null
+  coverImage: { asset: { _ref: string }; alt?: string; dominantColor: string | null } | null
   category: string
   excerpt: string
   publishedAt: string
@@ -21,7 +21,7 @@ const POST_SUMMARY_FIELDS = `
   _id,
   title,
   slug,
-  coverImage,
+  coverImage { asset, alt, "dominantColor": asset->metadata.palette.dominant.background },
   category,
   excerpt,
   publishedAt,

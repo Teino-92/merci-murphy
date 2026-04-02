@@ -7,7 +7,7 @@ import { urlFor } from '@/sanity/client'
 import { PortableText } from '@/components/sections/portable-text'
 import { PostCard } from '@/components/sections/post-card'
 import { Section, Container } from '@/components/ui/section'
-import { BLUR_PLACEHOLDER } from '@/lib/utils'
+import { BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 
 export const revalidate = 3600
 
@@ -48,6 +48,9 @@ export default async function BlogArticlePage({ params }: Props) {
   const coverImageUrl = post.coverImage
     ? urlFor(post.coverImage).width(1400).height(788).auto('format').quality(85).url()
     : null
+  const coverBlur = post.coverImage?.dominantColor
+    ? blurDataURL(post.coverImage.dominantColor)
+    : BLUR_PLACEHOLDER
 
   const publishedDate = new Date(post.publishedAt).toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -66,7 +69,7 @@ export default async function BlogArticlePage({ params }: Props) {
             fill
             priority
             placeholder="blur"
-            blurDataURL={BLUR_PLACEHOLDER}
+            blurDataURL={coverBlur}
             className="object-cover"
             sizes="100vw"
           />

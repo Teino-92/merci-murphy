@@ -6,7 +6,7 @@ export interface ServiceSummary {
   title: string
   slug: { current: string }
   description: string
-  image: { asset: { _ref: string } } | null
+  image: { asset: { _ref: string }; dominantColor: string | null } | null
 }
 
 export interface TarifsToilettage {
@@ -39,7 +39,7 @@ const SERVICE_SUMMARY_FIELDS = `
   title,
   slug,
   description,
-  image
+  image { asset, "dominantColor": asset->metadata.palette.dominant.background }
 `
 
 export async function getAllServices(): Promise<ServiceSummary[]> {

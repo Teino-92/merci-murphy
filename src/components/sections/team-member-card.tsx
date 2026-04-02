@@ -1,15 +1,24 @@
 import Image from 'next/image'
-import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
+import { cn, BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 
 interface TeamMemberCardProps {
   nom: string
   role: string
   bio: string
   photoSrc?: string
+  dominantColor?: string | null
   className?: string
 }
 
-export function TeamMemberCard({ nom, role, bio, photoSrc, className }: TeamMemberCardProps) {
+export function TeamMemberCard({
+  nom,
+  role,
+  bio,
+  photoSrc,
+  dominantColor,
+  className,
+}: TeamMemberCardProps) {
+  const blur = dominantColor ? blurDataURL(dominantColor) : BLUR_PLACEHOLDER
   return (
     <div className={cn('flex flex-col items-center text-center', className)}>
       <div
@@ -21,7 +30,7 @@ export function TeamMemberCard({ nom, role, bio, photoSrc, className }: TeamMemb
             alt={nom}
             fill
             placeholder="blur"
-            blurDataURL={BLUR_PLACEHOLDER}
+            blurDataURL={blur}
             className="object-cover"
           />
         )}

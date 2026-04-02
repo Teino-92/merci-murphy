@@ -141,6 +141,7 @@ export default async function ConceptPage() {
                             .url()
                         : undefined
                     }
+                    dominantColor={member.photo?.dominantColor}
                   />
                 </Reveal>
               ))}
