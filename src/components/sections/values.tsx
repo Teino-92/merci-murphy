@@ -17,7 +17,7 @@ const VALUES = [
   },
   {
     icon: Sparkles,
-    title: 'Expertise & bienveillance',
+    title: 'Expertise & Bienveillance',
     description:
       'Une équipe passionnée et engagée, un collectif d’experts avec une approche bienveillante et positive',
   },
