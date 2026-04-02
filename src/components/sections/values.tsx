@@ -1,6 +1,8 @@
+import Image from 'next/image'
 import { Leaf, Heart, Sparkles } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
+import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 const VALUES = [
   {
@@ -52,6 +54,20 @@ export function Values() {
             </Reveal>
           ))}
         </div>
+
+        <Reveal delay={200}>
+          <div className="mt-12 relative w-full aspect-[16/7] overflow-hidden rounded-2xl">
+            <Image
+              src="/vrac-snacks.jpg"
+              alt="Distributeurs de snacks en vrac merci murphy®"
+              fill
+              placeholder="blur"
+              blurDataURL={BLUR_PLACEHOLDER}
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+          </div>
+        </Reveal>
       </Container>
     </Section>
   )
