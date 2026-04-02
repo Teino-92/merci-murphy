@@ -163,21 +163,25 @@ export function ReservationForm({
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">État du pelage</label>
-            <Select value={form.etat_poil} onValueChange={(v) => set('etat_poil', v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="État du pelage" />
-              </SelectTrigger>
-              <SelectContent>
-                {ETAT_POIL.map((e) => (
-                  <SelectItem key={e.value} value={e.value}>
-                    {e.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {form.service === 'toilettage' && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-charcoal">
+                État du pelage
+              </label>
+              <Select value={form.etat_poil} onValueChange={(v) => set('etat_poil', v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="État du pelage" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ETAT_POIL.map((e) => (
+                    <SelectItem key={e.value} value={e.value}>
+                      {e.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="flex gap-3">
             <Button variant="outline" onClick={prev} className="flex-1">
               Retour
