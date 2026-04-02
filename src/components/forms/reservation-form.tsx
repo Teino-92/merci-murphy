@@ -17,11 +17,12 @@ import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 
 const SERVICES = [
   { value: 'toilettage', label: 'Toilettage' },
-  { value: 'bains', label: 'Bains self-service' },
+  { value: 'bains', label: 'Bain — Dog wash self-service' },
+  { value: 'balneo', label: 'Balnéo' },
+  { value: 'massage', label: 'Massage bien-être' },
   { value: 'creche', label: 'Crèche' },
   { value: 'education', label: 'Éducation' },
   { value: 'osteo', label: 'Ostéopathie' },
-  { value: 'autre', label: 'Autre' },
 ]
 
 const STEPS = ['Service', 'Votre chien', 'Vos coordonnées', 'Message']
