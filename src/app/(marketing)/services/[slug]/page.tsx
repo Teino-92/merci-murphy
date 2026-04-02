@@ -161,7 +161,9 @@ export default async function ServicePage({ params }: Props) {
               <h2 className="font-display text-2xl font-bold text-cream sm:text-3xl">
                 {isBains
                   ? 'Partagez un vrai moment de complicité avec votre chien'
-                  : 'Le déroulé du rendez-vous'}
+                  : params.slug === 'la-creche'
+                    ? "Les conditions d'admission"
+                    : 'Le déroulé du rendez-vous'}
               </h2>
               <PortableText value={service.deroule} className="mt-6" light />
             </Reveal>
