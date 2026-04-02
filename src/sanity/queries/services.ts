@@ -39,7 +39,7 @@ const SERVICE_SUMMARY_FIELDS = `
   title,
   slug,
   description,
-  image { asset, "dominantColor": asset->metadata.palette.dominant.background }
+  image { ..., "dominantColor": asset->metadata.palette.dominant.background }
 `
 
 export async function getAllServices(): Promise<ServiceSummary[]> {

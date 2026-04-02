@@ -16,7 +16,7 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
       nom,
       role,
       bio,
-      photo { asset, "dominantColor": asset->metadata.palette.dominant.background },
+      photo { ..., "dominantColor": asset->metadata.palette.dominant.background },
       ordre
     }`,
     {},

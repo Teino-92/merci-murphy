@@ -21,7 +21,7 @@ const POST_SUMMARY_FIELDS = `
   _id,
   title,
   slug,
-  coverImage { asset, alt, "dominantColor": asset->metadata.palette.dominant.background },
+  coverImage { ..., "dominantColor": asset->metadata.palette.dominant.background },
   category,
   excerpt,
   publishedAt,
