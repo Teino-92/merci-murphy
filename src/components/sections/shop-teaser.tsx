@@ -25,7 +25,7 @@ export function ShopTeaser({ products }: ShopTeaserProps) {
           <div className="flex items-end justify-between">
             <div>
               <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-                Eco-shop
+                Éco-shop
               </h2>
               <p className="mt-2 text-charcoal/60">
                 Notre sélection de produits pour votre chien, votre chat, et vous.

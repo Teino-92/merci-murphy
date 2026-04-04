@@ -82,7 +82,7 @@ export function Footer({ showBlog = false }: FooterProps) {
               {/* Boutique */}
               <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-charcoal/60">
-                  Eco-shop
+                  Éco-shop
                 </p>
                 <ul className="mt-4 space-y-2">
                   {[

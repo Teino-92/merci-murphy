@@ -25,6 +25,7 @@ const VALUES = [
     photo: '/valeurs-2.jpg',
     photoAlt: "Tote bag merci murphy® — It's never just a dog",
     photoContain: false,
+    photoPosition: 'object-[center_3%]',
     text: (
       <p className="leading-relaxed text-charcoal/70">
         Dans tout ce qui est entrepris pour la relation entre les chiens et leur famille,{' '}
@@ -41,6 +42,7 @@ const VALUES = [
     photo: '/valeurs-3.jpg',
     photoAlt: 'Chiens dans la boutique merci murphy® — un espace de vie partagé',
     photoContain: false,
+    photoPosition: 'object-[center_30%]',
     text: (
       <p className="leading-relaxed text-charcoal/70">
         <span className="text-charcoal font-medium">merci murphy®</span> est engagé pour réduire son
@@ -154,28 +156,32 @@ export function ValuesSection() {
 
           {/* Desktop — original stacked layout */}
           <div className="hidden lg:block space-y-20">
-            {VALUES.map(({ icon: DIcon, text, reverse, photo, photoAlt, photoContain }, i) => {
-              const fit = photoContain ? 'object-contain' : 'object-cover object-center'
-              const photoBlock = (
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl bg-charcoal/5 border border-charcoal/10">
-                  <Image src={photo} alt={photoAlt} fill className={fit} sizes="50vw" />
-                </div>
-              )
-              const textBlock = (
-                <div className="border-l-2 border-terracotta-dark pl-6">
-                  <DIcon className="h-6 w-6 text-terracotta-dark mb-4" />
-                  {text}
-                </div>
-              )
-              return (
-                <Reveal key={i} delay={100}>
-                  <div className="grid grid-cols-2 gap-10 items-center">
-                    <div className={reverse ? 'order-2' : ''}>{photoBlock}</div>
-                    <div className={reverse ? 'order-1' : ''}>{textBlock}</div>
+            {VALUES.map(
+              ({ icon: DIcon, text, reverse, photo, photoAlt, photoContain, photoPosition }, i) => {
+                const fit = photoContain
+                  ? 'object-contain'
+                  : `object-cover ${photoPosition ?? 'object-center'}`
+                const photoBlock = (
+                  <div className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl bg-charcoal/5 border border-charcoal/10">
+                    <Image src={photo} alt={photoAlt} fill className={fit} sizes="50vw" />
                   </div>
-                </Reveal>
-              )
-            })}
+                )
+                const textBlock = (
+                  <div className="border-l-2 border-terracotta-dark pl-6">
+                    <DIcon className="h-6 w-6 text-terracotta-dark mb-4" />
+                    {text}
+                  </div>
+                )
+                return (
+                  <Reveal key={i} delay={100}>
+                    <div className="grid grid-cols-2 gap-10 items-center">
+                      <div className={reverse ? 'order-2' : ''}>{photoBlock}</div>
+                      <div className={reverse ? 'order-1' : ''}>{textBlock}</div>
+                    </div>
+                  </Reveal>
+                )
+              }
+            )}
           </div>
         </div>
       </section>

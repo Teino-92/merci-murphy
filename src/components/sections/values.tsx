@@ -11,7 +11,7 @@ const VALUES = [
   },
   {
     icon: Leaf,
-    title: 'Ecoresponsabilité',
+    title: 'Écoresponsabilité',
     description:
       "Produits naturels, matières biologiques, recyclées, production artisanale française et européenne. consomation d'eau raisonée ",
   },
