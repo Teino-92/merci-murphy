@@ -4,6 +4,7 @@ import { getAllServices } from '@/sanity/queries/services'
 import { getTestimonials } from '@/sanity/queries/testimonials'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { TestimonialsSection } from '@/components/sections/testimonials-section'
+import { FaqServices } from '@/components/sections/faq-services'
 import { Section, Container } from '@/components/ui/section'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
@@ -57,6 +58,7 @@ export default async function ServicesPage() {
         </Section>
       )}
       {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
+      <FaqServices />
     </>
   )
 }
