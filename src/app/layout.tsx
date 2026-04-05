@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CookieBanner } from '@/components/ui/cookie-banner'
 import { CartProvider } from '@/context/cart-context'
 import { SiteShell } from '@/components/layout/site-shell'
+import { SmoothScroll } from '@/components/layout/smooth-scroll'
 import { getPublishedPostCount } from '@/sanity/queries/posts'
 import './globals.css'
 
@@ -71,6 +72,7 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased overflow-x-hidden`}
       >
+        <SmoothScroll />
         <CartProvider>
           <SiteShell showBlog={showBlog}>{children}</SiteShell>
         </CartProvider>
