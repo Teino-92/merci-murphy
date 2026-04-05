@@ -113,7 +113,7 @@ export default async function ConceptPage() {
       <Values />
 
       {/* Équipe */}
-      {team.length > 0 && (
+      {false && team.length > 0 && (
         <Section className="bg-cream">
           <Container>
             <Reveal>
