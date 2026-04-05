@@ -23,7 +23,9 @@ export function TestimonialCard({ auteur, note, texte, service, className }: Tes
           />
         ))}
       </div>
-      <p className="mt-4 text-sm leading-relaxed text-charcoal/70">&ldquo;{texte}&rdquo;</p>
+      <p className="mt-4 text-sm leading-relaxed text-charcoal/70 text-justify">
+        &ldquo;{texte}&rdquo;
+      </p>
       <div className="mt-4">
         <p className="text-sm font-semibold text-charcoal">{auteur}</p>
         {service && <p className="text-xs text-charcoal/40">{service}</p>}
