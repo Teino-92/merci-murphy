@@ -6,8 +6,10 @@ import { Values } from '@/components/sections/values'
 import { ShopTeaser } from '@/components/sections/shop-teaser'
 import { InstagramFeed } from '@/components/sections/instagram-feed'
 import { InfoPratiques } from '@/components/sections/info-pratiques'
+import { FeaturedPost } from '@/components/sections/featured-post'
 import { getAllServices } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { getLatestPost } from '@/sanity/queries/posts'
 import { getProductsByHandles, getCollectionByHandle } from '@/lib/shopify'
 
 // Handles in the exact order you want them in the carousel
@@ -21,11 +23,12 @@ const SHOP_TEASER_HANDLES = [
 ]
 
 export default async function HomePage() {
-  const [services, settings, shopProducts, petloversCollection] = await Promise.all([
+  const [services, settings, shopProducts, petloversCollection, latestPost] = await Promise.all([
     getAllServices(),
     getSiteSettings(),
     getProductsByHandles(SHOP_TEASER_HANDLES),
     getCollectionByHandle('petlovers'),
+    getLatestPost(),
   ])
 
   // Replace out-of-stock items with a stable fallback from petlovers.
@@ -147,6 +150,7 @@ export default async function HomePage() {
       <ShopTeaser products={finalProducts} />
       {services.length > 0 && <ServicesGrid services={services} preview />}
       <Values />
+      {latestPost && <FeaturedPost post={latestPost} />}
       {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
         <InstagramFeed feedId={process.env.NEXT_PUBLIC_BEHOLD_FEED_ID} />
       )}

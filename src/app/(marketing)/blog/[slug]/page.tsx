@@ -6,8 +6,10 @@ import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/sanity/queries/po
 import { urlFor } from '@/sanity/client'
 import { PortableText } from '@/components/sections/portable-text'
 import { PostCard } from '@/components/sections/post-card'
+import { BlogShopTeaser } from '@/components/sections/blog-shop-teaser'
 import { Section, Container } from '@/components/ui/section'
 import { BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
+import { getAllProducts } from '@/lib/shopify'
 
 export const revalidate = 3600
 
@@ -38,10 +40,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogArticlePage({ params }: Props) {
-  const [post, related] = await Promise.all([
+  const [post, related, allProducts] = await Promise.all([
     getPostBySlug(params.slug),
     getRelatedPosts(params.slug),
+    getAllProducts(24),
   ])
+
+  // Randomize and pick 6 products for the shop teaser
+  const shopProducts = [...allProducts].sort(() => Math.random() - 0.5).slice(0, 6)
 
   if (!post) notFound()
 
@@ -108,6 +114,9 @@ export default async function BlogArticlePage({ params }: Props) {
           <PortableText value={post.body} />
         </Container>
       </Section>
+
+      {/* Shop teaser */}
+      <BlogShopTeaser products={shopProducts} />
 
       {/* À lire aussi — only when >= 2 related posts */}
       {related.length >= 2 && (

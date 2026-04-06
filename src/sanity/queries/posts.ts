@@ -55,6 +55,14 @@ export async function getRelatedPosts(currentSlug: string): Promise<PostSummary[
   )
 }
 
+export async function getLatestPost(): Promise<PostSummary | null> {
+  return sanityClient.fetch(
+    `*[_type == "post" && publishedAt <= now()] | order(publishedAt desc) [0] { ${POST_SUMMARY_FIELDS} }`,
+    {},
+    { next: { revalidate: 3600 } }
+  )
+}
+
 export async function getPublishedPostCount(): Promise<number> {
   return sanityClient.fetch(
     `count(*[_type == "post" && publishedAt <= now()])`,
