@@ -66,7 +66,17 @@ export default async function RootLayout({
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25GTVLGR0" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-C25GTVLGR0');`,
+            __html: `
+              window.dataLayer=window.dataLayer||[];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent','default',{
+                analytics_storage:'denied',
+                ad_storage:'denied',
+                wait_for_update:500
+              });
+              gtag('js',new Date());
+              gtag('config','G-C25GTVLGR0');
+            `,
           }}
         />
       </head>

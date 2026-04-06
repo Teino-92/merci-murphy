@@ -9,18 +9,23 @@ export function CookieBanner() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
+    const consent = localStorage.getItem(STORAGE_KEY)
+    if (!consent) {
       setVisible(true)
+    } else if (consent === 'accepted') {
+      window.gtag?.('consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted' })
     }
   }, [])
 
   function accept() {
     localStorage.setItem(STORAGE_KEY, 'accepted')
+    window.gtag?.('consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted' })
     setVisible(false)
   }
 
   function decline() {
     localStorage.setItem(STORAGE_KEY, 'declined')
+    window.gtag?.('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied' })
     setVisible(false)
   }
 
