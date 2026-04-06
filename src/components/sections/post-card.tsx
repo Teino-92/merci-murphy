@@ -1,6 +1,6 @@
 // src/components/sections/post-card.tsx
 import Link from 'next/link'
-import Image from 'next/image'
+import { SanityImage as Image } from '@/components/ui/sanity-image'
 import { urlFor } from '@/sanity/client'
 import { cn, BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 import type { PostSummary } from '@/sanity/queries/posts'

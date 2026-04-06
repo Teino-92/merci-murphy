@@ -1,7 +1,7 @@
 export const revalidate = 3600
 
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
 import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'

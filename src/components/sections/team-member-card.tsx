@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { SanityImage as Image } from '@/components/ui/sanity-image'
 import { cn, BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 
 interface TeamMemberCardProps {

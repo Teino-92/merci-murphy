@@ -1,6 +1,6 @@
 // src/app/(marketing)/blog/[slug]/page.tsx
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
 import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/sanity/queries/posts'
 import { urlFor } from '@/sanity/client'

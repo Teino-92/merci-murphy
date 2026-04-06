@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { ShopifyImage as Image } from '@/components/ui/shopify-image'
 import { formatPrice, type ShopifyProduct } from '@/lib/shopify'
 import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 

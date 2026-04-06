@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { SanityImage as Image } from '@/components/ui/sanity-image'
 import { useState } from 'react'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import { ServiceCard } from './service-card'

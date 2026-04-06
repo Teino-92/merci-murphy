@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import { ShopifyImage as Image } from '@/components/ui/shopify-image'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
 import type { ShopifyImage } from '@/lib/shopify'
 
