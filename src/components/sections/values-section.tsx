@@ -84,6 +84,13 @@ export function ValuesSection() {
     setActive(i)
   }
 
+  function onScroll() {
+    const el = scrollRef.current
+    if (!el) return
+    const index = Math.round(el.scrollLeft / el.offsetWidth)
+    setActive(index)
+  }
+
   function prev() {
     scrollTo((active - 1 + VALUES.length) % VALUES.length)
   }
@@ -112,6 +119,7 @@ export function ValuesSection() {
               ref={scrollRef}
               className="flex gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide snap-x snap-mandatory"
               style={{ touchAction: 'pan-x' }}
+              onScroll={onScroll}
             >
               {VALUES.map((v, i) => {
                 const VIcon = v.icon
