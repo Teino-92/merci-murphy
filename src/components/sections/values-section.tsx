@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { Heart, Users, Leaf, Recycle } from 'lucide-react'
 import { Reveal } from '@/components/ui/reveal'
@@ -74,8 +74,23 @@ const VALUES = [
 
 export function ValuesSection() {
   const [active, setActive] = useState(0)
-  const value = VALUES[active]
-  const Icon = value.icon
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  function scrollTo(i: number) {
+    const el = scrollRef.current
+    if (!el) return
+    const card = el.children[i] as HTMLElement
+    el.scrollTo({ left: card.offsetLeft, behavior: 'smooth' })
+    setActive(i)
+  }
+
+  function prev() {
+    scrollTo((active - 1 + VALUES.length) % VALUES.length)
+  }
+
+  function next() {
+    scrollTo((active + 1) % VALUES.length)
+  }
 
   return (
     <div style={{ backgroundColor: '#B5A89A' }}>
@@ -90,14 +105,49 @@ export function ValuesSection() {
             </div>
           </Reveal>
 
-          {/* Mobile — carousel */}
+          {/* Mobile — horizontal scroll */}
           <div className="lg:hidden">
+            {/* Scrollable cards */}
+            <div
+              ref={scrollRef}
+              className="flex gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide snap-x snap-mandatory"
+              style={{ touchAction: 'pan-x' }}
+            >
+              {VALUES.map((v, i) => {
+                const VIcon = v.icon
+                return (
+                  <div
+                    key={i}
+                    className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-2xl snap-center"
+                  >
+                    <Image
+                      src={v.photo}
+                      alt={v.photoAlt}
+                      fill
+                      className="object-cover object-center"
+                      sizes="80vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/60 to-charcoal/10" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <div className="flex items-center gap-3 mb-3">
+                        <VIcon className="h-5 w-5 text-terracotta-dark shrink-0" />
+                        <div className="h-px flex-1 bg-terracotta-dark/60" />
+                      </div>
+                      <div className="text-sm leading-relaxed [&_p]:!text-[#B5A89A] [&_span]:!text-[#B5A89A]">
+                        {v.text}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
             {/* Dot nav */}
-            <div className="flex justify-center gap-2 mb-6">
+            <div className="flex justify-center gap-2 mt-4">
               {VALUES.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setActive(i)}
+                  onClick={() => scrollTo(i)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     i === active ? 'w-6 bg-terracotta-dark' : 'w-2 bg-charcoal/20'
                   }`}
@@ -106,46 +156,17 @@ export function ValuesSection() {
               ))}
             </div>
 
-            {/* Card */}
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
-              <Image
-                src={
-                  'photoMobile' in value &&
-                  typeof value.photoMobile === 'string' &&
-                  value.photoMobile
-                    ? value.photoMobile
-                    : value.photo
-                }
-                alt={value.photoAlt}
-                fill
-                className="object-cover object-center"
-                sizes="100vw"
-              />
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/60 to-charcoal/10" />
-              {/* Text */}
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <Icon className="h-5 w-5 text-terracotta-dark shrink-0" />
-                  <div className="h-px flex-1 bg-terracotta-dark/60" />
-                </div>
-                <div className="text-sm leading-relaxed [&_p]:!text-[#B5A89A] [&_span]:!text-[#B5A89A]">
-                  {value.text}
-                </div>
-              </div>
-            </div>
-
-            {/* Swipe hint arrows */}
-            <div className="flex justify-between mt-4">
+            {/* Arrows */}
+            <div className="flex justify-between mt-2">
               <button
-                onClick={() => setActive((a) => (a - 1 + VALUES.length) % VALUES.length)}
+                onClick={prev}
                 className="text-charcoal/40 hover:text-charcoal transition-colors px-2 py-1"
                 aria-label="Précédent"
               >
                 ←
               </button>
               <button
-                onClick={() => setActive((a) => (a + 1) % VALUES.length)}
+                onClick={next}
                 className="text-charcoal/40 hover:text-charcoal transition-colors px-2 py-1"
                 aria-label="Suivant"
               >
