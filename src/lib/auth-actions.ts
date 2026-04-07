@@ -23,6 +23,7 @@ export interface Profile {
   etat_poil: string | null
   can_book: boolean
   newsletter_subscribed: boolean
+  grooming_duration: number | null
 }
 
 // ─── Sign up ─────────────────────────────────────────────────────────────────

@@ -39,7 +39,7 @@ export default async function ComptePage() {
           canBook={profile.can_book}
         />
         <ProfileCard profile={profile} email={user.email ?? ''} />
-        <DogsCard dogs={dogs} />
+        <DogsCard dogs={dogs} groomingDuration={profile.grooming_duration} />
         {profile.can_book && <BookingCta />}
         <VisitTimeline visits={visits} dogs={dogs} />
       </div>
