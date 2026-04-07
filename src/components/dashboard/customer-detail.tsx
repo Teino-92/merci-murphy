@@ -33,6 +33,7 @@ export function CustomerDetail({
     age_chien: initial.age_chien ?? '',
     poids_chien: initial.poids_chien ?? '',
     etat_poil: initial.etat_poil ?? '',
+    grooming_duration: initial.grooming_duration ?? ('' as number | ''),
   })
   const [editSaving, setEditSaving] = useState(false)
 
@@ -76,7 +77,11 @@ export function CustomerDetail({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(editData),
     })
-    setProfile((p) => ({ ...p, ...editData }))
+    setProfile((p) => ({
+      ...p,
+      ...editData,
+      grooming_duration: editData.grooming_duration === '' ? null : editData.grooming_duration,
+    }))
     setEditSaving(false)
     setEditing(false)
   }
@@ -232,6 +237,27 @@ export function CustomerDetail({
                     onChange={(e) => setEditData((d) => ({ ...d, etat_poil: e.target.value }))}
                   />
                 </div>
+                {editData.nom_chien && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                      Durée toilettage (min)
+                    </label>
+                    <input
+                      type="number"
+                      min="15"
+                      step="15"
+                      placeholder="Ex: 90"
+                      className={inputCls}
+                      value={editData.grooming_duration}
+                      onChange={(e) =>
+                        setEditData((d) => ({
+                          ...d,
+                          grooming_duration: e.target.value === '' ? '' : Number(e.target.value),
+                        }))
+                      }
+                    />
+                  </div>
+                )}
                 <button
                   onClick={saveProfile}
                   disabled={editSaving}
@@ -269,6 +295,14 @@ export function CustomerDetail({
                     {profile.etat_poil && (
                       <p>
                         <span className="text-gray-400">Poil :</span> {profile.etat_poil}
+                      </p>
+                    )}
+                    {profile.grooming_duration && (
+                      <p>
+                        <span className="text-gray-400">Durée séance :</span>{' '}
+                        <span className="font-medium text-[#1D164E]">
+                          {profile.grooming_duration} min
+                        </span>
                       </p>
                     )}
                   </div>
