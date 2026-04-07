@@ -33,6 +33,7 @@ export interface Visit {
   notes: string | null
   staff: string | null
   price: number | null
+  // payment flow: pending_deposit → (sumup pays) → confirmed
   status: 'confirmed' | 'pending_deposit' | 'cancelled'
   sumup_checkout_id: string | null
   deposit_paid_at: string | null
