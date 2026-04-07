@@ -3,16 +3,17 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, X, ExternalLink, Check } from 'lucide-react'
-import { SERVICE_LABELS, POIDS, ETAT_POIL } from '@/lib/dog-constants'
+import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 import type { Profile } from '@/lib/supabase-admin'
+import type { ServiceOption } from '@/app/(dashboard)/dashboard/reservations/new/page'
 
 interface NewReservationFormProps {
-  calendlyUrls: Record<string, string>
+  services: ServiceOption[]
 }
 
 type Step = 'client' | 'service' | 'calendly' | 'confirm'
 
-export function NewReservationForm({ calendlyUrls }: NewReservationFormProps) {
+export function NewReservationForm({ services }: NewReservationFormProps) {
   const router = useRouter()
   const inputCls =
     'w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]'
@@ -44,7 +45,7 @@ export function NewReservationForm({ calendlyUrls }: NewReservationFormProps) {
   const [createError, setCreateError] = useState<string | null>(null)
 
   // Service selection
-  const [selectedService, setSelectedService] = useState('toilettage')
+  const [selectedService, setSelectedService] = useState(() => services[0]?.slug ?? '')
 
   // Visit confirmation
   const [visitDate, setVisitDate] = useState(new Date().toISOString().slice(0, 10))
@@ -99,9 +100,10 @@ export function NewReservationForm({ calendlyUrls }: NewReservationFormProps) {
   }
 
   function buildCalendlyUrl(): string | null {
-    const base = calendlyUrls[selectedService]
+    const service = services.find((s) => s.slug === selectedService)
+    const base = service?.calendlyUrl ?? null
     if (!base) return null
-    if (selectedService === 'toilettage' && selectedProfile?.grooming_duration) {
+    if (selectedService.includes('toilettage') && selectedProfile?.grooming_duration) {
       return `${base}?duration=${selectedProfile.grooming_duration}`
     }
     return base
@@ -135,7 +137,7 @@ export function NewReservationForm({ calendlyUrls }: NewReservationFormProps) {
   }
 
   const toilettageMissingDuration =
-    selectedService === 'toilettage' && !selectedProfile?.grooming_duration
+    selectedService.includes('toilettage') && !selectedProfile?.grooming_duration
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -340,9 +342,9 @@ export function NewReservationForm({ calendlyUrls }: NewReservationFormProps) {
             onChange={(e) => setSelectedService(e.target.value)}
             className={inputCls}
           >
-            {Object.entries(SERVICE_LABELS).map(([v, l]) => (
-              <option key={v} value={v}>
-                {l}
+            {services.map((s) => (
+              <option key={s.slug} value={s.slug}>
+                {s.title}
               </option>
             ))}
           </select>
@@ -361,18 +363,19 @@ export function NewReservationForm({ calendlyUrls }: NewReservationFormProps) {
             </p>
           )}
 
-          {!toilettageMissingDuration && !calendlyUrls[selectedService] && (
-            <p className="mt-3 text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-              Aucun lien Calendly configuré pour ce service.
-            </p>
-          )}
+          {!toilettageMissingDuration &&
+            !services.find((s) => s.slug === selectedService)?.calendlyUrl && (
+              <p className="mt-3 text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
+                Aucun lien Calendly configuré pour ce service.
+              </p>
+            )}
         </div>
       )}
 
       {/* Step 3: Open Calendly */}
       {selectedProfile &&
         !toilettageMissingDuration &&
-        calendlyUrls[selectedService] &&
+        services.find((s) => s.slug === selectedService)?.calendlyUrl &&
         step !== 'confirm' && (
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
