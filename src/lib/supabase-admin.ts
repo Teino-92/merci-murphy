@@ -19,6 +19,7 @@ export interface Profile {
   etat_poil: string | null
   notes: string | null
   can_book: boolean
+  grooming_duration: number | null
 }
 
 export interface Visit {
@@ -142,4 +143,58 @@ export async function setNewsletterActive(id: string, active: boolean): Promise<
     .update({ active })
     .eq('id', id)
   if (error) throw error
+}
+
+export async function searchProfiles(query: string): Promise<Profile[]> {
+  const { data, error } = await supabaseAdmin
+    .from('profiles')
+    .select('*')
+    .or(`nom.ilike.%${query}%,telephone.ilike.%${query}%`)
+    .order('nom', { ascending: true })
+    .limit(10)
+  if (error) throw error
+  return data ?? []
+}
+
+export interface CreateProfileInput {
+  email: string
+  nom: string
+  telephone: string
+  nom_chien: string
+  race_chien?: string
+  age_chien?: string
+  poids_chien?: string
+  etat_poil?: string
+  grooming_duration?: number | null
+  notes?: string | null
+}
+
+export async function createProfileWithAuth(input: CreateProfileInput): Promise<Profile> {
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    email: input.email,
+    email_confirm: false,
+  })
+  if (authError || !authData.user) {
+    throw new Error(authError?.message ?? 'Erreur création compte')
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from('profiles')
+    .insert({
+      id: authData.user.id,
+      nom: input.nom,
+      telephone: input.telephone,
+      nom_chien: input.nom_chien,
+      race_chien: input.race_chien ?? null,
+      age_chien: input.age_chien ?? null,
+      poids_chien: input.poids_chien ?? null,
+      etat_poil: input.etat_poil ?? null,
+      grooming_duration: input.grooming_duration ?? null,
+      notes: input.notes ?? null,
+    })
+    .select()
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data
 }
