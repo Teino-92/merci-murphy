@@ -57,6 +57,15 @@ Step 3: Redirect
         ├── toilettage + grooming_duration set → {calendlyUrl}?duration={grooming_duration}
         ├── toilettage + grooming_duration null → inline warning "Définir la durée toilettage sur le profil d'abord"
         └── other service → {calendlyUrl} (no param)
+
+Step 4: Confirm visit (manual, team comes back after booking on Calendly)
+  └── Form appears after "Ouvrir Calendly" is clicked
+        ├── Date (pre-filled with today)
+        ├── Prix (€)
+        ├── Staff
+        └── Notes
+  └── Button "Enregistrer la visite" → POST to visits table in Supabase
+  └── Success → redirect to client profile page
 ```
 
 ### 4.3 Existing Client Search
@@ -126,9 +135,10 @@ Add "Réservations" entry to the dashboard nav (`src/components/dashboard/nav.ts
 
 ---
 
-## 8. Out of Scope
+## 8. Out of Scope (V1 — to be added after Calendly plan upgrade)
 
 - Calendly embed in the dashboard (team uses the external Calendly page in a new tab)
-- Calendly webhook / confirmation syncing back to the dashboard
+- Calendly webhook → automatic visit creation in Supabase on booking confirmation
+- Calendly embed on client-facing service pages (replaces manual redirect)
 - Multi-dog profiles (one dog per profile for now)
 - Deposit / SumUp payment from this flow
