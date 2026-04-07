@@ -47,12 +47,12 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   const [creatingClient, setCreatingClient] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
 
-  // Clean ?confirm=1 from URL after redirect back from Calendly
+  // Clean ?confirm=1 from URL silently (history replace, no re-render)
   useEffect(() => {
     if (searchParams.get('confirm') === '1') {
-      router.replace('/dashboard/reservations/new')
+      window.history.replaceState(null, '', '/dashboard/reservations/new')
     }
-  }, [searchParams, router])
+  }, [searchParams])
 
   // Service selection
   const [selectedService, setSelectedService] = useState(() => services[0]?.slug ?? '')
@@ -63,6 +63,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   const [visitStaff, setVisitStaff] = useState('')
   const [visitNotes, setVisitNotes] = useState('')
   const [savingVisit, setSavingVisit] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   function handleSearchChange(q: string) {
     setSearchQuery(q)
@@ -133,7 +134,8 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   async function saveVisit() {
     if (!selectedProfile) return
     setSavingVisit(true)
-    await fetch(`/api/dashboard/customers/${selectedProfile.id}/visits`, {
+    setSaveError(null)
+    const res = await fetch(`/api/dashboard/customers/${selectedProfile.id}/visits`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -145,6 +147,11 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
       }),
     })
     setSavingVisit(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setSaveError(data.error ?? `Erreur ${res.status}`)
+      return
+    }
     router.push(`/dashboard/customers/${selectedProfile.id}`)
     router.refresh()
   }
@@ -458,6 +465,9 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                 className={`${inputCls} resize-none`}
               />
             </div>
+            {saveError && (
+              <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2">{saveError}</p>
+            )}
             <div className="flex gap-2 pt-1">
               <button
                 onClick={saveVisit}
