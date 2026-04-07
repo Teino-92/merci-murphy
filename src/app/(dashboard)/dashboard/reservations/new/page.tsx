@@ -19,5 +19,7 @@ async function getServices(): Promise<ServiceOption[]> {
 
 export default async function NewReservationPage() {
   const services = await getServices()
-  return <NewReservationForm services={services} />
+  // Only show services with a Calendly URL — excludes parent/placeholder entries
+  const bookableServices = services.filter((s) => s.calendlyUrl)
+  return <NewReservationForm services={bookableServices} />
 }

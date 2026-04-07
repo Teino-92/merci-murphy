@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Search, X, ExternalLink, Check } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 import type { Profile } from '@/lib/supabase-admin'
@@ -15,10 +15,13 @@ type Step = 'client' | 'service' | 'calendly' | 'confirm'
 
 export function NewReservationForm({ services }: NewReservationFormProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const inputCls =
     'w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]'
 
-  const [step, setStep] = useState<Step>('client')
+  const [step, setStep] = useState<Step>(() =>
+    searchParams.get('confirm') === '1' ? 'confirm' : 'client'
+  )
 
   // Client selection
   const [searchQuery, setSearchQuery] = useState('')
@@ -43,6 +46,13 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   })
   const [creatingClient, setCreatingClient] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
+
+  // Clean ?confirm=1 from URL after redirect back from Calendly
+  useEffect(() => {
+    if (searchParams.get('confirm') === '1') {
+      router.replace('/dashboard/reservations/new')
+    }
+  }, [searchParams, router])
 
   // Service selection
   const [selectedService, setSelectedService] = useState(() => services[0]?.slug ?? '')
@@ -103,10 +113,13 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
     const service = services.find((s) => s.slug === selectedService)
     const base = service?.calendlyUrl ?? null
     if (!base) return null
+    const params = new URLSearchParams()
     if (selectedService.includes('toilettage') && selectedProfile?.grooming_duration) {
-      return `${base}?duration=${selectedProfile.grooming_duration}`
+      params.set('duration', String(selectedProfile.grooming_duration))
     }
-    return base
+    const redirectUri = `${window.location.origin}/dashboard/reservations/new?confirm=1`
+    params.set('redirect_uri', redirectUri)
+    return `${base}?${params.toString()}`
   }
 
   function openCalendly() {
