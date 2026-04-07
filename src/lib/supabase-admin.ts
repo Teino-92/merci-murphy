@@ -28,9 +28,14 @@ export interface Visit {
   profile_id: string
   service: string
   date: string
+  time: string | null
+  duration: number | null
   notes: string | null
   staff: string | null
   price: number | null
+  status: 'confirmed' | 'pending_deposit' | 'cancelled'
+  sumup_checkout_id: string | null
+  deposit_paid_at: string | null
 }
 
 export interface Lead {
