@@ -149,24 +149,64 @@ Update the `Visit` interface in `supabase-admin.ts` accordingly.
 
 ---
 
-## 8. Environment Variables
+## 8. Toilettage Deposit Flow (client online booking only)
+
+When a client books toilettage online via the website embed, a 60€ deposit is required before the booking is confirmed. This flow only applies to client-side bookings — team bookings from the dashboard skip the deposit.
+
+### Flow
+
+1. **Cal.com webhook fires** (booking created) → visit created with `status = 'pending_deposit'`
+2. **Create SumUp checkout** (60€) via SumUp API → store `sumup_checkout_id` on the visit
+3. **Send deposit email** via Resend → client receives payment link, valid until they pay
+4. **SumUp webhook fires** (payment completed) → visit `status` updated to `'confirmed'`, `deposit_paid_at` set
+5. **Send confirmation email** via Resend → client receives booking confirmed with date/time
+
+### Visit status values
+
+Add `status` column to `visits` table:
+
+```sql
+ALTER TABLE visits ADD COLUMN status text not null default 'confirmed';
+-- Values: 'pending_deposit' | 'confirmed' | 'cancelled'
+```
+
+Team dashboard bookings always insert with `status = 'confirmed'` directly.
+
+### Deposit amount
+
+Fixed at **60€** for all toilettage bookings. Stored as `deposit_amount = 60.00` on the visit row (column already exists in the leads table schema, add to visits).
+
+### Cancellation
+
+Automatic cancellation for unpaid deposits is **deferred** — the team handles it manually for now. The booking window policy (how far in advance clients can book) will be defined later, at which point an automatic expiry job will be added.
+
+### Distinguish client vs team booking
+
+The cal.com webhook payload includes the attendee email. If the booking was made from the dashboard (team flow), we skip the deposit step. Detection: if the booking was initiated from `/dashboard/*` origin or if the attendee email matches a team account — use a cal.com "notes" prefill field set to `source=dashboard` to distinguish.
+
+---
+
+## 9. Environment Variables
 
 ```env
-CAL_WEBHOOK_SECRET=   # set in Vercel + cal.com webhook config
+CAL_WEBHOOK_SECRET=        # set in Vercel + cal.com webhook config
+SUMUP_API_KEY=             # already exists (used for leads deposits)
+RESEND_API_KEY=            # already exists
 ```
 
 ---
 
-## 9. Sanity — Update Service URLs
+## 10. Sanity — Update Service URLs
 
 Replace `calendlyUrl` field values in Sanity with cal.com URLs for toilettage, bains, balnéo. The field name stays `calendlyUrl` (no rename needed — it's just a URL field).
 
 ---
 
-## 10. Out of Scope
+## 11. Out of Scope
 
 - Website embed (separate spec)
 - Cal.com embed for crèche (uses leads form)
 - Ostéo/massage/éducation scheduling logic (team decides externally)
+- Automatic cancellation for unpaid deposits (deferred — booking window policy TBD)
 - Automatic price/staff population from cal.com
 - Cal.com OAuth (personal access token is sufficient for webhook validation)
