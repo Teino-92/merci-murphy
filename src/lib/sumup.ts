@@ -35,7 +35,9 @@ export async function createSumUpCheckout(params: {
     const body = await res.text()
     throw new Error(`SumUp checkout creation failed: ${res.status} ${body}`)
   }
-  return res.json()
+  const data = await res.json()
+  console.log('SumUp checkout response:', JSON.stringify(data))
+  return data
 }
 
 export function getSumUpCheckoutUrl(checkoutId: string): string {
