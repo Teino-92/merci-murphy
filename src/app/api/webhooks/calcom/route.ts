@@ -51,14 +51,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
+  // Log full payload for debugging
+  console.log('CAL WEBHOOK PAYLOAD:', JSON.stringify(payload, null, 2))
+
   if (payload.triggerEvent !== 'BOOKING_CREATED') {
     return NextResponse.json({ ok: true })
   }
 
-  const attendee = payload.payload.attendees[0]
+  const attendee = payload.payload.attendees?.[0]
   if (!attendee) return NextResponse.json({ error: 'No attendee' }, { status: 400 })
 
-  const service = getServiceFromSlug(payload.payload.eventType.slug)
+  const eventSlug = payload.payload.eventType?.slug ?? payload.payload.type ?? ''
+  const service = getServiceFromSlug(eventSlug)
   if (!service) return NextResponse.json({ error: 'Unknown event type' }, { status: 400 })
 
   const notesValue = payload.payload.responses?.notes?.value ?? ''
