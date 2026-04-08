@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
     triggerEvent: string
     payload: {
       attendees: { name: string; email: string }[]
-      eventType: { slug: string; title: string }
+      eventType?: { slug: string; title: string }
+      type?: string
       startTime: string
       endTime: string
       responses?: { notes?: { value?: string } }
