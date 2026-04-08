@@ -4,6 +4,9 @@ import { useState } from 'react'
 import type { Lead } from '@/lib/supabase-admin'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 
+const STATUSES = ['new', 'contacted', 'confirmed', 'cancelled'] as const
+type LeadStatus = (typeof STATUSES)[number]
+
 const STATUS_LABELS: Record<string, string> = {
   new: 'Nouveau',
   contacted: 'Contacté',
@@ -18,8 +21,25 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-700',
 }
 
-export function LeadsTable({ leads }: { leads: (Lead & { has_account: boolean })[] }) {
+export function LeadsTable({
+  leads: initialLeads,
+}: {
+  leads: (Lead & { has_account: boolean })[]
+}) {
+  const [leads, setLeads] = useState(initialLeads)
   const [filter, setFilter] = useState<string>('all')
+  const [updating, setUpdating] = useState<string | null>(null)
+
+  async function changeStatus(id: string, status: LeadStatus) {
+    setUpdating(id + status)
+    await fetch(`/api/dashboard/leads/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    })
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)))
+    setUpdating(null)
+  }
 
   const filtered =
     filter === 'all'
@@ -107,11 +127,18 @@ export function LeadsTable({ leads }: { leads: (Lead & { has_account: boolean })
                     <p className="text-xs text-gray-400">{lead.telephone}</p>
                   </td>
                   <td className="px-5 py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[lead.status]}`}
+                    <select
+                      value={lead.status}
+                      disabled={updating !== null}
+                      onChange={(e) => changeStatus(lead.id, e.target.value as LeadStatus)}
+                      className={`px-2 py-1 rounded-full text-xs font-medium border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1D164E] ${STATUS_COLORS[lead.status]}`}
                     >
-                      {STATUS_LABELS[lead.status]}
-                    </span>
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {STATUS_LABELS[s]}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="px-5 py-4 text-gray-400 hidden lg:table-cell">
                     {new Date(lead.created_at).toLocaleDateString('fr-FR')}
