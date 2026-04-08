@@ -109,6 +109,17 @@ export async function subscribeNewsletter(data: { email: string }) {
 
   if (error) return { success: false, error: 'Une erreur est survenue. Veuillez réessayer.' }
 
+  // Add to Resend Audience
+  if (process.env.RESEND_AUDIENCE_ID) {
+    await resend.contacts
+      .create({
+        email: parsed.data.email,
+        audienceId: process.env.RESEND_AUDIENCE_ID,
+        unsubscribed: false,
+      })
+      .catch(() => {})
+  }
+
   // Welcome email via Resend
   await resend.emails
     .send({
