@@ -6,6 +6,8 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 // Map cal.com event slug to Supabase visit service value
 const EVENT_SLUG_TO_SERVICE: Record<string, string> = {
   toilettage: 'toilettage',
+  'toilettage-maison-poilus-r-avec-titouan': 'toilettage',
+  'toilettage-maison-poilus-r-avec-andrea': 'toilettage',
   'les-bains': 'bains',
   balneo: 'balneo',
 }

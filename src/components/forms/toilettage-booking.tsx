@@ -8,12 +8,12 @@ const TOILETTEURS = [
   {
     key: 'titouan',
     name: 'Titouan',
-    calLink: 'merci-murphy/toilettage-maison-poilus\u00ae-avec-titouan',
+    calLink: 'merci-murphy/toilettage-maison-poilus-r-avec-titouan',
   },
   {
     key: 'andrea',
     name: 'Andrea',
-    calLink: 'merci-murphy/toilettage-maison-poilus\u00ae-avec-andrea',
+    calLink: 'merci-murphy/toilettage-maison-poilus-r-avec-andrea',
   },
 ] as const
 
