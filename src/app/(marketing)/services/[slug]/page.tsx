@@ -278,7 +278,13 @@ export default async function ServicePage({ params }: Props) {
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 {service.calendlyUrl && (
-                  <CalendlyCta calendlyUrl={service.calendlyUrl} label={service.cta?.label} />
+                  <CalendlyCta
+                    calendlyUrl={service.calendlyUrl}
+                    label={service.cta?.label}
+                    href={
+                      params.slug === 'le-toilettage-maison-poilus-r' ? '/reservation' : undefined
+                    }
+                  />
                 )}
                 <RappelButton />
               </div>
@@ -294,6 +300,7 @@ export default async function ServicePage({ params }: Props) {
           calendlyUrl={service.calendlyUrl}
           label={service.cta?.label}
           phone={settings?.telephone}
+          href={params.slug === 'le-toilettage-maison-poilus-r' ? '/reservation' : undefined}
         />
       ) : (
         <MobileCta

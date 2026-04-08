@@ -12,9 +12,13 @@ interface CalendlyCtaProps {
   /** If true, renders the mobile sticky bar variant */
   mobile?: boolean
   phone?: string
+  /** Override the booking URL (e.g. '/reservation' for internal pages) */
+  href?: string
 }
 
-export function CalendlyCta({ calendlyUrl, label, mobile = false, phone }: CalendlyCtaProps) {
+export function CalendlyCta({ calendlyUrl, label, mobile = false, phone, href }: CalendlyCtaProps) {
+  const bookingUrl = href ?? calendlyUrl
+  const isExternal = !bookingUrl.startsWith('/')
   const [canBook, setCanBook] = useState(false)
 
   useEffect(() => {
@@ -48,15 +52,22 @@ export function CalendlyCta({ calendlyUrl, label, mobile = false, phone }: Calen
               asChild
               className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
             >
-              <a
-                href={calendlyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
-              >
-                <Calendar className="h-4 w-4" />
-                {label ?? 'Réserver'}
-              </a>
+              {isExternal ? (
+                <a
+                  href={bookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  {label ?? 'Réserver'}
+                </a>
+              ) : (
+                <Link href={bookingUrl} className="flex items-center justify-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  {label ?? 'Réserver'}
+                </Link>
+              )}
             </Button>
           ) : (
             <Button
@@ -79,9 +90,13 @@ export function CalendlyCta({ calendlyUrl, label, mobile = false, phone }: Calen
 
   return (
     <Button asChild size="lg" className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
-      <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
-        {label ?? 'Réserver en ligne'}
-      </a>
+      {isExternal ? (
+        <a href={bookingUrl} target="_blank" rel="noopener noreferrer">
+          {label ?? 'Réserver en ligne'}
+        </a>
+      ) : (
+        <Link href={bookingUrl}>{label ?? 'Réserver en ligne'}</Link>
+      )}
     </Button>
   )
 }
