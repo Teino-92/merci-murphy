@@ -141,6 +141,16 @@ export function ReservationForm({
       {step === 1 && (
         <div className="space-y-4">
           <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">
+              Prénom du chien
+            </label>
+            <Input
+              placeholder="Ex: Murphy, Luna..."
+              value={(form as Record<string, string>).nom_chien ?? ''}
+              onChange={(e) => set('nom_chien' as keyof LeadFormData, e.target.value)}
+            />
+          </div>
+          <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Race</label>
             <Input
               placeholder="Ex: Labrador, Caniche..."
