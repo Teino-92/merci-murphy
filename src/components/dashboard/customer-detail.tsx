@@ -129,8 +129,7 @@ export function CustomerDetail({
   async function copyDepositEmail(visit: (typeof visits)[0]) {
     const finalPrice = depositPrices[visit.id]
     if (!finalPrice || isNaN(Number(finalPrice)) || Number(finalPrice) <= 0) return
-    const price = Number(finalPrice)
-    const deposit = Math.round(price * 0.5 * 100) / 100
+    const deposit = Number(finalPrice)
 
     const startDate = new Date(`${visit.date}T${visit.time ?? '00:00'}`)
     const appointmentDate = startDate.toLocaleDateString('fr-FR', {
@@ -160,15 +159,7 @@ L'équipe merci murphy`
 
     await navigator.clipboard.writeText(text)
 
-    // Save final price to visit
-    await fetch(`/api/dashboard/visits/${visit.id}/request-deposit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ finalPrice: price }),
-    })
-
     setDepositSent((s) => ({ ...s, [visit.id]: deposit }))
-    setVisits((vs) => vs.map((v) => (v.id === visit.id ? { ...v, final_price: price } : v)))
   }
 
   const inputCls =
@@ -543,7 +534,7 @@ L'équipe merci murphy`
                           type="number"
                           min="0"
                           step="0.01"
-                          placeholder="Prix final (€)"
+                          placeholder="Acompte (€)"
                           value={depositPrices[v.id] ?? ''}
                           onChange={(e) =>
                             setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
@@ -555,7 +546,7 @@ L'équipe merci murphy`
                           disabled={!depositPrices[v.id] || Number(depositPrices[v.id]) <= 0}
                           className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
                         >
-                          Copier le texte (50%)
+                          Copier le texte
                         </button>
                       </div>
                     )}
