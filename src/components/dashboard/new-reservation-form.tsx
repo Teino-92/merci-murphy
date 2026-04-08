@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Search, X, ExternalLink, Check } from 'lucide-react'
+import { useState, useRef } from 'react'
+import Cal from '@calcom/embed-react'
+import { Search, X, Check } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
+import { useRouter } from 'next/navigation'
 import type { Profile } from '@/lib/supabase-admin'
 import type { ServiceOption } from '@/app/(dashboard)/dashboard/reservations/new/page'
 
@@ -11,17 +12,10 @@ interface NewReservationFormProps {
   services: ServiceOption[]
 }
 
-type Step = 'client' | 'service' | 'calendly' | 'confirm'
-
 export function NewReservationForm({ services }: NewReservationFormProps) {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const inputCls =
     'w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]'
-
-  const [step, setStep] = useState<Step>(() =>
-    searchParams.get('confirm') === '1' ? 'confirm' : 'client'
-  )
 
   // Client selection
   const [searchQuery, setSearchQuery] = useState('')
@@ -47,23 +41,24 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   const [creatingClient, setCreatingClient] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
 
-  // Clean ?confirm=1 from URL silently (history replace, no re-render)
-  useEffect(() => {
-    if (searchParams.get('confirm') === '1') {
-      window.history.replaceState(null, '', '/dashboard/reservations/new')
-    }
-  }, [searchParams])
-
   // Service selection
   const [selectedService, setSelectedService] = useState(() => services[0]?.slug ?? '')
 
-  // Visit confirmation
+  // Manual form state
   const [visitDate, setVisitDate] = useState(new Date().toISOString().slice(0, 10))
+  const [visitTime, setVisitTime] = useState('')
+  const [visitDuration, setVisitDuration] = useState(60)
   const [visitPrice, setVisitPrice] = useState('')
   const [visitStaff, setVisitStaff] = useState('')
   const [visitNotes, setVisitNotes] = useState('')
   const [savingVisit, setSavingVisit] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  // Derived
+  const currentService = services.find((s) => s.slug === selectedService)
+  const isCalService = currentService?.calLink != null
+  const isToilettage = selectedService.includes('toilettage')
+  const toilettageMissingDuration = isToilettage && !selectedProfile?.grooming_duration
 
   function handleSearchChange(q: string) {
     setSearchQuery(q)
@@ -110,28 +105,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
     setCreatingClient(false)
   }
 
-  function buildCalendlyUrl(): string | null {
-    const service = services.find((s) => s.slug === selectedService)
-    const base = service?.calendlyUrl ?? null
-    if (!base) return null
-    const params = new URLSearchParams()
-    if (selectedService.includes('toilettage') && selectedProfile?.grooming_duration) {
-      params.set('duration', String(selectedProfile.grooming_duration))
-    }
-    const redirectUri = `${window.location.origin}/dashboard/reservations/new?confirm=1`
-    params.set('redirect_uri', redirectUri)
-    return `${base}?${params.toString()}`
-  }
-
-  function openCalendly() {
-    const url = buildCalendlyUrl()
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer')
-      setStep('confirm')
-    }
-  }
-
-  async function saveVisit() {
+  async function saveManualVisit() {
     if (!selectedProfile) return
     setSavingVisit(true)
     setSaveError(null)
@@ -141,9 +115,11 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
       body: JSON.stringify({
         service: selectedService,
         date: visitDate,
-        notes: visitNotes,
-        staff: visitStaff,
-        price: visitPrice,
+        time: visitTime || null,
+        duration: visitDuration,
+        notes: visitNotes || null,
+        staff: visitStaff || null,
+        price: visitPrice ? Number(visitPrice) : null,
       }),
     })
     setSavingVisit(false)
@@ -155,9 +131,6 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
     router.push(`/dashboard/customers/${selectedProfile.id}`)
     router.refresh()
   }
-
-  const toilettageMissingDuration =
-    selectedService.includes('toilettage') && !selectedProfile?.grooming_duration
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -186,10 +159,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
               )}
             </div>
             <button
-              onClick={() => {
-                setSelectedProfile(null)
-                setStep('client')
-              }}
+              onClick={() => setSelectedProfile(null)}
               className="text-gray-400 hover:text-red-400 transition-colors"
             >
               <X className="h-4 w-4" />
@@ -362,14 +332,27 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
             onChange={(e) => setSelectedService(e.target.value)}
             className={inputCls}
           >
-            {services.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                {s.title}
-              </option>
-            ))}
+            <optgroup label="Réservation en ligne (cal.com)">
+              {services
+                .filter((s) => s.calLink)
+                .map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.title}
+                  </option>
+                ))}
+            </optgroup>
+            <optgroup label="Rendez-vous manuel">
+              {services
+                .filter((s) => !s.calLink)
+                .map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.title}
+                  </option>
+                ))}
+            </optgroup>
           </select>
 
-          {toilettageMissingDuration && (
+          {isCalService && toilettageMissingDuration && (
             <p className="mt-3 text-sm text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
               ⚠️ La durée de toilettage n&apos;est pas définie pour ce client. Veuillez la
               renseigner sur{' '}
@@ -382,44 +365,37 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
               avant de réserver.
             </p>
           )}
-
-          {!toilettageMissingDuration &&
-            !services.find((s) => s.slug === selectedService)?.calendlyUrl && (
-              <p className="mt-3 text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-                Aucun lien Calendly configuré pour ce service.
-              </p>
-            )}
         </div>
       )}
 
-      {/* Step 3: Open Calendly */}
-      {selectedProfile &&
-        !toilettageMissingDuration &&
-        services.find((s) => s.slug === selectedService)?.calendlyUrl &&
-        step !== 'confirm' && (
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
-              3. Calendly
-            </p>
-            <p className="text-sm text-gray-500 mb-4">
-              Ouvrez Calendly dans un nouvel onglet, complétez la réservation, puis revenez ici pour
-              enregistrer la visite.
-            </p>
-            <button
-              onClick={openCalendly}
-              className="flex items-center gap-2 bg-[#1D164E] text-white rounded-lg px-5 py-2.5 text-sm font-medium hover:bg-[#1D164E]/90 transition-colors"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Ouvrir Calendly
-            </button>
-          </div>
-        )}
-
-      {/* Step 4: Confirm visit */}
-      {step === 'confirm' && selectedProfile && (
+      {/* Step 3a: Cal.com embed */}
+      {selectedProfile && isCalService && !toilettageMissingDuration && currentService?.calLink && (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
-            4. Confirmer la visite
+            3. Réservation
+          </p>
+          <Cal
+            calLink={currentService.calLink}
+            config={{
+              name: selectedProfile.nom,
+              notes: 'source=dashboard',
+              ...(isToilettage && selectedProfile.grooming_duration
+                ? { duration: String(selectedProfile.grooming_duration) }
+                : {}),
+            }}
+            style={{ width: '100%', height: '600px', border: 'none' }}
+          />
+          <p className="mt-4 text-xs text-gray-400 text-center">
+            La visite sera enregistrée automatiquement une fois la réservation confirmée.
+          </p>
+        </div>
+      )}
+
+      {/* Step 3b: Manual form */}
+      {selectedProfile && !isCalService && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
+            3. Détails du rendez-vous
           </p>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
@@ -429,6 +405,28 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                   type="date"
                   value={visitDate}
                   onChange={(e) => setVisitDate(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Heure</label>
+                <input
+                  type="time"
+                  value={visitTime}
+                  onChange={(e) => setVisitTime(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Durée (min)</label>
+                <input
+                  type="number"
+                  min="15"
+                  step="15"
+                  value={visitDuration}
+                  onChange={(e) => setVisitDuration(Number(e.target.value))}
                   className={inputCls}
                 />
               </div>
@@ -451,7 +449,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                 type="text"
                 value={visitStaff}
                 onChange={(e) => setVisitStaff(e.target.value)}
-                placeholder="Prénom du toiletteur / responsable"
+                placeholder="Prénom du praticien"
                 className={inputCls}
               />
             </div>
@@ -468,22 +466,14 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
             {saveError && (
               <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2">{saveError}</p>
             )}
-            <div className="flex gap-2 pt-1">
-              <button
-                onClick={saveVisit}
-                disabled={savingVisit}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#1D164E] text-white rounded-lg py-2.5 text-sm font-medium hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
-              >
-                <Check className="h-4 w-4" />
-                {savingVisit ? 'Enregistrement…' : 'Enregistrer la visite'}
-              </button>
-              <button
-                onClick={() => setStep('service')}
-                className="px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-100 transition-colors"
-              >
-                Retour
-              </button>
-            </div>
+            <button
+              onClick={saveManualVisit}
+              disabled={savingVisit || !visitDate}
+              className="w-full flex items-center justify-center gap-2 bg-[#1D164E] text-white rounded-lg py-2.5 text-sm font-medium hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+            >
+              <Check className="h-4 w-4" />
+              {savingVisit ? 'Enregistrement…' : 'Enregistrer la visite'}
+            </button>
           </div>
         </div>
       )}
