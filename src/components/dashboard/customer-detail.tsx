@@ -39,7 +39,6 @@ export function CustomerDetail({
 
   // Deposit state — keyed by visit id
   const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
-  const [sendingDeposit, setSendingDeposit] = useState<Record<string, boolean>>({})
   const [depositSent, setDepositSent] = useState<Record<string, number>>({})
 
   // Add visit state
@@ -127,26 +126,49 @@ export function CustomerDetail({
     setVisits((v) => v.filter((x) => x.id !== visitId))
   }
 
-  async function sendDeposit(visitId: string) {
-    const finalPrice = depositPrices[visitId]
+  async function copyDepositEmail(visit: (typeof visits)[0]) {
+    const finalPrice = depositPrices[visit.id]
     if (!finalPrice || isNaN(Number(finalPrice)) || Number(finalPrice) <= 0) return
-    setSendingDeposit((s) => ({ ...s, [visitId]: true }))
-    const res = await fetch(`/api/dashboard/visits/${visitId}/request-deposit`, {
+    const price = Number(finalPrice)
+    const deposit = Math.round(price * 0.5 * 100) / 100
+
+    const startDate = new Date(`${visit.date}T${visit.time ?? '00:00'}`)
+    const appointmentDate = startDate.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      ...(visit.time ? { hour: '2-digit', minute: '2-digit' } : {}),
+      timeZone: 'Europe/Paris',
+    })
+
+    const dogName = profile.nom_chien ?? 'votre chien'
+    const serviceName = SERVICE_LABELS[visit.service] ?? visit.service
+
+    const text = `Bonjour,
+
+Nous vous rappelons le rendez-vous de ${dogName} ${appointmentDate} chez merci murphy pour son ${serviceName.toLowerCase()}.
+Afin de valider définitivement votre créneau, merci de bien vouloir procéder au paiement d'un acompte de ${deposit}€ via le lien ci-dessous.
+
+[LIEN SUMUP]
+
+En effet en raison d'un grand nombre de non présentations, nous sommes contraints de procéder ainsi pour gérer au mieux le planning.
+
+Merci de votre compréhension.
+
+Nous vous souhaitons une bonne journée,
+L'équipe merci murphy`
+
+    await navigator.clipboard.writeText(text)
+
+    // Save final price to visit
+    await fetch(`/api/dashboard/visits/${visit.id}/request-deposit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ finalPrice: Number(finalPrice) }),
+      body: JSON.stringify({ finalPrice: price }),
     })
-    setSendingDeposit((s) => ({ ...s, [visitId]: false }))
-    if (!res.ok) return
-    const data = await res.json()
-    setDepositSent((s) => ({ ...s, [visitId]: data.depositAmount }))
-    setVisits((vs) =>
-      vs.map((v) =>
-        v.id === visitId
-          ? { ...v, final_price: Number(finalPrice), status: 'confirmed' as const }
-          : v
-      )
-    )
+
+    setDepositSent((s) => ({ ...s, [visit.id]: deposit }))
+    setVisits((vs) => vs.map((v) => (v.id === visit.id ? { ...v, final_price: price } : v)))
   }
 
   const inputCls =
@@ -529,15 +551,11 @@ export function CustomerDetail({
                           className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
                         />
                         <button
-                          onClick={() => sendDeposit(v.id)}
-                          disabled={
-                            sendingDeposit[v.id] ||
-                            !depositPrices[v.id] ||
-                            Number(depositPrices[v.id]) <= 0
-                          }
+                          onClick={() => copyDepositEmail(v)}
+                          disabled={!depositPrices[v.id] || Number(depositPrices[v.id]) <= 0}
                           className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
                         >
-                          {sendingDeposit[v.id] ? 'Envoi…' : "Envoyer l'acompte (50%)"}
+                          Copier le texte (50%)
                         </button>
                       </div>
                     )}
