@@ -37,6 +37,11 @@ export function CustomerDetail({
   })
   const [editSaving, setEditSaving] = useState(false)
 
+  // Deposit state — keyed by visit id
+  const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
+  const [sendingDeposit, setSendingDeposit] = useState<Record<string, boolean>>({})
+  const [depositSent, setDepositSent] = useState<Record<string, number>>({})
+
   // Add visit state
   const [showVisitForm, setShowVisitForm] = useState(false)
   const [visitService, setVisitService] = useState('toilettage')
@@ -120,6 +125,28 @@ export function CustomerDetail({
     if (!confirm('Supprimer cette visite ?')) return
     await fetch(`/api/dashboard/customers/${profile.id}/visits/${visitId}`, { method: 'DELETE' })
     setVisits((v) => v.filter((x) => x.id !== visitId))
+  }
+
+  async function sendDeposit(visitId: string) {
+    const finalPrice = depositPrices[visitId]
+    if (!finalPrice || isNaN(Number(finalPrice)) || Number(finalPrice) <= 0) return
+    setSendingDeposit((s) => ({ ...s, [visitId]: true }))
+    const res = await fetch(`/api/dashboard/visits/${visitId}/request-deposit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ finalPrice: Number(finalPrice) }),
+    })
+    setSendingDeposit((s) => ({ ...s, [visitId]: false }))
+    if (!res.ok) return
+    const data = await res.json()
+    setDepositSent((s) => ({ ...s, [visitId]: data.depositAmount }))
+    setVisits((vs) =>
+      vs.map((v) =>
+        v.id === visitId
+          ? { ...v, final_price: Number(finalPrice), status: 'confirmed' as const }
+          : v
+      )
+    )
   }
 
   const inputCls =
@@ -440,36 +467,80 @@ export function CustomerDetail({
             ) : (
               <div className="space-y-3">
                 {visits.map((v) => (
-                  <div key={v.id} className="flex gap-4 p-4 rounded-xl bg-gray-50 group">
-                    <div className="shrink-0 text-center">
-                      <p className="text-xs font-bold text-[#1D164E]">
-                        {new Date(v.date).toLocaleDateString('fr-FR', {
-                          day: '2-digit',
-                          month: 'short',
-                        })}
-                      </p>
-                      <p className="text-xs text-gray-400">{new Date(v.date).getFullYear()}</p>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-[#1D164E]">
-                          {SERVICE_LABELS[v.service] ?? v.service}
-                        </span>
-                        {v.staff && <span className="text-xs text-gray-400">· {v.staff}</span>}
-                        {v.price != null && (
-                          <span className="ml-auto text-sm font-semibold text-[#1D164E]">
-                            {v.price.toFixed(2)} €
+                  <div key={v.id} className="rounded-xl bg-gray-50 overflow-hidden group">
+                    <div className="flex gap-4 p-4">
+                      <div className="shrink-0 text-center">
+                        <p className="text-xs font-bold text-[#1D164E]">
+                          {new Date(v.date).toLocaleDateString('fr-FR', {
+                            day: '2-digit',
+                            month: 'short',
+                          })}
+                        </p>
+                        <p className="text-xs text-gray-400">{new Date(v.date).getFullYear()}</p>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-[#1D164E]">
+                            {SERVICE_LABELS[v.service] ?? v.service}
                           </span>
+                          {v.staff && <span className="text-xs text-gray-400">· {v.staff}</span>}
+                          {v.status === 'pending_deposit' && (
+                            <span className="ml-auto text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                              Acompte en attente
+                            </span>
+                          )}
+                          {v.status === 'confirmed' && v.final_price != null && (
+                            <span className="ml-auto text-sm font-semibold text-[#1D164E]">
+                              {v.final_price.toFixed(2)} €
+                            </span>
+                          )}
+                          {v.status === 'confirmed' && v.price != null && v.final_price == null && (
+                            <span className="ml-auto text-sm font-semibold text-[#1D164E]">
+                              {v.price.toFixed(2)} €
+                            </span>
+                          )}
+                        </div>
+                        {v.notes && <p className="text-xs text-gray-500 mt-1">{v.notes}</p>}
+                        {depositSent[v.id] != null && (
+                          <p className="text-xs text-green-600 mt-1">
+                            ✓ Acompte de {depositSent[v.id].toFixed(2)} € envoyé
+                          </p>
                         )}
                       </div>
-                      {v.notes && <p className="text-xs text-gray-500 mt-1">{v.notes}</p>}
+                      <button
+                        onClick={() => deleteVisit(v.id)}
+                        className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => deleteVisit(v.id)}
-                      className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all shrink-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+
+                    {v.status === 'pending_deposit' && depositSent[v.id] == null && (
+                      <div className="px-4 pb-4 flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="Prix final (€)"
+                          value={depositPrices[v.id] ?? ''}
+                          onChange={(e) =>
+                            setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
+                          }
+                          className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                        />
+                        <button
+                          onClick={() => sendDeposit(v.id)}
+                          disabled={
+                            sendingDeposit[v.id] ||
+                            !depositPrices[v.id] ||
+                            Number(depositPrices[v.id]) <= 0
+                          }
+                          className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+                        >
+                          {sendingDeposit[v.id] ? 'Envoi…' : "Envoyer l'acompte (50%)"}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
