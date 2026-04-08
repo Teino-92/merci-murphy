@@ -53,15 +53,20 @@ export function ToilettageBooking({ profile }: ToilettageBookingProps) {
             Changer
           </button>
         </div>
-        <Cal
-          calLink={selectedLink}
-          calOrigin="https://cal.eu"
-          config={{
-            name: profile.nom,
-            ...(profile.grooming_duration ? { duration: String(profile.grooming_duration) } : {}),
-          }}
-          style={{ width: '100%', height: '650px', border: 'none' }}
-        />
+        <div
+          className="overflow-y-auto rounded-2xl border border-charcoal/10 bg-white"
+          style={{ height: '600px' }}
+        >
+          <Cal
+            calLink={selectedLink}
+            calOrigin="https://cal.eu"
+            config={{
+              name: profile.nom,
+              ...(profile.grooming_duration ? { duration: String(profile.grooming_duration) } : {}),
+            }}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+          />
+        </div>
       </div>
     )
   }

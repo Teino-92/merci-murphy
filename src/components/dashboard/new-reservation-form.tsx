@@ -374,18 +374,23 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
             3. Réservation
           </p>
-          <Cal
-            calLink={currentService.calLink}
-            calOrigin="https://cal.eu"
-            config={{
-              name: selectedProfile.nom,
-              notes: 'source=dashboard',
-              ...(isToilettage && selectedProfile.grooming_duration
-                ? { duration: String(selectedProfile.grooming_duration) }
-                : {}),
-            }}
-            style={{ width: '100%', height: '600px', border: 'none' }}
-          />
+          <div
+            className="overflow-y-auto rounded-xl border border-gray-100"
+            style={{ height: '600px' }}
+          >
+            <Cal
+              calLink={currentService.calLink}
+              calOrigin="https://cal.eu"
+              config={{
+                name: selectedProfile.nom,
+                notes: 'source=dashboard',
+                ...(isToilettage && selectedProfile.grooming_duration
+                  ? { duration: String(selectedProfile.grooming_duration) }
+                  : {}),
+              }}
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
+          </div>
           <p className="mt-4 text-xs text-gray-400 text-center">
             La visite sera enregistrée automatiquement une fois la réservation confirmée.
           </p>
