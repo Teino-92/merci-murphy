@@ -1,13 +1,18 @@
 // src/lib/emails/deposit-request.ts
 
 export function depositRequestHtml(params: {
-  clientName: string
+  clientName: string // kept for future use
+  dogName: string | null
   serviceName: string
-  appointmentDate: string // formatted, e.g. 'vendredi 11 avril 2026 à 14h30'
-  depositAmount: number // 60
+  appointmentDate: string // e.g. 'jeudi 9 avril à 15h45'
+  depositAmount: number
   paymentUrl: string
 }): string {
-  const { clientName, serviceName, appointmentDate, depositAmount, paymentUrl } = params
+  const { dogName, serviceName, appointmentDate, depositAmount, paymentUrl } = params
+  const subject = dogName
+    ? `le rendez-vous de ${dogName} ${appointmentDate} chez merci murphy pour son ${serviceName.toLowerCase()}`
+    : `votre rendez-vous ${appointmentDate} chez merci murphy pour le ${serviceName.toLowerCase()}`
+
   return `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +25,16 @@ export function depositRequestHtml(params: {
   <p style="margin:0;color:#f5f0eb;font-size:22px;font-weight:600;letter-spacing:0.02em;">merci murphy®</p>
 </td></tr>
 <tr><td style="padding:40px 48px;">
-  <h1 style="margin:0 0 8px;font-size:24px;font-weight:600;color:#1D164E;">Votre réservation est presque confirmée</h1>
-  <p style="margin:0 0 24px;font-size:15px;color:#4a4a4a;line-height:1.6;">Bonjour ${clientName},</p>
-  <p style="margin:0 0 24px;font-size:15px;color:#4a4a4a;line-height:1.6;">
-    Votre demande de <strong>${serviceName}</strong> le <strong>${appointmentDate}</strong> a bien été reçue.<br>
-    Pour la confirmer définitivement, un acompte de <strong>${depositAmount}€</strong> est requis.
+  <p style="margin:0 0 16px;font-size:15px;color:#4a4a4a;line-height:1.6;">Bonjour,</p>
+  <p style="margin:0 0 16px;font-size:15px;color:#4a4a4a;line-height:1.6;">
+    Nous vous rappelons ${subject}.
+  </p>
+  <p style="margin:0 0 16px;font-size:15px;color:#4a4a4a;line-height:1.6;">
+    Afin de valider définitivement votre créneau, merci de bien vouloir procéder au paiement d'un acompte de <strong>${depositAmount}€</strong> via le lien ci-dessous.
+  </p>
+  <p style="margin:0 0 32px;font-size:15px;color:#4a4a4a;line-height:1.6;">
+    En effet en raison d'un grand nombre de non présentations, nous sommes contraints de procéder ainsi pour gérer au mieux le planning.<br><br>
+    Merci de votre compréhension.
   </p>
   <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
     <tr><td align="center">
@@ -33,11 +43,9 @@ export function depositRequestHtml(params: {
       </a>
     </td></tr>
   </table>
-  <p style="margin:0 0 8px;font-size:13px;color:#888;line-height:1.6;">
-    Ce lien est valable jusqu'à votre rendez-vous. Sans paiement, votre créneau pourra être libéré.
-  </p>
-  <p style="margin:0;font-size:13px;color:#888;line-height:1.6;">
-    Une question ? Répondez à cet email ou appelez-nous directement.
+  <p style="margin:0 0 24px;font-size:15px;color:#4a4a4a;line-height:1.6;">
+    Nous vous souhaitons une bonne journée,<br>
+    <strong>L'équipe merci murphy</strong>
   </p>
 </td></tr>
 <tr><td style="padding:24px 48px;background:#f5f0eb;text-align:center;">

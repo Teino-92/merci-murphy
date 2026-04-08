@@ -51,11 +51,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('nom')
+    .select('nom, nom_chien')
     .eq('id', visit.profile_id)
     .single()
 
   const clientName = profile?.nom ?? 'Client'
+  const dogName = profile?.nom_chien ?? null
   const clientEmail = authUser.user.email
 
   let checkout
@@ -95,6 +96,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       subject: 'Confirmez votre réservation — merci murphy® 🐾',
       html: depositRequestHtml({
         clientName,
+        dogName,
         serviceName: SERVICE_LABELS[visit.service] ?? visit.service,
         appointmentDate,
         depositAmount,
