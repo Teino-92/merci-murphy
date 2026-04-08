@@ -21,9 +21,23 @@ const EVENT_SLUG_TO_SERVICE: Record<string, string> = {
   balneo: 'Balnéo',
 }
 
+// Map cal.com event slug to staff name
+const EVENT_SLUG_TO_STAFF: Record<string, string | null> = {
+  toilettage: null,
+  'toilettage-maison-poilus-r-avec-titouan': 'Titouan',
+  'toilettage-maison-poilus-r-avec-andrea': 'Andrea',
+  'les-bains': null,
+  balneo: null,
+}
+
 function getServiceFromSlug(eventSlug: string): string | null {
   const slug = eventSlug.split('/').pop() ?? ''
   return EVENT_SLUG_TO_SERVICE[slug] ?? null
+}
+
+function getStaffFromSlug(eventSlug: string): string | null {
+  const slug = eventSlug.split('/').pop() ?? ''
+  return EVENT_SLUG_TO_STAFF[slug] ?? null
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,6 +94,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
+  // eslint-disable-next-line no-console
   console.log('CAL WEBHOOK PAYLOAD:', JSON.stringify(payload, null, 2))
 
   const attendee = payload.payload.attendees?.[0]
@@ -124,7 +139,7 @@ export async function POST(req: NextRequest) {
         time: timeStr,
         duration: null,
         notes: null,
-        staff: null,
+        staff: getStaffFromSlug(eventSlug),
         price: null,
         final_price: null,
         status,
@@ -133,6 +148,7 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (visitError) {
+      // eslint-disable-next-line no-console
       console.error('Visit insert error:', visitError)
       return NextResponse.json({ error: visitError.message }, { status: 500 })
     }
@@ -158,6 +174,7 @@ export async function POST(req: NextRequest) {
         }),
       })
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Reminder email error:', err)
     }
 
@@ -191,6 +208,7 @@ export async function POST(req: NextRequest) {
         }),
       })
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Thank-you email error:', err)
     }
 

@@ -12,6 +12,7 @@ import {
   Mail,
   LogOut,
   CalendarPlus,
+  CalendarDays,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +20,7 @@ const supabase = createSupabaseBrowserClient()
 
 const ADMIN_NAV = [
   { href: '/dashboard', label: "Vue d'ensemble", icon: LayoutDashboard },
+  { href: '/dashboard/calendar', label: 'Calendrier', icon: CalendarDays },
   { href: '/dashboard/customers', label: 'Clients', icon: Users },
   { href: '/dashboard/reservations/new', label: 'Réservation', icon: CalendarPlus },
   { href: '/dashboard/shopify-customers', label: 'Clients Shopify', icon: ShoppingBag },
@@ -27,6 +29,7 @@ const ADMIN_NAV = [
 ]
 
 const TEAM_NAV = [
+  { href: '/dashboard/calendar', label: 'Calendrier', icon: CalendarDays },
   { href: '/dashboard/customers', label: 'Clients', icon: Users },
   { href: '/dashboard/reservations/new', label: 'Réservation', icon: CalendarPlus },
   { href: '/dashboard/shopify-customers', label: 'Clients Shopify', icon: ShoppingBag },
