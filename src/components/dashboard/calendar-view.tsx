@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Clock } from 'lucide-react'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 
 interface CalVisit {
@@ -13,6 +13,7 @@ interface CalVisit {
   status: string
   client_nom: string
   nom_chien: string | null
+  cal_booking_uid: string | null
 }
 
 const STAFF_COLORS: Record<string, string> = {
@@ -53,6 +54,12 @@ export function CalendarView() {
   const [visits, setVisits] = useState<CalVisit[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Reschedule modal state
+  const [rescheduling, setRescheduling] = useState<CalVisit | null>(null)
+  const [newDatetime, setNewDatetime] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [rescheduleError, setRescheduleError] = useState<string | null>(null)
+
   useEffect(() => {
     setLoading(true)
     const from = toLocalDateStr(monday)
@@ -69,7 +76,6 @@ export function CalendarView() {
   const weekDays = Array.from({ length: 6 }, (_, i) => addDays(monday, i))
   const today = toLocalDateStr(new Date())
 
-  // Group visits by date+hour
   function getVisitsAt(day: Date, hour: number): CalVisit[] {
     const dateStr = toLocalDateStr(day)
     return visits.filter((v) => {
@@ -80,8 +86,106 @@ export function CalendarView() {
     })
   }
 
+  function openReschedule(v: CalVisit) {
+    // Pre-fill with current date/time
+    const current = `${v.date}T${v.time ?? '09:00'}`
+    setNewDatetime(current)
+    setRescheduleError(null)
+    setRescheduling(v)
+  }
+
+  async function submitReschedule() {
+    if (!rescheduling || !newDatetime) return
+    setSaving(true)
+    setRescheduleError(null)
+
+    // Convert local datetime-local value to UTC ISO string
+    const localDate = new Date(newDatetime)
+    const res = await fetch(`/api/dashboard/visits/${rescheduling.id}/reschedule`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newStart: localDate.toISOString() }),
+    })
+    const json = await res.json()
+
+    if (!res.ok) {
+      setRescheduleError(json.error ?? 'Erreur')
+      setSaving(false)
+      return
+    }
+
+    // Update local state
+    setVisits((prev) =>
+      prev.map((v) => (v.id === rescheduling.id ? { ...v, date: json.date, time: json.time } : v))
+    )
+    setSaving(false)
+    setRescheduling(null)
+  }
+
   return (
     <div>
+      {/* Reschedule modal */}
+      {rescheduling && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+          onClick={() => setRescheduling(null)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-bold text-[#1D164E]">Déplacer le rendez-vous</h2>
+              <button
+                onClick={() => setRescheduling(null)}
+                className="text-gray-400 hover:text-[#1D164E]"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              {rescheduling.nom_chien ?? rescheduling.client_nom} —{' '}
+              {SERVICE_LABELS[rescheduling.service] ?? rescheduling.service}
+              {rescheduling.staff ? ` · ${rescheduling.staff}` : ''}
+            </p>
+            {!rescheduling.cal_booking_uid ? (
+              <p className="text-sm text-amber-600 bg-amber-50 rounded-lg p-3">
+                Ce rendez-vous n&apos;a pas de UID cal.com — il a été créé manuellement et ne peut
+                pas être déplacé via l&apos;API.
+              </p>
+            ) : (
+              <>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Nouvelle date et heure
+                </label>
+                <input
+                  type="datetime-local"
+                  value={newDatetime}
+                  onChange={(e) => setNewDatetime(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E] mb-4"
+                />
+                {rescheduleError && <p className="text-sm text-red-500 mb-3">{rescheduleError}</p>}
+                <div className="flex gap-2">
+                  <button
+                    onClick={submitReschedule}
+                    disabled={saving || !newDatetime}
+                    className="flex-1 bg-[#1D164E] text-white rounded-lg py-2 text-sm font-medium hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+                  >
+                    {saving ? 'Déplacement…' : 'Confirmer'}
+                  </button>
+                  <button
+                    onClick={() => setRescheduling(null)}
+                    className="px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="flex items-center gap-4 mb-4">
         <button
@@ -154,11 +258,11 @@ export function CalendarView() {
                 {weekDays.map((day, di) => {
                   const slot = getVisitsAt(day, hour)
                   return (
-                    <td key={di} className="align-top p-1 min-h-[48px]" style={{ minWidth: 90 }}>
+                    <td key={di} className="align-top p-1" style={{ minWidth: 90 }}>
                       {slot.map((v) => (
                         <div
                           key={v.id}
-                          className={`rounded-lg px-2 py-1.5 mb-1 ${STAFF_COLORS[v.staff ?? ''] ?? DEFAULT_COLOR}`}
+                          className={`rounded-lg px-2 py-1.5 mb-1 group relative ${STAFF_COLORS[v.staff ?? ''] ?? DEFAULT_COLOR}`}
                           title={`${v.client_nom}${v.nom_chien ? ` — ${v.nom_chien}` : ''} · ${SERVICE_LABELS[v.service] ?? v.service}`}
                         >
                           <p className="font-semibold truncate leading-tight">
@@ -168,6 +272,13 @@ export function CalendarView() {
                             {SERVICE_LABELS[v.service] ?? v.service}
                             {v.staff ? ` · ${v.staff}` : ''}
                           </p>
+                          <button
+                            onClick={() => openReschedule(v)}
+                            className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 hover:bg-white/40 rounded p-0.5"
+                            title="Déplacer"
+                          >
+                            <Clock className="h-3 w-3" />
+                          </button>
                         </div>
                       ))}
                     </td>

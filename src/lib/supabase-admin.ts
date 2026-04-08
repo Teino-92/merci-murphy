@@ -39,6 +39,7 @@ export interface Visit {
   status: 'confirmed' | 'pending_deposit' | 'cancelled'
   sumup_checkout_id: string | null
   deposit_paid_at: string | null
+  cal_booking_uid: string | null
 }
 
 export interface Lead {

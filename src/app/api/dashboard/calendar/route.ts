@@ -17,7 +17,9 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await supabaseAdmin
     .from('visits')
-    .select('id, profile_id, service, date, time, staff, status, final_price, price')
+    .select(
+      'id, profile_id, service, date, time, staff, status, final_price, price, cal_booking_uid'
+    )
     .gte('date', from)
     .lte('date', to)
     .neq('status', 'cancelled')

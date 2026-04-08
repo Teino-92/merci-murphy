@@ -53,6 +53,7 @@ async function verifySignature(req: NextRequest, rawBody: string): Promise<boole
 interface CalPayload {
   triggerEvent: string
   payload: {
+    uid?: string
     attendees: { name: string; email: string }[]
     eventType?: { slug: string; title: string }
     type?: string
@@ -143,6 +144,7 @@ export async function POST(req: NextRequest) {
         price: null,
         final_price: null,
         status,
+        cal_booking_uid: payload.payload.uid ?? null,
       })
       .select()
       .single()
