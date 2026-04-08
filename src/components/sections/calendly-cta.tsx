@@ -19,19 +19,22 @@ interface CalendlyCtaProps {
 export function CalendlyCta({ calendlyUrl, label, mobile = false, phone, href }: CalendlyCtaProps) {
   const bookingUrl = href ?? calendlyUrl
   const isExternal = !bookingUrl.startsWith('/')
-  const [canBook, setCanBook] = useState(false)
+  const [canBook, setCanBook] = useState<boolean | null>(null)
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient()
     void (async () => {
       const { data } = await supabase.auth.getUser()
-      if (!data.user) return
+      if (!data.user) {
+        setCanBook(false)
+        return
+      }
       const { data: profile } = await supabase
         .from('profiles')
         .select('can_book')
         .eq('id', data.user.id)
         .single()
-      if (profile?.can_book) setCanBook(true)
+      setCanBook(profile?.can_book ?? false)
     })()
   }, [])
 
@@ -47,7 +50,7 @@ export function CalendlyCta({ calendlyUrl, label, mobile = false, phone, href }:
               </a>
             </Button>
           )}
-          {canBook ? (
+          {canBook === true ? (
             <Button
               asChild
               className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta-dark/90"
@@ -85,8 +88,8 @@ export function CalendlyCta({ calendlyUrl, label, mobile = false, phone, href }:
     )
   }
 
-  // Desktop: Réserver (terracotta-dark) when can_book, hidden otherwise
-  if (!canBook) return null
+  // Desktop: show while loading (null), hide only when confirmed can_book=false
+  if (canBook === false) return null
 
   return (
     <Button asChild size="lg" className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
