@@ -90,8 +90,10 @@ export function LeadsTable({ leads }: { leads: (Lead & { has_account: boolean })
                         />
                       )}
                     </div>
-                    {lead.race_chien && (
-                      <p className="text-xs text-gray-400">🐾 {lead.race_chien}</p>
+                    {(lead.nom_chien || lead.race_chien) && (
+                      <p className="text-xs text-gray-400">
+                        🐾 {[lead.nom_chien, lead.race_chien].filter(Boolean).join(' · ')}
+                      </p>
                     )}
                     {lead.message && (
                       <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{lead.message}</p>

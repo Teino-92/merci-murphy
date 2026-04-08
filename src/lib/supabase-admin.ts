@@ -48,6 +48,7 @@ export interface Lead {
   email: string
   telephone: string
   service: string
+  nom_chien: string | null
   race_chien: string | null
   poids_chien: string | null
   etat_poil: string | null
