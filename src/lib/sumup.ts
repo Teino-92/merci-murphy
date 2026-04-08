@@ -6,7 +6,7 @@ interface SumUpCheckoutResponse {
   checkout_reference: string
   amount: number
   currency: string
-  pay_to_email: string
+  merchant_code: string
   status: string
 }
 
@@ -26,9 +26,9 @@ export async function createSumUpCheckout(params: {
       checkout_reference: params.reference,
       amount: params.amount,
       currency: 'EUR',
-      pay_to_email: process.env.SUMUP_MERCHANT_EMAIL,
+      merchant_code: process.env.SUMUP_MERCHANT_CODE,
       description: params.description,
-      return_url: params.returnUrl,
+      redirect_url: params.returnUrl,
     }),
   })
   if (!res.ok) {
