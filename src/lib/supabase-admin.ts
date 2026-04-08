@@ -20,6 +20,7 @@ export interface Profile {
   notes: string | null
   can_book: boolean
   grooming_duration: number | null
+  numero_puce: string | null
 }
 
 export interface Visit {

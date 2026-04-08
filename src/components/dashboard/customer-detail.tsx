@@ -1,18 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Profile, Visit } from '@/lib/supabase-admin'
-import { ArrowLeft, Pencil, Trash2, X } from 'lucide-react'
+import { ArrowLeft, Pencil, Trash2, X, Upload, Eye, Download } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
+
+interface ClientFile {
+  name: string
+  path: string
+  url: string | null
+  createdAt: string | null
+}
 
 export function CustomerDetail({
   profile: initial,
   visits: initialVisits,
+  email,
+  isAdmin,
 }: {
   profile: Profile
   visits: Visit[]
+  email: string | null
+  isAdmin: boolean
 }) {
   const router = useRouter()
   const [profile, setProfile] = useState(initial)
@@ -34,6 +46,7 @@ export function CustomerDetail({
     poids_chien: initial.poids_chien ?? '',
     etat_poil: initial.etat_poil ?? '',
     grooming_duration: initial.grooming_duration ?? ('' as number | ''),
+    numero_puce: initial.numero_puce ?? '',
   })
   const [editSaving, setEditSaving] = useState(false)
 
@@ -49,6 +62,24 @@ export function CustomerDetail({
   const [visitStaff, setVisitStaff] = useState('')
   const [visitPrice, setVisitPrice] = useState('')
   const [addingVisit, setAddingVisit] = useState(false)
+
+  // Files state
+  const [files, setFiles] = useState<ClientFile[]>([])
+  const [filesLoading, setFilesLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewName, setPreviewName] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    fetch(`/api/dashboard/customers/${profile.id}/files`)
+      .then((r) => r.json())
+      .then((data) => {
+        setFiles(Array.isArray(data) ? data : [])
+        setFilesLoading(false)
+      })
+      .catch(() => setFilesLoading(false))
+  }, [profile.id])
 
   async function toggleCanBook() {
     setTogglingBook(true)
@@ -85,6 +116,7 @@ export function CustomerDetail({
       ...p,
       ...editData,
       grooming_duration: editData.grooming_duration === '' ? null : editData.grooming_duration,
+      numero_puce: editData.numero_puce || null,
     }))
     setEditSaving(false)
     setEditing(false)
@@ -158,8 +190,37 @@ Nous vous souhaitons une bonne journée,
 L'équipe merci murphy`
 
     await navigator.clipboard.writeText(text)
-
     setDepositSent((s) => ({ ...s, [visit.id]: deposit }))
+  }
+
+  async function uploadFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/files`, {
+      method: 'POST',
+      body: fd,
+    })
+    const uploaded: ClientFile = await res.json()
+    setFiles((f) => [uploaded, ...f])
+    setUploading(false)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  async function deleteFile(name: string) {
+    if (!confirm('Supprimer ce fichier ?')) return
+    await fetch(`/api/dashboard/customers/${profile.id}/files`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    })
+    setFiles((f) => f.filter((x) => x.name !== name))
+  }
+
+  function isImage(name: string) {
+    return /\.(jpg|jpeg|png|gif|webp|avif|heic)$/i.test(name)
   }
 
   const inputCls =
@@ -167,6 +228,43 @@ L'équipe merci murphy`
 
   return (
     <div>
+      {/* File preview lightbox */}
+      {previewUrl && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setPreviewUrl(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white"
+            onClick={() => setPreviewUrl(null)}
+          >
+            <X className="h-6 w-6" />
+          </button>
+          <div
+            className="max-w-4xl w-full max-h-[90vh] overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {previewName && isImage(previewName) ? (
+              <div className="relative w-full" style={{ minHeight: '60vh' }}>
+                <Image
+                  src={previewUrl}
+                  alt={previewName}
+                  fill
+                  className="object-contain rounded-xl"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <iframe
+                src={previewUrl}
+                className="w-full h-[80vh] rounded-xl bg-white"
+                title={previewName ?? 'Fichier'}
+              />
+            )}
+          </div>
+        </div>
+      )}
+
       <Link
         href="/dashboard/customers"
         className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-[#1D164E] mb-6"
@@ -182,6 +280,7 @@ L'équipe merci murphy`
               <div>
                 <h1 className="text-xl font-bold text-[#1D164E]">{profile.nom}</h1>
                 <p className="text-sm text-gray-400 mt-0.5">{profile.telephone}</p>
+                {email && <p className="text-sm text-gray-400 mt-0.5">{email}</p>}
               </div>
               <button
                 onClick={() => setEditing((e) => !e)}
@@ -277,6 +376,17 @@ L'équipe merci murphy`
                     onChange={(e) => setEditData((d) => ({ ...d, etat_poil: e.target.value }))}
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">
+                    N° de puce électronique
+                  </label>
+                  <input
+                    className={inputCls}
+                    value={editData.numero_puce}
+                    placeholder="15 chiffres"
+                    onChange={(e) => setEditData((d) => ({ ...d, numero_puce: e.target.value }))}
+                  />
+                </div>
                 {editData.nom_chien && (
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">
@@ -337,6 +447,12 @@ L'équipe merci murphy`
                         <span className="text-gray-400">Poil :</span> {profile.etat_poil}
                       </p>
                     )}
+                    {profile.numero_puce && (
+                      <p>
+                        <span className="text-gray-400">N° puce :</span>{' '}
+                        <span className="font-mono text-xs">{profile.numero_puce}</span>
+                      </p>
+                    )}
                     {profile.grooming_duration && (
                       <p>
                         <span className="text-gray-400">Durée séance :</span>{' '}
@@ -349,6 +465,76 @@ L'équipe merci murphy`
                 </div>
               )
             )}
+          </div>
+
+          {/* Files */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+              Documents
+            </p>
+
+            {filesLoading ? (
+              <p className="text-sm text-gray-400">Chargement…</p>
+            ) : files.length === 0 ? (
+              <p className="text-sm text-gray-400 mb-3">Aucun document.</p>
+            ) : (
+              <ul className="space-y-2 mb-3">
+                {files.map((f) => (
+                  <li key={f.name} className="flex items-center gap-2 group">
+                    <span className="flex-1 text-xs text-[#1D164E] truncate" title={f.name}>
+                      {f.name.replace(/^\d+-/, '')}
+                    </span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {f.url && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setPreviewUrl(f.url)
+                              setPreviewName(f.name)
+                            }}
+                            className="text-gray-400 hover:text-[#1D164E] transition-colors"
+                            title="Prévisualiser"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </button>
+                          <a
+                            href={f.url}
+                            download={f.name}
+                            className="text-gray-400 hover:text-[#1D164E] transition-colors"
+                            title="Télécharger"
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                          </a>
+                        </>
+                      )}
+                      <button
+                        onClick={() => deleteFile(f.name)}
+                        className="text-gray-300 hover:text-red-400 transition-colors"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.pdf"
+              className="hidden"
+              onChange={uploadFile}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="w-full flex items-center justify-center gap-2 border border-dashed border-gray-300 text-gray-400 hover:border-[#1D164E] hover:text-[#1D164E] rounded-lg py-2.5 text-sm transition-colors disabled:opacity-50"
+            >
+              <Upload className="h-4 w-4" />
+              {uploading ? 'Envoi…' : 'Ajouter un fichier'}
+            </button>
           </div>
 
           {/* Notes */}
@@ -372,15 +558,17 @@ L'équipe merci murphy`
             </button>
           </div>
 
-          {/* Delete */}
-          <button
-            onClick={deleteCustomer}
-            disabled={deleting}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 py-2.5 text-sm font-medium transition-colors disabled:opacity-50"
-          >
-            <Trash2 className="h-4 w-4" />
-            {deleting ? 'Suppression…' : 'Supprimer ce client'}
-          </button>
+          {/* Delete — admin only */}
+          {isAdmin && (
+            <button
+              onClick={deleteCustomer}
+              disabled={deleting}
+              className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 py-2.5 text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              <Trash2 className="h-4 w-4" />
+              {deleting ? 'Suppression…' : 'Supprimer ce client'}
+            </button>
+          )}
         </div>
 
         {/* Right: visit history */}
