@@ -55,6 +55,7 @@ export function ToilettageBooking({ profile }: ToilettageBookingProps) {
         </div>
         <Cal
           calLink={selectedLink}
+          calOrigin="https://cal.eu"
           config={{
             name: profile.nom,
             ...(profile.grooming_duration ? { duration: String(profile.grooming_duration) } : {}),

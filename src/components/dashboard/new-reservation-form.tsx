@@ -376,6 +376,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
           </p>
           <Cal
             calLink={currentService.calLink}
+            calOrigin="https://cal.eu"
             config={{
               name: selectedProfile.nom,
               notes: 'source=dashboard',
