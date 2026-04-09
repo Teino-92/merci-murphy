@@ -1,5 +1,13 @@
 export const revalidate = 3600
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://mercimurphy.com',
+  },
+}
+
 import { Hero } from '@/components/sections/hero'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { Values } from '@/components/sections/values'
