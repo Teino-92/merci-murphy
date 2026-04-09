@@ -21,6 +21,13 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-700',
 }
 
+const STATUS_DOT: Record<string, string> = {
+  new: 'bg-blue-400',
+  contacted: 'bg-yellow-400',
+  confirmed: 'bg-green-400',
+  cancelled: 'bg-red-400',
+}
+
 export function LeadsTable({
   leads: initialLeads,
 }: {
@@ -98,16 +105,14 @@ export function LeadsTable({
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-[#1D164E]">{lead.nom}</p>
-                      {lead.has_account ? (
-                        <span
-                          className="inline-block w-2 h-2 rounded-full bg-green-400 shrink-0"
-                          title="A un compte"
-                        />
-                      ) : (
-                        <span
-                          className="inline-block w-2 h-2 rounded-full bg-gray-300 shrink-0"
-                          title="Sans compte"
-                        />
+                      <span
+                        className={`inline-block w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[lead.status] ?? 'bg-gray-300'}`}
+                        title={STATUS_LABELS[lead.status]}
+                      />
+                      {!lead.has_account && (
+                        <span className="text-[10px] text-gray-400" title="Sans compte">
+                          —
+                        </span>
                       )}
                     </div>
                     {(lead.nom_chien || lead.race_chien) && (
