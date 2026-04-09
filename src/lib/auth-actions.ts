@@ -168,7 +168,8 @@ export async function getProfile(): Promise<Profile | null> {
   } = await supabase.auth.getUser()
   if (!user) return null
 
-  const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+  // Use admin client to bypass RLS — user identity already verified above
+  const { data } = await supabaseAdmin.from('profiles').select('*').eq('id', user.id).single()
 
   return data ?? null
 }
@@ -267,7 +268,7 @@ export async function getDogs(): Promise<Dog[]> {
   } = await supabase.auth.getUser()
   if (!user) return []
 
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('dogs')
     .select('id, owner_id, name, breed, age, poids, etat_poil, photo_url')
     .eq('owner_id', user.id)
@@ -285,7 +286,7 @@ export async function getVisits(): Promise<Visit[]> {
   } = await supabase.auth.getUser()
   if (!user) return []
 
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('visits')
     .select('id, service, date, dog_id')
     .eq('profile_id', user.id)
