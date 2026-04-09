@@ -78,10 +78,10 @@ export function CalendarView() {
 
   function getParisHour(dateStr: string, timeStr: string | null): number {
     if (!timeStr) return 9
-    // timeStr is stored as UTC HH:MM:SS — convert to Paris local hour
+    // timeStr is stored as UTC HH:MM:SS — convert to Paris local hour (floor to whole hour)
     const dt = new Date(`${dateStr}T${timeStr.slice(0, 5)}Z`)
     return parseInt(
-      dt.toLocaleTimeString('fr-FR', { hour: '2-digit', timeZone: 'Europe/Paris' }),
+      dt.toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }),
       10
     )
   }
@@ -283,7 +283,13 @@ export function CalendarView() {
                             {v.nom_chien ?? v.client_nom}
                           </p>
                           <p className="opacity-80 truncate leading-tight">
-                            {SERVICE_LABELS[v.service] ?? v.service}
+                            {v.time
+                              ? new Date(`${v.date}T${v.time.slice(0, 5)}Z`).toLocaleTimeString(
+                                  'fr-FR',
+                                  { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }
+                                )
+                              : ''}{' '}
+                            · {SERVICE_LABELS[v.service] ?? v.service}
                             {v.staff ? ` · ${v.staff}` : ''}
                           </p>
                           <button
