@@ -15,19 +15,19 @@ import { ShopTeaser } from '@/components/sections/shop-teaser'
 import { InstagramFeed } from '@/components/sections/instagram-feed'
 import { InfoPratiques } from '@/components/sections/info-pratiques'
 import { FeaturedPost } from '@/components/sections/featured-post'
+
 import { getAllServices } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { getLatestPost } from '@/sanity/queries/posts'
 import { getProductsByHandles, getCollectionByHandle } from '@/lib/shopify'
 
-// Handles in the exact order you want them in the carousel
 const SHOP_TEASER_HANDLES = [
-  'bonnet-cat-mom-marine', // Bonnet cat mom marine
-  'le-murphy-week-end-cabas-ecru-its-never-just-a-dog', // Cabas écru
-  'bougie-merci-murphy-sans-un-mot-grand-format-copy', // Bougie petit format
-  'mug-dog-mom', // Mug dog mom
-  'le-murphy-week-end-cabas-caramel-my-dog-is-my-therapist-copy', // Cabas vert
-  'casquette-dog-mom', // Casquette
+  'bonnet-cat-mom-marine',
+  'le-murphy-week-end-cabas-ecru-its-never-just-a-dog',
+  'bougie-merci-murphy-sans-un-mot-grand-format-copy',
+  'mug-dog-mom',
+  'le-murphy-week-end-cabas-caramel-my-dog-is-my-therapist-copy',
+  'casquette-dog-mom',
 ]
 
 export default async function HomePage() {
@@ -39,29 +39,35 @@ export default async function HomePage() {
     getLatestPost(),
   ])
 
-  // Replace out-of-stock items with a stable fallback from petlovers.
-  // The replacement is deterministic: derived from the out-of-stock handle so
-  // it stays the same across renders until the original item is back in stock.
   const usedHandles = new Set(shopProducts.map((p) => p.handle))
+
   const fallbackPool = (petloversCollection?.products.nodes ?? []).filter(
     (p) => p.availableForSale && !usedHandles.has(p.handle)
   )
+
   const pickedFallbackHandles = new Set<string>()
+
   const finalProducts = shopProducts.map((p) => {
     if (p.availableForSale) return p
     if (fallbackPool.length === 0) return p
-    // Hash the out-of-stock handle to a stable index
+
     const hash = p.handle.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
     const available = fallbackPool.filter((f) => !pickedFallbackHandles.has(f.handle))
+
     if (available.length === 0) return p
+
     const fallback = available[hash % available.length]
     pickedFallbackHandles.add(fallback.handle)
+
     return fallback
   })
 
+  /* ---------------------------
+     LOCAL BUSINESS
+  ---------------------------- */
   const localBusinessLd = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': ['LocalBusiness', 'PetStore'],
     name: 'Merci Murphy',
     description:
       'Boutique premium de bien-être pour chiens à Paris. Toilettage, spa, crèche, éducation et ostéopathie.',
@@ -90,6 +96,122 @@ export default async function HomePage() {
     sameAs: [settings?.instagram].filter(Boolean),
   }
 
+  /* ---------------------------
+     SERVICES
+  ---------------------------- */
+  const servicesLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Service',
+        name: 'Toilettage maison POILUS®',
+        description: 'Bain et mise en beauté par des experts en pratiques sans stress.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+        url: 'https://mercimurphy.com/services/le-toilettage-maison-poilus',
+      },
+      {
+        '@type': 'Service',
+        name: 'La crèche',
+        description: 'Jeux et socialisation supervisés par un éducateur canin.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+        url: 'https://mercimurphy.com/services/la-creche',
+      },
+      {
+        '@type': 'Service',
+        name: "L'éducation",
+        description: 'Les bases pour un chien équilibré et bien dans ses pattes.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+        url: 'https://mercimurphy.com/services/leducation',
+      },
+      {
+        '@type': 'Service',
+        name: "L'ostéopathie",
+        description: 'Équilibre, mobilité et soulagement des tensions.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+        url: 'https://mercimurphy.com/services/losteopathie',
+      },
+      {
+        '@type': 'Service',
+        name: 'Bain libre-service',
+        description: 'Bichonnez vous-même votre chien dans des cabines équipées.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+        url: 'https://mercimurphy.com/services/le-bain-libre-service',
+      },
+      {
+        '@type': 'Service',
+        name: 'Balnéo',
+        description: 'Expérience bien-être aux multiples bienfaits.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+        url: 'https://mercimurphy.com/services/la-balneo',
+      },
+      {
+        '@type': 'Service',
+        name: 'Massage bien-être',
+        description: 'Détente et relâchement des tensions entre mains expertes.',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Merci Murphy',
+          url: 'https://mercimurphy.com',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Paris',
+        },
+      },
+    ],
+  }
+
+  /* ---------------------------
+     WEBSITE
+  ---------------------------- */
   const websiteLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -106,6 +228,9 @@ export default async function HomePage() {
     },
   }
 
+  /* ---------------------------
+     BREADCRUMBS
+  ---------------------------- */
   const sitelinksBreadcrumbLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -113,13 +238,13 @@ export default async function HomePage() {
       {
         '@type': 'ListItem',
         position: 1,
-        name: 'Nos services',
+        name: 'Services',
         item: 'https://mercimurphy.com/services',
       },
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'La boutique',
+        name: 'Boutique',
         item: 'https://mercimurphy.com/boutique',
       },
       {
@@ -141,6 +266,10 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesLd) }}
+      />
+      <script
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }}
       />
       <script
@@ -149,19 +278,28 @@ export default async function HomePage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(sitelinksBreadcrumbLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(sitelinksBreadcrumbLd),
+        }}
       />
+
       <Hero
-        subtitle="Vivre heureux avec son chien et son chat à Paris. Toute l'attention et l'expertise que votre animal mérite, dans un lieu responsable, chaleureux et bienveillant."
+        subtitle="Vivre heureux avec son chien et son chat à Paris."
         imageSrc="/concept-hero.jpg"
       />
+
       <ShopTeaser products={finalProducts} />
+
       {services.length > 0 && <ServicesGrid services={services} preview />}
+
       <Values />
+
       {latestPost && <FeaturedPost post={latestPost} />}
+
       {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
         <InstagramFeed feedId={process.env.NEXT_PUBLIC_BEHOLD_FEED_ID} />
       )}
+
       {settings && <InfoPratiques settings={settings} />}
     </>
   )

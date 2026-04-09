@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: '%s | Merci Murphy',
   },
   description:
-    'Toilettage, spa, crèche, éducation et ostéopathie pour votre chien. Boutique premium de bien-être animal à Paris.',
+    "Boutique premium de bien-être pour chiens à Paris. Toilettage, spa, crèche, éducation et ostéopathie. merci murphy®, c'est aussi un dog shop engagé.",
   openGraph: {
     siteName: 'Merci Murphy',
     locale: 'fr_FR',
