@@ -22,7 +22,7 @@ const STAFF_COLORS: Record<string, string> = {
 }
 const DEFAULT_COLOR = 'bg-[#4F6072] text-white'
 
-const HOURS = Array.from({ length: 11 }, (_, i) => i + 9) // 9h → 19h
+const HOURS = Array.from({ length: 13 }, (_, i) => i + 8) // 8h → 20h
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 
 function getMondayOf(date: Date): Date {
@@ -76,20 +76,34 @@ export function CalendarView() {
   const weekDays = Array.from({ length: 6 }, (_, i) => addDays(monday, i))
   const today = toLocalDateStr(new Date())
 
+  function getParisHour(dateStr: string, timeStr: string | null): number {
+    if (!timeStr) return 9
+    // timeStr is stored as UTC HH:MM:SS — convert to Paris local hour
+    const dt = new Date(`${dateStr}T${timeStr.slice(0, 5)}Z`)
+    return parseInt(
+      dt.toLocaleTimeString('fr-FR', { hour: '2-digit', timeZone: 'Europe/Paris' }),
+      10
+    )
+  }
+
   function getVisitsAt(day: Date, hour: number): CalVisit[] {
     const dateStr = toLocalDateStr(day)
     return visits.filter((v) => {
       if (v.date !== dateStr) return false
-      if (!v.time) return hour === 9
-      const h = parseInt(v.time.slice(0, 2), 10)
-      return h === hour
+      return getParisHour(v.date, v.time) === hour
     })
   }
 
   function openReschedule(v: CalVisit) {
-    // Pre-fill with current date/time
-    const current = `${v.date}T${v.time ?? '09:00'}`
-    setNewDatetime(current)
+    // Pre-fill with current date/time in Paris local time (datetime-local is always local)
+    const utcStr = v.time ? `${v.date}T${v.time.slice(0, 5)}Z` : `${v.date}T09:00Z`
+    const dt = new Date(utcStr)
+    // Format as YYYY-MM-DDTHH:MM in Europe/Paris
+    const parisStr = dt
+      .toLocaleString('sv-SE', { timeZone: 'Europe/Paris' })
+      .replace(' ', 'T')
+      .slice(0, 16)
+    setNewDatetime(parisStr)
     setRescheduleError(null)
     setRescheduling(v)
   }
