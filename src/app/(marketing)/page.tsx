@@ -223,7 +223,7 @@ export default async function HomePage() {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://mercimurphy.com/boutique?q={search_term_string}',
+        urlTemplate: 'https://mercimurphy.com/shop?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
@@ -246,13 +246,13 @@ export default async function HomePage() {
         '@type': 'ListItem',
         position: 2,
         name: 'Boutique',
-        item: 'https://mercimurphy.com/boutique',
+        item: 'https://mercimurphy.com/shop',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: 'Réserver',
-        item: 'https://mercimurphy.com/reserver',
+        item: 'https://mercimurphy.com/reservation',
       },
       {
         '@type': 'ListItem',
