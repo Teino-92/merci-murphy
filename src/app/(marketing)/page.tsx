@@ -68,9 +68,9 @@ export default async function HomePage() {
   const localBusinessLd = {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'PetStore'],
-    name: 'Merci Murphy',
+    name: 'merci murphy®',
     description:
-      'Boutique premium de bien-être pour chiens à Paris. Toilettage, spa, crèche, éducation et ostéopathie.',
+      'Toilettage, spa, crèche et bien-être pour chiens à Paris 75009. Un lieu premium et engagé pour prendre soin de votre compagnon.',
     url: 'https://mercimurphy.com',
     image: 'https://mercimurphy.com/logo.avif',
     telephone: settings?.telephone,
@@ -108,7 +108,7 @@ export default async function HomePage() {
         description: 'Bain et mise en beauté par des experts en pratiques sans stress.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -123,7 +123,7 @@ export default async function HomePage() {
         description: 'Jeux et socialisation supervisés par un éducateur canin.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -138,7 +138,7 @@ export default async function HomePage() {
         description: 'Les bases pour un chien équilibré et bien dans ses pattes.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -153,7 +153,7 @@ export default async function HomePage() {
         description: 'Équilibre, mobilité et soulagement des tensions.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -168,7 +168,7 @@ export default async function HomePage() {
         description: 'Bichonnez vous-même votre chien dans des cabines équipées.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -183,7 +183,7 @@ export default async function HomePage() {
         description: 'Expérience bien-être aux multiples bienfaits.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -198,7 +198,7 @@ export default async function HomePage() {
         description: 'Détente et relâchement des tensions entre de bonnes et douces mains.',
         provider: {
           '@type': 'LocalBusiness',
-          name: 'Merci Murphy',
+          name: 'merci murphy®',
           url: 'https://mercimurphy.com',
         },
         areaServed: {
@@ -216,7 +216,7 @@ export default async function HomePage() {
   const websiteLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Merci Murphy',
+    name: 'merci murphy®',
     url: 'https://mercimurphy.com',
     inLanguage: 'fr-FR',
     potentialAction: {
