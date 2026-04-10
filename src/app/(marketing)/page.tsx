@@ -145,7 +145,7 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/leducation',
+        url: 'https://mercimurphy.com/services/l-education',
       },
       {
         '@type': 'Service',
@@ -160,11 +160,11 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/losteopathie',
+        url: 'https://mercimurphy.com/services/l-osteopathie',
       },
       {
         '@type': 'Service',
-        name: 'Bain libre-service',
+        name: 'LE BAIN EN LIBRE-SERVICE maison POILUS®',
         description: 'Bichonnez vous-même votre chien dans des cabines équipées.',
         provider: {
           '@type': 'LocalBusiness',
@@ -175,11 +175,11 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/le-bain-libre-service',
+        url: 'https://mercimurphy.com/services/le-bain-en-libre-service-maison-poilus-r',
       },
       {
         '@type': 'Service',
-        name: 'Balnéo',
+        name: 'BALNÉO maison POILUS®',
         description: 'Expérience bien-être aux multiples bienfaits.',
         provider: {
           '@type': 'LocalBusiness',
@@ -190,12 +190,12 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/la-balneo',
+        url: 'https://mercimurphy.com/services/balneo-maison-poilus-r',
       },
       {
         '@type': 'Service',
-        name: 'Massage bien-être',
-        description: 'Détente et relâchement des tensions entre mains expertes.',
+        name: 'LE MASSAGE BIEN-ÊTRE maison POILUS® & Le Petit Nénuphar',
+        description: 'Détente et relâchement des tensions entre de bonnes et douces mains.',
         provider: {
           '@type': 'LocalBusiness',
           name: 'Merci Murphy',
@@ -205,6 +205,7 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
+        url: 'https://mercimurphy.com/services/le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
       },
     ],
   }
