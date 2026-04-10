@@ -24,7 +24,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL('https://mercimurphy.com'),
   title: {
-    default: 'merci murphy®| Toilettage & Bien-être pour chiens à Paris 75009',
+    default: 'merci murphy® | Toilettage & Bien-être pour chiens à Paris 75009',
     template: '%s | Merci Murphy',
   },
   description:

@@ -1,4 +1,5 @@
 import { NewReservationForm } from '@/components/dashboard/new-reservation-form'
+import { CalendarView } from '@/components/dashboard/calendar-view'
 import { sanityClient } from '@/sanity/client'
 
 export const dynamic = 'force-dynamic'
@@ -43,5 +44,15 @@ async function getServices(): Promise<ServiceOption[]> {
 
 export default async function NewReservationPage() {
   const services = await getServices()
-  return <NewReservationForm services={services} />
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-[#1D164E] mb-6">Calendrier & Réservation</h1>
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <CalendarView />
+        <div className="xl:sticky xl:top-6">
+          <NewReservationForm services={services} />
+        </div>
+      </div>
+    </div>
+  )
 }
