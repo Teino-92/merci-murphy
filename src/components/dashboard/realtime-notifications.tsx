@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 function playChime() {
@@ -45,6 +46,7 @@ function notify(title: string, body: string) {
 
 export function RealtimeNotifications() {
   const mounted = useRef(false)
+  const router = useRouter()
 
   useEffect(() => {
     if (mounted.current) return
@@ -69,6 +71,7 @@ export function RealtimeNotifications() {
             'Nouvelle demande',
             `${(lead.nom as string | undefined) ?? "Quelqu'un"} a fait une demande de ${(lead.service as string | undefined) ?? 'service'}.`
           )
+          router.refresh()
         }
       )
       .on(
@@ -81,6 +84,7 @@ export function RealtimeNotifications() {
             'Nouvelle réservation',
             `Un rendez-vous ${(visit.service as string | undefined) ?? ''} le ${(visit.date as string | undefined) ?? ''} vient d'être créé.`
           )
+          router.refresh()
         }
       )
       .subscribe()
@@ -88,7 +92,7 @@ export function RealtimeNotifications() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [])
+  }, [router])
 
   return null
 }
