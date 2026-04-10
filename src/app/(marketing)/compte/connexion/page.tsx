@@ -1,27 +1,16 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { Section, Container } from '@/components/ui/section'
 import { SignInForm } from '@/components/forms/signin-form'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 export const metadata: Metadata = {
   title: 'Connexion',
   description: 'Connectez-vous à votre compte merci murphy®.',
 }
 
-export default async function ConnexionPage({
-  searchParams,
-}: {
-  searchParams: { redirect?: string }
-}) {
-  const supabase = await createSupabaseServerClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (user) redirect(searchParams.redirect ?? '/compte')
-
-  const redirectTo = searchParams.redirect ?? '/compte'
-
+// Static page — no auth check server-side (middleware handles logged-in redirect,
+// SignInForm handles the redirectTo param client-side via useSearchParams)
+export default function ConnexionPage() {
   return (
     <>
       <div style={{ backgroundColor: '#B5A89A' }}>
@@ -36,7 +25,9 @@ export default async function ConnexionPage({
       </div>
       <Section className="bg-cream">
         <Container className="max-w-sm">
-          <SignInForm redirectTo={redirectTo} />
+          <Suspense>
+            <SignInForm />
+          </Suspense>
         </Container>
       </Section>
     </>
