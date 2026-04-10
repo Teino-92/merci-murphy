@@ -1,3 +1,6 @@
+export const revalidate = 3600
+export const dynamicParams = false
+
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
