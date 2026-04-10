@@ -24,12 +24,23 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL('https://mercimurphy.com'),
   title: {
-    default: 'Merci Murphy — Boutique bien-être pour chiens à Paris',
+    default: 'Merci Murphy | Toilettage & Bien-être pour chiens à Paris 9',
     template: '%s | Merci Murphy',
   },
   description:
-    "Boutique premium de bien-être pour chiens à Paris. Toilettage, spa, crèche, éducation et ostéopathie. merci murphy®, c'est aussi un dog shop engagé.",
+    'Toilettage, spa, crèche et bien-être pour chiens à Paris 9. Un lieu premium et engagé pour prendre soin de votre compagnon.',
+  applicationName: 'Merci Murphy',
+  alternates: {
+    canonical: 'https://mercimurphy.com',
+  },
+  keywords: [
+    'toilettage chien Paris',
+    'spa chien Paris',
+    'crèche chien Paris',
+    'bien-être chien Paris',
+  ],
   openGraph: {
+    url: 'https://mercimurphy.com',
     siteName: 'Merci Murphy',
     locale: 'fr_FR',
     type: 'website',
