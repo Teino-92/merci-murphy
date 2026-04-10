@@ -14,7 +14,11 @@ export const metadata: Metadata = {
     'Prenez rendez-vous en ligne pour nos services de toilettage, crèche, éducation et ostéopathie.',
 }
 
-export default async function ReservationPage() {
+export default async function ReservationPage({
+  searchParams,
+}: {
+  searchParams: { contact?: string }
+}) {
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },
@@ -24,6 +28,9 @@ export default async function ReservationPage() {
 
   const profile = await getProfile()
 
+  // ?contact=1 forces the callback form regardless of can_book
+  const showForm = !profile?.can_book || searchParams.contact === '1'
+
   return (
     <>
       <div style={{ backgroundColor: '#B5A89A' }}>
@@ -31,18 +38,16 @@ export default async function ReservationPage() {
           <Container className="max-w-2xl text-center">
             <h1 className="font-display text-4xl font-bold sm:text-6xl">Prendre rendez-vous</h1>
             <p className="mt-4 text-lg text-charcoal/60">
-              {profile?.can_book
-                ? 'Choisissez votre toiletteur et réservez votre créneau directement.'
-                : 'Remplissez le formulaire et notre équipe vous appellera dans les plus brefs délais pour organiser votre rendez-vous.'}
+              {showForm
+                ? 'Remplissez le formulaire et notre équipe vous appellera dans les plus brefs délais pour organiser votre rendez-vous.'
+                : 'Choisissez votre toiletteur et réservez votre créneau directement.'}
             </p>
           </Container>
         </Section>
       </div>
       <Section className="bg-cream">
         <Container className="max-w-2xl">
-          {profile?.can_book ? (
-            <ToilettageBooking profile={profile} />
-          ) : (
+          {showForm ? (
             <ReservationForm
               defaultValues={{
                 nom: profile?.nom ?? '',
@@ -53,6 +58,8 @@ export default async function ReservationPage() {
                 etat_poil: profile?.etat_poil ?? '',
               }}
             />
+          ) : (
+            <ToilettageBooking profile={profile} />
           )}
         </Container>
       </Section>
