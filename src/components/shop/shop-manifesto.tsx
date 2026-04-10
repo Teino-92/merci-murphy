@@ -54,8 +54,7 @@ export function ShopManifesto() {
                 <span className="text-charcoal font-medium">merci murphy®</span> aime le vrai et les
                 savoir-faire des passionnés. La plupart de nos fournisseurs-partenaires sont des
                 artisans locaux. Nos produits voyagent le moins possible — fabrication engagé pour
-                favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les marques dirigées
-                par des femmes.{' '}
+                favoriser la mixité dans l&apos;entreprenariat.{' '}
                 <span className="not-italic font-medium text-charcoal">merci murphy®</span> est
                 engagé pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les
                 marques dirigées par des femmes.
