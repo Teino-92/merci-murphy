@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, X, Clock } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Clock, Dog } from 'lucide-react'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 
 interface CalVisit {
@@ -245,6 +245,94 @@ function WeekGrid({ monday, visits, showStaff, onReschedule }: WeekGridProps) {
   )
 }
 
+// ─── DayList (mobile) ─────────────────────────────────────────────────────────
+
+const SERVICE_COLOR: Record<string, string> = {
+  toilettage: '#4F6072',
+  bains: '#4F6072',
+  balneo: '#4F6072',
+  massage: '#7C6F9F',
+  osteo: '#7C6F9F',
+  education: '#7C6F9F',
+  creche: '#B85C38',
+}
+
+interface DayListProps {
+  day: Date
+  visits: CalVisit[]
+  showStaff: boolean
+  onReschedule: (v: CalVisit) => void
+}
+
+function DayList({ day, visits, showStaff, onReschedule }: DayListProps) {
+  const dateStr = toLocalDateStr(day)
+  const dayVisits = visits
+    .filter((v) => v.date === dateStr)
+    .sort((a, b) => (a.time ?? '00:00').localeCompare(b.time ?? '00:00'))
+
+  if (dayVisits.length === 0) {
+    return <div className="py-10 text-center text-sm text-gray-400">Aucun rendez-vous ce jour</div>
+  }
+
+  return (
+    <div className="space-y-2">
+      {dayVisits.map((v) => {
+        const timeLabel = v.time
+          ? new Date(`${v.date}T${v.time.slice(0, 5)}Z`).toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZone: 'Europe/Paris',
+            })
+          : null
+        const color = showStaff
+          ? v.staff_color
+          : (SERVICE_COLOR[v.service.split('-')[0]] ?? '#4F6072')
+
+        return (
+          <div
+            key={v.id}
+            className="flex items-stretch gap-3 bg-white rounded-2xl shadow-sm overflow-hidden"
+          >
+            {/* color strip */}
+            <div className="w-1.5 shrink-0 rounded-l-2xl" style={{ backgroundColor: color }} />
+            <div className="flex-1 py-3 pr-3">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-[#1D164E] leading-tight">
+                    {v.nom_chien ?? v.client_nom}
+                  </p>
+                  {v.nom_chien && (
+                    <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                      <Dog className="h-3 w-3" /> {v.client_nom}
+                    </p>
+                  )}
+                </div>
+                {timeLabel && (
+                  <span className="shrink-0 text-xs font-bold text-[#1D164E] bg-[#F5F0EB] rounded-lg px-2 py-1">
+                    {timeLabel}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-gray-500">
+                  {SERVICE_LABELS[v.service] ?? v.service}
+                  {showStaff && v.staff ? ` · ${v.staff}` : ''}
+                </span>
+                <button
+                  onClick={() => onReschedule(v)}
+                  className="text-xs text-gray-400 hover:text-[#1D164E] flex items-center gap-1 transition-colors"
+                >
+                  <Clock className="h-3 w-3" /> Déplacer
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ─── CalendarSection ──────────────────────────────────────────────────────────
 
 interface Tab {
@@ -262,9 +350,11 @@ interface CalendarSectionProps {
 function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
   const [activeTab, setActiveTab] = useState(tabs[0].slug)
   const [monday, setMonday] = useState<Date>(() => getMondayOf(new Date()))
+  const [selectedDay, setSelectedDay] = useState<Date>(() => new Date())
   const [visits, setVisits] = useState<CalVisit[]>([])
   const [loading, setLoading] = useState(true)
 
+  // On mobile fetch a wider window: Mon–Sun of the selected day's week
   useEffect(() => {
     setLoading(true)
     const from = toLocalDateStr(monday)
@@ -278,14 +368,34 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
       .catch(() => setLoading(false))
   }, [monday])
 
+  // Keep selectedDay in sync when week changes
+  function goWeek(delta: number) {
+    setMonday((m) => {
+      const next = addDays(m, delta)
+      setSelectedDay(addDays(selectedDay, delta))
+      return next
+    })
+  }
+
   const tab = tabs.find((t) => t.slug === activeTab) ?? tabs[0]
   const filtered = visits.filter((v) => v.service.startsWith(tab.slug))
+  const today = toLocalDateStr(new Date())
+  const weekDays = Array.from({ length: 6 }, (_, i) => addDays(monday, i))
+
+  // Count visits per day for the dot indicators
+  function countForDay(day: Date) {
+    const ds = toLocalDateStr(day)
+    return filtered.filter((v) => v.date === ds).length
+  }
 
   return (
     <div className={`transition-opacity ${loading ? 'opacity-50' : ''}`}>
+      {/* Header row */}
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">{title}</p>
-        <div className="flex items-center gap-2">
+
+        {/* Tab switcher — desktop only */}
+        <div className="hidden sm:flex items-center gap-2">
           {tabs.length > 1 && (
             <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm">
               {tabs.map((t) => (
@@ -320,7 +430,10 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
               <ChevronRight className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setMonday(getMondayOf(new Date()))}
+              onClick={() => {
+                setMonday(getMondayOf(new Date()))
+                setSelectedDay(new Date())
+              }}
               className="ml-1 px-2 py-0.5 text-xs font-medium rounded-lg border border-[#1D164E] text-[#1D164E] hover:bg-[#1D164E] hover:text-white transition-colors"
             >
               Auj.
@@ -328,12 +441,91 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
           </div>
         </div>
       </div>
-      <WeekGrid
-        monday={monday}
-        visits={filtered}
-        showStaff={tab.showStaff}
-        onReschedule={onReschedule}
-      />
+
+      {/* ── MOBILE: horizontal day picker + day list ── */}
+      <div className="sm:hidden">
+        {/* Week navigator */}
+        <div className="flex items-center justify-between mb-3 bg-white rounded-2xl px-3 py-2 shadow-sm">
+          <button
+            onClick={() => goWeek(-7)}
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-[#1D164E]"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <span className="text-xs font-medium text-[#1D164E]">{formatHeader(monday)}</span>
+          <button
+            onClick={() => goWeek(7)}
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-[#1D164E]"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Day strip */}
+        <div className="grid grid-cols-6 gap-1 mb-4">
+          {weekDays.map((day, i) => {
+            const ds = toLocalDateStr(day)
+            const isToday = ds === today
+            const isSelected = ds === toLocalDateStr(selectedDay)
+            const count = countForDay(day)
+            return (
+              <button
+                key={i}
+                onClick={() => setSelectedDay(day)}
+                className={`flex flex-col items-center py-2 rounded-xl transition-colors ${
+                  isSelected
+                    ? 'bg-[#1D164E] text-white'
+                    : isToday
+                      ? 'bg-[#F5F0EB] text-[#B85C38]'
+                      : 'bg-white text-[#1D164E]'
+                }`}
+              >
+                <span className="text-[10px] font-medium opacity-70">{DAYS[i]}</span>
+                <span className="text-base font-bold leading-tight">{day.getDate()}</span>
+                <span
+                  className={`mt-0.5 h-1.5 w-1.5 rounded-full ${
+                    count > 0 ? (isSelected ? 'bg-white' : 'bg-[#B85C38]') : 'bg-transparent'
+                  }`}
+                />
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Tab switcher on mobile */}
+        {tabs.length > 1 && (
+          <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm mb-4">
+            {tabs.map((t) => (
+              <button
+                key={t.slug}
+                onClick={() => setActiveTab(t.slug)}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  activeTab === t.slug ? 'bg-[#1D164E] text-white' : 'text-gray-500'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <DayList
+          day={selectedDay}
+          visits={filtered}
+          showStaff={tab.showStaff}
+          onReschedule={onReschedule}
+        />
+      </div>
+
+      {/* ── DESKTOP: week grid ── */}
+      <div className="hidden sm:block">
+        <WeekGrid
+          monday={monday}
+          visits={filtered}
+          showStaff={tab.showStaff}
+          onReschedule={onReschedule}
+        />
+      </div>
     </div>
   )
 }

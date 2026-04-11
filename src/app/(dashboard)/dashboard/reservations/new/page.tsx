@@ -25,7 +25,7 @@ export default async function NewReservationPage() {
       <h1 className="text-2xl font-bold text-[#1D164E] mb-6">Calendrier & Réservation</h1>
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
         <CalendarView />
-        <div className="xl:sticky xl:top-6">
+        <div className="hidden sm:block xl:sticky xl:top-6">
           <NewReservationForm services={services} />
         </div>
       </div>

@@ -20,21 +20,47 @@ import { NotificationBell } from './notification-bell'
 const supabase = createSupabaseBrowserClient()
 
 const ADMIN_NAV = [
-  { href: '/dashboard', label: "Vue d'ensemble", icon: LayoutDashboard },
-  { href: '/dashboard/reservations/new', label: 'Calendrier', icon: CalendarDays },
-  { href: '/dashboard/customers', label: 'Clients', icon: Users },
-  { href: '/dashboard/staff', label: 'Équipe', icon: Users2 },
-  { href: '/dashboard/shopify-customers', label: 'Clients Shopify', icon: ShoppingBag },
-  { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList },
-  { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail },
+  { href: '/dashboard', label: "Vue d'ensemble", icon: LayoutDashboard, mobileOnly: false },
+  {
+    href: '/dashboard/reservations/new',
+    label: 'Calendrier',
+    icon: CalendarDays,
+    mobileOnly: false,
+  },
+  { href: '/dashboard/customers', label: 'Clients', icon: Users, mobileOnly: false },
+  { href: '/dashboard/staff', label: 'Équipe', icon: Users2, mobileOnly: false },
+  {
+    href: '/dashboard/shopify-customers',
+    label: 'Clients Shopify',
+    icon: ShoppingBag,
+    desktopOnly: true,
+  },
+  { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList, mobileOnly: false },
+  { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail, desktopOnly: true },
 ]
 
 const TEAM_NAV = [
+  {
+    href: '/dashboard/reservations/new',
+    label: 'Calendrier',
+    icon: CalendarDays,
+    desktopOnly: false,
+  },
+  { href: '/dashboard/customers', label: 'Clients', icon: Users, desktopOnly: false },
+  {
+    href: '/dashboard/shopify-customers',
+    label: 'Clients Shopify',
+    icon: ShoppingBag,
+    desktopOnly: true,
+  },
+  { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList, desktopOnly: false },
+  { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail, desktopOnly: true },
+]
+
+const MOBILE_NAV = [
   { href: '/dashboard/reservations/new', label: 'Calendrier', icon: CalendarDays },
   { href: '/dashboard/customers', label: 'Clients', icon: Users },
-  { href: '/dashboard/shopify-customers', label: 'Clients Shopify', icon: ShoppingBag },
   { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList },
-  { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail },
 ]
 
 export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
@@ -114,15 +140,14 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
         </div>
       </div>
 
-      {/* Mobile bottom tab bar */}
+      {/* Mobile bottom tab bar — Calendrier, Clients, Demandes only */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1D164E] border-t border-white/10 flex">
-        {NAV.map(({ href, label, icon: Icon }) => {
+        {MOBILE_NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
             <Link
               key={href}
               href={href}
-              onClick={() => {}}
               className={cn(
                 'flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors',
                 active ? 'text-white' : 'text-white/50'
