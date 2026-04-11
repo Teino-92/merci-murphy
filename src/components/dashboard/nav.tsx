@@ -69,7 +69,6 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
               <Link
                 key={href}
                 href={href}
-                onClick={() => router.refresh()}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
                   active
@@ -123,7 +122,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
             <Link
               key={href}
               href={href}
-              onClick={() => router.refresh()}
+              onClick={() => {}}
               className={cn(
                 'flex-1 flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors',
                 active ? 'text-white' : 'text-white/50'

@@ -6,6 +6,9 @@ import { PwaGate } from '@/components/dashboard/pwa-gate'
 import { BfcacheRefresh } from '@/components/dashboard/bfcache-refresh'
 import { isAdminEmail } from '@/lib/auth-role'
 
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
 export const metadata = { title: 'Dashboard | Merci Murphy', robots: { index: false } }
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
