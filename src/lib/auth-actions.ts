@@ -22,6 +22,7 @@ export interface Profile {
   poids_chien: string | null
   etat_poil: string | null
   can_book: boolean
+  admission_passed: boolean
   newsletter_subscribed: boolean
   grooming_duration: number | null
 }

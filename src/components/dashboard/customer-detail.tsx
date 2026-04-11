@@ -36,6 +36,7 @@ export function CustomerDetail({
 
   // Edit profile state
   const [togglingBook, setTogglingBook] = useState(false)
+  const [togglingAdmission, setTogglingAdmission] = useState(false)
   const [editing, setEditing] = useState(false)
   const [editData, setEditData] = useState({
     nom: initial.nom,
@@ -113,6 +114,18 @@ export function CustomerDetail({
     })
     setProfile((p) => ({ ...p, can_book: next }))
     setTogglingBook(false)
+  }
+
+  async function toggleAdmission() {
+    setTogglingAdmission(true)
+    const next = !profile.admission_passed
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/profile`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admission_passed: next }),
+    })
+    if (res.ok) setProfile((p) => ({ ...p, admission_passed: next }))
+    setTogglingAdmission(false)
   }
 
   async function saveNotes() {
@@ -339,6 +352,31 @@ L'équipe merci murphy`
                 <span
                   className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${
                     profile.can_book ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* admission_passed toggle */}
+            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-[#1D164E]">Admission crèche validée</p>
+                <p className="text-xs text-gray-400">
+                  {profile.admission_passed
+                    ? 'Peut réserver la crèche en ligne'
+                    : "Doit passer par une visite d'admission"}
+                </p>
+              </div>
+              <button
+                onClick={toggleAdmission}
+                disabled={togglingAdmission}
+                className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${
+                  profile.admission_passed ? 'bg-[#1D164E]' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${
+                    profile.admission_passed ? 'translate-x-5' : 'translate-x-0.5'
                   }`}
                 />
               </button>

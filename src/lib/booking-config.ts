@@ -13,7 +13,7 @@ export const SERVICE_DURATIONS: Record<string, number> = {
   osteo: 60,
   massage: 30,
   education: 60,
-  creche: 0, // all-day — not slot-based
+  creche: 0, // variable — client picks 1h/2h/3h/4h
 }
 
 // Buffer added AFTER each appointment before the next slot opens
@@ -57,8 +57,8 @@ export const SERVICE_HOURS: Record<string, { start: string; end: string; days: n
 
 // Services that clients can book online.
 // osteo, education: "être rappelé" only — not self-bookable.
-// creche is managed separately (all-day, not slot-based).
-export const ONLINE_BOOKABLE = ['toilettage', 'bains', 'balneo', 'massage'] as const
+// creche: slot-based (last N hours of the day), requires admission_passed=true.
+export const ONLINE_BOOKABLE = ['toilettage', 'bains', 'balneo', 'massage', 'creche'] as const
 
 // Slot granularity in minutes (how far apart slot start times are)
 export const SLOT_GRANULARITY = 15

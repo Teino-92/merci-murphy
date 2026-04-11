@@ -21,20 +21,26 @@ export async function POST(req: NextRequest) {
 
   const { serviceSlug, date, timeUtc, staffId, duration: durationOverride } = await req.json()
 
-  if (!serviceSlug || !date || !timeUtc || !staffId) {
+  if (!serviceSlug || !date || !timeUtc) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
-  // Resolve staff name from id
-  const { data: staffRow } = await supabaseAdmin
-    .from('staff')
-    .select('name')
-    .eq('id', staffId)
-    .single()
-  if (!staffRow) return NextResponse.json({ error: 'Staff not found' }, { status: 404 })
+  const slugBase = serviceSlug.split('-')[0] as keyof typeof SERVICE_DURATIONS
+
+  // Crèche has no staff assignment; all other services require staffId
+  let staffName: string | null = null
+  if (slugBase !== 'creche') {
+    if (!staffId) return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const { data: staffRow } = await supabaseAdmin
+      .from('staff')
+      .select('name')
+      .eq('id', staffId)
+      .single()
+    if (!staffRow) return NextResponse.json({ error: 'Staff not found' }, { status: 404 })
+    staffName = staffRow.name
+  }
 
   // Resolve duration
-  const slugBase = serviceSlug.split('-')[0] as keyof typeof SERVICE_DURATIONS
   let duration: number = SERVICE_DURATIONS[slugBase] ?? 0
   if (duration === 0) duration = durationOverride ?? 0
   if (duration <= 0) return NextResponse.json({ error: 'Duration required' }, { status: 400 })
@@ -68,7 +74,6 @@ export async function POST(req: NextRequest) {
   }
 
   // Check: client must not have any overlapping visit on the same day
-  // Load all non-cancelled visits for this client on this date
   const { data: existingVisits } = await supabaseAdmin
     .from('visits')
     .select('time, duration')
@@ -105,7 +110,7 @@ export async function POST(req: NextRequest) {
       date,
       time: `${timeUtc}:00`, // store as HH:MM:00
       duration: duration + (SERVICE_BUFFER[slugBase] ?? 0),
-      staff: staffRow.name,
+      staff: staffName,
       status,
       price: null,
       final_price: null,
@@ -174,7 +179,7 @@ export async function POST(req: NextRequest) {
 <ul>
   <li><strong>Client :</strong> ${profile?.nom ?? user.email}${dogLine}</li>
   <li><strong>Email :</strong> ${user.email}</li>
-  <li><strong>Prestataire :</strong> ${staffRow.name}</li>
+  <li><strong>Prestataire :</strong> ${staffName}</li>
   <li><strong>Date :</strong> ${appointmentDate}</li>
   <li><strong>Durée :</strong> ${duration} min</li>
 </ul>

@@ -19,6 +19,7 @@ export interface Profile {
   etat_poil: string | null
   notes: string | null
   can_book: boolean
+  admission_passed: boolean
   grooming_duration: number | null
   numero_puce: string | null
 }

@@ -27,7 +27,6 @@ export default async function ReservationPage({
   if (!user) redirect('/compte/connexion?redirect=/reservation')
 
   const profile = await getProfile()
-
   // ?contact=1 forces the callback form regardless of can_book
   const showForm = !profile?.can_book || searchParams.contact === '1'
 

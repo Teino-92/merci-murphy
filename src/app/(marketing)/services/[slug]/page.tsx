@@ -27,7 +27,7 @@ const BAINS_SHOP_HANDLES = [
   'dog-cologne',
 ]
 
-// Services with native online booking — these get href='/reservation' regardless of calendlyUrl in Sanity
+// All services with a native booking CTA pointing to /reservation
 const NATIVE_BOOKING_SLUGS = [
   'le-toilettage-maison-poilus-r',
   'les-bains-en-libre-service-maison-poilus-r',

@@ -66,6 +66,54 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      keyframes: {
+        snip: {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-20deg)' },
+          '75%': { transform: 'rotate(20deg)' },
+        },
+        ripple: {
+          '0%, 100%': { transform: 'translateY(0px) scaleX(1)' },
+          '33%': { transform: 'translateY(-3px) scaleX(0.95)' },
+          '66%': { transform: 'translateY(2px) scaleX(1.05)' },
+        },
+        drip: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '40%': { transform: 'translateY(4px)' },
+          '60%': { transform: 'translateY(-2px)' },
+        },
+        pulse_heart: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '30%': { transform: 'scale(1.25)' },
+          '60%': { transform: 'scale(0.95)' },
+        },
+        paw_bounce: {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '40%': { transform: 'translateY(-5px) rotate(-8deg)' },
+          '70%': { transform: 'translateY(2px) rotate(4deg)' },
+        },
+        dice_spin: {
+          '0%': { transform: 'rotate(0deg) scale(1)' },
+          '40%': { transform: 'rotate(180deg) scale(1.2)' },
+          '100%': { transform: 'rotate(360deg) scale(1)' },
+        },
+        avatar_wiggle: {
+          '0%, 100%': { transform: 'translateY(0) scale(1)' },
+          '20%': { transform: 'translateY(-6px) scale(1.1)' },
+          '40%': { transform: 'translateY(-4px) rotate(8deg) scale(1.1)' },
+          '60%': { transform: 'translateY(-4px) rotate(-8deg) scale(1.1)' },
+          '80%': { transform: 'translateY(0) rotate(0deg) scale(1.05)' },
+        },
+      },
+      animation: {
+        snip: 'snip 0.5s ease-in-out',
+        ripple: 'ripple 0.7s ease-in-out',
+        drip: 'drip 0.5s ease-in-out',
+        pulse_heart: 'pulse_heart 0.5s ease-in-out',
+        paw_bounce: 'paw_bounce 0.5s ease-in-out',
+        dice_spin: 'dice_spin 0.5s ease-in-out',
+        avatar_wiggle: 'avatar_wiggle 0.6s ease-in-out',
+      },
     },
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports
