@@ -171,8 +171,24 @@ export async function getProfile(): Promise<Profile | null> {
 
   // Use admin client to bypass RLS — user identity already verified above
   const { data } = await supabaseAdmin.from('profiles').select('*').eq('id', user.id).single()
+  if (!data) return null
 
-  return data ?? null
+  // Reconcile newsletter_subscribed with the newsletter_subscribers table —
+  // the user may have subscribed via the homepage form which only writes to that table.
+  if (!data.newsletter_subscribed) {
+    const { data: nlRow } = await supabaseAdmin
+      .from('newsletter_subscribers')
+      .select('active')
+      .eq('email', user.email!)
+      .single()
+    if (nlRow?.active) {
+      data.newsletter_subscribed = true
+      // Sync back so future reads are consistent
+      await supabaseAdmin.from('profiles').update({ newsletter_subscribed: true }).eq('id', user.id)
+    }
+  }
+
+  return data
 }
 
 // ─── Update profile ───────────────────────────────────────────────────────────
