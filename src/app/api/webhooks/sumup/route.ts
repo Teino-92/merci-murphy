@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createHmac } from 'crypto'
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { bookingConfirmedHtml } from '@/lib/emails/booking-confirmed'
+import { depositPaidHtml } from '@/lib/emails/deposit-paid'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -64,11 +64,11 @@ export async function POST(req: NextRequest) {
   if (payload.customer?.email) {
     const { data: profile } = await supabaseAdmin
       .from('profiles')
-      .select('nom')
+      .select('nom, nom_chien')
       .eq('id', visit.profile_id)
       .single()
 
-    const startDate = new Date(`${visit.date}T${visit.time ?? '00:00'}`)
+    const startDate = new Date(`${visit.date}T${visit.time ?? '00:00'}Z`)
     const formatted = startDate.toLocaleDateString('fr-FR', {
       weekday: 'long',
       year: 'numeric',
@@ -79,18 +79,30 @@ export async function POST(req: NextRequest) {
       timeZone: 'Europe/Paris',
     })
 
+    const SERVICE_LABELS: Record<string, string> = {
+      toilettage: 'Toilettage',
+      bains: 'Bains',
+      balneo: 'Balnéo',
+      massage: 'Massage',
+      osteo: 'Ostéopathie',
+      education: 'Éducation',
+      creche: 'Crèche',
+    }
+    const slugBase = visit.service.split('-')[0]
+
     await resend.emails
       .send({
-        from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
+        from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: payload.customer.email,
-        subject: 'Réservation confirmée — merci murphy® 🐾',
-        html: bookingConfirmedHtml({
+        subject: 'Acompte reçu — merci murphy® 🐾',
+        html: depositPaidHtml({
           clientName: profile?.nom ?? payload.customer.name ?? 'Client',
-          serviceName: 'toilettage',
+          dogName: profile?.nom_chien ?? null,
+          serviceName: SERVICE_LABELS[slugBase] ?? visit.service,
           appointmentDate: formatted,
         }),
       })
-      .catch((err) => console.error('Confirmation email error:', err))
+      .catch((err) => console.error('Deposit confirmed email error:', err))
   }
 
   return NextResponse.json({ ok: true })

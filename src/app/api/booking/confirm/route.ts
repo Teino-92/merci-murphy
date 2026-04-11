@@ -120,26 +120,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: visitError.message }, { status: 500 })
   }
 
-  // Send confirmation email (skip for toilettage — deposit flow sends its own)
+  const startDate = new Date(`${date}T${timeUtc}:00Z`)
+  const appointmentDate = startDate.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Paris',
+  })
+
+  const EMAIL_SERVICE_LABELS: Record<string, string> = {
+    toilettage: 'Toilettage',
+    bains: 'Bains',
+    balneo: 'Balnéo',
+    osteo: 'Ostéopathie',
+    massage: 'Massage',
+    education: 'Éducation',
+    creche: 'Crèche',
+  }
+  const serviceName = EMAIL_SERVICE_LABELS[slugBase] ?? serviceSlug
+
   if (status === 'confirmed') {
-    const startDate = new Date(`${date}T${timeUtc}:00Z`)
-    const appointmentDate = startDate.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/Paris',
-    })
-
-    const SERVICE_LABELS: Record<string, string> = {
-      bains: 'Bains',
-      balneo: 'Balnéo',
-      osteo: 'Ostéopathie',
-      massage: 'Massage',
-      education: 'Éducation',
-    }
-
+    // Confirmation email to client
     try {
       await resend.emails.send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
@@ -147,13 +150,40 @@ export async function POST(req: NextRequest) {
         subject: `Votre rendez-vous est confirmé chez merci murphy® 🐾`,
         html: bookingConfirmedHtml({
           clientName: profile?.nom ?? '',
-          serviceName: SERVICE_LABELS[slugBase] ?? serviceSlug,
+          serviceName,
           appointmentDate,
         }),
       })
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Confirmation email error:', err)
+    }
+  }
+
+  if (status === 'pending_deposit') {
+    // Internal notification to team: toilettage booked, awaiting price + deposit link
+    const internalEmail = process.env.RESEND_INTERNAL_EMAIL
+    if (internalEmail) {
+      const dogLine = profile?.nom_chien ? ` (${profile.nom_chien})` : ''
+      try {
+        await resend.emails.send({
+          from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
+          to: internalEmail,
+          subject: `Nouveau toilettage — ${profile?.nom ?? user.email}${dogLine} · ${appointmentDate}`,
+          html: `<p>Un toilettage a été réservé en ligne :</p>
+<ul>
+  <li><strong>Client :</strong> ${profile?.nom ?? user.email}${dogLine}</li>
+  <li><strong>Email :</strong> ${user.email}</li>
+  <li><strong>Prestataire :</strong> ${staffRow.name}</li>
+  <li><strong>Date :</strong> ${appointmentDate}</li>
+  <li><strong>Durée :</strong> ${duration} min</li>
+</ul>
+<p>Rendez-vous dans le dashboard pour saisir le prix final et envoyer le lien d'acompte.</p>`,
+        })
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Internal notification email error:', err)
+      }
     }
   }
 

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import {
   LayoutDashboard,
@@ -13,6 +14,7 @@ import {
   Mail,
   LogOut,
   CalendarDays,
+  Bell,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -36,10 +38,38 @@ const TEAM_NAV = [
   { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail },
 ]
 
+function usePendingCount() {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    async function load() {
+      const { count: n } = await supabase
+        .from('visits')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending_deposit')
+      setCount(n ?? 0)
+    }
+    load()
+
+    // Re-check whenever visits table changes
+    const channel = supabase
+      .channel('pending-count')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'visits' }, load)
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [])
+
+  return count
+}
+
 export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname()
   const router = useRouter()
   const NAV = isAdmin ? ADMIN_NAV : TEAM_NAV
+  const pendingCount = usePendingCount()
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -51,7 +81,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
     <>
       {/* Desktop sidebar */}
       <aside className="w-56 shrink-0 bg-[#1D164E] h-screen sticky top-0 flex-col hidden lg:flex">
-        <div className="p-6 border-b border-white/10">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
           <Image
             src="/logo.avif"
             alt="Merci Murphy"
@@ -59,6 +89,18 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
             height={42}
             className="brightness-0 invert"
           />
+          {pendingCount > 0 && (
+            <Link
+              href="/dashboard/customers"
+              title={`${pendingCount} acompte${pendingCount > 1 ? 's' : ''} en attente`}
+              className="relative text-white/60 hover:text-white transition-colors"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1.5 -right-1.5 bg-[#B85C38] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                {pendingCount > 9 ? '9+' : pendingCount}
+              </span>
+            </Link>
+          )}
         </div>
         <nav className="flex-1 p-4 space-y-1">
           {NAV.map(({ href, label, icon: Icon }) => {
@@ -100,13 +142,26 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
           height={32}
           className="brightness-0 invert"
         />
-        <button
-          onClick={handleLogout}
-          className="text-white/60 hover:text-white transition-colors"
-          aria-label="Se déconnecter"
-        >
-          <LogOut className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-3">
+          {pendingCount > 0 && (
+            <Link
+              href="/dashboard/customers"
+              className="relative text-white/60 hover:text-white transition-colors"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1.5 -right-1.5 bg-[#B85C38] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                {pendingCount > 9 ? '9+' : pendingCount}
+              </span>
+            </Link>
+          )}
+          <button
+            onClick={handleLogout}
+            className="text-white/60 hover:text-white transition-colors"
+            aria-label="Se déconnecter"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Mobile bottom tab bar */}

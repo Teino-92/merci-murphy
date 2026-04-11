@@ -12,7 +12,7 @@ export function bookingConfirmedHtml(params: {
     body: [
       p('Bonjour,'),
       p(
-        `Votre réservation pour <strong>${serviceName}</strong> le <strong>${appointmentDate}</strong> est confirmée, ${clientName}.<br>Nous avons bien reçu votre acompte — merci !`
+        `Votre réservation pour <strong>${serviceName}</strong> le <strong>${appointmentDate}</strong> est confirmée, ${clientName}.`
       ),
       p(
         "Si vous avez la moindre question avant votre rendez-vous, n'hésitez pas à nous contacter."

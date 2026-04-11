@@ -49,11 +49,11 @@ export function SignUpForm() {
       <div className="flex flex-col items-center py-12 text-center">
         <CheckCircle className="h-16 w-16 text-rose" />
         <h2 className="mt-6 font-display text-2xl font-bold text-charcoal">
-          Vérifiez votre boîte mail
+          Bienvenue chez merci murphy® !
         </h2>
         <p className="mt-3 text-charcoal/60 max-w-sm">
-          Un email de confirmation vous a été envoyé. Cliquez sur le lien pour activer votre compte,
-          puis revenez pour vous connecter et faire votre demande.
+          Votre compte a bien été créé. Vous allez recevoir un email de bienvenue. Vous pouvez dès
+          maintenant vous connecter et prendre rendez-vous.
         </p>
       </div>
     )
