@@ -27,6 +27,16 @@ const BAINS_SHOP_HANDLES = [
   'dog-cologne',
 ]
 
+// Services with native online booking — these get href='/reservation' regardless of calendlyUrl in Sanity
+const NATIVE_BOOKING_SLUGS = [
+  'le-toilettage-maison-poilus-r',
+  'les-bains-en-libre-service-maison-poilus-r',
+  'le-bain-en-libre-service-maison-poilus-r',
+  'balneo-maison-poilus-r',
+  'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
+  'la-creche',
+]
+
 // Avant/après pour Maison Poilus
 const BEFORE_AFTER_PAIRS = [
   {
@@ -277,13 +287,11 @@ export default async function ServicePage({ params }: Props) {
                   : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                {service.calendlyUrl && (
+                {(service.calendlyUrl || NATIVE_BOOKING_SLUGS.includes(params.slug)) && (
                   <CalendlyCta
-                    calendlyUrl={service.calendlyUrl}
+                    calendlyUrl={service.calendlyUrl ?? '/reservation'}
                     label={service.cta?.label}
-                    href={
-                      params.slug === 'le-toilettage-maison-poilus-r' ? '/reservation' : undefined
-                    }
+                    href={NATIVE_BOOKING_SLUGS.includes(params.slug) ? '/reservation' : undefined}
                   />
                 )}
                 <RappelButton />
@@ -294,13 +302,13 @@ export default async function ServicePage({ params }: Props) {
       </div>
 
       {/* Mobile sticky CTA */}
-      {service.calendlyUrl ? (
+      {service.calendlyUrl || NATIVE_BOOKING_SLUGS.includes(params.slug) ? (
         <CalendlyCta
           mobile
-          calendlyUrl={service.calendlyUrl}
+          calendlyUrl={service.calendlyUrl ?? '/reservation'}
           label={service.cta?.label}
           phone={settings?.telephone}
-          href={params.slug === 'le-toilettage-maison-poilus-r' ? '/reservation' : undefined}
+          href={NATIVE_BOOKING_SLUGS.includes(params.slug) ? '/reservation' : undefined}
         />
       ) : (
         <MobileCta
