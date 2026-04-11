@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { Section, Container } from '@/components/ui/section'
 import { ReservationForm } from '@/components/forms/reservation-form'
-import { ToilettageBooking } from '@/components/forms/toilettage-booking'
+import { SlotPicker } from '@/components/forms/slot-picker'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { getProfile } from '@/lib/auth-actions'
 
@@ -40,7 +40,7 @@ export default async function ReservationPage({
             <p className="mt-4 text-lg text-charcoal/60">
               {showForm
                 ? 'Remplissez le formulaire et notre équipe vous appellera dans les plus brefs délais pour organiser votre rendez-vous.'
-                : 'Choisissez votre toiletteur et réservez votre créneau directement.'}
+                : 'Choisissez votre service et réservez votre créneau directement.'}
             </p>
           </Container>
         </Section>
@@ -59,7 +59,7 @@ export default async function ReservationPage({
               }}
             />
           ) : (
-            <ToilettageBooking profile={profile} />
+            <SlotPicker profile={profile!} />
           )}
         </Container>
       </Section>
