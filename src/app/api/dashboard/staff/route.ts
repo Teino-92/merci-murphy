@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { getStaff, createStaff } from '@/lib/supabase-admin'
-import { isAdminEmail } from '@/lib/auth-role'
+import { hasDashboardAccess } from '@/lib/auth-role'
 
 async function requireAdmin() {
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user || !isAdminEmail(user.email)) return null
+  if (!user || !hasDashboardAccess(user.email)) return null
   return user
 }
 

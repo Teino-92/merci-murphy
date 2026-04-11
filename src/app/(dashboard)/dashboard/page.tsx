@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
+import { isAdminEmail } from '@/lib/auth-role'
 import { getRevenueStats, getDailyRevenue, getTopProducts } from '@/lib/shopify-admin'
 import { getLeads, getProfiles, supabaseAdmin } from '@/lib/supabase-admin'
 import { StatCard } from '@/components/dashboard/stat-card'
@@ -76,6 +77,7 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
+  if (!isAdminEmail(user.email)) redirect('/dashboard/reservations/new')
 
   const { from, to } = currentMonthRange()
 

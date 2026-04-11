@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { isAdminEmail } from '@/lib/auth-role'
+import { hasDashboardAccess } from '@/lib/auth-role'
 
 const BUCKET = 'client-files'
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
@@ -13,7 +13,7 @@ async function requireAdmin() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user || !isAdminEmail(user.email)) return null
+  if (!user || !hasDashboardAccess(user.email)) return null
   return user
 }
 

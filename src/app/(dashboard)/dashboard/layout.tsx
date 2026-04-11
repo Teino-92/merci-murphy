@@ -4,7 +4,7 @@ import { DashboardNav } from '@/components/dashboard/nav'
 import { RealtimeNotifications } from '@/components/dashboard/realtime-notifications'
 import { PwaGate } from '@/components/dashboard/pwa-gate'
 import { BfcacheRefresh } from '@/components/dashboard/bfcache-refresh'
-import { isAdminEmail } from '@/lib/auth-role'
+import { isAdminEmail, hasDashboardAccess } from '@/lib/auth-role'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -18,6 +18,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
+  if (!hasDashboardAccess(user.email)) redirect('/login')
 
   const isAdmin = isAdminEmail(user.email)
 
