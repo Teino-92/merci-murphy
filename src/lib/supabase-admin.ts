@@ -208,3 +208,127 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
   if (error) throw new Error(error.message)
   return data
 }
+
+// --- Staff ---
+
+export interface Staff {
+  id: string
+  name: string
+  role: string
+  color: string
+  active: boolean
+}
+
+export interface Availability {
+  id: string
+  staff_id: string
+  day_of_week: number
+  start_time: string
+  end_time: string
+}
+
+export interface TimeOff {
+  id: string
+  staff_id: string
+  date: string
+  note: string | null
+}
+
+export async function getStaff(): Promise<Staff[]> {
+  const { data } = await supabaseAdmin.from('staff').select('*').order('name')
+  return (data ?? []) as Staff[]
+}
+
+export async function createStaff(name: string, role: string, color: string): Promise<Staff> {
+  const { data, error } = await supabaseAdmin
+    .from('staff')
+    .insert({ name, role, color })
+    .select()
+    .single()
+  if (error) throw error
+  return data as Staff
+}
+
+export async function updateStaff(
+  id: string,
+  updates: Partial<Pick<Staff, 'name' | 'role' | 'color' | 'active'>>
+): Promise<void> {
+  const { error } = await supabaseAdmin.from('staff').update(updates).eq('id', id)
+  if (error) throw error
+}
+
+// --- Availabilities ---
+
+export async function getAvailabilities(staffId: string): Promise<Availability[]> {
+  const { data } = await supabaseAdmin
+    .from('availabilities')
+    .select('*')
+    .eq('staff_id', staffId)
+    .order('day_of_week')
+  return (data ?? []) as Availability[]
+}
+
+export async function upsertAvailability(
+  staffId: string,
+  dayOfWeek: number,
+  startTime: string,
+  endTime: string
+): Promise<void> {
+  const { error } = await supabaseAdmin.from('availabilities').upsert(
+    {
+      staff_id: staffId,
+      day_of_week: dayOfWeek,
+      start_time: startTime,
+      end_time: endTime,
+    },
+    { onConflict: 'staff_id,day_of_week' }
+  )
+  if (error) throw error
+}
+
+export async function deleteAvailability(id: string): Promise<void> {
+  const { error } = await supabaseAdmin.from('availabilities').delete().eq('id', id)
+  if (error) throw error
+}
+
+// --- Time Off ---
+
+export async function getTimeOff(staffId: string, from: string, to: string): Promise<TimeOff[]> {
+  const { data } = await supabaseAdmin
+    .from('time_off')
+    .select('*')
+    .eq('staff_id', staffId)
+    .gte('date', from)
+    .lte('date', to)
+    .order('date')
+  return (data ?? []) as TimeOff[]
+}
+
+export async function addTimeOff(staffId: string, date: string, note?: string): Promise<void> {
+  const { error } = await supabaseAdmin
+    .from('time_off')
+    .insert({ staff_id: staffId, date, note: note ?? null })
+  if (error) throw error
+}
+
+export async function deleteTimeOff(id: string): Promise<void> {
+  const { error } = await supabaseAdmin.from('time_off').delete().eq('id', id)
+  if (error) throw error
+}
+
+// --- Visits for staff ---
+
+export async function getVisitsForStaff(
+  staffName: string,
+  from: string,
+  to: string
+): Promise<{ date: string; time: string | null; duration: number | null }[]> {
+  const { data } = await supabaseAdmin
+    .from('visits')
+    .select('date, time, duration')
+    .eq('staff', staffName)
+    .gte('date', from)
+    .lte('date', to)
+    .in('status', ['confirmed', 'pending_deposit', 'new'])
+  return (data ?? []) as { date: string; time: string | null; duration: number | null }[]
+}
