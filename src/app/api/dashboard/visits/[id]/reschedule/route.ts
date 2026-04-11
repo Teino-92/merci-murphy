@@ -34,37 +34,40 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .single()
 
   if (fetchError || !visit) return NextResponse.json({ error: 'Visit not found' }, { status: 404 })
-  if (!visit.cal_booking_uid) {
-    return NextResponse.json(
-      { error: 'No cal.com booking UID — cannot reschedule' },
-      { status: 400 }
-    )
-  }
 
-  // Call cal.com reschedule API
-  const calRes = await fetch(
-    `https://api.cal.com/v1/bookings/${visit.cal_booking_uid}/reschedule`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.CAL_API_KEY}`,
-      },
-      body: JSON.stringify({ start: newStart }),
-    }
-  )
-
-  if (!calRes.ok) {
-    const body = await calRes.text()
-    return NextResponse.json({ error: `cal.com error: ${body}` }, { status: 500 })
-  }
-
-  // Update Supabase visit date/time
+  // Parse new date/time from ISO string (Paris-local datetime from frontend)
   const newDate = new Date(newStart)
   const dateStr = newDate.toISOString().slice(0, 10)
   const timeStr = newDate.toISOString().slice(11, 16)
 
-  await supabaseAdmin.from('visits').update({ date: dateStr, time: timeStr }).eq('id', params.id)
+  // If visit has a cal.com UID, also reschedule there
+  if (visit.cal_booking_uid) {
+    const calRes = await fetch(
+      `https://api.cal.com/v1/bookings/${visit.cal_booking_uid}/reschedule`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.CAL_API_KEY}`,
+        },
+        body: JSON.stringify({ start: newStart }),
+      }
+    )
+    if (!calRes.ok) {
+      const body = await calRes.text()
+      return NextResponse.json({ error: `cal.com error: ${body}` }, { status: 500 })
+    }
+  }
+
+  // Update Supabase visit date/time
+  const { error: updateError } = await supabaseAdmin
+    .from('visits')
+    .update({ date: dateStr, time: `${timeStr}:00` })
+    .eq('id', params.id)
+
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 })
+  }
 
   // Send reschedule email to client
   const formattedDate = newDate.toLocaleDateString('fr-FR', {
@@ -75,7 +78,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     minute: '2-digit',
     timeZone: 'Europe/Paris',
   })
-  const serviceName = SERVICE_LABELS[visit.service] ?? visit.service
+  const slugBase = visit.service.split('-')[0]
+  const serviceName = SERVICE_LABELS[slugBase] ?? visit.service
 
   const { data: profile } = await supabaseAdmin
     .from('profiles')
@@ -89,7 +93,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (clientEmail) {
     await resend.emails
       .send({
-        from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
+        from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: clientEmail,
         subject: `Votre rendez-vous a été déplacé chez merci murphy® 🐾`,
         html: bookingRescheduledHtml({
@@ -101,5 +105,5 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       .catch(() => {})
   }
 
-  return NextResponse.json({ ok: true, date: dateStr, time: timeStr })
+  return NextResponse.json({ ok: true, date: dateStr, time: `${timeStr}:00` })
 }
