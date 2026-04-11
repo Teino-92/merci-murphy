@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
+function isMobile(): boolean {
+  if (typeof window === 'undefined') return false
+  return /Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent)
+}
+
 function isStandalone(): boolean {
   if (typeof window === 'undefined') return true
   // Android / desktop Chrome
@@ -21,7 +26,8 @@ export function PwaGate({ children }: { children: React.ReactNode }) {
   const [standalone, setStandalone] = useState(true)
 
   useEffect(() => {
-    setStandalone(isStandalone())
+    // Desktop always passes through — PWA gate is mobile-only
+    setStandalone(isStandalone() || !isMobile())
     setChecked(true)
   }, [])
 
