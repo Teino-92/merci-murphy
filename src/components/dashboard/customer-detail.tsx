@@ -666,8 +666,12 @@ L'équipe merci murphy`
             {visits.length === 0 ? (
               <p className="text-sm text-gray-400">Aucune visite enregistrée.</p>
             ) : (
-              <div className="space-y-3">
-                {visits.map((v) => (
+              (() => {
+                const today = new Date().toISOString().slice(0, 10)
+                const upcoming = visits.filter((v) => v.date >= today && v.status !== 'cancelled')
+                const past = visits.filter((v) => v.date < today || v.status === 'cancelled')
+
+                const renderVisit = (v: (typeof visits)[0]) => (
                   <div key={v.id} className="rounded-xl bg-gray-50 overflow-hidden group">
                     <div className="flex gap-4 p-4">
                       <div className="shrink-0 text-center">
@@ -685,6 +689,11 @@ L'équipe merci murphy`
                             {SERVICE_LABELS[v.service] ?? v.service}
                           </span>
                           {v.staff && <span className="text-xs text-gray-400">· {v.staff}</span>}
+                          {v.status === 'cancelled' && (
+                            <span className="ml-auto text-xs font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                              Annulé
+                            </span>
+                          )}
                           {v.status === 'pending_deposit' && (
                             <span className="ml-auto text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                               Acompte en attente
@@ -739,8 +748,29 @@ L'équipe merci murphy`
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
+                )
+
+                return (
+                  <div className="space-y-5">
+                    {upcoming.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
+                          À venir
+                        </p>
+                        <div className="space-y-3">{upcoming.map(renderVisit)}</div>
+                      </div>
+                    )}
+                    {past.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
+                          Passées
+                        </p>
+                        <div className="space-y-3">{past.map(renderVisit)}</div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })()
             )}
           </div>
         </div>
