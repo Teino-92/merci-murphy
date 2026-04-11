@@ -17,12 +17,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const isAdmin = isAdminEmail(user.email)
 
   return (
-    <div className="h-screen bg-[#F5F0EB] flex overflow-hidden">
+    <div className="min-h-screen bg-[#F5F0EB] flex">
       <RealtimeNotifications />
       <DashboardNav isAdmin={isAdmin} />
-      <main className="flex-1 p-4 pt-20 pb-24 lg:p-10 lg:pt-10 lg:pb-10 overflow-y-auto">
-        {children}
-      </main>
+      <main className="flex-1 p-4 pt-20 pb-24 lg:p-10 lg:pt-10 lg:pb-10">{children}</main>
     </div>
   )
 }
