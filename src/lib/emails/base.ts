@@ -1,6 +1,17 @@
 // src/lib/emails/base.ts
 // Shared HTML email layout — dark navy header, cream background
 
+/** Escape user-supplied strings before inserting into HTML email bodies. */
+export function esc(str: string | null | undefined): string {
+  if (!str) return ''
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export function emailHtml(params: { title: string; body: string }): string {
   return `<!DOCTYPE html>
 <html lang="fr">

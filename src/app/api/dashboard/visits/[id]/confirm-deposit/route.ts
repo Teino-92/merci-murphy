@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { isAdminEmail } from '@/lib/auth-role'
 import { depositPaidHtml } from '@/lib/emails/deposit-paid'
 import { Resend } from 'resend'
 
@@ -22,6 +23,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!isAdminEmail(user.email)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   // Fetch visit + profile
   const { data: visit, error: fetchError } = await supabaseAdmin

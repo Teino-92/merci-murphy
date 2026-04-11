@@ -5,6 +5,7 @@ import { Resend } from 'resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { newsletterWelcomeHtml } from '@/lib/emails/newsletter-welcome'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
+import { esc } from '@/lib/emails/base'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -46,13 +47,13 @@ export async function submitLead(data: LeadFormData) {
   const serviceLabel = SERVICE_LABELS[d.service] ?? d.service
   const dogRows = [
     d.nom_chien &&
-      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Nom du chien</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;font-weight:600;">${d.nom_chien}</td></tr>`,
+      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Nom du chien</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;font-weight:600;">${esc(d.nom_chien)}</td></tr>`,
     d.race_chien &&
-      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Race</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${d.race_chien}</td></tr>`,
+      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Race</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${esc(d.race_chien)}</td></tr>`,
     d.poids_chien &&
-      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Poids</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${d.poids_chien}</td></tr>`,
+      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Poids</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${esc(d.poids_chien)}</td></tr>`,
     d.etat_poil &&
-      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Pelage</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${d.etat_poil}</td></tr>`,
+      `<tr><td style="padding:4px 0;color:#888;font-size:14px;">Pelage</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${esc(d.etat_poil)}</td></tr>`,
   ]
     .filter(Boolean)
     .join('')
@@ -68,14 +69,14 @@ export async function submitLead(data: LeadFormData) {
 </td></tr>
 <tr><td style="padding:40px 48px;">
   <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1D164E;">Nouvelle demande de rappel</p>
-  <p style="margin:0 0 32px;font-size:14px;color:#888;">Service demandé : <strong style="color:#1D164E;">${serviceLabel}</strong></p>
+  <p style="margin:0 0 32px;font-size:14px;color:#888;">Service demandé : <strong style="color:#1D164E;">${esc(serviceLabel)}</strong></p>
   <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
     <tr><td>
       <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Client</p>
       <table cellpadding="0" cellspacing="0">
-        <tr><td style="padding:4px 0;color:#888;font-size:14px;">Nom</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;font-weight:600;">${d.nom}</td></tr>
-        <tr><td style="padding:4px 0;color:#888;font-size:14px;">Email</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;"><a href="mailto:${d.email}" style="color:#B85C38;">${d.email}</a></td></tr>
-        <tr><td style="padding:4px 0;color:#888;font-size:14px;">Téléphone</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;"><a href="tel:${d.telephone}" style="color:#B85C38;">${d.telephone}</a></td></tr>
+        <tr><td style="padding:4px 0;color:#888;font-size:14px;">Nom</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;font-weight:600;">${esc(d.nom)}</td></tr>
+        <tr><td style="padding:4px 0;color:#888;font-size:14px;">Email</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;"><a href="mailto:${esc(d.email)}" style="color:#B85C38;">${esc(d.email)}</a></td></tr>
+        <tr><td style="padding:4px 0;color:#888;font-size:14px;">Téléphone</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;"><a href="tel:${esc(d.telephone)}" style="color:#B85C38;">${esc(d.telephone)}</a></td></tr>
       </table>
     </td></tr>
   </table>
@@ -94,7 +95,7 @@ export async function submitLead(data: LeadFormData) {
       ? `<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
     <tr><td>
       <p style="margin:0 0 8px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Message</p>
-      <p style="margin:0;font-size:14px;color:#1D164E;line-height:1.6;">${d.message}</p>
+      <p style="margin:0;font-size:14px;color:#1D164E;line-height:1.6;">${esc(d.message)}</p>
     </td></tr>
   </table>`
       : ''

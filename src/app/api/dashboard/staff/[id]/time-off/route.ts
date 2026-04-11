@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { getTimeOff, addTimeOff, deleteTimeOff } from '@/lib/supabase-admin'
+import { isAdminEmail } from '@/lib/auth-role'
 
-async function authed() {
+async function requireAdmin() {
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  if (!user || !isAdminEmail(user.email)) return null
   return user
 }
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const user = await authed()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await requireAdmin()
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { searchParams } = req.nextUrl
   const from = searchParams.get('from') ?? new Date().toISOString().slice(0, 10)
   const to = searchParams.get('to') ?? from
@@ -21,8 +23,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const user = await authed()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await requireAdmin()
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { date, note } = await req.json()
   if (!date) return NextResponse.json({ error: 'date required' }, { status: 400 })
   await addTimeOff(params.id, date, note)
@@ -30,8 +32,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 }
 
 export async function DELETE(req: NextRequest) {
-  const user = await authed()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const user = await requireAdmin()
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { id } = await req.json()
   await deleteTimeOff(id)
   return NextResponse.json({ ok: true })

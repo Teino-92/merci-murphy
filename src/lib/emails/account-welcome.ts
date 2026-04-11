@@ -1,10 +1,10 @@
 // src/lib/emails/account-welcome.ts
-import { emailHtml, btn, p } from './base'
+import { emailHtml, btn, p, esc } from './base'
 
 export function accountWelcomeHtml(prenom: string, nomChien?: string): string {
   const greeting = nomChien
-    ? `Bienvenue à vous et à <strong>${nomChien}</strong> !`
-    : `Bienvenue, <strong>${prenom}</strong> !`
+    ? `Bienvenue à vous et à <strong>${esc(nomChien)}</strong> !`
+    : `Bienvenue, <strong>${esc(prenom)}</strong> !`
 
   return emailHtml({
     title: 'Votre compte merci murphy® est créé',

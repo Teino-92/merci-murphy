@@ -20,8 +20,9 @@ const SERVICE_LABELS: Record<string, string> = {
 
 export async function GET(req: NextRequest) {
   // Protect the endpoint: Vercel cron passes this header
+  const cronSecret = process.env.CRON_SECRET
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
