@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import Cal from '@calcom/embed-react'
 import { Search, X, Check } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 import { useRouter } from 'next/navigation'
@@ -53,12 +52,6 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   const [visitNotes, setVisitNotes] = useState('')
   const [savingVisit, setSavingVisit] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-
-  // Derived
-  const currentService = services.find((s) => s.slug === selectedService)
-  const isCalService = currentService?.calLink != null
-  const isToilettage = selectedService.includes('toilettage')
-  const toilettageMissingDuration = isToilettage && !selectedProfile?.grooming_duration
 
   function handleSearchChange(q: string) {
     setSearchQuery(q)
@@ -332,73 +325,17 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
             onChange={(e) => setSelectedService(e.target.value)}
             className={inputCls}
           >
-            <optgroup label="Réservation en ligne (cal.com)">
-              {services
-                .filter((s) => s.calLink)
-                .map((s) => (
-                  <option key={s.slug} value={s.slug}>
-                    {s.title}
-                  </option>
-                ))}
-            </optgroup>
-            <optgroup label="Rendez-vous manuel">
-              {services
-                .filter((s) => !s.calLink)
-                .map((s) => (
-                  <option key={s.slug} value={s.slug}>
-                    {s.title}
-                  </option>
-                ))}
-            </optgroup>
+            {services.map((s) => (
+              <option key={s.slug} value={s.slug}>
+                {s.title}
+              </option>
+            ))}
           </select>
-
-          {isCalService && toilettageMissingDuration && (
-            <p className="mt-3 text-sm text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
-              ⚠️ La durée de toilettage n&apos;est pas définie pour ce client. Veuillez la
-              renseigner sur{' '}
-              <a
-                href={`/dashboard/customers/${selectedProfile.id}`}
-                className="underline font-medium"
-              >
-                le profil client
-              </a>{' '}
-              avant de réserver.
-            </p>
-          )}
         </div>
       )}
 
-      {/* Step 3a: Cal.com embed */}
-      {selectedProfile && isCalService && !toilettageMissingDuration && currentService?.calLink && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
-            3. Réservation
-          </p>
-          <div
-            className="overflow-y-auto rounded-xl border border-gray-100"
-            style={{ height: '600px' }}
-          >
-            <Cal
-              calLink={currentService.calLink}
-              calOrigin="https://cal.eu"
-              config={{
-                name: selectedProfile.nom,
-                notes: 'source=dashboard',
-                ...(isToilettage && selectedProfile.grooming_duration
-                  ? { duration: String(selectedProfile.grooming_duration) }
-                  : {}),
-              }}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-            />
-          </div>
-          <p className="mt-4 text-xs text-gray-400 text-center">
-            La visite sera enregistrée automatiquement une fois la réservation confirmée.
-          </p>
-        </div>
-      )}
-
-      {/* Step 3b: Manual form */}
-      {selectedProfile && !isCalService && (
+      {/* Step 3: Manual form */}
+      {selectedProfile && (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
             3. Détails du rendez-vous
