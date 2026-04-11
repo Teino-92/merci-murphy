@@ -8,7 +8,7 @@ import {
   PawPrint,
   GraduationCap,
   Bone,
-  Dog,
+  Dog as DogIcon,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -52,7 +52,7 @@ export function VisitTimeline({ visits, dogs }: VisitTimelineProps) {
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-rose">
                 {(() => {
-                  const Icon = SERVICE_ICON[visit.service] ?? Dog
+                  const Icon = SERVICE_ICON[visit.service] ?? DogIcon
                   return <Icon className="h-4 w-4 text-charcoal/60" />
                 })()}
               </div>
@@ -72,7 +72,7 @@ export function VisitTimeline({ visits, dogs }: VisitTimelineProps) {
                     className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full mt-1"
                     style={{ backgroundColor: '#f0ebe3', color: '#8B5A3A' }}
                   >
-                    <Dog className="h-3 w-3" /> {dogMap.get(visit.dog_id)}
+                    <DogIcon className="h-3 w-3" /> {dogMap.get(visit.dog_id)}
                   </span>
                 )}
               </div>
