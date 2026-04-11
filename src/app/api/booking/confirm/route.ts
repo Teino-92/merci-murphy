@@ -7,6 +7,11 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+function timeToMinutes(t: string): number {
+  const [h, m] = t.split(':').map(Number)
+  return h * 60 + m
+}
+
 export async function POST(req: NextRequest) {
   const supabase = await createSupabaseServerClient()
   const {
@@ -44,6 +49,48 @@ export async function POST(req: NextRequest) {
   // Use grooming_duration from profile for toilettage if not overridden
   if (slugBase === 'toilettage' && profile?.grooming_duration && !durationOverride) {
     duration = profile.grooming_duration
+  }
+
+  // Check: client must not already have the same service on the same day
+  const { data: sameServiceSameDay } = await supabaseAdmin
+    .from('visits')
+    .select('id')
+    .eq('profile_id', user.id)
+    .eq('service', serviceSlug)
+    .eq('date', date)
+    .not('status', 'eq', 'cancelled')
+    .limit(1)
+  if (sameServiceSameDay && sameServiceSameDay.length > 0) {
+    return NextResponse.json(
+      { error: 'Vous avez déjà un rendez-vous pour ce service ce jour-là.' },
+      { status: 409 }
+    )
+  }
+
+  // Check: client must not have any overlapping visit on the same day
+  // Load all non-cancelled visits for this client on this date
+  const { data: existingVisits } = await supabaseAdmin
+    .from('visits')
+    .select('time, duration')
+    .eq('profile_id', user.id)
+    .eq('date', date)
+    .not('status', 'eq', 'cancelled')
+
+  if (existingVisits && existingVisits.length > 0) {
+    const newStartMins = timeToMinutes(timeUtc)
+    const newEndMins = newStartMins + duration + (SERVICE_BUFFER[slugBase] ?? 0)
+    const hasOverlap = existingVisits.some((v) => {
+      if (!v.time) return false
+      const vStart = timeToMinutes(v.time.slice(0, 5))
+      const vEnd = vStart + (v.duration ?? duration)
+      return newStartMins < vEnd && newEndMins > vStart
+    })
+    if (hasOverlap) {
+      return NextResponse.json(
+        { error: 'Ce créneau est en conflit avec un autre rendez-vous.' },
+        { status: 409 }
+      )
+    }
   }
 
   // Determine status: toilettage needs deposit, others confirmed directly

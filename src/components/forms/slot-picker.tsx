@@ -410,7 +410,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
           <p className="text-sm font-semibold text-charcoal">
             {SERVICE_EMOJI[selectedService ?? ''] ?? ''}{' '}
             {SERVICE_LABELS[selectedService?.split('-')[0] ?? ''] ?? selectedService}
-            {selectedStaffName ? ` · ${selectedStaffName}` : ''}
+            {selectedService === 'toilettage' && selectedStaffName ? ` · ${selectedStaffName}` : ''}
           </p>
         </div>
         <p className="text-sm text-charcoal/60">Choisissez une date</p>
@@ -441,7 +441,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
         </button>
         <p className="text-sm font-semibold text-charcoal">
           {selectedDate ? formatDateFr(selectedDate) : ''}
-          {selectedStaffName ? ` · ${selectedStaffName}` : ''}
+          {selectedService === 'toilettage' && selectedStaffName ? ` · ${selectedStaffName}` : ''}
         </p>
       </div>
 
