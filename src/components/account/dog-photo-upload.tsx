@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import Image from 'next/image'
+import { Dog, Loader2 } from 'lucide-react'
 
 interface DogPhotoUploadProps {
   currentUrl: string | null
@@ -49,11 +50,11 @@ export function DogPhotoUpload({ currentUrl, dogName, onUpload }: DogPhotoUpload
         {currentUrl ? (
           <Image src={currentUrl} alt={dogName} fill className="object-cover" sizes="60px" />
         ) : (
-          <span>{uploading ? '⏳' : '🐶'}</span>
+          <Dog className="h-6 w-6 text-charcoal/40" />
         )}
         {uploading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full">
-            <span className="text-lg">⏳</span>
+            <Loader2 className="h-5 w-5 text-white animate-spin" />
           </div>
         )}
       </button>

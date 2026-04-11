@@ -1,5 +1,26 @@
 import type { Visit, Dog } from '@/lib/auth-actions'
-import { SERVICE_LABELS, SERVICE_EMOJI } from '@/lib/dog-constants'
+import { SERVICE_LABELS } from '@/lib/dog-constants'
+import {
+  Scissors,
+  Bath,
+  Waves,
+  HandHeart,
+  PawPrint,
+  GraduationCap,
+  Bone,
+  Dog,
+  type LucideIcon,
+} from 'lucide-react'
+
+const SERVICE_ICON: Record<string, LucideIcon> = {
+  toilettage: Scissors,
+  bains: Bath,
+  balneo: Waves,
+  massage: HandHeart,
+  creche: PawPrint,
+  education: GraduationCap,
+  osteo: Bone,
+}
 
 interface VisitTimelineProps {
   visits: Visit[]
@@ -29,11 +50,11 @@ export function VisitTimeline({ visits, dogs }: VisitTimelineProps) {
                 borderBottom: i < visits.length - 1 ? '1px solid #f5f0eb' : undefined,
               }}
             >
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0 mt-0.5"
-                style={{ backgroundColor: '#f0ebe3' }}
-              >
-                {SERVICE_EMOJI[visit.service] ?? '📋'}
+              <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-rose">
+                {(() => {
+                  const Icon = SERVICE_ICON[visit.service] ?? Dog
+                  return <Icon className="h-4 w-4 text-charcoal/60" />
+                })()}
               </div>
               <div>
                 <p className="text-[14px] font-semibold text-[#1a1a1a]">
@@ -51,7 +72,7 @@ export function VisitTimeline({ visits, dogs }: VisitTimelineProps) {
                     className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full mt-1"
                     style={{ backgroundColor: '#f0ebe3', color: '#8B5A3A' }}
                   >
-                    🐶 {dogMap.get(visit.dog_id)}
+                    <Dog className="h-3 w-3" /> {dogMap.get(visit.dog_id)}
                   </span>
                 )}
               </div>
