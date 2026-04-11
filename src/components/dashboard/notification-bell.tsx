@@ -39,7 +39,7 @@ export function NotificationBell() {
     const [visitsRes, leadsRes, nlRes] = await Promise.all([
       supabase
         .from('visits')
-        .select('id, service, status, created_at, profiles(nom, nom_chien)')
+        .select('id, profile_id, service, status, created_at, profiles(nom, nom_chien)')
         .in('status', ['confirmed', 'pending_deposit'])
         .order('created_at', { ascending: false })
         .limit(20),
@@ -84,7 +84,7 @@ export function NotificationBell() {
             ? `Acompte en attente — ${name}`
             : `Nouvelle résa — ${name}`,
         sub: SERVICE_LABELS[slug] ?? v.service,
-        href: '/dashboard/customers',
+        href: `/dashboard/customers/${v.profile_id}`,
         created_at: v.created_at,
       })
     }
