@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { DashboardNav } from '@/components/dashboard/nav'
 import { RealtimeNotifications } from '@/components/dashboard/realtime-notifications'
 import { PwaGate } from '@/components/dashboard/pwa-gate'
+import { BfcacheRefresh } from '@/components/dashboard/bfcache-refresh'
 import { isAdminEmail } from '@/lib/auth-role'
 
 export const metadata = { title: 'Dashboard | Merci Murphy', robots: { index: false } }
@@ -19,6 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <PwaGate>
+      <BfcacheRefresh />
       <div className="min-h-screen bg-[#F5F0EB] flex">
         <RealtimeNotifications />
         <DashboardNav isAdmin={isAdmin} />
