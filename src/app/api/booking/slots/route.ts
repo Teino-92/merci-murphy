@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin, getVisitsForStaff } from '@/lib/supabase-admin'
 import { getAvailableSlots } from '@/lib/booking-slots'
-import { SERVICE_DURATIONS, ONLINE_BOOKABLE, BOOKING_HORIZON_DAYS } from '@/lib/booking-config'
+import {
+  SERVICE_DURATIONS,
+  ONLINE_BOOKABLE,
+  BOOKING_HORIZON_DAYS,
+  BOOKING_MIN_NOTICE_MINUTES,
+} from '@/lib/booking-config'
 import type { Availability, TimeOff, Staff } from '@/lib/supabase-admin'
 
 export async function GET(req: NextRequest) {
@@ -82,6 +87,18 @@ export async function GET(req: NextRequest) {
     })
   )
 
-  const slots = getAvailableSlots(dateStr, slugBase, duration, staffInputs)
+  const allSlots = getAvailableSlots(dateStr, slugBase, duration, staffInputs)
+
+  // Filter out slots that are within the minimum notice window (Paris time → UTC comparison)
+  const minNotice = BOOKING_MIN_NOTICE_MINUTES[slugBase] ?? 0
+  const nowMs = Date.now()
+  const slots =
+    minNotice > 0
+      ? allSlots.filter((slot) => {
+          const slotMs = new Date(`${dateStr}T${slot.timeUtc}:00Z`).getTime()
+          return slotMs - nowMs >= minNotice * 60 * 1000
+        })
+      : allSlots
+
   return NextResponse.json({ slots })
 }

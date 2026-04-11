@@ -53,6 +53,7 @@ export function CustomerDetail({
   // Deposit state — keyed by visit id
   const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
   const [depositSent, setDepositSent] = useState<Record<string, number>>({})
+  const [confirmingDeposit, setConfirmingDeposit] = useState<Record<string, boolean>>({})
 
   // Add visit state
   const [showVisitForm, setShowVisitForm] = useState(false)
@@ -80,6 +81,27 @@ export function CustomerDetail({
       })
       .catch(() => setFilesLoading(false))
   }, [profile.id])
+
+  // Auto-cancel overdue pending_deposit visits on page load
+  useEffect(() => {
+    const now = Date.now()
+    visits.forEach((v) => {
+      if (v.status !== 'pending_deposit' || !v.created_at) return
+      const appointmentMs = new Date(`${v.date}T${v.time?.slice(0, 5) ?? '09:00'}Z`).getTime()
+      const createdMs = new Date(v.created_at).getTime()
+      const hoursUntilAppt = (appointmentMs - createdMs) / 3600000
+      const deadlineHours = hoursUntilAppt >= 24 ? 24 : 12
+      const deadlineMs = createdMs + deadlineHours * 3600000
+      if (now > deadlineMs) {
+        fetch(`/api/dashboard/visits/${v.id}/cancel`, { method: 'POST' }).then(() => {
+          setVisits((prev) =>
+            prev.map((x) => (x.id === v.id ? { ...x, status: 'cancelled' as const } : x))
+          )
+        })
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function toggleCanBook() {
     setTogglingBook(true)
@@ -150,6 +172,15 @@ export function CustomerDetail({
     setVisitNotes('')
     setVisitStaff('')
     setVisitPrice('')
+  }
+
+  async function confirmDeposit(visitId: string) {
+    setConfirmingDeposit((s) => ({ ...s, [visitId]: true }))
+    await fetch(`/api/dashboard/visits/${visitId}/confirm-deposit`, { method: 'POST' })
+    setVisits((prev) =>
+      prev.map((v) => (v.id === visitId ? { ...v, status: 'confirmed' as const } : v))
+    )
+    setConfirmingDeposit((s) => ({ ...s, [visitId]: false }))
   }
 
   async function deleteVisit(visitId: string) {
@@ -725,28 +756,65 @@ L'équipe merci murphy`
                       </button>
                     </div>
 
-                    {v.status === 'pending_deposit' && depositSent[v.id] == null && (
-                      <div className="px-4 pb-4 flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="Acompte (€)"
-                          value={depositPrices[v.id] ?? ''}
-                          onChange={(e) =>
-                            setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
-                          }
-                          className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-                        />
-                        <button
-                          onClick={() => copyDepositEmail(v)}
-                          disabled={!depositPrices[v.id] || Number(depositPrices[v.id]) <= 0}
-                          className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
-                        >
-                          Copier le texte
-                        </button>
-                      </div>
-                    )}
+                    {v.status === 'pending_deposit' &&
+                      (() => {
+                        const createdMs = new Date(v.created_at).getTime()
+                        const appointmentMs = new Date(
+                          `${v.date}T${v.time?.slice(0, 5) ?? '09:00'}Z`
+                        ).getTime()
+                        const hoursUntilAppt = (appointmentMs - createdMs) / 3600000
+                        const deadlineHours = hoursUntilAppt >= 24 ? 24 : 12
+                        const deadlineMs = createdMs + deadlineHours * 3600000
+                        const remainingMs = deadlineMs - Date.now()
+                        const remainingH = Math.floor(remainingMs / 3600000)
+                        const remainingM = Math.floor((remainingMs % 3600000) / 60000)
+                        const deadlineLabel =
+                          remainingMs > 0
+                            ? `Expire dans ${remainingH > 0 ? `${remainingH}h` : ''}${remainingM}min`
+                            : 'Délai expiré'
+                        const isExpired = remainingMs <= 0
+
+                        return (
+                          <div className="px-4 pb-4 space-y-2">
+                            <p
+                              className={`text-xs font-medium ${isExpired ? 'text-red-500' : 'text-amber-600'}`}
+                            >
+                              {deadlineLabel}
+                            </p>
+                            {depositSent[v.id] == null && (
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  placeholder="Acompte (€)"
+                                  value={depositPrices[v.id] ?? ''}
+                                  onChange={(e) =>
+                                    setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
+                                  }
+                                  className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                                />
+                                <button
+                                  onClick={() => copyDepositEmail(v)}
+                                  disabled={
+                                    !depositPrices[v.id] || Number(depositPrices[v.id]) <= 0
+                                  }
+                                  className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+                                >
+                                  Copier le texte
+                                </button>
+                              </div>
+                            )}
+                            <button
+                              onClick={() => confirmDeposit(v.id)}
+                              disabled={confirmingDeposit[v.id]}
+                              className="text-xs font-medium bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                            >
+                              {confirmingDeposit[v.id] ? 'Confirmation…' : '✓ Acompte reçu'}
+                            </button>
+                          </div>
+                        )
+                      })()}
                   </div>
                 )
 

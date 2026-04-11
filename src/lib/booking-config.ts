@@ -56,9 +56,9 @@ export const SERVICE_HOURS: Record<string, { start: string; end: string; days: n
 }
 
 // Services that clients can book online.
-// osteo is NEVER client-bookable (Sandra Colletet is a subcontractor — dashboard manual only).
+// osteo, education: "être rappelé" only — not self-bookable.
 // creche is managed separately (all-day, not slot-based).
-export const ONLINE_BOOKABLE = ['toilettage', 'bains', 'balneo', 'massage', 'education'] as const
+export const ONLINE_BOOKABLE = ['toilettage', 'bains', 'balneo', 'massage'] as const
 
 // Slot granularity in minutes (how far apart slot start times are)
 export const SLOT_GRANULARITY = 15
@@ -70,3 +70,21 @@ export const SERVICE_GRANULARITY: Record<string, number> = {
 
 // How many days ahead clients can book
 export const BOOKING_HORIZON_DAYS = 60
+
+// Minimum notice before appointment start (in minutes) per service.
+// Slots within this window from now are hidden.
+// toilettage: 2h, bains/balneo/crèche: 1h, massage: 1h
+export const BOOKING_MIN_NOTICE_MINUTES: Record<string, number> = {
+  toilettage: 120,
+  bains: 60,
+  balneo: 60,
+  creche: 60,
+  massage: 60,
+}
+
+// Deposit deadline rules (in hours) for pending_deposit visits.
+// If the appointment is ≥ DEPOSIT_DEADLINE_LONG_THRESHOLD hours away at booking time,
+// the client has DEPOSIT_DEADLINE_LONG hours to pay. Otherwise DEPOSIT_DEADLINE_SHORT.
+export const DEPOSIT_DEADLINE_LONG_THRESHOLD = 24 // hours before appointment
+export const DEPOSIT_DEADLINE_LONG = 24 // hours to pay
+export const DEPOSIT_DEADLINE_SHORT = 12 // hours to pay
