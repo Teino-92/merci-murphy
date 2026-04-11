@@ -2,7 +2,8 @@
 const nextConfig = {
   experimental: {
     staleTimes: {
-      dynamic: 0, // force-dynamic pages never served from router cache
+      dynamic: 0,
+      static: 0,
     },
   },
   async redirects() {
