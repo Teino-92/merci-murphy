@@ -256,63 +256,14 @@ interface Tab {
 interface CalendarSectionProps {
   title: string
   tabs: Tab[]
-  monday: Date
-  visits: CalVisit[]
-  loading: boolean
   onReschedule: (v: CalVisit) => void
 }
 
-function CalendarSection({
-  title,
-  tabs,
-  monday,
-  visits,
-  loading,
-  onReschedule,
-}: CalendarSectionProps) {
+function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
   const [activeTab, setActiveTab] = useState(tabs[0].slug)
-  const tab = tabs.find((t) => t.slug === activeTab) ?? tabs[0]
-  const filtered = visits.filter((v) => v.service.startsWith(tab.slug))
-
-  return (
-    <div className={`transition-opacity ${loading ? 'opacity-50' : ''}`}>
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">{title}</p>
-        {tabs.length > 1 && (
-          <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm">
-            {tabs.map((t) => (
-              <button
-                key={t.slug}
-                onClick={() => setActiveTab(t.slug)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
-                  activeTab === t.slug
-                    ? 'bg-[#1D164E] text-white'
-                    : 'text-gray-500 hover:text-[#1D164E]'
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-      <WeekGrid
-        monday={monday}
-        visits={filtered}
-        showStaff={tab.showStaff}
-        onReschedule={onReschedule}
-      />
-    </div>
-  )
-}
-
-// ─── CalendarView ─────────────────────────────────────────────────────────────
-
-export function CalendarView() {
   const [monday, setMonday] = useState<Date>(() => getMondayOf(new Date()))
   const [visits, setVisits] = useState<CalVisit[]>([])
   const [loading, setLoading] = useState(true)
-  const [rescheduling, setRescheduling] = useState<CalVisit | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -327,8 +278,72 @@ export function CalendarView() {
       .catch(() => setLoading(false))
   }, [monday])
 
-  function handleSaved(id: string, date: string, time: string) {
-    setVisits((prev) => prev.map((v) => (v.id === id ? { ...v, date, time } : v)))
+  const tab = tabs.find((t) => t.slug === activeTab) ?? tabs[0]
+  const filtered = visits.filter((v) => v.service.startsWith(tab.slug))
+
+  return (
+    <div className={`transition-opacity ${loading ? 'opacity-50' : ''}`}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">{title}</p>
+        <div className="flex items-center gap-2">
+          {tabs.length > 1 && (
+            <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm">
+              {tabs.map((t) => (
+                <button
+                  key={t.slug}
+                  onClick={() => setActiveTab(t.slug)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                    activeTab === t.slug
+                      ? 'bg-[#1D164E] text-white'
+                      : 'text-gray-500 hover:text-[#1D164E]'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center gap-1 bg-white rounded-xl px-2 py-1 shadow-sm">
+            <button
+              onClick={() => setMonday((m) => addDays(m, -7))}
+              className="p-1 rounded hover:bg-gray-100 transition-colors text-[#1D164E]"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="text-xs font-medium text-[#1D164E] min-w-[168px] text-center">
+              {formatHeader(monday)}
+            </span>
+            <button
+              onClick={() => setMonday((m) => addDays(m, 7))}
+              className="p-1 rounded hover:bg-gray-100 transition-colors text-[#1D164E]"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setMonday(getMondayOf(new Date()))}
+              className="ml-1 px-2 py-0.5 text-xs font-medium rounded-lg border border-[#1D164E] text-[#1D164E] hover:bg-[#1D164E] hover:text-white transition-colors"
+            >
+              Auj.
+            </button>
+          </div>
+        </div>
+      </div>
+      <WeekGrid
+        monday={monday}
+        visits={filtered}
+        showStaff={tab.showStaff}
+        onReschedule={onReschedule}
+      />
+    </div>
+  )
+}
+
+// ─── CalendarView ─────────────────────────────────────────────────────────────
+
+export function CalendarView() {
+  const [rescheduling, setRescheduling] = useState<CalVisit | null>(null)
+
+  function handleSaved() {
     setRescheduling(null)
   }
 
@@ -342,58 +357,16 @@ export function CalendarView() {
         />
       )}
 
-      {/* Week navigation — shared across all sections */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => setMonday((m) => addDays(m, -7))}
-          className="p-2 rounded-lg hover:bg-white transition-colors text-[#1D164E]"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <span className="text-sm font-medium text-[#1D164E] flex-1 text-center">
-          {formatHeader(monday)}
-        </span>
-        <button
-          onClick={() => setMonday((m) => addDays(m, 7))}
-          className="p-2 rounded-lg hover:bg-white transition-colors text-[#1D164E]"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => setMonday(getMondayOf(new Date()))}
-          className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#1D164E] text-[#1D164E] hover:bg-[#1D164E] hover:text-white transition-colors"
-        >
-          {"Aujourd'hui"}
-        </button>
-      </div>
-
       {/* Spa POILUS — Toilettage / Bains / Balnéo */}
-      <CalendarSection
-        title="Spa POILUS"
-        tabs={SPA_TABS}
-        monday={monday}
-        visits={visits}
-        loading={loading}
-        onReschedule={setRescheduling}
-      />
+      <CalendarSection title="Spa POILUS" tabs={SPA_TABS} onReschedule={setRescheduling} />
 
       {/* Bien-être — Massage / Ostéopathie / Éducation */}
-      <CalendarSection
-        title="Bien-être"
-        tabs={BIENETRE_TABS}
-        monday={monday}
-        visits={visits}
-        loading={loading}
-        onReschedule={setRescheduling}
-      />
+      <CalendarSection title="Bien-être" tabs={BIENETRE_TABS} onReschedule={setRescheduling} />
 
       {/* Crèche — standalone */}
       <CalendarSection
         title="Crèche"
         tabs={[{ slug: 'creche', label: 'Crèche', showStaff: false }]}
-        monday={monday}
-        visits={visits}
-        loading={loading}
         onReschedule={setRescheduling}
       />
     </div>
