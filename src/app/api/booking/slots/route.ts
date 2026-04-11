@@ -44,8 +44,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Duration required for this service' }, { status: 400 })
   }
 
-  // Load all active staff
-  const { data: staffRows } = await supabaseAdmin.from('staff').select('*').eq('active', true)
+  // Load active staff — optionally filtered to a single staff member
+  const staffIdFilter = searchParams.get('staffId')
+  let query = supabaseAdmin.from('staff').select('*').eq('active', true)
+  if (staffIdFilter) query = query.eq('id', staffIdFilter)
+  const { data: staffRows } = await query
   const staff: Staff[] = staffRows ?? []
 
   // Load availabilities + time-off + booked visits for each staff member

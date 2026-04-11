@@ -13,7 +13,13 @@ interface Slot {
   staffName: string
 }
 
-type Step = 'service' | 'date' | 'time' | 'confirmed'
+interface Toiletteur {
+  id: string
+  name: string
+  color: string
+}
+
+type Step = 'service' | 'staff' | 'date' | 'time' | 'confirmed'
 
 const BOOKABLE_SERVICES = (ONLINE_BOOKABLE as readonly string[]).map((slug) => ({
   slug,
@@ -42,12 +48,10 @@ function addDays(dateStr: string, n: number): string {
   return d.toISOString().slice(0, 10)
 }
 
-// day of week: 0=Sun,1=Mon...6=Sat
 function getDayOfWeek(dateStr: string): number {
   return new Date(`${dateStr}T12:00:00Z`).getUTCDay()
 }
 
-// Return all YYYY-MM-DD dates in a given month (year/month 0-indexed)
 function getDatesInMonth(year: number, month: number): string[] {
   const dates: string[] = []
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
@@ -69,11 +73,7 @@ function monthLabel(year: number, month: number): string {
 
 // ─── MonthCalendar ────────────────────────────────────────────────────────────
 
-interface MonthCalendarProps {
-  onSelectDate: (date: string) => void
-}
-
-function MonthCalendar({ onSelectDate }: MonthCalendarProps) {
+function MonthCalendar({ onSelectDate }: { onSelectDate: (date: string) => void }) {
   const today = isoToday()
   const horizon = addDays(today, BOOKING_HORIZON_DAYS)
 
@@ -81,10 +81,7 @@ function MonthCalendar({ onSelectDate }: MonthCalendarProps) {
   const [month, setMonth] = useState(() => parseInt(today.slice(5, 7), 10) - 1)
 
   const dates = getDatesInMonth(year, month)
-
-  // First day of month: 0=Sun,1=Mon...6=Sat → we need Mon=0 offset for grid
   const firstDow = getDayOfWeek(dates[0])
-  // Convert Sun=0 → 6, Mon=1 → 0, Tue=2 → 1 ...
   const gridOffset = firstDow === 0 ? 6 : firstDow - 1
 
   const prevMonth = () => {
@@ -100,19 +97,16 @@ function MonthCalendar({ onSelectDate }: MonthCalendarProps) {
     } else setMonth((m) => m + 1)
   }
 
-  // Disable prev if current month is today's month
   const todayYear = parseInt(today.slice(0, 4), 10)
   const todayMonth = parseInt(today.slice(5, 7), 10) - 1
   const canGoPrev = year > todayYear || (year === todayYear && month > todayMonth)
 
-  // Disable next if current month is beyond horizon month
   const horizonYear = parseInt(horizon.slice(0, 4), 10)
   const horizonMonth = parseInt(horizon.slice(5, 7), 10) - 1
   const canGoNext = year < horizonYear || (year === horizonYear && month < horizonMonth)
 
   return (
     <div className="bg-white rounded-2xl border border-[#f0ebe3] p-5">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={prevMonth}
@@ -133,7 +127,6 @@ function MonthCalendar({ onSelectDate }: MonthCalendarProps) {
         </button>
       </div>
 
-      {/* Day labels */}
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map((d) => (
           <div
@@ -145,15 +138,12 @@ function MonthCalendar({ onSelectDate }: MonthCalendarProps) {
         ))}
       </div>
 
-      {/* Days grid */}
       <div className="grid grid-cols-7 gap-y-1">
-        {/* empty cells before first day */}
         {Array.from({ length: gridOffset }).map((_, i) => (
           <div key={`empty-${i}`} />
         ))}
         {dates.map((date) => {
-          const dow = getDayOfWeek(date)
-          const isSunday = dow === 0
+          const isSunday = getDayOfWeek(date) === 0
           const isPast = date < today
           const isBeyondHorizon = date > horizon
           const disabled = isSunday || isPast || isBeyondHorizon
@@ -197,8 +187,23 @@ export function SlotPicker({ profile }: { profile: Profile }) {
   const [confirmedDate, setConfirmedDate] = useState<string | null>(null)
   const [confirmedTime, setConfirmedTime] = useState<string | null>(null)
 
+  // Toiletteur selection state
+  const [toiletteurs, setToiletteurs] = useState<Toiletteur[]>([])
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null)
+  const [selectedStaffName, setSelectedStaffName] = useState<string | null>(null)
+
+  // Load toiletteurs when toilettage is selected
+  useEffect(() => {
+    if (selectedService === 'toilettage' && toiletteurs.length === 0) {
+      fetch('/api/booking/toiletteurs')
+        .then((r) => r.json())
+        .then((data: Toiletteur[]) => setToiletteurs(data))
+        .catch(() => {})
+    }
+  }, [selectedService, toiletteurs.length])
+
   const fetchSlots = useCallback(
-    async (service: string, date: string) => {
+    async (service: string, date: string, staffId: string | null) => {
       setSlotsLoading(true)
       setSlotsError(null)
       setSlots([])
@@ -213,6 +218,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
           }
           url += `&duration=${profile.grooming_duration}`
         }
+        if (staffId) url += `&staffId=${staffId}`
         const res = await fetch(url)
         const data = await res.json()
         if (!res.ok) {
@@ -231,9 +237,21 @@ export function SlotPicker({ profile }: { profile: Profile }) {
 
   useEffect(() => {
     if (step === 'time' && selectedService && selectedDate) {
-      fetchSlots(selectedService, selectedDate)
+      fetchSlots(selectedService, selectedDate, selectedStaffId)
     }
-  }, [step, selectedService, selectedDate, fetchSlots])
+  }, [step, selectedService, selectedDate, selectedStaffId, fetchSlots])
+
+  function pickToiletteur(id: string, name: string) {
+    setSelectedStaffId(id)
+    setSelectedStaffName(name)
+    setStep('date')
+  }
+
+  function pickRandomToiletteur() {
+    if (toiletteurs.length === 0) return
+    const t = toiletteurs[Math.floor(Math.random() * toiletteurs.length)]
+    pickToiletteur(t.id, t.name)
+  }
 
   async function confirmBooking(slot: Slot) {
     if (!selectedService || !selectedDate) return
@@ -288,6 +306,8 @@ export function SlotPicker({ profile }: { profile: Profile }) {
             setSelectedService(null)
             setSelectedDate(null)
             setSelectedSlot(null)
+            setSelectedStaffId(null)
+            setSelectedStaffName(null)
             setConfirmedService(null)
             setConfirmedDate(null)
             setConfirmedTime(null)
@@ -311,7 +331,8 @@ export function SlotPicker({ profile }: { profile: Profile }) {
               key={s.slug}
               onClick={() => {
                 setSelectedService(s.slug)
-                setStep('date')
+                // Toilettage gets a staff-picker step; others go straight to date
+                setStep(s.slug === 'toilettage' ? 'staff' : 'date')
               }}
               className="flex items-center gap-4 rounded-2xl border border-charcoal/10 bg-white px-5 py-4 text-left hover:border-charcoal/30 hover:shadow-sm transition-all"
             >
@@ -324,8 +345,8 @@ export function SlotPicker({ profile }: { profile: Profile }) {
     )
   }
 
-  // ── Date ─────────────────────────────────────────────────────────────────────
-  if (step === 'date') {
+  // ── Staff (toilettage only) ───────────────────────────────────────────────────
+  if (step === 'staff') {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
@@ -335,9 +356,61 @@ export function SlotPicker({ profile }: { profile: Profile }) {
           >
             ← Retour
           </button>
+          <p className="text-sm font-semibold text-charcoal">✂️ Toilettage</p>
+        </div>
+        <p className="text-sm text-charcoal/60">Choisissez votre toiletteur</p>
+        <div className="grid grid-cols-1 gap-3">
+          {toiletteurs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => pickToiletteur(t.id, t.name)}
+              className="flex items-center gap-4 rounded-2xl border border-charcoal/10 bg-white px-5 py-4 text-left hover:border-charcoal/30 hover:shadow-sm transition-all"
+            >
+              <span
+                className="w-8 h-8 rounded-full shrink-0"
+                style={{ backgroundColor: t.color }}
+              />
+              <span className="font-semibold text-charcoal">{t.name}</span>
+            </button>
+          ))}
+          {toiletteurs.length > 1 && (
+            <button
+              onClick={pickRandomToiletteur}
+              className="flex items-center gap-4 rounded-2xl border border-charcoal/10 bg-white px-5 py-4 text-left hover:border-charcoal/30 hover:shadow-sm transition-all"
+            >
+              <span className="w-8 h-8 rounded-full shrink-0 bg-[#f0ebe3] flex items-center justify-center text-lg">
+                🎲
+              </span>
+              <div>
+                <span className="font-semibold text-charcoal">Au hasard</span>
+                <span className="block text-xs text-charcoal/40">On choisit pour vous</span>
+              </div>
+            </button>
+          )}
+          {toiletteurs.length === 0 && (
+            <p className="text-sm text-charcoal/40 text-center py-4">Chargement…</p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ── Date ─────────────────────────────────────────────────────────────────────
+  if (step === 'date') {
+    const backStep = selectedService === 'toilettage' ? 'staff' : 'service'
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setStep(backStep)}
+            className="text-xs text-charcoal/40 hover:text-charcoal underline underline-offset-2 transition-colors"
+          >
+            ← Retour
+          </button>
           <p className="text-sm font-semibold text-charcoal">
             {SERVICE_EMOJI[selectedService ?? ''] ?? ''}{' '}
             {SERVICE_LABELS[selectedService?.split('-')[0] ?? ''] ?? selectedService}
+            {selectedStaffName ? ` · ${selectedStaffName}` : ''}
           </p>
         </div>
         <p className="text-sm text-charcoal/60">Choisissez une date</p>
@@ -368,6 +441,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
         </button>
         <p className="text-sm font-semibold text-charcoal">
           {selectedDate ? formatDateFr(selectedDate) : ''}
+          {selectedStaffName ? ` · ${selectedStaffName}` : ''}
         </p>
       </div>
 
