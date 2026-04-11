@@ -67,8 +67,8 @@ export async function GET(req: NextRequest) {
 
     // Format appointment date/time
     const dateTime = visit.time
-      ? new Date(`${visit.date}T${visit.time}:00`)
-      : new Date(`${visit.date}T00:00:00`)
+      ? new Date(`${visit.date}T${visit.time.slice(0, 5)}Z`)
+      : new Date(`${visit.date}T00:00:00Z`)
 
     const appointmentDate = dateTime.toLocaleDateString('fr-FR', {
       weekday: 'long',
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 
     try {
       await resend.emails.send({
-        from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
+        from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: authUser.email,
         subject: `Rappel — votre rendez-vous demain chez merci murphy® 🐾`,
         html: bookingReminderHtml({
