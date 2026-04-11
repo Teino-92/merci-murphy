@@ -37,10 +37,14 @@ export async function GET(req: NextRequest) {
 
   const profileMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]))
 
+  const { data: staffRows } = await supabaseAdmin.from('staff').select('name, color')
+  const staffColorMap = Object.fromEntries((staffRows ?? []).map((s) => [s.name, s.color]))
+
   const visits = (data ?? []).map((v) => ({
     ...v,
     client_nom: profileMap[v.profile_id]?.nom ?? '—',
     nom_chien: profileMap[v.profile_id]?.nom_chien ?? null,
+    staff_color: v.staff ? (staffColorMap[v.staff] ?? '#4F6072') : '#4F6072',
   }))
 
   return NextResponse.json(visits)

@@ -10,17 +10,12 @@ interface CalVisit {
   date: string
   time: string | null
   staff: string | null
+  staff_color: string
   status: string
   client_nom: string
   nom_chien: string | null
   cal_booking_uid: string | null
 }
-
-const STAFF_COLORS: Record<string, string> = {
-  Titouan: 'bg-[#1D164E] text-white',
-  Andrea: 'bg-[#B85C38] text-white',
-}
-const DEFAULT_COLOR = 'bg-[#4F6072] text-white'
 
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8) // 8h → 20h
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
@@ -276,7 +271,8 @@ export function CalendarView() {
                       {slot.map((v) => (
                         <div
                           key={v.id}
-                          className={`rounded-lg px-2 py-1.5 mb-1 group relative ${STAFF_COLORS[v.staff ?? ''] ?? DEFAULT_COLOR}`}
+                          className="rounded-lg px-2 py-1.5 mb-1 group relative text-white"
+                          style={{ backgroundColor: v.staff_color }}
                           title={`${v.client_nom}${v.nom_chien ? ` — ${v.nom_chien}` : ''} · ${SERVICE_LABELS[v.service] ?? v.service}`}
                         >
                           <p className="font-semibold truncate leading-tight">
