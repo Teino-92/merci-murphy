@@ -1,23 +1,15 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 /**
- * Forces a router refresh on every internal navigation and when the page
- * becomes visible again (tab switch, PWA resume, bfcache restore).
- * This ensures dashboard data is never served from the client-side router cache.
+ * Forces a router refresh when the page is restored from bfcache or the tab
+ * becomes visible again (PWA resume, tab switch).
  */
 export function BfcacheRefresh() {
   const router = useRouter()
-  const pathname = usePathname()
 
-  // Refresh whenever the route changes (nav between dashboard pages)
-  useEffect(() => {
-    router.refresh()
-  }, [pathname, router])
-
-  // Refresh when tab/app becomes visible again
   useEffect(() => {
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') router.refresh()
