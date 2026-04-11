@@ -63,5 +63,10 @@ export const ONLINE_BOOKABLE = ['toilettage', 'bains', 'balneo', 'massage', 'edu
 // Slot granularity in minutes (how far apart slot start times are)
 export const SLOT_GRANULARITY = 15
 
+// Per-service granularity override — if not listed, SLOT_GRANULARITY applies
+export const SERVICE_GRANULARITY: Record<string, number> = {
+  toilettage: 30, // every 30min to avoid excessive slot count
+}
+
 // How many days ahead clients can book
 export const BOOKING_HORIZON_DAYS = 60

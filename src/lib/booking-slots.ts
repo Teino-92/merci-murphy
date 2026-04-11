@@ -1,4 +1,9 @@
-import { SERVICE_HOURS, SERVICE_BUFFER, SLOT_GRANULARITY } from '@/lib/booking-config'
+import {
+  SERVICE_HOURS,
+  SERVICE_BUFFER,
+  SLOT_GRANULARITY,
+  SERVICE_GRANULARITY,
+} from '@/lib/booking-config'
 import type { Availability, TimeOff } from '@/lib/supabase-admin'
 
 export interface AvailableSlot {
@@ -138,6 +143,7 @@ function getSlotsForStaffOnDate(
       return { start: startMins, end: startMins + dur + bufferMinutes }
     })
 
+  const granularity = SERVICE_GRANULARITY[serviceSlug] ?? SLOT_GRANULARITY
   const slots: AvailableSlot[] = []
   let cursor = windowStartMins
 
@@ -152,7 +158,7 @@ function getSlotsForStaffOnDate(
       const timeUtc = parisToUtcTime(timeParis, offsetMinutes)
       slots.push({ timeUtc, timeParis, staffId, staffName })
     }
-    cursor += SLOT_GRANULARITY
+    cursor += granularity
   }
 
   return slots

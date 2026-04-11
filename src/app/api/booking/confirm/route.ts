@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 
     try {
       await resend.emails.send({
-        from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
+        from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: user.email!,
         subject: `Votre rendez-vous est confirmé chez merci murphy® 🐾`,
         html: bookingConfirmedHtml({

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Profile } from '@/lib/auth-actions'
 import { ONLINE_BOOKABLE, BOOKING_HORIZON_DAYS } from '@/lib/booking-config'
 import { SERVICE_LABELS, SERVICE_EMOJI } from '@/lib/dog-constants'
@@ -19,6 +20,8 @@ const BOOKABLE_SERVICES = (ONLINE_BOOKABLE as readonly string[]).map((slug) => (
   label: SERVICE_LABELS[slug] ?? slug,
   emoji: SERVICE_EMOJI[slug] ?? '📋',
 }))
+
+const DAY_LABELS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
 function isoToday(): string {
   return new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })
@@ -39,22 +42,146 @@ function addDays(dateStr: string, n: number): string {
   return d.toISOString().slice(0, 10)
 }
 
+// day of week: 0=Sun,1=Mon...6=Sat
 function getDayOfWeek(dateStr: string): number {
   return new Date(`${dateStr}T12:00:00Z`).getUTCDay()
 }
 
-// Generate the next N available dates (skip Sundays, limit to horizon)
-function getSelectableDates(): string[] {
+// Return all YYYY-MM-DD dates in a given month (year/month 0-indexed)
+function getDatesInMonth(year: number, month: number): string[] {
   const dates: string[] = []
-  let cursor = isoToday()
-  const horizon = addDays(cursor, BOOKING_HORIZON_DAYS)
-  while (cursor <= horizon && dates.length < 60) {
-    const dow = getDayOfWeek(cursor)
-    if (dow !== 0) dates.push(cursor) // skip Sundays
-    cursor = addDays(cursor, 1)
+  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
+  for (let d = 1; d <= daysInMonth; d++) {
+    const mm = String(month + 1).padStart(2, '0')
+    const dd = String(d).padStart(2, '0')
+    dates.push(`${year}-${mm}-${dd}`)
   }
   return dates
 }
+
+function monthLabel(year: number, month: number): string {
+  return new Date(Date.UTC(year, month, 1)).toLocaleDateString('fr-FR', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+// ─── MonthCalendar ────────────────────────────────────────────────────────────
+
+interface MonthCalendarProps {
+  onSelectDate: (date: string) => void
+}
+
+function MonthCalendar({ onSelectDate }: MonthCalendarProps) {
+  const today = isoToday()
+  const horizon = addDays(today, BOOKING_HORIZON_DAYS)
+
+  const [year, setYear] = useState(() => parseInt(today.slice(0, 4), 10))
+  const [month, setMonth] = useState(() => parseInt(today.slice(5, 7), 10) - 1)
+
+  const dates = getDatesInMonth(year, month)
+
+  // First day of month: 0=Sun,1=Mon...6=Sat → we need Mon=0 offset for grid
+  const firstDow = getDayOfWeek(dates[0])
+  // Convert Sun=0 → 6, Mon=1 → 0, Tue=2 → 1 ...
+  const gridOffset = firstDow === 0 ? 6 : firstDow - 1
+
+  const prevMonth = () => {
+    if (month === 0) {
+      setYear((y) => y - 1)
+      setMonth(11)
+    } else setMonth((m) => m - 1)
+  }
+  const nextMonth = () => {
+    if (month === 11) {
+      setYear((y) => y + 1)
+      setMonth(0)
+    } else setMonth((m) => m + 1)
+  }
+
+  // Disable prev if current month is today's month
+  const todayYear = parseInt(today.slice(0, 4), 10)
+  const todayMonth = parseInt(today.slice(5, 7), 10) - 1
+  const canGoPrev = year > todayYear || (year === todayYear && month > todayMonth)
+
+  // Disable next if current month is beyond horizon month
+  const horizonYear = parseInt(horizon.slice(0, 4), 10)
+  const horizonMonth = parseInt(horizon.slice(5, 7), 10) - 1
+  const canGoNext = year < horizonYear || (year === horizonYear && month < horizonMonth)
+
+  return (
+    <div className="bg-white rounded-2xl border border-[#f0ebe3] p-5">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={prevMonth}
+          disabled={!canGoPrev}
+          className="p-1.5 rounded-lg text-charcoal/40 hover:text-charcoal hover:bg-[#f5f0eb] transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <span className="text-sm font-semibold text-charcoal capitalize">
+          {monthLabel(year, month)}
+        </span>
+        <button
+          onClick={nextMonth}
+          disabled={!canGoNext}
+          className="p-1.5 rounded-lg text-charcoal/40 hover:text-charcoal hover:bg-[#f5f0eb] transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Day labels */}
+      <div className="grid grid-cols-7 mb-1">
+        {DAY_LABELS.map((d) => (
+          <div
+            key={d}
+            className="text-center text-[10px] font-semibold text-charcoal/30 uppercase py-1"
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+
+      {/* Days grid */}
+      <div className="grid grid-cols-7 gap-y-1">
+        {/* empty cells before first day */}
+        {Array.from({ length: gridOffset }).map((_, i) => (
+          <div key={`empty-${i}`} />
+        ))}
+        {dates.map((date) => {
+          const dow = getDayOfWeek(date)
+          const isSunday = dow === 0
+          const isPast = date < today
+          const isBeyondHorizon = date > horizon
+          const disabled = isSunday || isPast || isBeyondHorizon
+          const isToday = date === today
+
+          return (
+            <button
+              key={date}
+              onClick={() => !disabled && onSelectDate(date)}
+              disabled={disabled}
+              className={[
+                'flex items-center justify-center h-9 w-full rounded-xl text-sm font-medium transition-colors',
+                disabled
+                  ? 'text-charcoal/20 cursor-not-allowed'
+                  : 'text-charcoal hover:bg-[#B5A89A]/20 cursor-pointer',
+                isToday && !disabled ? 'ring-1 ring-[#B5A89A]' : '',
+              ].join(' ')}
+            >
+              {parseInt(date.slice(8), 10)}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── SlotPicker ───────────────────────────────────────────────────────────────
 
 export function SlotPicker({ profile }: { profile: Profile }) {
   const [step, setStep] = useState<Step>('service')
@@ -69,8 +196,6 @@ export function SlotPicker({ profile }: { profile: Profile }) {
   const [confirmedService, setConfirmedService] = useState<string | null>(null)
   const [confirmedDate, setConfirmedDate] = useState<string | null>(null)
   const [confirmedTime, setConfirmedTime] = useState<string | null>(null)
-
-  const selectableDates = getSelectableDates()
 
   const fetchSlots = useCallback(
     async (service: string, date: string) => {
@@ -146,7 +271,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
     }
   }
 
-  // ── Step: Confirmed ──────────────────────────────────────────────────────────
+  // ── Confirmed ────────────────────────────────────────────────────────────────
   if (step === 'confirmed') {
     return (
       <div className="rounded-2xl bg-white border border-[#f0ebe3] p-8 text-center space-y-4">
@@ -175,7 +300,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
     )
   }
 
-  // ── Step 1: Service ──────────────────────────────────────────────────────────
+  // ── Service ──────────────────────────────────────────────────────────────────
   if (step === 'service') {
     return (
       <div className="space-y-4">
@@ -199,7 +324,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
     )
   }
 
-  // ── Step 2: Date ─────────────────────────────────────────────────────────────
+  // ── Date ─────────────────────────────────────────────────────────────────────
   if (step === 'date') {
     return (
       <div className="space-y-4">
@@ -216,37 +341,17 @@ export function SlotPicker({ profile }: { profile: Profile }) {
           </p>
         </div>
         <p className="text-sm text-charcoal/60">Choisissez une date</p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {selectableDates.map((date) => (
-            <button
-              key={date}
-              onClick={() => {
-                setSelectedDate(date)
-                setStep('time')
-              }}
-              className="rounded-xl border border-charcoal/10 bg-white px-3 py-3 text-sm text-center hover:border-charcoal/30 hover:shadow-sm transition-all"
-            >
-              <span className="block text-xs text-charcoal/40 capitalize">
-                {new Date(`${date}T12:00:00Z`).toLocaleDateString('fr-FR', {
-                  weekday: 'short',
-                  timeZone: 'Europe/Paris',
-                })}
-              </span>
-              <span className="font-semibold text-charcoal">
-                {new Date(`${date}T12:00:00Z`).toLocaleDateString('fr-FR', {
-                  day: 'numeric',
-                  month: 'short',
-                  timeZone: 'Europe/Paris',
-                })}
-              </span>
-            </button>
-          ))}
-        </div>
+        <MonthCalendar
+          onSelectDate={(date) => {
+            setSelectedDate(date)
+            setStep('time')
+          }}
+        />
       </div>
     )
   }
 
-  // ── Step 3: Time ─────────────────────────────────────────────────────────────
+  // ── Time ─────────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -255,6 +360,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
             setStep('date')
             setSlots([])
             setSlotsError(null)
+            setSelectedSlot(null)
           }}
           className="text-xs text-charcoal/40 hover:text-charcoal underline underline-offset-2 transition-colors"
         >
@@ -306,7 +412,6 @@ export function SlotPicker({ profile }: { profile: Profile }) {
               >
                 {confirming ? 'Confirmation…' : `Confirmer ${selectedSlot.timeParis}`}
               </button>
-              <p className="text-xs text-charcoal/40 text-center">avec {selectedSlot.staffName}</p>
             </div>
           )}
         </>
