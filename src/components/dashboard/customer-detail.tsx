@@ -163,7 +163,7 @@ export function CustomerDetail({
     if (!finalPrice || isNaN(Number(finalPrice)) || Number(finalPrice) <= 0) return
     const deposit = Number(finalPrice)
 
-    const startDate = new Date(`${visit.date}T${visit.time ?? '00:00'}`)
+    const startDate = new Date(`${visit.date}T${visit.time?.slice(0, 5) ?? '00:00'}Z`)
     const appointmentDate = startDate.toLocaleDateString('fr-FR', {
       weekday: 'long',
       day: 'numeric',
