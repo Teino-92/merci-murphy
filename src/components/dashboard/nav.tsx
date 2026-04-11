@@ -50,7 +50,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="w-56 shrink-0 bg-[#1D164E] min-h-screen flex-col hidden lg:flex">
+      <aside className="w-56 shrink-0 bg-[#1D164E] h-screen sticky top-0 flex-col hidden lg:flex">
         <div className="p-6 border-b border-white/10">
           <Image
             src="/logo.avif"
