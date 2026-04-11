@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase'
 import {
   LayoutDashboard,
   Users,
+  Users2,
   ClipboardList,
   ShoppingBag,
   Mail,
@@ -21,6 +22,7 @@ const ADMIN_NAV = [
   { href: '/dashboard', label: "Vue d'ensemble", icon: LayoutDashboard },
   { href: '/dashboard/reservations/new', label: 'Calendrier', icon: CalendarDays },
   { href: '/dashboard/customers', label: 'Clients', icon: Users },
+  { href: '/dashboard/staff', label: 'Équipe', icon: Users2 },
   { href: '/dashboard/shopify-customers', label: 'Clients Shopify', icon: ShoppingBag },
   { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList },
   { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail },
