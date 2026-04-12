@@ -1,11 +1,11 @@
 import type { MetadataRoute } from 'next'
-import { getAllServices } from '@/sanity/queries/services'
+import { getAllServicesForSitemap } from '@/sanity/queries/services'
 import { getAllProducts } from '@/lib/shopify'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://mercimurphy.com'
 
-  const [services, products] = await Promise.all([getAllServices(), getAllProducts()])
+  const [services, products] = await Promise.all([getAllServicesForSitemap(), getAllProducts()])
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
@@ -40,8 +40,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const serviceRoutes: MetadataRoute.Sitemap = services.map((s) => ({
     url: `${base}/services/${s.slug.current}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
+    lastModified: new Date(s._updatedAt),
+    changeFrequency: 'monthly' as const,
     priority: 0.8,
   }))
 

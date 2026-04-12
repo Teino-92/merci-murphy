@@ -51,6 +51,16 @@ export async function getAllServices(): Promise<ServiceSummary[]> {
   )
 }
 
+export async function getAllServicesForSitemap(): Promise<
+  { slug: { current: string }; _updatedAt: string }[]
+> {
+  return sanityClient.fetch(
+    `*[_type == "service"] | order(ordre asc) { "slug": slug, _updatedAt }`,
+    {},
+    { next: { revalidate: 3600 } }
+  )
+}
+
 export async function getServiceBySlug(slug: string): Promise<ServiceDetail | null> {
   return sanityClient.fetch(
     `*[_type == "service" && slug.current == $slug][0] {
