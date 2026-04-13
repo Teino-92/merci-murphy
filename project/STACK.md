@@ -24,15 +24,15 @@
 
 ## Emails transactionnels
 
-- Resend (confirmation de demande de RDV, notification interne)
+- Resend (confirmation de demande de RDV, notification interne, newsletter)
 
 ## Réservations
 
-- Calendly (embed iframe) — V1 : prise d'infos uniquement, pas de validation en ligne
+- Calendrie custom avec suivi dans /dashboard
 
 ## Analytics
 
-- Plausible Analytics (RGPD compliant, no cookie banner)
+- Google analytics
 
 ## Hosting
 
@@ -52,5 +52,3 @@
 - bleu: #1D164E
 
 ---
-
-**Ces choix sont finaux. Ne pas suggérer d'alternatives.**
