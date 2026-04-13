@@ -30,7 +30,10 @@ export interface Profile {
 // ─── Sign up ─────────────────────────────────────────────────────────────────
 
 const SignUpSchema = z.object({
-  email: z.string().email(),
+  email: z
+    .string()
+    .email('Email invalide')
+    .regex(/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/, 'Email invalide'),
   password: z
     .string()
     .min(8, 'Le mot de passe doit faire au moins 8 caractères')
@@ -39,7 +42,8 @@ const SignUpSchema = z.object({
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
   prenom: z.string().min(1),
   nom: z.string().min(1),
-  telephone: z.string().min(8),
+  // stored as e.g. "+33 06 12 34 56 78" — digits portion must be XX XX XX XX XX
+  telephone: z.string().regex(/^\+\d+\s\d{2}(\s\d{2}){4}$/, 'Format invalide — ex: 06 12 34 56 78'),
   nom_chien: z.string().optional(),
   race_chien: z.string().optional(),
   age_chien: z.string().optional(),

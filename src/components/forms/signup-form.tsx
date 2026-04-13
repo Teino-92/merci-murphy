@@ -8,6 +8,22 @@ import { CheckCircle } from 'lucide-react'
 
 const STEPS = ['Vos coordonnées', 'Votre compte']
 
+const COUNTRY_PREFIXES = [
+  { code: '+33', flag: '🇫🇷', label: 'France' },
+  { code: '+32', flag: '🇧🇪', label: 'Belgique' },
+  { code: '+41', flag: '🇨🇭', label: 'Suisse' },
+  { code: '+352', flag: '🇱🇺', label: 'Luxembourg' },
+  { code: '+44', flag: '🇬🇧', label: 'UK' },
+  { code: '+1', flag: '🇺🇸', label: 'USA/Canada' },
+]
+
+function formatPhoneDigits(raw: string): string {
+  // Keep only digits, max 10
+  const digits = raw.replace(/\D/g, '').slice(0, 10)
+  // Group as XX XX XX XX XX
+  return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim()
+}
+
 export function SignUpForm() {
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -16,8 +32,24 @@ export function SignUpForm() {
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
   const [newsletter, setNewsletter] = useState(false)
+  const [prefix, setPrefix] = useState('+33')
+  const [phoneDigits, setPhoneDigits] = useState('')
+
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
+
+  function handlePhoneChange(raw: string) {
+    const formatted = formatPhoneDigits(raw)
+    setPhoneDigits(formatted)
+    set('telephone', `${prefix} ${formatted}`)
+  }
+
+  function handlePrefixChange(newPrefix: string) {
+    setPrefix(newPrefix)
+    if (phoneDigits) set('telephone', `${newPrefix} ${phoneDigits}`)
+  }
+
+  const phoneComplete = phoneDigits.replace(/\s/g, '').length === 10
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
   const prev = () => setStep((s) => Math.max(s - 1, 0))
@@ -90,16 +122,31 @@ export function SignUpForm() {
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Téléphone *</label>
-            <Input
-              type="tel"
-              placeholder="06 00 00 00 00"
-              value={form.telephone ?? ''}
-              onChange={(e) => set('telephone', e.target.value)}
-            />
+            <div className="flex gap-2">
+              <select
+                value={prefix}
+                onChange={(e) => handlePrefixChange(e.target.value)}
+                className="text-sm rounded-lg border border-charcoal/20 px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-terracotta-dark shrink-0"
+              >
+                {COUNTRY_PREFIXES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.code}
+                  </option>
+                ))}
+              </select>
+              <Input
+                type="tel"
+                placeholder="06 12 34 56 78"
+                value={phoneDigits}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                className="flex-1"
+              />
+            </div>
+            <p className="mt-1 text-xs text-charcoal/40">Format : 06 12 34 56 78</p>
           </div>
           <Button
             onClick={next}
-            disabled={!form.prenom || !form.nom || !form.telephone}
+            disabled={!form.prenom || !form.nom || !phoneComplete}
             className="w-full bg-terracotta-dark text-white hover:bg-terracotta/90"
           >
             Continuer
