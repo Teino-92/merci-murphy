@@ -12,14 +12,15 @@ const DogSchema = z.object({
   age: z.string().optional(),
   poids: z.string().optional(),
   etat_poil: z.string().optional(),
-  photo_url: z.string().url().optional().or(z.literal('')),
+  photo_url: z.string().optional(),
 })
 
 // ─── Add dog ──────────────────────────────────────────────────────────────────
 
 export async function addDog(data: z.infer<typeof DogSchema>) {
   const parsed = DogSchema.safeParse(data)
-  if (!parsed.success) return { success: false, error: 'Données invalides.' }
+  if (!parsed.success)
+    return { success: false, error: parsed.error.issues[0]?.message ?? 'Données invalides.' }
 
   const supabase = await createSupabaseServerClient()
   const {
@@ -47,7 +48,8 @@ export async function addDog(data: z.infer<typeof DogSchema>) {
 
 export async function updateDog(dogId: string, data: z.infer<typeof DogSchema>) {
   const parsed = DogSchema.safeParse(data)
-  if (!parsed.success) return { success: false, error: 'Données invalides.' }
+  if (!parsed.success)
+    return { success: false, error: parsed.error.issues[0]?.message ?? 'Données invalides.' }
 
   const supabase = await createSupabaseServerClient()
   const {
