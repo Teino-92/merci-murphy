@@ -4,85 +4,10 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { signUp, type SignUpData } from '@/lib/auth-actions'
+import { COUNTRY_PREFIXES } from '@/lib/phone-prefixes'
 import { CheckCircle } from 'lucide-react'
 
 const STEPS = ['Vos coordonnées', 'Votre compte']
-
-interface CountryPrefix {
-  code: string
-  flag: string
-  label: string
-  digits: number // expected number of local digits
-  placeholder: string // display format hint
-  format: (d: string) => string
-}
-
-const COUNTRY_PREFIXES: CountryPrefix[] = [
-  {
-    code: '+33',
-    flag: '🇫🇷',
-    label: 'France',
-    digits: 10,
-    placeholder: '06 12 34 56 78',
-    format: (d) => d.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
-  },
-  {
-    code: '+32',
-    flag: '🇧🇪',
-    label: 'Belgique',
-    digits: 9,
-    placeholder: '04 12 34 56 7',
-    format: (d) => d.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
-  },
-  {
-    code: '+41',
-    flag: '🇨🇭',
-    label: 'Suisse',
-    digits: 9,
-    placeholder: '078 123 45 67',
-    format: (d) => {
-      if (d.length <= 3) return d
-      if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
-      if (d.length <= 8) return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
-      return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 8)} ${d.slice(8)}`
-    },
-  },
-  {
-    code: '+352',
-    flag: '🇱🇺',
-    label: 'Luxembourg',
-    digits: 9,
-    placeholder: '621 123 456',
-    format: (d) => {
-      if (d.length <= 3) return d
-      if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
-      return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
-    },
-  },
-  {
-    code: '+44',
-    flag: '🇬🇧',
-    label: 'UK',
-    digits: 10,
-    placeholder: '07911 123456',
-    format: (d) => {
-      if (d.length <= 5) return d
-      return `${d.slice(0, 5)} ${d.slice(5)}`
-    },
-  },
-  {
-    code: '+1',
-    flag: '🇺🇸',
-    label: 'USA/Canada',
-    digits: 10,
-    placeholder: '202 555 0123',
-    format: (d) => {
-      if (d.length <= 3) return d
-      if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
-      return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
-    },
-  },
-]
 
 export function SignUpForm() {
   const [step, setStep] = useState(0)
@@ -92,27 +17,26 @@ export function SignUpForm() {
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
   const [newsletter, setNewsletter] = useState(false)
-  const [country, setCountry] = useState<CountryPrefix>(COUNTRY_PREFIXES[0])
-  const [phoneDigits, setPhoneDigits] = useState('')
+  const [prefix, setPrefix] = useState(COUNTRY_PREFIXES[0])
+  const [phoneLocal, setPhoneLocal] = useState('')
 
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
   function handlePhoneChange(raw: string) {
-    const digits = raw.replace(/\D/g, '').slice(0, country.digits)
-    const formatted = country.format(digits)
-    setPhoneDigits(formatted)
-    set('telephone', `${country.code} ${formatted}`)
+    setPhoneLocal(raw)
+    set('telephone', `${prefix.code} ${raw}`)
   }
 
-  function handleCountryChange(code: string) {
+  function handlePrefixChange(code: string) {
     const next = COUNTRY_PREFIXES.find((c) => c.code === code) ?? COUNTRY_PREFIXES[0]
-    setCountry(next)
-    setPhoneDigits('')
+    setPrefix(next)
+    setPhoneLocal('')
     set('telephone', '')
   }
 
-  const phoneComplete = phoneDigits.replace(/\s/g, '').length === country.digits
+  // At least 6 digits entered
+  const phoneComplete = phoneLocal.replace(/\D/g, '').length >= 6
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
   const prev = () => setStep((s) => Math.max(s - 1, 0))
@@ -187,25 +111,24 @@ export function SignUpForm() {
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Téléphone *</label>
             <div className="flex gap-2">
               <select
-                value={country.code}
-                onChange={(e) => handleCountryChange(e.target.value)}
-                className="text-sm rounded-lg border border-charcoal/20 px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-terracotta-dark shrink-0"
+                value={prefix.code}
+                onChange={(e) => handlePrefixChange(e.target.value)}
+                className="text-sm rounded-lg border border-charcoal/20 px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-terracotta-dark shrink-0 max-w-[130px]"
               >
                 {COUNTRY_PREFIXES.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.flag} {c.code}
+                  <option key={`${c.code}-${c.label}`} value={c.code}>
+                    {c.flag} {c.code} {c.label}
                   </option>
                 ))}
               </select>
               <Input
                 type="tel"
-                placeholder={country.placeholder}
-                value={phoneDigits}
+                placeholder={prefix.placeholder}
+                value={phoneLocal}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 className="flex-1"
               />
             </div>
-            <p className="mt-1 text-xs text-charcoal/40">Format : {country.placeholder}</p>
           </div>
           <Button
             onClick={next}
