@@ -211,6 +211,17 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
     .single()
 
   if (error) throw new Error(error.message)
+
+  // Also insert into dogs table so getDogs() returns results
+  await supabaseAdmin.from('dogs').insert({
+    owner_id: authData.user.id,
+    name: input.nom_chien,
+    breed: input.race_chien ?? null,
+    age: input.age_chien ?? null,
+    poids: input.poids_chien ?? null,
+    etat_poil: input.etat_poil ?? null,
+  })
+
   return data
 }
 
