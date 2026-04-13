@@ -14,7 +14,6 @@ interface CalVisit {
   status: string
   client_nom: string
   nom_chien: string | null
-  cal_booking_uid: string | null
 }
 
 const HOURS = Array.from({ length: 13 }, (_, i) => i + 8) // 8h → 20h
