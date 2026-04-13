@@ -15,16 +15,28 @@ interface ClientFile {
   createdAt: string | null
 }
 
+interface DogRow {
+  id: string
+  name: string
+  breed: string | null
+  age: string | null
+  poids: string | null
+  etat_poil: string | null
+  photo_url: string | null
+}
+
 export function CustomerDetail({
   profile: initial,
   visits: initialVisits,
   email,
   isAdmin,
+  dogs = [],
 }: {
   profile: Profile
   visits: Visit[]
   email: string | null
   isAdmin: boolean
+  dogs?: DogRow[]
 }) {
   const router = useRouter()
   const [profile, setProfile] = useState(initial)
@@ -486,51 +498,100 @@ L'équipe merci murphy`
                 </button>
               </div>
             ) : (
-              profile.nom_chien && (
+              (dogs.length > 0 || profile.nom_chien) && (
                 <div className="mt-5 pt-5 border-t border-gray-100">
                   <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
-                    Chien
+                    {dogs.length > 1 ? 'Chiens' : 'Chien'}
                   </p>
-                  <div className="space-y-1 text-sm">
-                    <p>
-                      <span className="text-gray-400">Nom :</span>{' '}
-                      <span className="font-medium text-[#1D164E]">{profile.nom_chien}</span>
-                    </p>
-                    {profile.race_chien && (
+                  {/* Dogs from dogs table (source of truth) */}
+                  {dogs.length > 0 ? (
+                    <div className="space-y-4">
+                      {dogs.map((dog) => (
+                        <div key={dog.id} className="space-y-1 text-sm">
+                          <p>
+                            <span className="text-gray-400">Nom :</span>{' '}
+                            <span className="font-medium text-[#1D164E]">{dog.name}</span>
+                          </p>
+                          {dog.breed && (
+                            <p>
+                              <span className="text-gray-400">Race :</span> {dog.breed}
+                            </p>
+                          )}
+                          {dog.age && (
+                            <p>
+                              <span className="text-gray-400">Âge :</span> {dog.age}
+                            </p>
+                          )}
+                          {dog.poids && (
+                            <p>
+                              <span className="text-gray-400">Poids :</span> {dog.poids}
+                            </p>
+                          )}
+                          {dog.etat_poil && (
+                            <p>
+                              <span className="text-gray-400">Poil :</span> {dog.etat_poil}
+                            </p>
+                          )}
+                          {profile.numero_puce && (
+                            <p>
+                              <span className="text-gray-400">N° puce :</span>{' '}
+                              <span className="font-mono text-xs">{profile.numero_puce}</span>
+                            </p>
+                          )}
+                          {profile.grooming_duration && (
+                            <p>
+                              <span className="text-gray-400">Durée séance :</span>{' '}
+                              <span className="font-medium text-[#1D164E]">
+                                {profile.grooming_duration} min
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    /* Fallback: legacy profile fields */
+                    <div className="space-y-1 text-sm">
                       <p>
-                        <span className="text-gray-400">Race :</span> {profile.race_chien}
+                        <span className="text-gray-400">Nom :</span>{' '}
+                        <span className="font-medium text-[#1D164E]">{profile.nom_chien}</span>
                       </p>
-                    )}
-                    {profile.age_chien && (
-                      <p>
-                        <span className="text-gray-400">Âge :</span> {profile.age_chien}
-                      </p>
-                    )}
-                    {profile.poids_chien && (
-                      <p>
-                        <span className="text-gray-400">Poids :</span> {profile.poids_chien}
-                      </p>
-                    )}
-                    {profile.etat_poil && (
-                      <p>
-                        <span className="text-gray-400">Poil :</span> {profile.etat_poil}
-                      </p>
-                    )}
-                    {profile.numero_puce && (
-                      <p>
-                        <span className="text-gray-400">N° puce :</span>{' '}
-                        <span className="font-mono text-xs">{profile.numero_puce}</span>
-                      </p>
-                    )}
-                    {profile.grooming_duration && (
-                      <p>
-                        <span className="text-gray-400">Durée séance :</span>{' '}
-                        <span className="font-medium text-[#1D164E]">
-                          {profile.grooming_duration} min
-                        </span>
-                      </p>
-                    )}
-                  </div>
+                      {profile.race_chien && (
+                        <p>
+                          <span className="text-gray-400">Race :</span> {profile.race_chien}
+                        </p>
+                      )}
+                      {profile.age_chien && (
+                        <p>
+                          <span className="text-gray-400">Âge :</span> {profile.age_chien}
+                        </p>
+                      )}
+                      {profile.poids_chien && (
+                        <p>
+                          <span className="text-gray-400">Poids :</span> {profile.poids_chien}
+                        </p>
+                      )}
+                      {profile.etat_poil && (
+                        <p>
+                          <span className="text-gray-400">Poil :</span> {profile.etat_poil}
+                        </p>
+                      )}
+                      {profile.numero_puce && (
+                        <p>
+                          <span className="text-gray-400">N° puce :</span>{' '}
+                          <span className="font-mono text-xs">{profile.numero_puce}</span>
+                        </p>
+                      )}
+                      {profile.grooming_duration && (
+                        <p>
+                          <span className="text-gray-400">Durée séance :</span>{' '}
+                          <span className="font-medium text-[#1D164E]">
+                            {profile.grooming_duration} min
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )
             )}
