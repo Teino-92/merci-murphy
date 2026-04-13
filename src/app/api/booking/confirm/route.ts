@@ -57,6 +57,22 @@ export async function POST(req: NextRequest) {
     duration = profile.grooming_duration
   }
 
+  // Check: crèche capacity (max 10 dogs per day)
+  if (slugBase === 'creche') {
+    const { count } = await supabaseAdmin
+      .from('visits')
+      .select('id', { count: 'exact', head: true })
+      .like('service', 'creche%')
+      .eq('date', date)
+      .not('status', 'eq', 'cancelled')
+    if ((count ?? 0) >= 10) {
+      return NextResponse.json(
+        { error: 'La crèche est complète pour cette journée (10 places maximum).' },
+        { status: 409 }
+      )
+    }
+  }
+
   // Check: client must not already have the same service on the same day
   const { data: sameServiceSameDay } = await supabaseAdmin
     .from('visits')
