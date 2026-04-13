@@ -32,7 +32,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   // Fetch visit
   const { data: visit, error: fetchError } = await supabaseAdmin
     .from('visits')
-    .select('cal_booking_uid, profile_id, service')
+    .select('profile_id, service')
     .eq('id', params.id)
     .single()
 
@@ -42,25 +42,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const newDate = new Date(newStart)
   const dateStr = newDate.toISOString().slice(0, 10)
   const timeStr = newDate.toISOString().slice(11, 16)
-
-  // If visit has a cal.com UID, also reschedule there
-  if (visit.cal_booking_uid) {
-    const calRes = await fetch(
-      `https://api.cal.com/v1/bookings/${visit.cal_booking_uid}/reschedule`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.CAL_API_KEY}`,
-        },
-        body: JSON.stringify({ start: newStart }),
-      }
-    )
-    if (!calRes.ok) {
-      const body = await calRes.text()
-      return NextResponse.json({ error: `cal.com error: ${body}` }, { status: 500 })
-    }
-  }
 
   // Update Supabase visit date/time
   const { error: updateError } = await supabaseAdmin

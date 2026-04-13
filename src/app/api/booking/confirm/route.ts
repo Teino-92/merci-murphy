@@ -114,7 +114,6 @@ export async function POST(req: NextRequest) {
       status,
       price: null,
       final_price: null,
-      cal_booking_uid: null,
     })
     .select()
     .single()
