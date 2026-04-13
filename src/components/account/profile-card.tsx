@@ -13,7 +13,9 @@ interface ProfileCardProps {
 
 export function ProfileCard({ profile, email }: ProfileCardProps) {
   const [editing, setEditing] = useState(false)
-  const [nom, setNom] = useState(profile.nom)
+  const parts = profile.nom.split(' ')
+  const [prenom, setPrenom] = useState(parts[0] ?? '')
+  const [nom, setNom] = useState((parts.slice(1).join(' ') || parts[0]) ?? '')
   const [telephone, setTelephone] = useState(profile.telephone)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -25,7 +27,8 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
   const handleSave = async () => {
     setLoading(true)
     setError(null)
-    const result = await updateProfile({ nom, telephone })
+    const fullNom = `${prenom} ${nom}`.trim()
+    const result = await updateProfile({ nom: fullNom, telephone })
     setLoading(false)
     if (result.success) {
       setEditing(false)
@@ -61,9 +64,15 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
 
       {editing ? (
         <div className="space-y-3">
-          <div>
-            <label className="block text-[13px] text-[#888] mb-1">Nom</label>
-            <Input value={nom} onChange={(e) => setNom(e.target.value)} />
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-[13px] text-[#888] mb-1">Prénom</label>
+              <Input value={prenom} onChange={(e) => setPrenom(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[13px] text-[#888] mb-1">Nom</label>
+              <Input value={nom} onChange={(e) => setNom(e.target.value)} />
+            </div>
           </div>
           <div>
             <label className="block text-[13px] text-[#888] mb-1">Téléphone</label>
@@ -88,7 +97,7 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
             </Button>
             <Button
               onClick={handleSave}
-              disabled={loading || !nom || !telephone}
+              disabled={loading || !prenom || !nom || !telephone}
               className="flex-1 text-white"
               style={{ backgroundColor: '#8B5A3A' }}
             >
@@ -98,7 +107,8 @@ export function ProfileCard({ profile, email }: ProfileCardProps) {
         </div>
       ) : (
         <>
-          <InfoRow label="Nom" value={profile.nom} />
+          <InfoRow label="Prénom" value={parts[0] ?? profile.nom} />
+          <InfoRow label="Nom" value={(parts.slice(1).join(' ') || parts[0]) ?? ''} />
           <InfoRow label="Téléphone" value={profile.telephone} />
           <InfoRow label="Email" value={email} />
           <div className="flex justify-between items-center py-2.5">

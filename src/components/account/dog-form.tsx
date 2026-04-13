@@ -19,9 +19,10 @@ import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 interface DogFormProps {
   dog?: Dog
   onClose: () => void
+  required?: boolean
 }
 
-export function DogForm({ dog, onClose }: DogFormProps) {
+export function DogForm({ dog, onClose, required = false }: DogFormProps) {
   const [name, setName] = useState(dog?.name ?? '')
   const [breed, setBreed] = useState(dog?.breed ?? '')
   const [age, setAge] = useState(dog?.age ?? '')
@@ -54,7 +55,7 @@ export function DogForm({ dog, onClose }: DogFormProps) {
         />
       </div>
       <div>
-        <label className="block text-[13px] text-[#888] mb-1">Prénom *</label>
+        <label className="block text-[13px] text-[#888] mb-1">Prénom du chien *</label>
         <Input
           placeholder="Ex: Rocky, Bella…"
           value={name}
@@ -62,11 +63,11 @@ export function DogForm({ dog, onClose }: DogFormProps) {
         />
       </div>
       <div>
-        <label className="block text-[13px] text-[#888] mb-1">Race</label>
+        <label className="block text-[13px] text-[#888] mb-1">Race {required ? '*' : ''}</label>
         <BreedCombobox value={breed} onChange={setBreed} />
       </div>
       <div>
-        <label className="block text-[13px] text-[#888] mb-1">Âge</label>
+        <label className="block text-[13px] text-[#888] mb-1">Âge {required ? '*' : ''}</label>
         <Select value={age} onValueChange={setAge}>
           <SelectTrigger>
             <SelectValue placeholder="Âge" />
@@ -88,7 +89,7 @@ export function DogForm({ dog, onClose }: DogFormProps) {
         </Select>
       </div>
       <div>
-        <label className="block text-[13px] text-[#888] mb-1">Poids</label>
+        <label className="block text-[13px] text-[#888] mb-1">Poids {required ? '*' : ''}</label>
         <Select value={poids} onValueChange={setPoids}>
           <SelectTrigger>
             <SelectValue placeholder="Poids approximatif" />
@@ -119,16 +120,24 @@ export function DogForm({ dog, onClose }: DogFormProps) {
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
       <div className="flex gap-2 pt-1">
-        <Button variant="outline" onClick={onClose} className="flex-1" disabled={loading}>
-          Annuler
-        </Button>
+        {!required && (
+          <Button variant="outline" onClick={onClose} className="flex-1" disabled={loading}>
+            Annuler
+          </Button>
+        )}
         <Button
           onClick={handleSubmit}
-          disabled={loading || !name}
+          disabled={loading || !name || (required && (!breed || !age || !poids))}
           className="flex-1 text-white"
           style={{ backgroundColor: '#8B5A3A' }}
         >
-          {loading ? 'Enregistrement…' : dog ? 'Enregistrer' : 'Ajouter'}
+          {loading
+            ? 'Enregistrement…'
+            : required
+              ? 'Enregistrer et continuer'
+              : dog
+                ? 'Enregistrer'
+                : 'Ajouter'}
         </Button>
       </div>
     </div>

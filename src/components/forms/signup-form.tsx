@@ -3,19 +3,10 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { signUp, type SignUpData } from '@/lib/auth-actions'
-import { BreedCombobox } from '@/components/ui/breed-combobox'
 import { CheckCircle } from 'lucide-react'
-import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 
-const STEPS = ['Votre chien', 'Vos coordonnées', 'Votre compte']
+const STEPS = ['Vos coordonnées', 'Votre compte']
 
 export function SignUpForm() {
   const [step, setStep] = useState(0)
@@ -25,7 +16,6 @@ export function SignUpForm() {
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
   const [newsletter, setNewsletter] = useState(false)
-  const [mixDetail, setMixDetail] = useState('')
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
@@ -52,8 +42,8 @@ export function SignUpForm() {
           Bienvenue chez merci murphy® !
         </h2>
         <p className="mt-3 text-charcoal/60 max-w-sm">
-          Votre compte a bien été créé. Vous allez recevoir un email de bienvenue. Vous pouvez dès
-          maintenant vous connecter et prendre rendez-vous.
+          Votre compte a bien été créé. Vous allez recevoir un email de bienvenue. Connectez-vous
+          pour compléter le profil de votre chien.
         </p>
       </div>
     )
@@ -77,115 +67,29 @@ export function SignUpForm() {
         ))}
       </div>
 
-      {/* Step 0 — Chien */}
+      {/* Step 0 — Contact */}
       {step === 0 && (
         <div className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">
-              Prénom de votre chien
-            </label>
-            <Input
-              placeholder="Ex: Rocky, Bella..."
-              value={form.nom_chien ?? ''}
-              onChange={(e) => set('nom_chien', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Race</label>
-            <BreedCombobox
-              value={
-                form.race_chien === 'Mélange / Mix' ||
-                form.race_chien?.startsWith('Mélange / Mix —')
-                  ? 'Mélange / Mix'
-                  : (form.race_chien ?? '')
-              }
-              onChange={(v) => {
-                set('race_chien', v)
-                if (v !== 'Mélange / Mix') setMixDetail('')
-              }}
-            />
-            {form.race_chien === 'Mélange / Mix' && (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-charcoal">Prénom *</label>
               <Input
-                className="mt-2"
-                placeholder="Ex: Labrador × Berger Australien..."
-                value={mixDetail}
-                onChange={(e) => {
-                  setMixDetail(e.target.value)
-                  set(
-                    'race_chien',
-                    e.target.value ? `Mélange / Mix — ${e.target.value}` : 'Mélange / Mix'
-                  )
-                }}
+                placeholder="Marie"
+                value={form.prenom ?? ''}
+                onChange={(e) => set('prenom', e.target.value)}
               />
-            )}
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-charcoal">Nom *</label>
+              <Input
+                placeholder="Dupont"
+                value={form.nom ?? ''}
+                onChange={(e) => set('nom', e.target.value)}
+              />
+            </div>
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Âge</label>
-            <Select value={form.age_chien} onValueChange={(v) => set('age_chien', v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Âge de votre chien" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="3-mois-1-an">3 mois à 1 an</SelectItem>
-                <SelectItem value="1-an-2-ans">1 an – 2 ans</SelectItem>
-                <SelectItem value="3-ans-10-ans">3 ans – 10 ans</SelectItem>
-                <SelectItem value="10-ans-14-ans">10 ans – 14 ans</SelectItem>
-                <SelectItem value="plus-de-14-ans">Plus de 14 ans</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Poids</label>
-            <Select value={form.poids_chien} onValueChange={(v) => set('poids_chien', v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Poids approximatif" />
-              </SelectTrigger>
-              <SelectContent>
-                {POIDS.map((p) => (
-                  <SelectItem key={p.value} value={p.value}>
-                    {p.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">État du pelage</label>
-            <Select value={form.etat_poil} onValueChange={(v) => set('etat_poil', v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="État du pelage" />
-              </SelectTrigger>
-              <SelectContent>
-                {ETAT_POIL.map((e) => (
-                  <SelectItem key={e.value} value={e.value}>
-                    {e.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button
-            onClick={next}
-            className="w-full bg-terracotta-dark text-white hover:bg-terracotta/90"
-          >
-            Continuer
-          </Button>
-        </div>
-      )}
-
-      {/* Step 1 — Contact */}
-      {step === 1 && (
-        <div className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Prénom et nom</label>
-            <Input
-              placeholder="Marie Dupont"
-              value={form.nom ?? ''}
-              onChange={(e) => set('nom', e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Téléphone</label>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Téléphone *</label>
             <Input
               type="tel"
               placeholder="06 00 00 00 00"
@@ -193,26 +97,21 @@ export function SignUpForm() {
               onChange={(e) => set('telephone', e.target.value)}
             />
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={prev} className="flex-1">
-              Retour
-            </Button>
-            <Button
-              onClick={next}
-              disabled={!form.nom || !form.telephone}
-              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta/90"
-            >
-              Continuer
-            </Button>
-          </div>
+          <Button
+            onClick={next}
+            disabled={!form.prenom || !form.nom || !form.telephone}
+            className="w-full bg-terracotta-dark text-white hover:bg-terracotta/90"
+          >
+            Continuer
+          </Button>
         </div>
       )}
 
-      {/* Step 2 — Compte */}
-      {step === 2 && (
+      {/* Step 1 — Compte */}
+      {step === 1 && (
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Email</label>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Email *</label>
             <Input
               type="email"
               placeholder="marie@example.com"
@@ -221,7 +120,7 @@ export function SignUpForm() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-charcoal">Mot de passe</label>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Mot de passe *</label>
             <Input
               type="password"
               placeholder="Au moins 8 caractères"

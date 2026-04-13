@@ -7,6 +7,7 @@ import { ProfileCard } from '@/components/account/profile-card'
 import { DogsCard } from '@/components/account/dogs-card'
 import { BookingCta } from '@/components/account/booking-cta'
 import { VisitTimeline } from '@/components/account/visit-timeline'
+import { CompleteProfileGate } from '@/components/account/complete-profile-gate'
 
 export const metadata: Metadata = {
   title: 'Mon compte',
@@ -24,6 +25,17 @@ export default async function ComptePage() {
   const [profile, dogs, visits] = await Promise.all([getProfile(), getDogs(), getVisits()])
 
   if (!profile) redirect('/compte/connexion?redirect=/compte')
+
+  // First-login gate: force dog profile completion before anything else
+  if (dogs.length === 0) {
+    return (
+      <div className="min-h-screen" style={{ backgroundColor: '#f5f0eb' }}>
+        <div className="mx-auto max-w-[480px] px-4 py-8 pb-20">
+          <CompleteProfileGate prenom={profile.nom.split(' ')[0]} />
+        </div>
+      </div>
+    )
+  }
 
   const memberSince = new Date(user.created_at).toLocaleDateString('fr-FR', {
     month: 'long',

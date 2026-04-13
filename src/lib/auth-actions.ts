@@ -37,7 +37,8 @@ const SignUpSchema = z.object({
     .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
     .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
-  nom: z.string().min(2),
+  prenom: z.string().min(1),
+  nom: z.string().min(1),
   telephone: z.string().min(8),
   nom_chien: z.string().optional(),
   race_chien: z.string().optional(),
@@ -72,9 +73,11 @@ export async function signUp(data: SignUpData) {
 
   const newsletterSubscribed = parsed.data.newsletter_subscribed ?? false
 
+  const fullNom = `${parsed.data.prenom} ${parsed.data.nom}`.trim()
+
   const { error: profileError } = await supabaseAdmin.from('profiles').insert({
     id: authData.user.id,
-    nom: parsed.data.nom,
+    nom: fullNom,
     telephone: parsed.data.telephone,
     nom_chien: parsed.data.nom_chien ?? null,
     race_chien: parsed.data.race_chien ?? null,
@@ -110,7 +113,7 @@ export async function signUp(data: SignUpData) {
   }
 
   // Welcome email
-  const prenom = parsed.data.nom.split(' ')[0] ?? parsed.data.nom
+  const prenom = parsed.data.prenom
   const { error: emailError } = await resend.emails.send({
     from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
