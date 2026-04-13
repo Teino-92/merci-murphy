@@ -8,21 +8,81 @@ import { CheckCircle } from 'lucide-react'
 
 const STEPS = ['Vos coordonnées', 'Votre compte']
 
-const COUNTRY_PREFIXES = [
-  { code: '+33', flag: '🇫🇷', label: 'France' },
-  { code: '+32', flag: '🇧🇪', label: 'Belgique' },
-  { code: '+41', flag: '🇨🇭', label: 'Suisse' },
-  { code: '+352', flag: '🇱🇺', label: 'Luxembourg' },
-  { code: '+44', flag: '🇬🇧', label: 'UK' },
-  { code: '+1', flag: '🇺🇸', label: 'USA/Canada' },
-]
-
-function formatPhoneDigits(raw: string): string {
-  // Keep only digits, max 10
-  const digits = raw.replace(/\D/g, '').slice(0, 10)
-  // Group as XX XX XX XX XX
-  return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim()
+interface CountryPrefix {
+  code: string
+  flag: string
+  label: string
+  digits: number // expected number of local digits
+  placeholder: string // display format hint
+  format: (d: string) => string
 }
+
+const COUNTRY_PREFIXES: CountryPrefix[] = [
+  {
+    code: '+33',
+    flag: '🇫🇷',
+    label: 'France',
+    digits: 10,
+    placeholder: '06 12 34 56 78',
+    format: (d) => d.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
+  },
+  {
+    code: '+32',
+    flag: '🇧🇪',
+    label: 'Belgique',
+    digits: 9,
+    placeholder: '04 12 34 56 7',
+    format: (d) => d.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
+  },
+  {
+    code: '+41',
+    flag: '🇨🇭',
+    label: 'Suisse',
+    digits: 9,
+    placeholder: '078 123 45 67',
+    format: (d) => {
+      if (d.length <= 3) return d
+      if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
+      if (d.length <= 8) return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
+      return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 8)} ${d.slice(8)}`
+    },
+  },
+  {
+    code: '+352',
+    flag: '🇱🇺',
+    label: 'Luxembourg',
+    digits: 9,
+    placeholder: '621 123 456',
+    format: (d) => {
+      if (d.length <= 3) return d
+      if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
+      return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
+    },
+  },
+  {
+    code: '+44',
+    flag: '🇬🇧',
+    label: 'UK',
+    digits: 10,
+    placeholder: '07911 123456',
+    format: (d) => {
+      if (d.length <= 5) return d
+      return `${d.slice(0, 5)} ${d.slice(5)}`
+    },
+  },
+  {
+    code: '+1',
+    flag: '🇺🇸',
+    label: 'USA/Canada',
+    digits: 10,
+    placeholder: '202 555 0123',
+    format: (d) => {
+      if (d.length <= 3) return d
+      if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`
+      return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`
+    },
+  },
+]
 
 export function SignUpForm() {
   const [step, setStep] = useState(0)
@@ -32,24 +92,27 @@ export function SignUpForm() {
 
   const [form, setForm] = useState<Partial<SignUpData>>({})
   const [newsletter, setNewsletter] = useState(false)
-  const [prefix, setPrefix] = useState('+33')
+  const [country, setCountry] = useState<CountryPrefix>(COUNTRY_PREFIXES[0])
   const [phoneDigits, setPhoneDigits] = useState('')
 
   const set = (key: keyof SignUpData, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
   function handlePhoneChange(raw: string) {
-    const formatted = formatPhoneDigits(raw)
+    const digits = raw.replace(/\D/g, '').slice(0, country.digits)
+    const formatted = country.format(digits)
     setPhoneDigits(formatted)
-    set('telephone', `${prefix} ${formatted}`)
+    set('telephone', `${country.code} ${formatted}`)
   }
 
-  function handlePrefixChange(newPrefix: string) {
-    setPrefix(newPrefix)
-    if (phoneDigits) set('telephone', `${newPrefix} ${phoneDigits}`)
+  function handleCountryChange(code: string) {
+    const next = COUNTRY_PREFIXES.find((c) => c.code === code) ?? COUNTRY_PREFIXES[0]
+    setCountry(next)
+    setPhoneDigits('')
+    set('telephone', '')
   }
 
-  const phoneComplete = phoneDigits.replace(/\s/g, '').length === 10
+  const phoneComplete = phoneDigits.replace(/\s/g, '').length === country.digits
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
   const prev = () => setStep((s) => Math.max(s - 1, 0))
@@ -124,8 +187,8 @@ export function SignUpForm() {
             <label className="mb-1.5 block text-sm font-medium text-charcoal">Téléphone *</label>
             <div className="flex gap-2">
               <select
-                value={prefix}
-                onChange={(e) => handlePrefixChange(e.target.value)}
+                value={country.code}
+                onChange={(e) => handleCountryChange(e.target.value)}
                 className="text-sm rounded-lg border border-charcoal/20 px-2 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-terracotta-dark shrink-0"
               >
                 {COUNTRY_PREFIXES.map((c) => (
@@ -136,13 +199,13 @@ export function SignUpForm() {
               </select>
               <Input
                 type="tel"
-                placeholder="06 12 34 56 78"
+                placeholder={country.placeholder}
                 value={phoneDigits}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 className="flex-1"
               />
             </div>
-            <p className="mt-1 text-xs text-charcoal/40">Format : 06 12 34 56 78</p>
+            <p className="mt-1 text-xs text-charcoal/40">Format : {country.placeholder}</p>
           </div>
           <Button
             onClick={next}

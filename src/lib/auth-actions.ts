@@ -42,8 +42,8 @@ const SignUpSchema = z.object({
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
   prenom: z.string().min(1),
   nom: z.string().min(1),
-  // stored as e.g. "+33 06 12 34 56 78" — digits portion must be XX XX XX XX XX
-  telephone: z.string().regex(/^\+\d+\s\d{2}(\s\d{2}){4}$/, 'Format invalide — ex: 06 12 34 56 78'),
+  // stored as e.g. "+33 06 12 34 56 78" — country prefix + space + local digits (spaces allowed)
+  telephone: z.string().regex(/^\+\d+\s[\d\s]{6,}$/, 'Numéro de téléphone invalide'),
   nom_chien: z.string().optional(),
   race_chien: z.string().optional(),
   age_chien: z.string().optional(),
