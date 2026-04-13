@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { StaffManager } from '@/components/dashboard/staff-manager'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { isAdminEmail } from '@/lib/auth-role'
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,8 @@ export default async function StaffPage() {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
+
+  const isAdmin = isAdminEmail(user.email)
 
   const { data: staffRows } = await supabaseAdmin.from('staff').select('*').order('name')
   const staff = staffRows ?? []
@@ -39,7 +42,7 @@ export default async function StaffPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-[#1D164E] mb-6">Équipe</h1>
-      <StaffManager initialStaff={staffWithDetails} />
+      <StaffManager initialStaff={staffWithDetails} isAdmin={isAdmin} />
     </div>
   )
 }

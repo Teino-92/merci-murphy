@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { Staff, Availability, TimeOff } from '@/lib/supabase-admin'
-import { Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trash2, Plus, ChevronDown, ChevronUp, CalendarOff } from 'lucide-react'
 
 const DAYS = ['', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 const ROLES = ['toiletteur', 'educateur', 'osteopathe', 'masseur']
@@ -12,7 +12,13 @@ interface StaffWithDetails extends Staff {
   timeOff: TimeOff[]
 }
 
-export function StaffManager({ initialStaff }: { initialStaff: StaffWithDetails[] }) {
+export function StaffManager({
+  initialStaff,
+  isAdmin,
+}: {
+  initialStaff: StaffWithDetails[]
+  isAdmin: boolean
+}) {
   const [staffList, setStaffList] = useState(initialStaff)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [newName, setNewName] = useState('')
@@ -101,6 +107,35 @@ export function StaffManager({ initialStaff }: { initialStaff: StaffWithDetails[
     )
   }
 
+  async function addTimeOff(staffId: string, date: string, note: string) {
+    const res = await fetch(`/api/dashboard/staff/${staffId}/time-off`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date, note }),
+    })
+    const row = await res.json()
+    setStaffList((prev) =>
+      prev.map((s) =>
+        s.id !== staffId
+          ? s
+          : { ...s, timeOff: [...s.timeOff, row].sort((a, b) => a.date.localeCompare(b.date)) }
+      )
+    )
+  }
+
+  async function removeTimeOff(staffId: string, timeOffId: string) {
+    await fetch(`/api/dashboard/staff/${staffId}/time-off`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: timeOffId }),
+    })
+    setStaffList((prev) =>
+      prev.map((s) =>
+        s.id !== staffId ? s : { ...s, timeOff: s.timeOff.filter((t) => t.id !== timeOffId) }
+      )
+    )
+  }
+
   return (
     <div className="space-y-4">
       {/* Add staff */}
@@ -176,28 +211,107 @@ export function StaffManager({ initialStaff }: { initialStaff: StaffWithDetails[
           </div>
 
           {expanded === s.id && (
-            <div className="border-t border-gray-100 p-5 space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                Disponibilités hebdomadaires
-              </p>
-              <div className="space-y-2">
-                {[1, 2, 3, 4, 5, 6].map((day) => {
-                  const avail = s.availabilities.find((a) => a.day_of_week === day)
-                  return (
-                    <AvailRow
-                      key={day}
-                      dayLabel={DAYS[day]}
-                      avail={avail}
-                      onSave={(start, end) => upsertAvail(s.id, day, start, end)}
-                      onRemove={avail ? () => removeAvail(s.id, avail.id) : undefined}
-                    />
-                  )
-                })}
+            <div className="border-t border-gray-100 p-5 space-y-6">
+              {/* Weekly availabilities */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+                  Disponibilités hebdomadaires
+                </p>
+                <div className="space-y-2">
+                  {[1, 2, 3, 4, 5, 6].map((day) => {
+                    const avail = s.availabilities.find((a) => a.day_of_week === day)
+                    return (
+                      <AvailRow
+                        key={day}
+                        dayLabel={DAYS[day]}
+                        avail={avail}
+                        onSave={(start, end) => upsertAvail(s.id, day, start, end)}
+                        onRemove={avail ? () => removeAvail(s.id, avail.id) : undefined}
+                      />
+                    )
+                  })}
+                </div>
               </div>
+
+              {/* Time-off — admin only */}
+              {isAdmin && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
+                    <CalendarOff className="h-3.5 w-3.5" /> Congés & absences
+                  </p>
+                  {s.timeOff.length > 0 && (
+                    <div className="mb-3 space-y-1">
+                      {s.timeOff.map((t) => (
+                        <div
+                          key={t.id}
+                          className="flex items-center justify-between text-sm rounded-lg bg-gray-50 px-3 py-2"
+                        >
+                          <span className="text-[#1D164E] font-medium">
+                            {new Date(t.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                              weekday: 'short',
+                              day: 'numeric',
+                              month: 'short',
+                            })}
+                          </span>
+                          {t.note && (
+                            <span className="text-gray-400 text-xs mx-2 truncate">{t.note}</span>
+                          )}
+                          <button
+                            onClick={() => removeTimeOff(s.id, t.id)}
+                            className="text-gray-300 hover:text-red-400 transition-colors shrink-0"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <TimeOffRow onAdd={(date, note) => addTimeOff(s.id, date, note)} />
+                </div>
+              )}
             </div>
           )}
         </div>
       ))}
+    </div>
+  )
+}
+
+function TimeOffRow({ onAdd }: { onAdd: (date: string, note: string) => void }) {
+  const [date, setDate] = useState('')
+  const [note, setNote] = useState('')
+  const inputCls =
+    'text-sm rounded border border-gray-200 px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#1D164E]'
+
+  function submit() {
+    if (!date) return
+    onAdd(date, note)
+    setDate('')
+    setNote('')
+  }
+
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className={inputCls}
+      />
+      <input
+        type="text"
+        placeholder="Motif (optionnel)"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className={`${inputCls} flex-1 min-w-[120px]`}
+      />
+      <button
+        onClick={submit}
+        disabled={!date}
+        className="flex items-center gap-1 text-xs bg-[#1D164E] text-white rounded px-2 py-1 font-medium disabled:opacity-40 hover:bg-[#1D164E]/90 transition-colors"
+      >
+        <Plus className="h-3 w-3" /> Ajouter
+      </button>
     </div>
   )
 }

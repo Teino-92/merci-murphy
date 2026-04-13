@@ -27,8 +27,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { date, note } = await req.json()
   if (!date) return NextResponse.json({ error: 'date required' }, { status: 400 })
-  await addTimeOff(params.id, date, note)
-  return NextResponse.json({ ok: true })
+  const row = await addTimeOff(params.id, date, note)
+  return NextResponse.json(row)
 }
 
 export async function DELETE(req: NextRequest) {

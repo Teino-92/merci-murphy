@@ -310,11 +310,14 @@ export async function getTimeOff(staffId: string, from: string, to: string): Pro
   return (data ?? []) as TimeOff[]
 }
 
-export async function addTimeOff(staffId: string, date: string, note?: string): Promise<void> {
-  const { error } = await supabaseAdmin
+export async function addTimeOff(staffId: string, date: string, note?: string): Promise<TimeOff> {
+  const { data, error } = await supabaseAdmin
     .from('time_off')
     .insert({ staff_id: staffId, date, note: note ?? null })
+    .select()
+    .single()
   if (error) throw error
+  return data as TimeOff
 }
 
 export async function deleteTimeOff(id: string): Promise<void> {
