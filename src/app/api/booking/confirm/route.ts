@@ -19,7 +19,14 @@ export async function POST(req: NextRequest) {
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { serviceSlug, date, timeUtc, staffId, duration: durationOverride } = await req.json()
+  const {
+    serviceSlug,
+    date,
+    timeUtc,
+    staffId,
+    duration: durationOverride,
+    dogId,
+  } = await req.json()
 
   if (!serviceSlug || !date || !timeUtc) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -48,13 +55,31 @@ export async function POST(req: NextRequest) {
   // Get user profile
   const { data: profile } = await supabaseAdmin
     .from('profiles')
-    .select('nom, nom_chien, grooming_duration')
+    .select('nom')
     .eq('id', user.id)
     .single()
 
-  // Use grooming_duration from profile for toilettage if not overridden
-  if (slugBase === 'toilettage' && profile?.grooming_duration && !durationOverride) {
-    duration = profile.grooming_duration
+  let dogName: string | null = null
+  if (slugBase === 'toilettage' && dogId) {
+    const { data: dog } = await supabaseAdmin
+      .from('dogs')
+      .select('name, grooming_duration')
+      .eq('id', dogId)
+      .eq('owner_id', user.id)
+      .single()
+    if (dog) {
+      dogName = dog.name
+      if (dog.grooming_duration && !durationOverride) duration = dog.grooming_duration
+    }
+  } else {
+    const { data: firstDog } = await supabaseAdmin
+      .from('dogs')
+      .select('name')
+      .eq('owner_id', user.id)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single()
+    dogName = firstDog?.name ?? null
   }
 
   // Check: crèche capacity (max 10 dogs per day)
@@ -122,6 +147,7 @@ export async function POST(req: NextRequest) {
     .from('visits')
     .insert({
       profile_id: user.id,
+      dog_id: dogId ?? null,
       service: serviceSlug,
       date,
       time: `${timeUtc}:00`, // store as HH:MM:00
@@ -184,7 +210,7 @@ export async function POST(req: NextRequest) {
     // Internal notification to team: toilettage booked, awaiting price + deposit link
     const internalEmail = process.env.RESEND_INTERNAL_EMAIL
     if (internalEmail) {
-      const dogLine = profile?.nom_chien ? ` (${profile.nom_chien})` : ''
+      const dogLine = dogName ? ` (${dogName})` : ''
       try {
         await resend.emails.send({
           from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,

@@ -70,10 +70,12 @@ export async function GET(req: NextRequest) {
     const authUser = allUsers.find((u) => u.id === visit.profile_id)
     if (!authUser?.email) continue
 
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('nom_chien')
-      .eq('id', visit.profile_id)
+    const { data: firstDog } = await supabaseAdmin
+      .from('dogs')
+      .select('name')
+      .eq('owner_id', visit.profile_id)
+      .order('created_at', { ascending: true })
+      .limit(1)
       .single()
 
     const slugBase = visit.service.split('-')[0]
@@ -85,7 +87,7 @@ export async function GET(req: NextRequest) {
         to: authUser.email,
         subject: `Merci pour votre visite chez merci murphy® 🐾`,
         html: thankYouHtml({
-          dogName: profile?.nom_chien ?? null,
+          dogName: firstDog?.name ?? null,
           serviceName,
           googleReviewUrl: GOOGLE_REVIEW_URL,
           products: productCards,

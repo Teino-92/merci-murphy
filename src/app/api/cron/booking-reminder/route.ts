@@ -55,11 +55,13 @@ export async function GET(req: NextRequest) {
   let sent = 0
 
   for (const visit of visits) {
-    // Get profile for dog name
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('nom_chien')
-      .eq('id', visit.profile_id)
+    // Get dog name from first dog
+    const { data: firstDog } = await supabaseAdmin
+      .from('dogs')
+      .select('name')
+      .eq('owner_id', visit.profile_id)
+      .order('created_at', { ascending: true })
+      .limit(1)
       .single()
 
     // Get email from auth user
@@ -88,7 +90,7 @@ export async function GET(req: NextRequest) {
         to: authUser.email,
         subject: `Rappel — votre rendez-vous demain chez merci murphy® 🐾`,
         html: bookingReminderHtml({
-          dogName: profile?.nom_chien ?? null,
+          dogName: firstDog?.name ?? null,
           serviceName,
           appointmentDate,
         }),
