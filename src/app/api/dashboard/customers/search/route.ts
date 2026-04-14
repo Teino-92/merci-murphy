@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { searchProfiles } from '@/lib/supabase-admin'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 
 export async function GET(req: NextRequest) {
@@ -16,5 +17,26 @@ export async function GET(req: NextRequest) {
   if (query.length < 2) return NextResponse.json([])
 
   const profiles = await searchProfiles(query)
-  return NextResponse.json(profiles)
+  const profileIds = profiles.map((p) => p.id)
+
+  if (profileIds.length === 0) return NextResponse.json([])
+
+  // Fetch all dogs for matched profiles to show alongside results
+  const { data: dogs } = await supabaseAdmin
+    .from('dogs')
+    .select('owner_id, name')
+    .in('owner_id', profileIds)
+
+  const dogsByOwner: Record<string, string[]> = {}
+  for (const dog of dogs ?? []) {
+    if (!dogsByOwner[dog.owner_id]) dogsByOwner[dog.owner_id] = []
+    dogsByOwner[dog.owner_id].push(dog.name)
+  }
+
+  const results = profiles.map((p) => ({
+    ...p,
+    dog_names: dogsByOwner[p.id] ?? [],
+  }))
+
+  return NextResponse.json(results)
 }

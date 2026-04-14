@@ -3,6 +3,7 @@
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
@@ -28,7 +29,7 @@ export async function addDog(data: z.infer<typeof DogSchema>) {
   } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Non authentifié.' }
 
-  const { error } = await supabase.from('dogs').insert({
+  const { error } = await supabaseAdmin.from('dogs').insert({
     owner_id: user.id,
     name: parsed.data.name,
     breed: parsed.data.breed ?? null,
@@ -38,7 +39,7 @@ export async function addDog(data: z.infer<typeof DogSchema>) {
     photo_url: parsed.data.photo_url || null,
   })
 
-  if (error) return { success: false, error: "Erreur lors de l'ajout." }
+  if (error) return { success: false, error: error.message }
 
   revalidatePath('/compte')
   return { success: true }
@@ -57,7 +58,7 @@ export async function updateDog(dogId: string, data: z.infer<typeof DogSchema>) 
   } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Non authentifié.' }
 
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('dogs')
     .update({
       name: parsed.data.name,
@@ -70,7 +71,7 @@ export async function updateDog(dogId: string, data: z.infer<typeof DogSchema>) 
     .eq('id', dogId)
     .eq('owner_id', user.id)
 
-  if (error) return { success: false, error: 'Erreur lors de la mise à jour.' }
+  if (error) return { success: false, error: error.message }
 
   revalidatePath('/compte')
   return { success: true }

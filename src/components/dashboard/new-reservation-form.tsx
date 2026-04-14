@@ -18,7 +18,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
 
   // Client selection
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<Profile[]>([])
+  const [searchResults, setSearchResults] = useState<(Profile & { dog_names: string[] })[]>([])
   const [searching, setSearching] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
   const [showNewForm, setShowNewForm] = useState(false)
@@ -157,7 +157,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  placeholder="Rechercher par nom ou téléphone…"
+                  placeholder="Rechercher par nom, téléphone ou chien…"
                   className="w-full text-sm rounded-lg border border-gray-200 pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
                 />
                 {searching && (
@@ -177,7 +177,10 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
                   >
                     <p className="text-sm font-medium text-[#1D164E]">{p.nom}</p>
-                    <p className="text-xs text-gray-400">{p.telephone}</p>
+                    <p className="text-xs text-gray-400">
+                      {p.telephone}
+                      {p.dog_names.length > 0 && ` · 🐶 ${p.dog_names.join(', ')}`}
+                    </p>
                   </button>
                 ))}
               </div>

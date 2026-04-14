@@ -98,20 +98,21 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Check: client must not already have the same service on the same day
-  const { data: sameServiceSameDay } = await supabaseAdmin
-    .from('visits')
-    .select('id')
-    .eq('profile_id', user.id)
-    .eq('service', serviceSlug)
-    .eq('date', date)
-    .not('status', 'eq', 'cancelled')
-    .limit(1)
-  if (sameServiceSameDay && sameServiceSameDay.length > 0) {
-    return NextResponse.json(
-      { error: 'Vous avez déjà un rendez-vous pour ce service ce jour-là.' },
-      { status: 409 }
-    )
+  // Check: same dog must not already have a booking on the same day
+  if (dogId) {
+    const { data: sameDogSameDay } = await supabaseAdmin
+      .from('visits')
+      .select('id')
+      .eq('dog_id', dogId)
+      .eq('date', date)
+      .not('status', 'eq', 'cancelled')
+      .limit(1)
+    if (sameDogSameDay && sameDogSameDay.length > 0) {
+      return NextResponse.json(
+        { error: 'Ce chien a déjà un rendez-vous ce jour-là.' },
+        { status: 409 }
+      )
+    }
   }
 
   // Check: client must not have any overlapping visit on the same day

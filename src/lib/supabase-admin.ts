@@ -169,14 +169,34 @@ export async function setNewsletterActive(id: string, active: boolean): Promise<
 }
 
 export async function searchProfiles(query: string): Promise<Profile[]> {
-  const { data, error } = await supabaseAdmin
+  // Search profiles by name or phone directly
+  const { data: directMatches, error } = await supabaseAdmin
     .from('profiles')
     .select('*')
     .or(`nom.ilike.%${query}%,telephone.ilike.%${query}%`)
     .order('nom', { ascending: true })
     .limit(10)
   if (error) throw error
-  return data ?? []
+
+  // Also search by dog name and collect matching owner_ids
+  const { data: dogMatches } = await supabaseAdmin
+    .from('dogs')
+    .select('owner_id')
+    .ilike('name', `%${query}%`)
+    .limit(10)
+
+  const dogOwnerIds = (dogMatches ?? []).map((d) => d.owner_id as string)
+  const directIds = new Set((directMatches ?? []).map((p) => p.id))
+  const missingOwnerIds = dogOwnerIds.filter((id) => !directIds.has(id))
+
+  if (missingOwnerIds.length === 0) return directMatches ?? []
+
+  const { data: dogOwnerProfiles } = await supabaseAdmin
+    .from('profiles')
+    .select('*')
+    .in('id', missingOwnerIds)
+
+  return [...(directMatches ?? []), ...(dogOwnerProfiles ?? [])]
 }
 
 export interface CreateProfileInput {
