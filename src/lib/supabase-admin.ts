@@ -202,10 +202,12 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
     throw new Error(authError?.message ?? 'Erreur création compte')
   }
 
-  const { data, error } = await supabaseAdmin
+  const userId = authData.user.id
+
+  const { data, error: profileError } = await supabaseAdmin
     .from('profiles')
     .insert({
-      id: authData.user.id,
+      id: userId,
       nom: input.nom,
       telephone: input.telephone,
       notes: input.notes ?? null,
@@ -213,11 +215,13 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
     .select()
     .single()
 
-  if (error) throw new Error(error.message)
+  if (profileError) {
+    await supabaseAdmin.auth.admin.deleteUser(userId)
+    throw new Error(profileError.message)
+  }
 
-  // Insert dog row into dogs table
-  await supabaseAdmin.from('dogs').insert({
-    owner_id: authData.user.id,
+  const { error: dogError } = await supabaseAdmin.from('dogs').insert({
+    owner_id: userId,
     name: input.nom_chien,
     breed: input.race_chien ?? null,
     age: input.age_chien ?? null,
@@ -225,6 +229,12 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
     etat_poil: input.etat_poil ?? null,
     grooming_duration: input.grooming_duration ?? null,
   })
+
+  if (dogError) {
+    await supabaseAdmin.from('profiles').delete().eq('id', userId)
+    await supabaseAdmin.auth.admin.deleteUser(userId)
+    throw new Error(dogError.message)
+  }
 
   return data
 }
