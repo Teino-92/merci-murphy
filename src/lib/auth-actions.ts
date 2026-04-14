@@ -231,7 +231,6 @@ export async function updateNewsletter(subscribed: boolean) {
 
 export interface Dog {
   id: string
-  created_at: string
   owner_id: string
   name: string
   breed: string | null
@@ -242,7 +241,6 @@ export interface Dog {
   grooming_duration: number | null
   numero_puce: string | null
   notes: string | null
-  can_book_online: boolean
 }
 
 // ─── Visit types ──────────────────────────────────────────────────────────────
@@ -266,7 +264,7 @@ export async function getDogs(): Promise<Dog[]> {
   const { data } = await supabaseAdmin
     .from('dogs')
     .select(
-      'id, created_at, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes, can_book_online'
+      'id, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes'
     )
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
