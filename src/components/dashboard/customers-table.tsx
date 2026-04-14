@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
-import type { Profile } from '@/lib/supabase-admin'
+import type { Profile, Dog } from '@/lib/supabase-admin'
 
 export function CustomersTable({
   profiles,
   dogMap,
 }: {
   profiles: Profile[]
-  dogMap: Record<string, { name: string; breed: string | null }>
+  dogMap: Record<string, Pick<Dog, 'name' | 'breed'>>
 }) {
   const [query, setQuery] = useState('')
 
