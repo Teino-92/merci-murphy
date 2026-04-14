@@ -26,7 +26,7 @@ export default async function CustomerPage({ params }: { params: { id: string } 
   const { data: dogs } = await supabaseAdmin
     .from('dogs')
     .select(
-      'id, created_at, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes, can_book_online'
+      'id, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes'
     )
     .eq('owner_id', params.id)
     .order('created_at', { ascending: true })

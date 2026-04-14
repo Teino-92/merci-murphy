@@ -25,7 +25,6 @@ export interface Profile {
 
 export interface Dog {
   id: string
-  created_at: string
   owner_id: string
   name: string
   breed: string | null
@@ -36,7 +35,6 @@ export interface Dog {
   grooming_duration: number | null
   numero_puce: string | null
   notes: string | null
-  can_book_online: boolean
 }
 
 export interface Visit {
