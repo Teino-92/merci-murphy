@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { isAdminEmail } from '@/lib/auth-role'
-import { getRevenueStats, getDailyRevenue, getTopProducts } from '@/lib/shopify-admin'
+import { getDailyRevenue, getTopProducts } from '@/lib/shopify-admin'
 import { getLeads, getProfiles, supabaseAdmin } from '@/lib/supabase-admin'
 import { StatCard } from '@/components/dashboard/stat-card'
 import { DashboardMain } from './dashboard-main'
@@ -10,10 +10,6 @@ import type { VisitsStats } from './dashboard-main'
 export const dynamic = 'force-dynamic'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatCurrency(amount: number, currency: string) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(amount)
-}
 
 function localDateStr(d: Date) {
   const y = d.getFullYear()
@@ -82,8 +78,7 @@ export default async function DashboardPage() {
 
   const { from, to } = currentMonthRange()
 
-  const [revenue, dailyRevenue, topProducts, leads, profiles, visits] = await Promise.all([
-    getRevenueStats(),
+  const [dailyRevenue, topProducts, leads, profiles, visits] = await Promise.all([
     getDailyRevenue(),
     getTopProducts(),
     getLeads(),
@@ -99,44 +94,6 @@ export default async function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl font-bold text-[#4F6072]">Vue d&apos;ensemble</h1>
       </div>
-
-      {/* KPIs — current month */}
-      <section className="mb-6">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
-          Mois en cours
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            label="CA services"
-            value={visits.totalRevenue > 0 ? formatCurrency(visits.totalRevenue, 'EUR') : '—'}
-            highlight={visits.totalRevenue > 0}
-            sub="Visites enregistrées"
-          />
-          <StatCard
-            label="Visites"
-            value={visits.visitCount > 0 ? String(visits.visitCount) : '—'}
-            sub="Ce mois-ci"
-          />
-          <StatCard
-            label="CA Shopify"
-            value={
-              revenue.totalRevenue > 0
-                ? formatCurrency(revenue.totalRevenue, revenue.currency)
-                : '—'
-            }
-            sub="Boutique en ligne"
-          />
-          <StatCard
-            label="Ticket moyen"
-            value={visits.avgTicket > 0 ? formatCurrency(visits.avgTicket, 'EUR') : '—'}
-            sub={
-              visits.visitCount > 0
-                ? `${visits.visitCount} visite${visits.visitCount > 1 ? 's' : ''}`
-                : undefined
-            }
-          />
-        </div>
-      </section>
 
       {/* Main analytics — interactive */}
       <DashboardMain
