@@ -26,8 +26,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!hasDashboardAccess(user.email))
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { newStart } = await req.json()
-  if (!newStart) return NextResponse.json({ error: 'Missing newStart' }, { status: 400 })
+  const { date: dateStr, time: timeStr } = await req.json()
+  if (!dateStr || !timeStr)
+    return NextResponse.json({ error: 'Missing date/time' }, { status: 400 })
 
   // Fetch visit
   const { data: visit, error: fetchError } = await supabaseAdmin
@@ -37,11 +38,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .single()
 
   if (fetchError || !visit) return NextResponse.json({ error: 'Visit not found' }, { status: 404 })
-
-  // Parse new date/time from ISO string (Paris-local datetime from frontend)
-  const newDate = new Date(newStart)
-  const dateStr = newDate.toISOString().slice(0, 10)
-  const timeStr = newDate.toISOString().slice(11, 16)
 
   // Update Supabase visit date/time
   const { error: updateError } = await supabaseAdmin
@@ -53,8 +49,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
 
-  // Send reschedule email to client
-  const formattedDate = newDate.toLocaleDateString('fr-FR', {
+  // Format for email — treat as Paris local time
+  const formattedDate = new Date(`${dateStr}T${timeStr}:00`).toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

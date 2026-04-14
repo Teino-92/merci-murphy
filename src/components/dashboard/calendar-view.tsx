@@ -90,11 +90,13 @@ function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
   async function submit() {
     setSaving(true)
     setError(null)
-    const localDate = new Date(newDatetime)
+    // newDatetime is a Paris-local "YYYY-MM-DDTHH:MM" string — send date/time directly
+    // to avoid timezone conversion issues when constructing an ISO string
+    const [dateStr, timeStr] = newDatetime.split('T')
     const res = await fetch(`/api/dashboard/visits/${visit.id}/reschedule`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ newStart: localDate.toISOString() }),
+      body: JSON.stringify({ date: dateStr, time: timeStr }),
     })
     const json = await res.json()
     if (!res.ok) {
