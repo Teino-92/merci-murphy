@@ -407,7 +407,14 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
           {SERVICE_LABELS[confirmedService?.split('-')[0] ?? ''] ?? confirmedService}
           {durationLabel} · {confirmedDate ? formatDateFr(confirmedDate) : ''} à {confirmedTime}
         </p>
-        <p className="text-xs text-charcoal/40">Un email de confirmation vous a été envoyé.</p>
+        {confirmedService?.split('-')[0] === 'toilettage' ? (
+          <p className="text-xs text-charcoal/40">
+            Vous recevrez un email avec un lien de paiement d&apos;acompte dans les 2 heures. Pensez
+            à vérifier vos spams.
+          </p>
+        ) : (
+          <p className="text-xs text-charcoal/40">Un email de confirmation vous a été envoyé.</p>
+        )}
         <button
           onClick={resetAll}
           className="text-xs underline underline-offset-2 text-charcoal/40 hover:text-charcoal transition-colors"

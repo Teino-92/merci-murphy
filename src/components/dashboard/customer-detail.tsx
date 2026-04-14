@@ -117,6 +117,10 @@ export function CustomerDetail({
   const [depositSent, setDepositSent] = useState<Record<string, number>>({})
   const [confirmingDeposit, setConfirmingDeposit] = useState<Record<string, boolean>>({})
 
+  // Final price editing — keyed by visit id
+  const [finalPriceInputs, setFinalPriceInputs] = useState<Record<string, string>>({})
+  const [savingFinalPrice, setSavingFinalPrice] = useState<Record<string, boolean>>({})
+
   // Add visit state
   const [showVisitForm, setShowVisitForm] = useState(false)
   const [visitService, setVisitService] = useState('toilettage')
@@ -250,6 +254,24 @@ export function CustomerDetail({
       prev.map((v) => (v.id === visitId ? { ...v, status: 'confirmed' as const } : v))
     )
     setConfirmingDeposit((s) => ({ ...s, [visitId]: false }))
+  }
+
+  async function saveFinalPrice(visitId: string) {
+    const val = finalPriceInputs[visitId]
+    if (!val || isNaN(Number(val)) || Number(val) <= 0) return
+    setSavingFinalPrice((s) => ({ ...s, [visitId]: true }))
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/visits/${visitId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ final_price: Number(val) }),
+    })
+    if (res.ok) {
+      setVisits((prev) =>
+        prev.map((v) => (v.id === visitId ? { ...v, final_price: Number(val) } : v))
+      )
+      setFinalPriceInputs((s) => ({ ...s, [visitId]: '' }))
+    }
+    setSavingFinalPrice((s) => ({ ...s, [visitId]: false }))
   }
 
   async function deleteVisit(visitId: string) {
@@ -836,6 +858,36 @@ L'équipe merci murphy`
                             </span>
                           )}
                         </div>
+                        {v.status === 'confirmed' && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder={
+                                v.final_price != null
+                                  ? `${v.final_price.toFixed(2)} €`
+                                  : 'Prix final (€)'
+                              }
+                              value={finalPriceInputs[v.id] ?? ''}
+                              onChange={(e) =>
+                                setFinalPriceInputs((s) => ({ ...s, [v.id]: e.target.value }))
+                              }
+                              className="w-36 text-xs rounded-lg border border-gray-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                            />
+                            <button
+                              onClick={() => saveFinalPrice(v.id)}
+                              disabled={
+                                !finalPriceInputs[v.id] ||
+                                Number(finalPriceInputs[v.id]) <= 0 ||
+                                savingFinalPrice[v.id]
+                              }
+                              className="text-xs font-medium bg-[#1D164E] text-white px-2.5 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-40 transition-colors"
+                            >
+                              {savingFinalPrice[v.id] ? '…' : 'OK'}
+                            </button>
+                          </div>
+                        )}
                         {v.notes && <p className="text-xs text-gray-500 mt-1">{v.notes}</p>}
                         {depositSent[v.id] != null && (
                           <p className="text-xs text-green-600 mt-1">
