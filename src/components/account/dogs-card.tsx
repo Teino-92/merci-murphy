@@ -8,10 +8,9 @@ import type { Dog } from '@/lib/auth-actions'
 
 interface DogsCardProps {
   dogs: Dog[]
-  groomingDuration?: number | null
 }
 
-export function DogsCard({ dogs, groomingDuration }: DogsCardProps) {
+export function DogsCard({ dogs }: DogsCardProps) {
   const [addingNew, setAddingNew] = useState(false)
   const [editingDog, setEditingDog] = useState<Dog | null>(null)
 
@@ -31,11 +30,7 @@ export function DogsCard({ dogs, groomingDuration }: DogsCardProps) {
               <DogForm dog={dog} onClose={() => setEditingDog(null)} />
             </div>
           ) : (
-            <DogSubCard
-              dog={dog}
-              onEdit={() => setEditingDog(dog)}
-              groomingDuration={groomingDuration}
-            />
+            <DogSubCard dog={dog} onEdit={() => setEditingDog(dog)} />
           )}
         </div>
       ))}
@@ -58,15 +53,7 @@ export function DogsCard({ dogs, groomingDuration }: DogsCardProps) {
   )
 }
 
-function DogSubCard({
-  dog,
-  onEdit,
-  groomingDuration,
-}: {
-  dog: Dog
-  onEdit: () => void
-  groomingDuration?: number | null
-}) {
+function DogSubCard({ dog, onEdit }: { dog: Dog; onEdit: () => void }) {
   return (
     <div
       className="flex items-center gap-3.5 p-3.5 rounded-[14px] mb-2.5 border border-[#f0ebe3]"
@@ -92,7 +79,7 @@ function DogSubCard({
         <div className="flex flex-wrap gap-1 mt-1">
           {dog.poids && <DogTag>{dog.poids}</DogTag>}
           {dog.etat_poil && <DogTag>{dog.etat_poil}</DogTag>}
-          {groomingDuration && <DogTag>{groomingDuration} min</DogTag>}
+          {dog.grooming_duration && <DogTag>{dog.grooming_duration} min</DogTag>}
         </div>
       </div>
       <button
