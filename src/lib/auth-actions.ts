@@ -93,7 +93,7 @@ export async function signUp(data: SignUpData) {
     from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
     subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
-    html: accountWelcomeHtml(prenom, null),
+    html: accountWelcomeHtml(prenom),
   })
 
   if (emailError) {
@@ -265,7 +265,9 @@ export async function getDogs(): Promise<Dog[]> {
 
   const { data } = await supabaseAdmin
     .from('dogs')
-    .select('id, owner_id, name, breed, age, poids, etat_poil, photo_url')
+    .select(
+      'id, created_at, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes, can_book_online'
+    )
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
 

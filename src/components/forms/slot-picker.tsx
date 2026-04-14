@@ -508,7 +508,13 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
             </button>
           ))}
         </div>
-        <button onClick={() => setStep('service')} className="text-sm text-charcoal/50 underline">
+        <button
+          onClick={() => {
+            setSelectedService(null)
+            setStep('service')
+          }}
+          className="text-sm text-charcoal/50 underline"
+        >
           ← Retour
         </button>
       </div>
@@ -521,7 +527,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setStep('service')}
+            onClick={() => setStep(dogs.length > 1 ? 'dog' : 'service')}
             className="text-xs text-charcoal/40 hover:text-charcoal underline underline-offset-2 transition-colors"
           >
             ← Retour
