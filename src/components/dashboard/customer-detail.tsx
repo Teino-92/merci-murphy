@@ -168,12 +168,12 @@ export function CustomerDetail({
   async function toggleCanBook() {
     setTogglingBook(true)
     const next = !profile.can_book
-    await fetch(`/api/dashboard/customers/${profile.id}/profile`, {
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/profile`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ can_book: next }),
     })
-    setProfile((p) => ({ ...p, can_book: next }))
+    if (res.ok) setProfile((p) => ({ ...p, can_book: next }))
     setTogglingBook(false)
   }
 

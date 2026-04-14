@@ -9,6 +9,8 @@ import { BookingCta } from '@/components/account/booking-cta'
 import { VisitTimeline } from '@/components/account/visit-timeline'
 import { CompleteProfileGate } from '@/components/account/complete-profile-gate'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Mon compte',
   description: 'Votre espace personnel merci murphy®.',
