@@ -13,12 +13,11 @@ export default async function CustomersPage() {
   ])
   if (dogsRes.error) throw dogsRes.error
 
-  // First dog per owner
-  const dogMap: Record<string, { name: string; breed: string | null }> = {}
+  // All dogs per owner
+  const dogMap: Record<string, { name: string; breed: string | null }[]> = {}
   for (const dog of dogsRes.data ?? []) {
-    if (!dogMap[dog.owner_id]) {
-      dogMap[dog.owner_id] = { name: dog.name, breed: dog.breed }
-    }
+    if (!dogMap[dog.owner_id]) dogMap[dog.owner_id] = []
+    dogMap[dog.owner_id].push({ name: dog.name, breed: dog.breed })
   }
 
   return (
