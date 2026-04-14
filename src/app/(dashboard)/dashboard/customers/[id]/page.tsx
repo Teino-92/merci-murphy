@@ -26,7 +26,9 @@ export default async function CustomerPage({ params }: { params: { id: string } 
   // Get dogs from dogs table (source of truth since the gate flow)
   const { data: dogs } = await supabaseAdmin
     .from('dogs')
-    .select('id, name, breed, age, poids, etat_poil, photo_url')
+    .select(
+      'id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes'
+    )
     .eq('owner_id', params.id)
     .order('created_at', { ascending: true })
 
