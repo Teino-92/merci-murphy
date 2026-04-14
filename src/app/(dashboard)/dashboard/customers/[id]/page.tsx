@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getProfileWithVisits } from '@/lib/supabase-admin'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getProfileWithVisits, supabaseAdmin } from '@/lib/supabase-admin'
 import { CustomerDetail } from '@/components/dashboard/customer-detail'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { isAdminEmail } from '@/lib/auth-role'
@@ -27,7 +26,7 @@ export default async function CustomerPage({ params }: { params: { id: string } 
   const { data: dogs } = await supabaseAdmin
     .from('dogs')
     .select(
-      'id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes'
+      'id, created_at, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes, can_book_online'
     )
     .eq('owner_id', params.id)
     .order('created_at', { ascending: true })

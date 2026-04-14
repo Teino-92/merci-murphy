@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Profile, Visit } from '@/lib/supabase-admin'
+import type { Profile, Visit, Dog } from '@/lib/supabase-admin'
 import { ArrowLeft, Pencil, Trash2, X, Upload, Eye, Download } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,19 +13,6 @@ interface ClientFile {
   path: string
   url: string | null
   createdAt: string | null
-}
-
-interface DogRow {
-  id: string
-  name: string
-  breed: string | null
-  age: string | null
-  poids: string | null
-  etat_poil: string | null
-  photo_url: string | null
-  grooming_duration: number | null
-  numero_puce: string | null
-  notes: string | null
 }
 
 export function CustomerDetail({
@@ -39,7 +26,7 @@ export function CustomerDetail({
   visits: Visit[]
   email: string | null
   isAdmin: boolean
-  dogs?: DogRow[]
+  dogs?: Dog[]
 }) {
   const router = useRouter()
   const [profile, setProfile] = useState(initial)
@@ -77,7 +64,7 @@ export function CustomerDetail({
     >
   >({})
 
-  function startEditDog(dog: DogRow) {
+  function startEditDog(dog: Dog) {
     setEditingDogId(dog.id)
     setDogEdits((prev) => ({
       ...prev,
@@ -97,7 +84,7 @@ export function CustomerDetail({
   async function saveDog(dogId: string) {
     const d = dogEdits[dogId]
     if (!d) return
-    await fetch(`/api/dashboard/customers/${profile.id}/dogs/${dogId}`, {
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/dogs/${dogId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -105,6 +92,7 @@ export function CustomerDetail({
         grooming_duration: d.grooming_duration ? Number(d.grooming_duration) : null,
       }),
     })
+    if (!res.ok) return
     setEditingDogId(null)
     router.refresh()
   }
@@ -509,6 +497,7 @@ L'équipe merci murphy`
                           { key: 'etat_poil', label: 'État du poil' },
                           { key: 'numero_puce', label: 'N° puce' },
                           { key: 'grooming_duration', label: 'Durée toilettage (min)' },
+                          { key: 'notes', label: 'Notes' },
                         ] as { key: string; label: string }[]
                       ).map(({ key, label }) => (
                         <div key={key}>
