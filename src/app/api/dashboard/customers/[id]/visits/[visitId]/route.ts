@@ -13,15 +13,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { visitId: s
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { final_price } = body
+  const { price } = body
 
-  if (final_price == null || isNaN(Number(final_price)) || Number(final_price) <= 0) {
-    return NextResponse.json({ error: 'final_price invalide' }, { status: 400 })
+  if (price == null || isNaN(Number(price)) || Number(price) <= 0) {
+    return NextResponse.json({ error: 'price invalide' }, { status: 400 })
   }
 
   const { error } = await supabaseAdmin
     .from('visits')
-    .update({ final_price: Number(final_price) })
+    .update({ price: Number(price) })
     .eq('id', params.visitId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

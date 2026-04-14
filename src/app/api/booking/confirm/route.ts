@@ -156,7 +156,6 @@ export async function POST(req: NextRequest) {
       staff: staffName,
       status,
       price: null,
-      final_price: null,
     })
     .select()
     .single()

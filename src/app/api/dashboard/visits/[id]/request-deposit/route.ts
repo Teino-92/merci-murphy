@@ -20,10 +20,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const price = Number(finalPrice)
   const depositAmount = Math.round(price * 0.5 * 100) / 100
 
-  const { error } = await supabaseAdmin
-    .from('visits')
-    .update({ final_price: price })
-    .eq('id', params.id)
+  const { error } = await supabaseAdmin.from('visits').update({ price }).eq('id', params.id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

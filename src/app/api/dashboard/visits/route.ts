@@ -17,10 +17,7 @@ export async function GET(req: NextRequest) {
   const from = searchParams.get('from')
   const to = searchParams.get('to')
 
-  let query = supabaseAdmin
-    .from('visits')
-    .select('service, price, final_price, date')
-    .eq('status', 'confirmed')
+  let query = supabaseAdmin.from('visits').select('service, price, date').eq('status', 'confirmed')
 
   if (from) query = query.gte('date', from)
   if (to) query = query.lte('date', to)
@@ -37,15 +34,13 @@ export async function GET(req: NextRequest) {
   let visitCount = 0
 
   for (const row of rows) {
-    // Use final_price when set (post-deposit toilettage), fall back to price
-    const effectivePrice =
-      row.final_price != null ? Number(row.final_price) : Number(row.price ?? 0)
-    if (effectivePrice <= 0) continue
-    totalRevenue += effectivePrice
+    const price = Number(row.price ?? 0)
+    if (price <= 0) continue
+    totalRevenue += price
     visitCount++
     const existing = serviceMap.get(row.service) ?? { revenue: 0, count: 0 }
     serviceMap.set(row.service, {
-      revenue: existing.revenue + effectivePrice,
+      revenue: existing.revenue + price,
       count: existing.count + 1,
     })
   }

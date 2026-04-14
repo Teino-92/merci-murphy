@@ -263,12 +263,10 @@ export function CustomerDetail({
     const res = await fetch(`/api/dashboard/customers/${profile.id}/visits/${visitId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ final_price: Number(val) }),
+      body: JSON.stringify({ price: Number(val) }),
     })
     if (res.ok) {
-      setVisits((prev) =>
-        prev.map((v) => (v.id === visitId ? { ...v, final_price: Number(val) } : v))
-      )
+      setVisits((prev) => prev.map((v) => (v.id === visitId ? { ...v, price: Number(val) } : v)))
       setFinalPriceInputs((s) => ({ ...s, [visitId]: '' }))
     }
     setSavingFinalPrice((s) => ({ ...s, [visitId]: false }))
@@ -847,12 +845,7 @@ L'équipe merci murphy`
                               Acompte en attente
                             </span>
                           )}
-                          {v.status === 'confirmed' && v.final_price != null && (
-                            <span className="ml-auto text-sm font-semibold text-[#1D164E]">
-                              {v.final_price.toFixed(2)} €
-                            </span>
-                          )}
-                          {v.status === 'confirmed' && v.price != null && v.final_price == null && (
+                          {v.status === 'confirmed' && v.price != null && (
                             <span className="ml-auto text-sm font-semibold text-[#1D164E]">
                               {v.price.toFixed(2)} €
                             </span>
@@ -865,9 +858,7 @@ L'équipe merci murphy`
                               min="0"
                               step="0.01"
                               placeholder={
-                                v.final_price != null
-                                  ? `${v.final_price.toFixed(2)} €`
-                                  : 'Prix final (€)'
+                                v.price != null ? `${v.price.toFixed(2)} €` : 'Prix final (€)'
                               }
                               value={finalPriceInputs[v.id] ?? ''}
                               onChange={(e) =>

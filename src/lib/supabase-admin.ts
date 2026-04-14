@@ -48,7 +48,6 @@ export interface Visit {
   notes: string | null
   staff: string | null
   price: number | null
-  final_price: number | null // set by staff when sending deposit request
   // payment flow: pending_deposit → (sumup pays) → confirmed
   status: 'confirmed' | 'pending_deposit' | 'cancelled'
   sumup_checkout_id: string | null

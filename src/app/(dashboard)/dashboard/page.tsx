@@ -34,7 +34,7 @@ async function getVisitsStats(from: string, to: string): Promise<VisitsStats> {
     const { data } = await supabaseAdmin
       .from('visits')
       .select('service, price, date')
-      .not('price', 'is', null)
+      .eq('status', 'confirmed')
       .gte('date', from)
       .lte('date', to)
 
@@ -45,6 +45,7 @@ async function getVisitsStats(from: string, to: string): Promise<VisitsStats> {
 
     for (const row of rows) {
       const price = Number(row.price ?? 0)
+      if (price <= 0) continue
       totalRevenue += price
       visitCount++
       const existing = serviceMap.get(row.service) ?? { revenue: 0, count: 0 }
