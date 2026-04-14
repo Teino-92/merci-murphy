@@ -1,10 +1,24 @@
-import { getProfiles } from '@/lib/supabase-admin'
+import { getProfiles, supabaseAdmin } from '@/lib/supabase-admin'
 import { CustomersTable } from '@/components/dashboard/customers-table'
 
 export const dynamic = 'force-dynamic'
 
 export default async function CustomersPage() {
-  const profiles = await getProfiles()
+  const [profiles, { data: dogsData }] = await Promise.all([
+    getProfiles(),
+    supabaseAdmin
+      .from('dogs')
+      .select('owner_id, name, breed')
+      .order('created_at', { ascending: true }),
+  ])
+
+  // First dog per owner
+  const dogMap: Record<string, { name: string; breed: string | null }> = {}
+  for (const dog of dogsData ?? []) {
+    if (!dogMap[dog.owner_id]) {
+      dogMap[dog.owner_id] = { name: dog.name, breed: dog.breed }
+    }
+  }
 
   return (
     <div>
@@ -15,7 +29,7 @@ export default async function CustomersPage() {
       {profiles.length === 0 ? (
         <p className="text-gray-400">Aucun profil client enregistré.</p>
       ) : (
-        <CustomersTable profiles={profiles} />
+        <CustomersTable profiles={profiles} dogMap={dogMap} />
       )}
     </div>
   )
