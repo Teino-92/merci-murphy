@@ -38,6 +38,12 @@ const SignUpSchema = z.object({
   nom: z.string().min(1),
   telephone: z.string().regex(/^\+\d+\s[\d\s]{6,}$/, 'Numéro de téléphone invalide'),
   newsletter_subscribed: z.boolean().optional(),
+  // Dog fields
+  dog_name: z.string().min(1, 'Le prénom du chien est requis'),
+  dog_breed: z.string().optional(),
+  dog_age: z.string().optional(),
+  dog_poids: z.string().optional(),
+  dog_etat_poil: z.string().optional(),
 })
 
 export type SignUpData = z.infer<typeof SignUpSchema>
@@ -63,19 +69,35 @@ export async function signUp(data: SignUpData) {
     return { success: false, error: 'Erreur lors de la création du compte.' }
   }
 
+  const userId = authData.user.id
   const newsletterSubscribed = parsed.data.newsletter_subscribed ?? false
-
   const fullNom = `${parsed.data.prenom} ${parsed.data.nom}`.trim()
 
   const { error: profileError } = await supabaseAdmin.from('profiles').insert({
-    id: authData.user.id,
+    id: userId,
     nom: fullNom,
     telephone: parsed.data.telephone,
     newsletter_subscribed: newsletterSubscribed,
   })
 
   if (profileError) {
+    await supabaseAdmin.auth.admin.deleteUser(userId)
     return { success: false, error: `Erreur profil: ${profileError.message}` }
+  }
+
+  const { error: dogError } = await supabaseAdmin.from('dogs').insert({
+    owner_id: userId,
+    name: parsed.data.dog_name,
+    breed: parsed.data.dog_breed ?? null,
+    age: parsed.data.dog_age ?? null,
+    poids: parsed.data.dog_poids ?? null,
+    etat_poil: parsed.data.dog_etat_poil ?? null,
+  })
+
+  if (dogError) {
+    await supabaseAdmin.from('profiles').delete().eq('id', userId)
+    await supabaseAdmin.auth.admin.deleteUser(userId)
+    return { success: false, error: `Erreur chien: ${dogError.message}` }
   }
 
   // Subscribe to newsletter if opted in
@@ -93,7 +115,7 @@ export async function signUp(data: SignUpData) {
     from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
     subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
-    html: accountWelcomeHtml(prenom),
+    html: accountWelcomeHtml(prenom, parsed.data.dog_name),
   })
 
   if (emailError) {

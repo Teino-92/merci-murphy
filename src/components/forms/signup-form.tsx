@@ -1,15 +1,27 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { BreedCombobox } from '@/components/ui/breed-combobox'
 import { signUp, type SignUpData } from '@/lib/auth-actions'
 import { COUNTRY_PREFIXES } from '@/lib/phone-prefixes'
+import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { CheckCircle } from 'lucide-react'
 
-const STEPS = ['Vos coordonnées', 'Votre compte']
+const STEPS = ['Vos coordonnées', 'Votre compte', 'Votre chien']
 
 export function SignUpForm() {
+  const router = useRouter()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -35,9 +47,7 @@ export function SignUpForm() {
     set('telephone', '')
   }
 
-  // At least 6 digits entered
   const phoneComplete = phoneLocal.replace(/\D/g, '').length >= 6
-
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
   const prev = () => setStep((s) => Math.max(s - 1, 0))
 
@@ -45,12 +55,19 @@ export function SignUpForm() {
     setLoading(true)
     setError(null)
     const result = await signUp({ ...(form as SignUpData), newsletter_subscribed: newsletter })
-    setLoading(false)
-    if (result.success) {
-      setDone(true)
-    } else {
+    if (!result.success) {
+      setLoading(false)
       setError(result.error ?? 'Une erreur est survenue.')
+      return
     }
+    // Auto sign-in then redirect
+    const supabase = createSupabaseBrowserClient()
+    await supabase.auth.signInWithPassword({
+      email: form.email!,
+      password: form.password!,
+    })
+    setDone(true)
+    router.push('/compte')
   }
 
   if (done) {
@@ -60,10 +77,7 @@ export function SignUpForm() {
         <h2 className="mt-6 font-display text-2xl font-bold text-charcoal">
           Bienvenue chez merci murphy® !
         </h2>
-        <p className="mt-3 text-charcoal/60 max-w-sm">
-          Votre compte a bien été créé. Vous allez recevoir un email de bienvenue. Connectez-vous
-          pour compléter le profil de votre chien.
-        </p>
+        <p className="mt-3 text-charcoal/60 max-w-sm">Redirection vers votre espace…</p>
       </div>
     )
   }
@@ -86,7 +100,7 @@ export function SignUpForm() {
         ))}
       </div>
 
-      {/* Step 0 — Contact */}
+      {/* Step 0 — Coordonnées */}
       {step === 0 && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -175,6 +189,90 @@ export function SignUpForm() {
               Je souhaite recevoir les actualités et offres de merci murphy® par email.
             </span>
           </label>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={prev} className="flex-1">
+              Retour
+            </Button>
+            <Button
+              onClick={next}
+              disabled={!form.email || !form.password}
+              className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta/90"
+            >
+              Continuer
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2 — Chien */}
+      {step === 2 && (
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">
+              Prénom du chien *
+            </label>
+            <Input
+              placeholder="Ex: Rocky, Bella…"
+              value={form.dog_name ?? ''}
+              onChange={(e) => set('dog_name', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Race</label>
+            <BreedCombobox value={form.dog_breed ?? ''} onChange={(v) => set('dog_breed', v)} />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Âge</label>
+            <Select value={form.dog_age ?? ''} onValueChange={(v) => set('dog_age', v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Âge" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="moins-de-1-an">Moins d&apos;1 an</SelectItem>
+                <SelectItem value="1-an">1 an</SelectItem>
+                <SelectItem value="2-ans">2 ans</SelectItem>
+                <SelectItem value="3-ans">3 ans</SelectItem>
+                <SelectItem value="4-ans">4 ans</SelectItem>
+                <SelectItem value="5-ans">5 ans</SelectItem>
+                <SelectItem value="6-ans">6 ans</SelectItem>
+                <SelectItem value="7-ans">7 ans</SelectItem>
+                <SelectItem value="8-ans">8 ans</SelectItem>
+                <SelectItem value="9-ans">9 ans</SelectItem>
+                <SelectItem value="10-ans">10 ans</SelectItem>
+                <SelectItem value="plus-de-10-ans">Plus de 10 ans</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">Poids</label>
+            <Select value={form.dog_poids ?? ''} onValueChange={(v) => set('dog_poids', v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Poids approximatif" />
+              </SelectTrigger>
+              <SelectContent>
+                {POIDS.map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-charcoal">État du pelage</label>
+            <Select value={form.dog_etat_poil ?? ''} onValueChange={(v) => set('dog_etat_poil', v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="État du pelage" />
+              </SelectTrigger>
+              <SelectContent>
+                {ETAT_POIL.map((e) => (
+                  <SelectItem key={e.value} value={e.value}>
+                    {e.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <div className="flex gap-3">
             <Button variant="outline" onClick={prev} className="flex-1">
@@ -182,7 +280,7 @@ export function SignUpForm() {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={loading || !form.email || !form.password}
+              disabled={loading || !form.dog_name}
               className="flex-1 bg-terracotta-dark text-white hover:bg-terracotta/90"
             >
               {loading ? 'Création…' : 'Créer mon compte'}
