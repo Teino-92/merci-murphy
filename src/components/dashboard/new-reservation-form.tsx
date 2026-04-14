@@ -140,16 +140,6 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
             <div>
               <p className="font-semibold text-[#1D164E]">{selectedProfile.nom}</p>
               <p className="text-sm text-gray-500">{selectedProfile.telephone}</p>
-              {selectedProfile.nom_chien && (
-                <p className="text-sm text-gray-500 mt-1">
-                  🐶 {selectedProfile.nom_chien}
-                  {selectedProfile.grooming_duration && (
-                    <span className="ml-2 text-terracotta-dark font-medium">
-                      · {selectedProfile.grooming_duration} min toilettage
-                    </span>
-                  )}
-                </p>
-              )}
             </div>
             <button
               onClick={() => setSelectedProfile(null)}
@@ -187,10 +177,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
                   >
                     <p className="text-sm font-medium text-[#1D164E]">{p.nom}</p>
-                    <p className="text-xs text-gray-400">
-                      {p.telephone}
-                      {p.nom_chien ? ` · 🐶 ${p.nom_chien}` : ''}
-                    </p>
+                    <p className="text-xs text-gray-400">{p.telephone}</p>
                   </button>
                 ))}
               </div>

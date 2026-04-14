@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Profile, Visit } from '@/lib/supabase-admin'
+import type { Profile, Visit, Dog } from '@/lib/supabase-admin'
 import { ArrowLeft, Pencil, Trash2, X, Upload, Eye, Download } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,16 +13,6 @@ interface ClientFile {
   path: string
   url: string | null
   createdAt: string | null
-}
-
-interface DogRow {
-  id: string
-  name: string
-  breed: string | null
-  age: string | null
-  poids: string | null
-  etat_poil: string | null
-  photo_url: string | null
 }
 
 export function CustomerDetail({
@@ -36,7 +26,7 @@ export function CustomerDetail({
   visits: Visit[]
   email: string | null
   isAdmin: boolean
-  dogs?: DogRow[]
+  dogs?: Dog[]
 }) {
   const router = useRouter()
   const [profile, setProfile] = useState(initial)
@@ -53,15 +43,74 @@ export function CustomerDetail({
   const [editData, setEditData] = useState({
     nom: initial.nom,
     telephone: initial.telephone,
-    nom_chien: initial.nom_chien ?? '',
-    race_chien: initial.race_chien ?? '',
-    age_chien: initial.age_chien ?? '',
-    poids_chien: initial.poids_chien ?? '',
-    etat_poil: initial.etat_poil ?? '',
-    grooming_duration: initial.grooming_duration ?? ('' as number | ''),
-    numero_puce: initial.numero_puce ?? '',
   })
   const [editSaving, setEditSaving] = useState(false)
+
+  // Per-dog editing state
+  const [editingDogId, setEditingDogId] = useState<string | null>(null)
+  const [dogEdits, setDogEdits] = useState<
+    Record<
+      string,
+      {
+        name: string
+        breed: string
+        age: string
+        poids: string
+        etat_poil: string
+        grooming_duration: string
+        numero_puce: string
+        notes: string
+      }
+    >
+  >({})
+
+  function startEditDog(dog: Dog) {
+    setEditingDogId(dog.id)
+    setDogEdits((prev) => ({
+      ...prev,
+      [dog.id]: {
+        name: dog.name,
+        breed: dog.breed ?? '',
+        age: dog.age ?? '',
+        poids: dog.poids ?? '',
+        etat_poil: dog.etat_poil ?? '',
+        grooming_duration: dog.grooming_duration?.toString() ?? '',
+        numero_puce: dog.numero_puce ?? '',
+        notes: dog.notes ?? '',
+      },
+    }))
+  }
+
+  async function saveDog(dogId: string) {
+    const d = dogEdits[dogId]
+    if (!d) return
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/dogs/${dogId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...d,
+        grooming_duration: d.grooming_duration ? Number(d.grooming_duration) : null,
+      }),
+    })
+    if (!res.ok) return
+    setEditingDogId(null)
+    router.refresh()
+  }
+
+  async function addDogForCustomer() {
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/dogs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'Nouveau chien' }),
+    })
+    if (res.ok) router.refresh()
+  }
+
+  async function deleteDogForCustomer(dogId: string) {
+    if (!confirm('Supprimer ce chien ?')) return
+    await fetch(`/api/dashboard/customers/${profile.id}/dogs/${dogId}`, { method: 'DELETE' })
+    router.refresh()
+  }
 
   // Deposit state — keyed by visit id
   const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
@@ -157,14 +206,9 @@ export function CustomerDetail({
     await fetch(`/api/dashboard/customers/${profile.id}/profile`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editData),
+      body: JSON.stringify({ nom: editData.nom, telephone: editData.telephone }),
     })
-    setProfile((p) => ({
-      ...p,
-      ...editData,
-      grooming_duration: editData.grooming_duration === '' ? null : editData.grooming_duration,
-      numero_puce: editData.numero_puce || null,
-    }))
+    setProfile((p) => ({ ...p, nom: editData.nom, telephone: editData.telephone }))
     setEditSaving(false)
     setEditing(false)
   }
@@ -228,7 +272,7 @@ export function CustomerDetail({
       timeZone: 'Europe/Paris',
     })
 
-    const dogName = profile.nom_chien ?? 'votre chien'
+    const dogName = dogs[0]?.name ?? 'votre chien'
     const serviceName = SERVICE_LABELS[visit.service] ?? visit.service
 
     const text = `Bonjour,
@@ -394,7 +438,7 @@ L'équipe merci murphy`
               </button>
             </div>
 
-            {editing ? (
+            {editing && (
               <div className="mt-5 pt-5 border-t border-gray-100 space-y-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Nom</label>
@@ -412,83 +456,6 @@ L'équipe merci murphy`
                     onChange={(e) => setEditData((d) => ({ ...d, telephone: e.target.value }))}
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    Nom du chien
-                  </label>
-                  <input
-                    className={inputCls}
-                    value={editData.nom_chien}
-                    onChange={(e) => setEditData((d) => ({ ...d, nom_chien: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Race</label>
-                  <input
-                    className={inputCls}
-                    value={editData.race_chien}
-                    onChange={(e) => setEditData((d) => ({ ...d, race_chien: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Âge</label>
-                  <input
-                    className={inputCls}
-                    value={editData.age_chien}
-                    placeholder="Ex: 3 ans"
-                    onChange={(e) => setEditData((d) => ({ ...d, age_chien: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Poids</label>
-                  <input
-                    className={inputCls}
-                    value={editData.poids_chien}
-                    onChange={(e) => setEditData((d) => ({ ...d, poids_chien: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    État du poil
-                  </label>
-                  <input
-                    className={inputCls}
-                    value={editData.etat_poil}
-                    onChange={(e) => setEditData((d) => ({ ...d, etat_poil: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    N° de puce électronique
-                  </label>
-                  <input
-                    className={inputCls}
-                    value={editData.numero_puce}
-                    placeholder="15 chiffres"
-                    onChange={(e) => setEditData((d) => ({ ...d, numero_puce: e.target.value }))}
-                  />
-                </div>
-                {editData.nom_chien && (
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
-                      Durée toilettage (min)
-                    </label>
-                    <input
-                      type="number"
-                      min="15"
-                      step="15"
-                      placeholder="Ex: 90"
-                      className={inputCls}
-                      value={editData.grooming_duration}
-                      onChange={(e) =>
-                        setEditData((d) => ({
-                          ...d,
-                          grooming_duration: e.target.value === '' ? '' : Number(e.target.value),
-                        }))
-                      }
-                    />
-                  </div>
-                )}
                 <button
                   onClick={saveProfile}
                   disabled={editSaving}
@@ -497,104 +464,133 @@ L'équipe merci murphy`
                   {editSaving ? 'Sauvegarde…' : 'Sauvegarder'}
                 </button>
               </div>
-            ) : (
-              (dogs.length > 0 || profile.nom_chien) && (
-                <div className="mt-5 pt-5 border-t border-gray-100">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
-                    {dogs.length > 1 ? 'Chiens' : 'Chien'}
-                  </p>
-                  {/* Dogs from dogs table (source of truth) */}
-                  {dogs.length > 0 ? (
-                    <div className="space-y-4">
-                      {dogs.map((dog) => (
-                        <div key={dog.id} className="space-y-1 text-sm">
-                          <p>
-                            <span className="text-gray-400">Nom :</span>{' '}
-                            <span className="font-medium text-[#1D164E]">{dog.name}</span>
-                          </p>
-                          {dog.breed && (
-                            <p>
-                              <span className="text-gray-400">Race :</span> {dog.breed}
-                            </p>
-                          )}
-                          {dog.age && (
-                            <p>
-                              <span className="text-gray-400">Âge :</span> {dog.age}
-                            </p>
-                          )}
-                          {dog.poids && (
-                            <p>
-                              <span className="text-gray-400">Poids :</span> {dog.poids}
-                            </p>
-                          )}
-                          {dog.etat_poil && (
-                            <p>
-                              <span className="text-gray-400">Poil :</span> {dog.etat_poil}
-                            </p>
-                          )}
-                          {profile.numero_puce && (
-                            <p>
-                              <span className="text-gray-400">N° puce :</span>{' '}
-                              <span className="font-mono text-xs">{profile.numero_puce}</span>
-                            </p>
-                          )}
-                          {profile.grooming_duration && (
-                            <p>
-                              <span className="text-gray-400">Durée séance :</span>{' '}
-                              <span className="font-medium text-[#1D164E]">
-                                {profile.grooming_duration} min
-                              </span>
-                            </p>
-                          )}
+            )}
+
+            {/* Dogs section */}
+            <div className="mt-5 pt-5 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                  {dogs.length !== 1 ? 'Chiens' : 'Chien'}
+                </p>
+                {editing && (
+                  <button
+                    onClick={addDogForCustomer}
+                    className="text-xs text-[#1D164E] underline underline-offset-2"
+                  >
+                    + Ajouter
+                  </button>
+                )}
+              </div>
+              {dogs.length === 0 && (
+                <p className="text-sm text-gray-400">Aucun chien enregistré.</p>
+              )}
+              {dogs.map((dog) => (
+                <div key={dog.id} className="mb-4 p-3 rounded-xl bg-gray-50">
+                  {editingDogId === dog.id ? (
+                    <div className="space-y-2">
+                      {(
+                        [
+                          { key: 'name', label: 'Nom' },
+                          { key: 'breed', label: 'Race' },
+                          { key: 'age', label: 'Âge' },
+                          { key: 'poids', label: 'Poids' },
+                          { key: 'etat_poil', label: 'État du poil' },
+                          { key: 'numero_puce', label: 'N° puce' },
+                          { key: 'grooming_duration', label: 'Durée toilettage (min)' },
+                          { key: 'notes', label: 'Notes' },
+                        ] as { key: string; label: string }[]
+                      ).map(({ key, label }) => (
+                        <div key={key}>
+                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                            {label}
+                          </label>
+                          <input
+                            className="w-full text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                            value={dogEdits[dog.id]?.[key as keyof (typeof dogEdits)[string]] ?? ''}
+                            onChange={(e) =>
+                              setDogEdits((prev) => ({
+                                ...prev,
+                                [dog.id]: { ...prev[dog.id], [key]: e.target.value },
+                              }))
+                            }
+                          />
                         </div>
                       ))}
+                      <div className="flex gap-2 pt-1">
+                        <button
+                          onClick={() => saveDog(dog.id)}
+                          className="flex-1 bg-[#1D164E] text-white rounded-lg py-1.5 text-xs font-medium hover:bg-[#1D164E]/90 transition-colors"
+                        >
+                          Sauvegarder
+                        </button>
+                        <button
+                          onClick={() => setEditingDogId(null)}
+                          className="px-3 rounded-lg border border-gray-200 text-xs text-gray-500 hover:bg-gray-100 transition-colors"
+                        >
+                          Annuler
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    /* Fallback: legacy profile fields */
                     <div className="space-y-1 text-sm">
-                      <p>
-                        <span className="text-gray-400">Nom :</span>{' '}
-                        <span className="font-medium text-[#1D164E]">{profile.nom_chien}</span>
-                      </p>
-                      {profile.race_chien && (
+                      <div className="flex justify-between items-start">
+                        <p className="font-medium text-[#1D164E]">{dog.name}</p>
+                        {editing && (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => startEditDog(dog)}
+                              className="text-xs text-gray-400 hover:text-[#1D164E] transition-colors"
+                            >
+                              Modifier
+                            </button>
+                            <button
+                              onClick={() => deleteDogForCustomer(dog.id)}
+                              className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      {dog.breed && (
                         <p>
-                          <span className="text-gray-400">Race :</span> {profile.race_chien}
+                          <span className="text-gray-400">Race :</span> {dog.breed}
                         </p>
                       )}
-                      {profile.age_chien && (
+                      {dog.age && (
                         <p>
-                          <span className="text-gray-400">Âge :</span> {profile.age_chien}
+                          <span className="text-gray-400">Âge :</span> {dog.age}
                         </p>
                       )}
-                      {profile.poids_chien && (
+                      {dog.poids && (
                         <p>
-                          <span className="text-gray-400">Poids :</span> {profile.poids_chien}
+                          <span className="text-gray-400">Poids :</span> {dog.poids}
                         </p>
                       )}
-                      {profile.etat_poil && (
+                      {dog.etat_poil && (
                         <p>
-                          <span className="text-gray-400">Poil :</span> {profile.etat_poil}
+                          <span className="text-gray-400">Poil :</span> {dog.etat_poil}
                         </p>
                       )}
-                      {profile.numero_puce && (
+                      {dog.numero_puce && (
                         <p>
                           <span className="text-gray-400">N° puce :</span>{' '}
-                          <span className="font-mono text-xs">{profile.numero_puce}</span>
+                          <span className="font-mono text-xs">{dog.numero_puce}</span>
                         </p>
                       )}
-                      {profile.grooming_duration && (
+                      {dog.grooming_duration && (
                         <p>
                           <span className="text-gray-400">Durée séance :</span>{' '}
                           <span className="font-medium text-[#1D164E]">
-                            {profile.grooming_duration} min
+                            {dog.grooming_duration} min
                           </span>
                         </p>
                       )}
                     </div>
                   )}
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
 
           {/* Files */}

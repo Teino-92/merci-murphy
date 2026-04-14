@@ -6,7 +6,7 @@ import { Section, Container } from '@/components/ui/section'
 import { ReservationForm } from '@/components/forms/reservation-form'
 import { SlotPicker } from '@/components/forms/slot-picker'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { getProfile } from '@/lib/auth-actions'
+import { getProfile, getDogs } from '@/lib/auth-actions'
 
 export const metadata: Metadata = {
   title: 'Réservation',
@@ -26,9 +26,10 @@ export default async function ReservationPage({
 
   if (!user) redirect('/compte/connexion?redirect=/reservation')
 
-  const profile = await getProfile()
+  const [profile, dogs] = await Promise.all([getProfile(), getDogs()])
   // ?contact=1 forces the callback form regardless of can_book
   const showForm = !profile?.can_book || searchParams.contact === '1'
+  const firstDog = dogs[0] ?? null
 
   return (
     <>
@@ -52,13 +53,13 @@ export default async function ReservationPage({
                 nom: profile?.nom ?? '',
                 email: user.email ?? '',
                 telephone: profile?.telephone ?? '',
-                race_chien: profile?.race_chien ?? '',
-                poids_chien: profile?.poids_chien ?? '',
-                etat_poil: profile?.etat_poil ?? '',
+                race_chien: firstDog?.breed ?? '',
+                poids_chien: firstDog?.poids ?? '',
+                etat_poil: firstDog?.etat_poil ?? '',
               }}
             />
           ) : (
-            <SlotPicker profile={profile!} />
+            <SlotPicker profile={profile!} dogs={dogs} />
           )}
         </Container>
       </Section>

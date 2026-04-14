@@ -17,16 +17,26 @@ export interface Profile {
   created_at: string
   nom: string
   telephone: string
-  nom_chien: string | null
-  race_chien: string | null
-  age_chien: string | null
-  poids_chien: string | null
-  etat_poil: string | null
   notes: string | null
   can_book: boolean
   admission_passed: boolean
+  newsletter_subscribed: boolean
+}
+
+export interface Dog {
+  id: string
+  created_at: string
+  owner_id: string
+  name: string
+  breed: string | null
+  age: string | null
+  poids: string | null
+  etat_poil: string | null
+  photo_url: string | null
   grooming_duration: number | null
   numero_puce: string | null
+  notes: string | null
+  can_book_online: boolean
 }
 
 export interface Visit {
@@ -175,13 +185,14 @@ export interface CreateProfileInput {
   email: string
   nom: string
   telephone: string
+  notes?: string | null
+  // Dog data — written to dogs table only
   nom_chien: string
   race_chien?: string
   age_chien?: string
   poids_chien?: string
   etat_poil?: string
   grooming_duration?: number | null
-  notes?: string | null
 }
 
 export async function createProfileWithAuth(input: CreateProfileInput): Promise<Profile> {
@@ -199,12 +210,6 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
       id: authData.user.id,
       nom: input.nom,
       telephone: input.telephone,
-      nom_chien: input.nom_chien,
-      race_chien: input.race_chien ?? null,
-      age_chien: input.age_chien ?? null,
-      poids_chien: input.poids_chien ?? null,
-      etat_poil: input.etat_poil ?? null,
-      grooming_duration: input.grooming_duration ?? null,
       notes: input.notes ?? null,
     })
     .select()
@@ -212,7 +217,7 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
 
   if (error) throw new Error(error.message)
 
-  // Also insert into dogs table so getDogs() returns results
+  // Insert dog row into dogs table
   await supabaseAdmin.from('dogs').insert({
     owner_id: authData.user.id,
     name: input.nom_chien,
@@ -220,6 +225,7 @@ export async function createProfileWithAuth(input: CreateProfileInput): Promise<
     age: input.age_chien ?? null,
     poids: input.poids_chien ?? null,
     etat_poil: input.etat_poil ?? null,
+    grooming_duration: input.grooming_duration ?? null,
   })
 
   return data

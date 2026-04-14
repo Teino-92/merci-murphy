@@ -65,10 +65,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const slugBase = visit.service.split('-')[0]
   const serviceName = SERVICE_LABELS[slugBase] ?? visit.service
 
-  const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('nom_chien')
-    .eq('id', visit.profile_id)
+  const { data: firstDog } = await supabaseAdmin
+    .from('dogs')
+    .select('name')
+    .eq('owner_id', visit.profile_id)
+    .order('created_at', { ascending: true })
+    .limit(1)
     .single()
 
   const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(visit.profile_id)
@@ -81,7 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         to: clientEmail,
         subject: `Votre rendez-vous a été déplacé chez merci murphy® 🐾`,
         html: bookingRescheduledHtml({
-          dogName: profile?.nom_chien ?? null,
+          dogName: firstDog?.name ?? null,
           serviceName,
           newDate: formattedDate,
         }),

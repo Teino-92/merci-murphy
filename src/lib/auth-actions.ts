@@ -16,15 +16,9 @@ export interface Profile {
   id: string
   nom: string
   telephone: string
-  nom_chien: string | null
-  race_chien: string | null
-  age_chien: string | null
-  poids_chien: string | null
-  etat_poil: string | null
   can_book: boolean
   admission_passed: boolean
   newsletter_subscribed: boolean
-  grooming_duration: number | null
 }
 
 // ─── Sign up ─────────────────────────────────────────────────────────────────
@@ -42,13 +36,7 @@ const SignUpSchema = z.object({
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
   prenom: z.string().min(1),
   nom: z.string().min(1),
-  // stored as e.g. "+33 06 12 34 56 78" — country prefix + space + local digits (spaces allowed)
   telephone: z.string().regex(/^\+\d+\s[\d\s]{6,}$/, 'Numéro de téléphone invalide'),
-  nom_chien: z.string().optional(),
-  race_chien: z.string().optional(),
-  age_chien: z.string().optional(),
-  poids_chien: z.string().optional(),
-  etat_poil: z.string().optional(),
   newsletter_subscribed: z.boolean().optional(),
 })
 
@@ -83,28 +71,11 @@ export async function signUp(data: SignUpData) {
     id: authData.user.id,
     nom: fullNom,
     telephone: parsed.data.telephone,
-    nom_chien: parsed.data.nom_chien ?? null,
-    race_chien: parsed.data.race_chien ?? null,
-    age_chien: parsed.data.age_chien ?? null,
-    poids_chien: parsed.data.poids_chien ?? null,
-    etat_poil: parsed.data.etat_poil ?? null,
     newsletter_subscribed: newsletterSubscribed,
   })
 
   if (profileError) {
     return { success: false, error: `Erreur profil: ${profileError.message}` }
-  }
-
-  // Insert dog row if dog info was provided
-  if (parsed.data.nom_chien) {
-    await supabaseAdmin.from('dogs').insert({
-      owner_id: authData.user.id,
-      name: parsed.data.nom_chien,
-      breed: parsed.data.race_chien ?? null,
-      age: parsed.data.age_chien ?? null,
-      poids: parsed.data.poids_chien ?? null,
-      etat_poil: parsed.data.etat_poil ?? null,
-    })
   }
 
   // Subscribe to newsletter if opted in
@@ -122,7 +93,7 @@ export async function signUp(data: SignUpData) {
     from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
     subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
-    html: accountWelcomeHtml(prenom, parsed.data.nom_chien),
+    html: accountWelcomeHtml(prenom),
   })
 
   if (emailError) {
@@ -203,11 +174,6 @@ export async function getProfile(): Promise<Profile | null> {
 const UpdateProfileSchema = z.object({
   nom: z.string().min(2),
   telephone: z.string().min(8),
-  nom_chien: z.string().optional(),
-  race_chien: z.string().optional(),
-  age_chien: z.string().optional(),
-  poids_chien: z.string().optional(),
-  etat_poil: z.string().optional(),
 })
 
 export async function updateProfile(data: z.infer<typeof UpdateProfileSchema>) {
@@ -265,6 +231,7 @@ export async function updateNewsletter(subscribed: boolean) {
 
 export interface Dog {
   id: string
+  created_at: string
   owner_id: string
   name: string
   breed: string | null
@@ -272,6 +239,10 @@ export interface Dog {
   poids: string | null
   etat_poil: string | null
   photo_url: string | null
+  grooming_duration: number | null
+  numero_puce: string | null
+  notes: string | null
+  can_book_online: boolean
 }
 
 // ─── Visit types ──────────────────────────────────────────────────────────────
@@ -294,7 +265,9 @@ export async function getDogs(): Promise<Dog[]> {
 
   const { data } = await supabaseAdmin
     .from('dogs')
-    .select('id, owner_id, name, breed, age, poids, etat_poil, photo_url')
+    .select(
+      'id, created_at, owner_id, name, breed, age, poids, etat_poil, photo_url, grooming_duration, numero_puce, notes, can_book_online'
+    )
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
 

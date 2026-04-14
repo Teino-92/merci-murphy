@@ -3,17 +3,24 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
-import type { Profile } from '@/lib/supabase-admin'
+import type { Profile, Dog } from '@/lib/supabase-admin'
 
-export function CustomersTable({ profiles }: { profiles: Profile[] }) {
+export function CustomersTable({
+  profiles,
+  dogMap,
+}: {
+  profiles: Profile[]
+  dogMap: Record<string, Pick<Dog, 'name' | 'breed'>>
+}) {
   const [query, setQuery] = useState('')
 
   const filtered = profiles.filter((p) => {
     const q = query.toLowerCase()
+    const dog = dogMap[p.id]
     return (
       p.nom.toLowerCase().includes(q) ||
-      (p.nom_chien ?? '').toLowerCase().includes(q) ||
-      (p.race_chien ?? '').toLowerCase().includes(q) ||
+      (dog?.name ?? '').toLowerCase().includes(q) ||
+      (dog?.breed ?? '').toLowerCase().includes(q) ||
       p.telephone.toLowerCase().includes(q)
     )
   })
@@ -52,30 +59,33 @@ export function CustomersTable({ profiles }: { profiles: Profile[] }) {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
-                <tr
-                  key={p.id}
-                  className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-5 py-4 font-medium text-[#1D164E]">{p.nom}</td>
-                  <td className="px-5 py-4 text-gray-700">{p.nom_chien ?? '—'}</td>
-                  <td className="px-5 py-4 text-gray-500 hidden sm:table-cell">
-                    {p.race_chien ?? '—'}
-                  </td>
-                  <td className="px-5 py-4 text-gray-500 hidden md:table-cell">{p.telephone}</td>
-                  <td className="px-5 py-4 text-gray-400 hidden lg:table-cell">
-                    {new Date(p.created_at).toLocaleDateString('fr-FR')}
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <Link
-                      href={`/dashboard/customers/${p.id}`}
-                      className="text-xs font-medium text-[#1D164E] hover:underline"
-                    >
-                      Voir →
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((p) => {
+                const dog = dogMap[p.id]
+                return (
+                  <tr
+                    key={p.id}
+                    className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-5 py-4 font-medium text-[#1D164E]">{p.nom}</td>
+                    <td className="px-5 py-4 text-gray-700">{dog?.name ?? '—'}</td>
+                    <td className="px-5 py-4 text-gray-500 hidden sm:table-cell">
+                      {dog?.breed ?? '—'}
+                    </td>
+                    <td className="px-5 py-4 text-gray-500 hidden md:table-cell">{p.telephone}</td>
+                    <td className="px-5 py-4 text-gray-400 hidden lg:table-cell">
+                      {new Date(p.created_at).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <Link
+                        href={`/dashboard/customers/${p.id}`}
+                        className="text-xs font-medium text-[#1D164E] hover:underline"
+                      >
+                        Voir →
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

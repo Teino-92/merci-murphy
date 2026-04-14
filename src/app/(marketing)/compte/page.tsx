@@ -51,7 +51,7 @@ export default async function ComptePage() {
           canBook={profile.can_book}
         />
         <ProfileCard profile={profile} email={user.email ?? ''} />
-        <DogsCard dogs={dogs} groomingDuration={profile.grooming_duration} />
+        <DogsCard dogs={dogs} />
         <BookingCta canBook={profile.can_book} />
         <VisitTimeline visits={visits} dogs={dogs} />
       </div>

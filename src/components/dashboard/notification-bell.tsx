@@ -39,7 +39,7 @@ export function NotificationBell() {
     const [visitsRes, leadsRes, nlRes] = await Promise.all([
       supabase
         .from('visits')
-        .select('id, profile_id, service, status, created_at, profiles(nom, nom_chien)')
+        .select('id, profile_id, service, status, created_at, profiles(nom)')
         .in('status', ['confirmed', 'pending_deposit'])
         .order('created_at', { ascending: false })
         .limit(20),
@@ -71,10 +71,7 @@ export function NotificationBell() {
 
     for (const v of visitsRes.data ?? []) {
       const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
-      const name =
-        (profile as { nom_chien?: string | null; nom?: string } | null)?.nom_chien ??
-        (profile as { nom?: string } | null)?.nom ??
-        '—'
+      const name = (profile as { nom?: string } | null)?.nom ?? '—'
       const slug = v.service.split('-')[0]
       items.push({
         id: `visit-${v.id}`,

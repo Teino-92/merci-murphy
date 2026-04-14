@@ -12,7 +12,7 @@ import {
   Dices,
   type LucideIcon,
 } from 'lucide-react'
-import type { Profile } from '@/lib/auth-actions'
+import type { Profile, Dog } from '@/lib/auth-actions'
 import { ONLINE_BOOKABLE, BOOKING_HORIZON_DAYS } from '@/lib/booking-config'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 
@@ -50,7 +50,7 @@ interface Toiletteur {
   color: string
 }
 
-type Step = 'service' | 'staff' | 'creche-duration' | 'date' | 'time' | 'confirmed'
+type Step = 'service' | 'dog' | 'staff' | 'creche-duration' | 'date' | 'time' | 'confirmed'
 
 const CRECHE_DURATIONS = [
   { value: 60, label: '1 heure' },
@@ -228,7 +228,7 @@ function MonthCalendar({
 
 // ─── SlotPicker ───────────────────────────────────────────────────────────────
 
-export function SlotPicker({ profile }: { profile: Profile }) {
+export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] }) {
   const [step, setStep] = useState<Step>('service')
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -251,6 +251,9 @@ export function SlotPicker({ profile }: { profile: Profile }) {
 
   // Crèche duration state
   const [crecheDuration, setCrecheDuration] = useState<number | null>(null)
+
+  // Selected dog state
+  const [selectedDog, setSelectedDog] = useState<Dog | null>(dogs.length === 1 ? dogs[0] : null)
 
   // Hover animation state for service icons
   const [animatingService, setAnimatingService] = useState<string | null>(null)
@@ -275,12 +278,14 @@ export function SlotPicker({ profile }: { profile: Profile }) {
         const slugBase = service.split('-')[0]
         let url = `/api/booking/slots?service=${slugBase}&date=${date}`
         if (slugBase === 'toilettage') {
-          if (!profile.grooming_duration) {
-            setSlotsError("Votre durée de toilettage n'est pas encore définie. Contactez-nous.")
+          if (!selectedDog?.grooming_duration) {
+            setSlotsError(
+              "La durée de toilettage de votre chien n'est pas encore définie. Contactez-nous."
+            )
             setSlotsLoading(false)
             return
           }
-          url += `&duration=${profile.grooming_duration}`
+          url += `&duration=${selectedDog.grooming_duration}`
         }
         if (slugBase === 'creche' && durationOverride) {
           url += `&duration=${durationOverride}`
@@ -303,7 +308,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
         setSlotsLoading(false)
       }
     },
-    [profile.grooming_duration]
+    [selectedDog]
   )
 
   useEffect(() => {
@@ -342,9 +347,10 @@ export function SlotPicker({ profile }: { profile: Profile }) {
         timeUtc,
         staffId: staffId ?? null,
       }
-      if (slugBase === 'toilettage' && profile.grooming_duration) {
-        body.duration = profile.grooming_duration
+      if (slugBase === 'toilettage' && selectedDog?.grooming_duration) {
+        body.duration = selectedDog.grooming_duration
       }
+      body.dogId = selectedDog?.id ?? null
       if (slugBase === 'creche' && crecheDuration) {
         body.duration = crecheDuration
       }
@@ -381,6 +387,7 @@ export function SlotPicker({ profile }: { profile: Profile }) {
     setSelectedStaffId(null)
     setSelectedStaffName(null)
     setCrecheDuration(null)
+    setSelectedDog(dogs.length === 1 ? dogs[0] : null)
     setConfirmedService(null)
     setConfirmedDate(null)
     setConfirmedTime(null)
@@ -432,9 +439,17 @@ export function SlotPicker({ profile }: { profile: Profile }) {
                 key={s.slug}
                 onClick={() => {
                   setSelectedService(s.slug)
-                  if (s.slug === 'toilettage') setStep('staff')
-                  else if (s.slug === 'creche') setStep('creche-duration')
-                  else setStep('date')
+                  const slugBase = s.slug.split('-')[0]
+                  if (slugBase === 'toilettage' && dogs.length > 1) {
+                    setStep('dog')
+                  } else if (slugBase === 'toilettage') {
+                    // single dog already set via useState default
+                    setStep('staff')
+                  } else if (slugBase === 'creche') {
+                    setStep('creche-duration')
+                  } else {
+                    setStep('date')
+                  }
                 }}
                 onMouseEnter={() => setAnimatingService(s.slug)}
                 onAnimationEnd={() => setAnimatingService(null)}
@@ -470,13 +485,49 @@ export function SlotPicker({ profile }: { profile: Profile }) {
     )
   }
 
+  // ── Dog selection ─────────────────────────────────────────────────────────────
+  if (step === 'dog') {
+    return (
+      <div className="space-y-4">
+        <h2 className="font-display text-xl font-bold text-charcoal">Pour quel chien ?</h2>
+        <div className="space-y-2">
+          {dogs.map((dog) => (
+            <button
+              key={dog.id}
+              onClick={() => {
+                setSelectedDog(dog)
+                setStep('staff')
+              }}
+              className="w-full text-left p-4 rounded-xl border border-charcoal/10 hover:border-terracotta-dark hover:bg-terracotta-dark/5 transition-colors"
+            >
+              <p className="font-medium text-charcoal">{dog.name}</p>
+              {dog.breed && <p className="text-sm text-charcoal/60">{dog.breed}</p>}
+              {!dog.grooming_duration && (
+                <p className="text-xs text-red-400 mt-1">Durée de toilettage non définie</p>
+              )}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => {
+            setSelectedService(null)
+            setStep('service')
+          }}
+          className="text-sm text-charcoal/50 underline"
+        >
+          ← Retour
+        </button>
+      </div>
+    )
+  }
+
   // ── Staff (toilettage only) ───────────────────────────────────────────────────
   if (step === 'staff') {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setStep('service')}
+            onClick={() => setStep(dogs.length > 1 ? 'dog' : 'service')}
             className="text-xs text-charcoal/40 hover:text-charcoal underline underline-offset-2 transition-colors"
           >
             ← Retour

@@ -31,12 +31,21 @@ export async function GET(req: NextRequest) {
 
   // Fetch profile names
   const profileIds = Array.from(new Set((data ?? []).map((v) => v.profile_id)))
-  const { data: profiles } = await supabaseAdmin
-    .from('profiles')
-    .select('id, nom, nom_chien')
-    .in('id', profileIds)
+  const [profilesRes, dogsRes] = await Promise.all([
+    supabaseAdmin.from('profiles').select('id, nom').in('id', profileIds),
+    supabaseAdmin
+      .from('dogs')
+      .select('owner_id, name')
+      .in('owner_id', profileIds)
+      .order('created_at', { ascending: true }),
+  ])
 
-  const profileMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]))
+  const profileMap = Object.fromEntries((profilesRes.data ?? []).map((p) => [p.id, p]))
+  // First dog per owner
+  const dogMap: Record<string, string> = {}
+  for (const dog of dogsRes.data ?? []) {
+    if (!dogMap[dog.owner_id]) dogMap[dog.owner_id] = dog.name
+  }
 
   const { data: staffRows } = await supabaseAdmin.from('staff').select('name, color')
   const staffColorMap = Object.fromEntries((staffRows ?? []).map((s) => [s.name, s.color]))
@@ -44,7 +53,7 @@ export async function GET(req: NextRequest) {
   const visits = (data ?? []).map((v) => ({
     ...v,
     client_nom: profileMap[v.profile_id]?.nom ?? '—',
-    nom_chien: profileMap[v.profile_id]?.nom_chien ?? null,
+    nom_chien: dogMap[v.profile_id] ?? null,
     staff_color: v.staff ? (staffColorMap[v.staff] ?? '#4F6072') : '#4F6072',
   }))
 

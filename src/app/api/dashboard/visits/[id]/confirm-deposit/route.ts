@@ -47,9 +47,16 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   // Send deposit-paid email to client
-  const [profileRes, authUserRes] = await Promise.all([
-    supabaseAdmin.from('profiles').select('nom, nom_chien').eq('id', visit.profile_id).single(),
+  const [profileRes, authUserRes, dogRes] = await Promise.all([
+    supabaseAdmin.from('profiles').select('nom').eq('id', visit.profile_id).single(),
     supabaseAdmin.auth.admin.getUserById(visit.profile_id),
+    supabaseAdmin
+      .from('dogs')
+      .select('name')
+      .eq('owner_id', visit.profile_id)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single(),
   ])
 
   const clientEmail = authUserRes.data.user?.email
@@ -72,7 +79,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
         subject: `Acompte reçu — votre toilettage est confirmé chez merci murphy® 🐾`,
         html: depositPaidHtml({
           clientName: profileRes.data?.nom ?? '',
-          dogName: profileRes.data?.nom_chien ?? null,
+          dogName: dogRes.data?.name ?? null,
           serviceName: SERVICE_LABELS[slugBase] ?? visit.service,
           appointmentDate,
         }),
