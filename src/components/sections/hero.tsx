@@ -33,7 +33,7 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
           <div className="flex items-center gap-3 mb-4">
             <span className="block w-6 h-px bg-terracotta-dark flex-shrink-0" />
             <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-terracotta-dark">
-              Paris · Toilettage &amp; Spa
+              Vivre heureux avec son chien et son chat à Paris.
             </span>
           </div>
           <h1 className="font-display text-[7.5vw] font-normal leading-tight text-charcoal mb-4">
@@ -81,7 +81,7 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
                 className="text-[13px] font-semibold tracking-[0.18em] uppercase font-sans"
                 style={{ color: '#8B5A3A' }}
               >
-                Paris · Toilettage &amp; Spa
+                Vivre heureux avec son chien et son chat à Paris.
               </span>
             </div>
             <h1 className="font-display text-[3.4vw] font-normal leading-[1.08] text-charcoal tracking-[-0.02em]">
