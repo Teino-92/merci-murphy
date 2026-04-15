@@ -20,7 +20,7 @@ export default function ResetPasswordPage() {
     // Supabase envoie le token dans le hash — le SDK émet PASSWORD_RECOVERY une fois consommé
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
+    } = supabase.auth.onAuthStateChange((event: string) => {
       if (event === 'PASSWORD_RECOVERY') setReady(true)
     })
     return () => subscription.unsubscribe()
