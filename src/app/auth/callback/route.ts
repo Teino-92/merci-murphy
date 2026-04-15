@@ -16,10 +16,5 @@ export async function GET(request: Request) {
     await supabase.auth.verifyOtp({ token_hash, type })
   }
 
-  // Password reset — send to reset form
-  if (type === 'recovery') {
-    return NextResponse.redirect(`${origin}/auth/reset-password`)
-  }
-
   return NextResponse.redirect(`${origin}${next}`)
 }
