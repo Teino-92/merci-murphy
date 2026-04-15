@@ -24,6 +24,7 @@ export function depositPaidHtml(params: {
         "Si vous avez la moindre question avant votre rendez-vous, n'hésitez pas à nous contacter."
       ),
       p('<strong>À très bientôt chez merci murphy® !</strong>'),
+      p('Merci de noter que toute préstation annulée à moins de 24h est dûe en intégralité.'),
     ].join('\n'),
   })
 }

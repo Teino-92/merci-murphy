@@ -402,18 +402,23 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
     return (
       <div className="rounded-2xl bg-white border border-[#f0ebe3] p-8 text-center space-y-4">
         <div className="text-4xl">🐾</div>
-        <h2 className="font-display text-xl font-bold text-charcoal">Rendez-vous confirmé !</h2>
+        <h2 className="font-display text-xl font-bold text-charcoal">
+          Votre demande de rendez-vous est prise en compte !
+        </h2>
         <p className="text-sm text-charcoal/60">
           {SERVICE_LABELS[confirmedService?.split('-')[0] ?? ''] ?? confirmedService}
           {durationLabel} · {confirmedDate ? formatDateFr(confirmedDate) : ''} à {confirmedTime}
         </p>
         {confirmedService?.split('-')[0] === 'toilettage' ? (
           <p className="text-xs text-charcoal/40">
-            Vous recevrez un email avec un lien de paiement d&apos;acompte dans les 2 heures. Pensez
-            à vérifier vos spams.
+            Vous recevrez un email avec un lien de paiement d&apos;acompte dans la journée. Pensez à
+            vérifier vos spams.
           </p>
         ) : (
-          <p className="text-xs text-charcoal/40">Un email de confirmation vous a été envoyé.</p>
+          <p className="text-xs text-charcoal/40">
+            Nous vous rappelons que l&apos;horaire choisit sera confirmé par l&apos;équipe merci
+            murphy®.
+          </p>
         )}
         <button
           onClick={resetAll}

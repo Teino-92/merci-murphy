@@ -285,7 +285,7 @@ export default async function HomePage() {
       />
 
       <Hero
-        subtitle="Merci Murphy propose des services de toilettage, spa et crèche pour chiens à Paris 9, dans un cadre premium dédié au bien-être animal."
+        subtitle="merci murphy® propose des services de toilettage, spa et crèche pour chiens à Paris 9, dans un cadre premium dédié au bien-être animal."
         imageSrc="/concept-hero.jpg"
       />
 
