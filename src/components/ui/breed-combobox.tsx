@@ -360,7 +360,7 @@ export function BreedCombobox({ value, onChange }: BreedComboboxProps) {
       </div>
 
       {open && filtered.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full rounded-xl border border-charcoal/10 bg-white shadow-lg overflow-hidden max-h-60 overflow-y-auto">
+        <ul className="absolute z-[9999] mt-1 w-full rounded-xl border border-charcoal/10 bg-white shadow-lg max-h-60 overflow-y-auto">
           {filtered.map((breed) => (
             <li key={breed}>
               <button
