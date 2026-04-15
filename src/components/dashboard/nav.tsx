@@ -13,6 +13,7 @@ import {
   Mail,
   LogOut,
   CalendarDays,
+  Download,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { NotificationBell } from './notification-bell'
@@ -37,6 +38,7 @@ const ADMIN_NAV = [
   },
   { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList, mobileOnly: false },
   { href: '/dashboard/newsletter', label: 'Newsletter', icon: Mail, desktopOnly: true },
+  { href: '/dashboard/export', label: 'Export', icon: Download, desktopOnly: true },
 ]
 
 const TEAM_NAV = [
