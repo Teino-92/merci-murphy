@@ -148,7 +148,7 @@ export async function getCollectionByHandle(handle: string): Promise<ShopifyColl
       collection(handle: $handle) {
         id title handle description
         image { url altText width height }
-        products(first: 24, sortKey: BEST_SELLING) { nodes { ${PRODUCT_FRAGMENT} } }
+        products(first: 24, sortKey: MANUAL) { nodes { ${PRODUCT_FRAGMENT} } }
       }
     }`,
     { handle }
