@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
@@ -14,17 +14,6 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    // Supabase envoie le token dans le hash — le SDK émet PASSWORD_RECOVERY une fois consommé
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: string) => {
-      if (event === 'PASSWORD_RECOVERY') setReady(true)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -72,9 +61,7 @@ export default function ResetPasswordPage() {
           />
         </div>
         <div className="bg-white rounded-2xl p-8 shadow-xl">
-          {!ready ? (
-            <p className="text-center text-sm text-gray-500">Vérification du lien…</p>
-          ) : success ? (
+          {success ? (
             <div className="text-center">
               <p className="text-lg font-semibold text-[#4F6072]">Mot de passe mis à jour !</p>
               <p className="mt-2 text-sm text-gray-500">Redirection en cours…</p>
