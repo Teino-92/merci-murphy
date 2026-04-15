@@ -12,7 +12,7 @@ export function newsletterWelcomeHtml(): string {
       p('En attendant, découvrez nos services et notre boutique :'),
       btn('Visiter mercimurphy.com', 'https://mercimurphy.com'),
       p(
-        '<span style="font-size:13px;color:#888;">Vous recevez cet email car vous vous êtes inscrit·e à la newsletter merci murphy®. Pour vous désabonner, contactez-nous à <a href="mailto:bonjour@mercimurphy.com" style="color:#B85C38;">bonjour@mercimurphy.com</a>.</span>'
+        '<span style="font-size:13px;color:#888;">Vous recevez cet email car vous vous êtes inscrit·e à la newsletter merci murphy®. Pour vous désabonner, contactez-nous à <a href="mailto:bonjour@mercimurphy.com" style="color:#8B5A3A;">bonjour@mercimurphy.com</a>.</span>'
       ),
     ].join('\n'),
   })

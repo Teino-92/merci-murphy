@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: user.email!,
-        subject: `Votre rendez-vous est confirmé chez merci murphy® 🐾`,
+        subject: `Votre rendez-vous est confirmé chez merci murphy®`,
         html: bookingConfirmedHtml({
           clientName: profile?.nom ?? '',
           serviceName,

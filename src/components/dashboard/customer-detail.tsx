@@ -121,6 +121,10 @@ export function CustomerDetail({
   const [finalPriceInputs, setFinalPriceInputs] = useState<Record<string, string>>({})
   const [savingFinalPrice, setSavingFinalPrice] = useState<Record<string, boolean>>({})
 
+  // Visit notes — keyed by visit id
+  const [visitNotesInputs, setVisitNotesInputs] = useState<Record<string, string>>({})
+  const [savingVisitNotes, setSavingVisitNotes] = useState<Record<string, boolean>>({})
+
   // Add visit state
   const [showVisitForm, setShowVisitForm] = useState(false)
   const [visitService, setVisitService] = useState('toilettage')
@@ -249,9 +253,16 @@ export function CustomerDetail({
 
   async function confirmDeposit(visitId: string) {
     setConfirmingDeposit((s) => ({ ...s, [visitId]: true }))
-    await fetch(`/api/dashboard/visits/${visitId}/confirm-deposit`, { method: 'POST' })
+    const depositAmount = depositSent[visitId] ?? null
+    await fetch(`/api/dashboard/visits/${visitId}/confirm-deposit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deposit_amount: depositAmount }),
+    })
     setVisits((prev) =>
-      prev.map((v) => (v.id === visitId ? { ...v, status: 'confirmed' as const } : v))
+      prev.map((v) =>
+        v.id === visitId ? { ...v, status: 'confirmed' as const, deposit_amount: depositAmount } : v
+      )
     )
     setConfirmingDeposit((s) => ({ ...s, [visitId]: false }))
   }
@@ -270,6 +281,24 @@ export function CustomerDetail({
       setFinalPriceInputs((s) => ({ ...s, [visitId]: '' }))
     }
     setSavingFinalPrice((s) => ({ ...s, [visitId]: false }))
+  }
+
+  async function saveVisitNotes(visitId: string) {
+    const val = visitNotesInputs[visitId]
+    if (val === undefined) return
+    setSavingVisitNotes((s) => ({ ...s, [visitId]: true }))
+    const res = await fetch(`/api/dashboard/customers/${profile.id}/visits/${visitId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visit_notes: val }),
+    })
+    if (res.ok) {
+      setVisits((prev) =>
+        prev.map((v) => (v.id === visitId ? { ...v, visit_notes: val || null } : v))
+      )
+      setVisitNotesInputs((s) => ({ ...s, [visitId]: undefined as unknown as string }))
+    }
+    setSavingVisitNotes((s) => ({ ...s, [visitId]: false }))
   }
 
   async function deleteVisit(visitId: string) {
@@ -877,9 +906,60 @@ L'équipe merci murphy`
                             >
                               {savingFinalPrice[v.id] ? '…' : 'OK'}
                             </button>
+                            {v.deposit_amount != null && (
+                              <span className="text-xs text-gray-400">
+                                acompte {v.deposit_amount.toFixed(2)} €
+                              </span>
+                            )}
                           </div>
                         )}
                         {v.notes && <p className="text-xs text-gray-500 mt-1">{v.notes}</p>}
+                        <div className="mt-2">
+                          {v.visit_notes && visitNotesInputs[v.id] === undefined ? (
+                            <p
+                              className="text-xs text-gray-500 italic cursor-pointer hover:text-gray-700"
+                              onClick={() =>
+                                setVisitNotesInputs((s) => ({ ...s, [v.id]: v.visit_notes ?? '' }))
+                              }
+                            >
+                              {v.visit_notes}
+                            </p>
+                          ) : visitNotesInputs[v.id] !== undefined ? (
+                            <div className="flex items-start gap-2">
+                              <textarea
+                                rows={2}
+                                autoFocus
+                                placeholder="Notes sur cette visite…"
+                                value={visitNotesInputs[v.id]}
+                                onChange={(e) =>
+                                  setVisitNotesInputs((s) => ({ ...s, [v.id]: e.target.value }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Escape')
+                                    setVisitNotesInputs((s) => ({
+                                      ...s,
+                                      [v.id]: undefined as unknown as string,
+                                    }))
+                                }}
+                                className="flex-1 text-xs rounded-lg border border-gray-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E] resize-none"
+                              />
+                              <button
+                                onClick={() => saveVisitNotes(v.id)}
+                                disabled={savingVisitNotes[v.id]}
+                                className="text-xs font-medium bg-[#1D164E] text-white px-2.5 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-40 transition-colors shrink-0"
+                              >
+                                {savingVisitNotes[v.id] ? '…' : 'OK'}
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setVisitNotesInputs((s) => ({ ...s, [v.id]: '' }))}
+                              className="text-xs text-gray-300 hover:text-gray-500 transition-colors"
+                            >
+                              + note
+                            </button>
+                          )}
+                        </div>
                         {depositSent[v.id] != null && (
                           <p className="text-xs text-green-600 mt-1">
                             ✓ Acompte de {depositSent[v.id].toFixed(2)} € envoyé

@@ -152,7 +152,7 @@ export async function subscribeNewsletter(data: { email: string }) {
     .send({
       from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM}>`,
       to: parsed.data.email,
-      subject: 'Bienvenue dans la communauté merci murphy® 🐾',
+      subject: 'Bienvenue dans la communauté merci murphy®',
       html: newsletterWelcomeHtml(),
     })
     .catch(() => {})

@@ -17,7 +17,7 @@ const SERVICE_LABELS: Record<string, string> = {
   creche: 'Crèche',
 }
 
-export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },
@@ -25,6 +25,10 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasDashboardAccess(user.email))
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const body = await req.json().catch(() => ({}))
+  const depositAmount: number | null =
+    typeof body.deposit_amount === 'number' && body.deposit_amount > 0 ? body.deposit_amount : null
 
   // Fetch visit + profile
   const { data: visit, error: fetchError } = await supabaseAdmin
@@ -41,7 +45,11 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   // Mark confirmed
   const { error } = await supabaseAdmin
     .from('visits')
-    .update({ status: 'confirmed', deposit_paid_at: new Date().toISOString() })
+    .update({
+      status: 'confirmed',
+      deposit_paid_at: new Date().toISOString(),
+      ...(depositAmount !== null ? { deposit_amount: depositAmount } : {}),
+    })
     .eq('id', params.id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -76,7 +84,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       .send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: clientEmail,
-        subject: `Acompte reçu — votre toilettage est confirmé chez merci murphy® 🐾`,
+        subject: `Acompte reçu — votre toilettage est confirmé chez merci murphy®`,
         html: depositPaidHtml({
           clientName: profileRes.data?.nom ?? '',
           dogName: dogRes.data?.name ?? null,

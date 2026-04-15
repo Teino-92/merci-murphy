@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
       await resend.emails.send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: authUser.email,
-        subject: `Rappel — votre rendez-vous demain chez merci murphy® 🐾`,
+        subject: `Rappel — votre rendez-vous demain chez merci murphy®`,
         html: bookingReminderHtml({
           dogName: firstDog?.name ?? null,
           serviceName,

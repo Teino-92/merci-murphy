@@ -4,6 +4,8 @@ import { useState } from 'react'
 import type { Lead } from '@/lib/supabase-admin'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 
+const MESSAGE_TRUNCATE = 80
+
 const STATUSES = ['new', 'contacted', 'confirmed', 'cancelled'] as const
 type LeadStatus = (typeof STATUSES)[number]
 
@@ -34,8 +36,9 @@ export function LeadsTable({
   leads: (Lead & { has_account: boolean })[]
 }) {
   const [leads, setLeads] = useState(initialLeads)
-  const [filter, setFilter] = useState<string>('all')
+  const [filter, setFilter] = useState<string>('new')
   const [updating, setUpdating] = useState<string | null>(null)
+  const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({})
 
   async function changeStatus(id: string, status: LeadStatus) {
     setUpdating(id + status)
@@ -59,7 +62,7 @@ export function LeadsTable({
     <div>
       {/* Filter tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {['all', 'new', 'contacted', 'confirmed', 'cancelled', 'no_account'].map((s) => (
+        {['new', 'contacted', 'confirmed', 'cancelled', 'no_account', 'all'].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -68,13 +71,13 @@ export function LeadsTable({
             }`}
           >
             {s === 'all' ? 'Tout' : s === 'no_account' ? 'Sans compte' : STATUS_LABELS[s]}
-            {s !== 'all' && (
-              <span className="ml-1.5 text-xs opacity-70">
-                {s === 'no_account'
+            <span className="ml-1.5 text-xs opacity-70">
+              {s === 'all'
+                ? leads.length
+                : s === 'no_account'
                   ? leads.filter((l) => !l.has_account).length
                   : leads.filter((l) => l.status === s).length}
-              </span>
-            )}
+            </span>
           </button>
         ))}
       </div>
@@ -121,7 +124,23 @@ export function LeadsTable({
                       </p>
                     )}
                     {lead.message && (
-                      <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{lead.message}</p>
+                      <div className="mt-0.5">
+                        <p className="text-xs text-gray-400">
+                          {expandedMessages[lead.id] || lead.message.length <= MESSAGE_TRUNCATE
+                            ? lead.message
+                            : lead.message.slice(0, MESSAGE_TRUNCATE) + '…'}
+                        </p>
+                        {lead.message.length > MESSAGE_TRUNCATE && (
+                          <button
+                            onClick={() =>
+                              setExpandedMessages((s) => ({ ...s, [lead.id]: !s[lead.id] }))
+                            }
+                            className="text-[10px] text-gray-400 hover:text-gray-600 underline transition-colors"
+                          >
+                            {expandedMessages[lead.id] ? 'Réduire' : 'Voir plus'}
+                          </button>
+                        )}
+                      </div>
                     )}
                   </td>
                   <td className="px-5 py-4 text-gray-600 hidden sm:table-cell">

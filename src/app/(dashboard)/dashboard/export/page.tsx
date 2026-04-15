@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Download } from 'lucide-react'
+import { Download, DownloadCloud } from 'lucide-react'
 
 const EXPORTS = [
   { table: 'profiles', label: 'Profils clients', description: 'Noms, téléphones, statuts' },
@@ -12,18 +12,33 @@ const EXPORTS = [
 export default function ExportPage() {
   const [loading, setLoading] = useState<string | null>(null)
 
+  async function downloadTable(table: string) {
+    const res = await fetch(`/api/dashboard/export?table=${table}`)
+    if (!res.ok) throw new Error(`Erreur export ${table}`)
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${table}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   async function handleExport(table: string) {
     setLoading(table)
     try {
-      const res = await fetch(`/api/dashboard/export?table=${table}`)
-      if (!res.ok) throw new Error('Erreur export')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${table}.csv`
-      a.click()
-      URL.revokeObjectURL(url)
+      await downloadTable(table)
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  async function handleExportAll() {
+    setLoading('all')
+    try {
+      for (const { table } of EXPORTS) {
+        await downloadTable(table)
+      }
     } finally {
       setLoading(null)
     }
@@ -31,9 +46,19 @@ export default function ExportPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1D164E]">Export</h1>
-        <p className="text-sm text-gray-400 mt-1">Téléchargez les données en CSV</p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1D164E]">Export</h1>
+          <p className="text-sm text-gray-400 mt-1">Téléchargez les données en CSV</p>
+        </div>
+        <button
+          onClick={handleExportAll}
+          disabled={loading !== null}
+          className="flex items-center gap-2 rounded-xl bg-[#1D164E] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+        >
+          <DownloadCloud className="h-4 w-4" />
+          {loading === 'all' ? 'Export en cours…' : 'Tout exporter'}
+        </button>
       </div>
       <div className="grid gap-4 max-w-lg">
         {EXPORTS.map(({ table, label, description }) => (
@@ -47,7 +72,7 @@ export default function ExportPage() {
             </div>
             <button
               onClick={() => handleExport(table)}
-              disabled={loading === table}
+              disabled={loading !== null}
               className="flex items-center gap-2 rounded-xl bg-[#1D164E] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
             >
               <Download className="h-4 w-4" />

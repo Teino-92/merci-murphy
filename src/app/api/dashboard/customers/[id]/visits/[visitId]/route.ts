@@ -13,16 +13,26 @@ export async function PATCH(req: NextRequest, { params }: { params: { visitId: s
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { price } = body
+  const { price, visit_notes } = body
 
-  if (price == null || isNaN(Number(price)) || Number(price) <= 0) {
-    return NextResponse.json({ error: 'price invalide' }, { status: 400 })
+  const update: Record<string, unknown> = {}
+
+  if (price != null) {
+    if (isNaN(Number(price)) || Number(price) <= 0) {
+      return NextResponse.json({ error: 'price invalide' }, { status: 400 })
+    }
+    update.price = Number(price)
   }
 
-  const { error } = await supabaseAdmin
-    .from('visits')
-    .update({ price: Number(price) })
-    .eq('id', params.visitId)
+  if (visit_notes !== undefined) {
+    update.visit_notes = visit_notes || null
+  }
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: 'Aucun champ à mettre à jour' }, { status: 400 })
+  }
+
+  const { error } = await supabaseAdmin.from('visits').update(update).eq('id', params.visitId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })

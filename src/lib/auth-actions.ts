@@ -114,7 +114,7 @@ export async function signUp(data: SignUpData) {
   const { error: emailError } = await resend.emails.send({
     from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
-    subject: `Bienvenue chez merci murphy®, ${prenom} 🐾`,
+    subject: `Bienvenue chez merci murphy®, ${prenom}`,
     html: accountWelcomeHtml(prenom, parsed.data.dog_name),
   })
 

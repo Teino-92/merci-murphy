@@ -77,7 +77,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       .send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: clientEmail,
-        subject: `Votre rendez-vous a été déplacé chez merci murphy® 🐾`,
+        subject: `Votre rendez-vous a été déplacé chez merci murphy®`,
         html: bookingRescheduledHtml({
           dogName: firstDog?.name ?? null,
           serviceName,

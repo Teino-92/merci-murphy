@@ -19,7 +19,7 @@ export function accountWelcomeHtml(prenom: string, nomChien?: string): string {
       ),
       btn('Découvrir nos services', 'https://mercimurphy.com/services'),
       p(
-        '<span style="font-size:13px;color:#888;">Une question ? Écrivez-nous à <a href="mailto:bonjour@mercimurphy.com" style="color:#B85C38;">bonjour@mercimurphy.com</a></span>'
+        '<span style="font-size:13px;color:#888;">Une question ? Écrivez-nous à <a href="mailto:bonjour@mercimurphy.com" style="color:#8B5A3A;">bonjour@mercimurphy.com</a></span>'
       ),
     ].join('\n'),
   })
