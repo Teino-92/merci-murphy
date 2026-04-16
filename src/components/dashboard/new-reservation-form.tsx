@@ -1,11 +1,29 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Search, X, Check } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
+import { BreedCombobox } from '@/components/ui/breed-combobox'
 import { useRouter } from 'next/navigation'
 import type { Profile } from '@/lib/supabase-admin'
 import type { ServiceOption } from '@/app/(dashboard)/dashboard/reservations/new/page'
+
+interface Dog {
+  id: string
+  name: string
+  grooming_duration: number | null
+}
+
+interface ProfileWithDogs extends Profile {
+  dog_names: string[]
+  dogs: Dog[]
+}
+
+interface StaffMember {
+  id: string
+  name: string
+  active: boolean
+}
 
 interface NewReservationFormProps {
   services: ServiceOption[]
@@ -16,11 +34,24 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   const inputCls =
     'w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]'
 
+  // Staff
+  const [staffList, setStaffList] = useState<StaffMember[]>([])
+  useEffect(() => {
+    fetch('/api/dashboard/staff')
+      .then((r) => r.json())
+      .then((data) =>
+        setStaffList(Array.isArray(data) ? data.filter((s: StaffMember) => s.active) : [])
+      )
+      .catch(() => {})
+  }, [])
+
   // Client selection
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<(Profile & { dog_names: string[] })[]>([])
+  const [searchResults, setSearchResults] = useState<ProfileWithDogs[]>([])
   const [searching, setSearching] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
+  const [profileDogs, setProfileDogs] = useState<Dog[]>([])
+  const [selectedDogId, setSelectedDogId] = useState<string>('')
   const [showNewForm, setShowNewForm] = useState(false)
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -40,10 +71,8 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
   const [creatingClient, setCreatingClient] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
 
-  // Service selection
+  // Service + visit
   const [selectedService, setSelectedService] = useState(() => services[0]?.slug ?? '')
-
-  // Manual form state
   const [visitDate, setVisitDate] = useState(new Date().toISOString().slice(0, 10))
   const [visitTime, setVisitTime] = useState('')
   const [visitDuration, setVisitDuration] = useState(60)
@@ -64,26 +93,42 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
       setSearching(true)
       const res = await fetch(`/api/dashboard/customers/search?q=${encodeURIComponent(q)}`)
       const data = await res.json()
-      setSearchResults(data)
+      setSearchResults(Array.isArray(data) ? data : [])
       setSearching(false)
     }, 300)
   }
 
-  function selectProfile(p: Profile) {
+  function selectProfile(p: ProfileWithDogs) {
     setSelectedProfile(p)
+    setProfileDogs(p.dogs ?? [])
+    // Auto-select first dog if only one
+    if (p.dogs?.length === 1) {
+      setSelectedDogId(p.dogs[0].id)
+      if (p.dogs[0].grooming_duration) setVisitDuration(p.dogs[0].grooming_duration)
+    } else {
+      setSelectedDogId('')
+    }
     setSearchQuery('')
     setSearchResults([])
     setShowNewForm(false)
   }
 
+  function handleDogChange(dogId: string) {
+    setSelectedDogId(dogId)
+    const dog = profileDogs.find((d) => d.id === dogId)
+    if (dog?.grooming_duration) setVisitDuration(dog.grooming_duration)
+  }
+
   async function handleCreateClient() {
     setCreatingClient(true)
     setCreateError(null)
+    const hasRealEmail = !!newClient.email
     const res = await fetch('/api/dashboard/customers/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...newClient,
+        email: newClient.email || `noemail+${Date.now()}@mercimurphy.internal`,
         grooming_duration: newClient.grooming_duration ? Number(newClient.grooming_duration) : null,
       }),
     })
@@ -93,7 +138,13 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
       setCreatingClient(false)
       return
     }
+    // Send password-setup invite if a real email was provided
+    if (hasRealEmail && data.id) {
+      await fetch(`/api/dashboard/customers/${data.id}/invite`, { method: 'POST' })
+    }
     setSelectedProfile(data)
+    setProfileDogs([])
+    setSelectedDogId('')
     setShowNewForm(false)
     setCreatingClient(false)
   }
@@ -136,17 +187,46 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
         </p>
 
         {selectedProfile ? (
-          <div className="flex items-start justify-between p-4 rounded-xl bg-gray-50 border border-gray-200">
-            <div>
-              <p className="font-semibold text-[#1D164E]">{selectedProfile.nom}</p>
-              <p className="text-sm text-gray-500">{selectedProfile.telephone}</p>
+          <div className="space-y-3">
+            <div className="flex items-start justify-between p-4 rounded-xl bg-gray-50 border border-gray-200">
+              <div>
+                <p className="font-semibold text-[#1D164E]">{selectedProfile.nom}</p>
+                <p className="text-sm text-gray-500">{selectedProfile.telephone}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedProfile(null)
+                  setProfileDogs([])
+                  setSelectedDogId('')
+                }}
+                className="text-gray-400 hover:text-red-400 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
-            <button
-              onClick={() => setSelectedProfile(null)}
-              className="text-gray-400 hover:text-red-400 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            {profileDogs.length > 1 && (
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Chien</label>
+                <select
+                  className={inputCls}
+                  value={selectedDogId}
+                  onChange={(e) => handleDogChange(e.target.value)}
+                >
+                  <option value="">— Choisir un chien</option>
+                  {profileDogs.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}
+                      {d.grooming_duration ? ` (${d.grooming_duration} min)` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {profileDogs.length === 1 && (
+              <p className="text-xs text-gray-400">
+                Chien : <span className="font-medium text-gray-600">{profileDogs[0].name}</span>
+              </p>
+            )}
           </div>
         ) : (
           <>
@@ -179,7 +259,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     <p className="text-sm font-medium text-[#1D164E]">{p.nom}</p>
                     <p className="text-xs text-gray-400">
                       {p.telephone}
-                      {p.dog_names.length > 0 && ` · 🐶 ${p.dog_names.join(', ')}`}
+                      {p.dog_names.length > 0 && ` · ${p.dog_names.join(', ')}`}
                     </p>
                   </button>
                 ))}
@@ -198,11 +278,9 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                 <p className="text-sm font-semibold text-[#1D164E]">Nouveau client</p>
                 {[
                   { key: 'nom', label: 'Nom', required: true, type: 'text' },
-                  { key: 'email', label: 'Email', required: true, type: 'email' },
                   { key: 'telephone', label: 'Téléphone', required: true, type: 'tel' },
+                  { key: 'email', label: 'Email', required: false, type: 'email' },
                   { key: 'nom_chien', label: 'Nom du chien', required: true, type: 'text' },
-                  { key: 'race_chien', label: 'Race', required: false, type: 'text' },
-                  { key: 'age_chien', label: 'Âge', required: false, type: 'text' },
                 ].map(({ key, label, required, type }) => (
                   <div key={key}>
                     <label className="block text-xs font-medium text-gray-500 mb-1">
@@ -217,6 +295,36 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     />
                   </div>
                 ))}
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Race</label>
+                  <BreedCombobox
+                    value={newClient.race_chien}
+                    onChange={(v) => setNewClient((d) => ({ ...d, race_chien: v }))}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Âge</label>
+                  <select
+                    className={inputCls}
+                    value={newClient.age_chien}
+                    onChange={(e) => setNewClient((d) => ({ ...d, age_chien: e.target.value }))}
+                  >
+                    <option value="">—</option>
+                    <option value="3-5-mois">3 à 5 mois</option>
+                    <option value="6-mois-1-an">6 mois à 1 an</option>
+                    <option value="1-an">1 an</option>
+                    <option value="2-ans">2 ans</option>
+                    <option value="3-ans">3 ans</option>
+                    <option value="4-ans">4 ans</option>
+                    <option value="5-ans">5 ans</option>
+                    <option value="6-ans">6 ans</option>
+                    <option value="7-ans">7 ans</option>
+                    <option value="8-ans">8 ans</option>
+                    <option value="9-ans">9 ans</option>
+                    <option value="10-ans">10 ans</option>
+                    <option value="plus-de-10-ans">Plus de 10 ans</option>
+                  </select>
+                </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Poids</label>
                   <select
@@ -283,7 +391,6 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     disabled={
                       creatingClient ||
                       !newClient.nom ||
-                      !newClient.email ||
                       !newClient.telephone ||
                       !newClient.nom_chien
                     }
@@ -324,7 +431,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
         </div>
       )}
 
-      {/* Step 3: Manual form */}
+      {/* Step 3: Détails */}
       {selectedProfile && (
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
@@ -333,7 +440,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Date</label>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Date *</label>
                 <input
                   type="date"
                   value={visitDate}
@@ -356,8 +463,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                 <label className="block text-xs font-medium text-gray-500 mb-1">Durée (min)</label>
                 <input
                   type="number"
-                  min="15"
-                  step="15"
+                  min="1"
                   value={visitDuration}
                   onChange={(e) => setVisitDuration(Number(e.target.value))}
                   className={inputCls}
@@ -378,13 +484,18 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Staff</label>
-              <input
-                type="text"
+              <select
                 value={visitStaff}
                 onChange={(e) => setVisitStaff(e.target.value)}
-                placeholder="Prénom du praticien"
                 className={inputCls}
-              />
+              >
+                <option value="">— Choisir</option>
+                {staffList.map((s) => (
+                  <option key={s.id} value={s.name}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Notes</label>
