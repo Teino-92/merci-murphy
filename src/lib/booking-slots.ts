@@ -4,7 +4,7 @@ import {
   SLOT_GRANULARITY,
   SERVICE_GRANULARITY,
 } from '@/lib/booking-config'
-import type { Availability, TimeOff } from '@/lib/supabase-admin'
+import type { Availability, TimeOff, StaffSchedule } from '@/lib/supabase-admin'
 
 export interface AvailableSlot {
   timeUtc: string // "HH:MM" in UTC — what gets stored in the DB
@@ -25,6 +25,7 @@ interface StaffInput {
   availabilities: Availability[]
   timeOff: TimeOff[]
   bookedSlots: BookedSlot[]
+  scheduleEntries?: StaffSchedule[] // monthly schedule — overrides availabilities when present
 }
 
 /**
@@ -101,24 +102,35 @@ function getSlotsForStaffOnDate(
   bufferMinutes: number,
   availabilities: Availability[],
   timeOff: TimeOff[],
-  bookedSlots: BookedSlot[]
+  bookedSlots: BookedSlot[],
+  scheduleEntries?: StaffSchedule[]
 ): AvailableSlot[] {
-  const dayOfWeek = getDayOfWeek(dateStr)
   const offsetMinutes = getParisOffsetMinutes(dateStr)
 
-  // Check if staff has time off this day
-  const hasTimeOff = timeOff.some((t) => t.date === dateStr)
-  if (hasTimeOff) return []
+  let windowStartMins: number
+  let windowEndMins: number
 
-  // Find staff availability for this day
-  const avail = availabilities.find((a) => a.day_of_week === dayOfWeek)
-  if (!avail) return []
+  if (scheduleEntries && scheduleEntries.length > 0) {
+    // Use monthly schedule: find entry for this exact date
+    const entry = scheduleEntries.find((e) => e.date === dateStr)
+    if (!entry) return [] // not scheduled this day
+    windowStartMins = timeToMinutes(entry.start_time.slice(0, 5))
+    windowEndMins = timeToMinutes(entry.end_time.slice(0, 5))
+  } else {
+    // Fall back to weekly availability + time-off
+    const hasTimeOff = timeOff.some((t) => t.date === dateStr)
+    if (hasTimeOff) return []
 
-  // Staff window in Paris local time
-  let windowStartMins = timeToMinutes(avail.start_time.slice(0, 5))
-  let windowEndMins = timeToMinutes(avail.end_time.slice(0, 5))
+    const dayOfWeek = getDayOfWeek(dateStr)
+    const avail = availabilities.find((a) => a.day_of_week === dayOfWeek)
+    if (!avail) return []
+
+    windowStartMins = timeToMinutes(avail.start_time.slice(0, 5))
+    windowEndMins = timeToMinutes(avail.end_time.slice(0, 5))
+  }
 
   // Apply SERVICE_HOURS override if this service has one
+  const dayOfWeek = getDayOfWeek(dateStr)
   const serviceHourRules = SERVICE_HOURS[serviceSlug]
   if (serviceHourRules) {
     const rule = serviceHourRules.find((r) => r.days.includes(dayOfWeek))
@@ -189,7 +201,8 @@ export function getAvailableSlots(
       bufferMinutes,
       s.availabilities,
       s.timeOff,
-      s.bookedSlots
+      s.bookedSlots,
+      s.scheduleEntries
     )
     for (const slot of slots) {
       if (!seen.has(slot.timeParis)) {

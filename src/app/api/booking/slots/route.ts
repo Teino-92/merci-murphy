@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { supabaseAdmin, getVisitsForStaff } from '@/lib/supabase-admin'
+import { supabaseAdmin, getVisitsForStaff, getStaffSchedule } from '@/lib/supabase-admin'
 import { getAvailableSlots } from '@/lib/booking-slots'
 import {
   SERVICE_DURATIONS,
@@ -9,7 +9,7 @@ import {
   BOOKING_HORIZON_DAYS,
   BOOKING_MIN_NOTICE_MINUTES,
 } from '@/lib/booking-config'
-import type { Availability, TimeOff, Staff } from '@/lib/supabase-admin'
+import type { Availability, TimeOff, Staff, StaffSchedule } from '@/lib/supabase-admin'
 
 // ─── Crèche slot logic ────────────────────────────────────────────────────────
 // Returns up to 4 hourly start times in the last 4 hours of the day's closing time.
@@ -150,10 +150,12 @@ export async function GET(req: NextRequest) {
   const { data: staffRows } = await query
   const staff: Staff[] = staffRows ?? []
 
-  // Load availabilities + time-off + booked visits for each staff member
+  // Load availabilities + time-off + schedule + booked visits for each staff member
   const staffInputs = await Promise.all(
     staff.map(async (s) => {
-      const [availRows, timeOffRows, visits] = await Promise.all([
+      const monthStart = dateStr.slice(0, 8) + '01'
+      const monthEnd = dateStr.slice(0, 8) + '31'
+      const [availRows, timeOffRows, scheduleRows, visits] = await Promise.all([
         supabaseAdmin
           .from('availabilities')
           .select('*')
@@ -165,8 +167,17 @@ export async function GET(req: NextRequest) {
           .eq('staff_id', s.id)
           .eq('date', dateStr)
           .then((r) => (r.data ?? []) as TimeOff[]),
+        // For toilettage: fetch the entire month's schedule to check if monthly planning is active
+        slugBase === 'toilettage'
+          ? getStaffSchedule(s.id, monthStart, monthEnd)
+          : Promise.resolve([] as StaffSchedule[]),
         getVisitsForStaff(s.name, dateStr, dateStr),
       ])
+
+      // Only use scheduleEntries if the admin has set up ANY entries for this month
+      // (if empty, fall back to availabilities — backward compatible)
+      const scheduleEntries = scheduleRows.length > 0 ? scheduleRows : undefined
+
       return {
         staffId: s.id,
         staffName: s.name,
@@ -177,6 +188,7 @@ export async function GET(req: NextRequest) {
           time: v.time ?? '00:00:00',
           duration: v.duration ?? duration,
         })),
+        scheduleEntries,
       }
     })
   )

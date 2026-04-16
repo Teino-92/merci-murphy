@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Staff, Availability, TimeOff } from '@/lib/supabase-admin'
 import { Trash2, Plus, ChevronDown, ChevronUp, CalendarOff } from 'lucide-react'
+import { StaffScheduleEditor } from '@/components/dashboard/staff-schedule-editor'
 
 const DAYS = ['', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 const ROLES = ['toiletteur', 'educateur', 'osteopathe', 'masseur']
@@ -21,6 +22,7 @@ export function StaffManager({
 }) {
   const [staffList, setStaffList] = useState(initialStaff)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [activeStaffTab, setActiveStaffTab] = useState<Record<string, string>>({})
   const [newName, setNewName] = useState('')
   const [newRole, setNewRole] = useState('toiletteur')
   const [newColor, setNewColor] = useState('#4F6072')
@@ -212,62 +214,146 @@ export function StaffManager({
 
           {expanded === s.id && (
             <div className="border-t border-gray-100 p-5 space-y-6">
-              {/* Weekly availabilities */}
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
-                  Disponibilités hebdomadaires
-                </p>
-                <div className="space-y-2">
-                  {[1, 2, 3, 4, 5, 6].map((day) => {
-                    const avail = s.availabilities.find((a) => a.day_of_week === day)
-                    return (
-                      <AvailRow
-                        key={day}
-                        dayLabel={DAYS[day]}
-                        avail={avail}
-                        onSave={(start, end) => upsertAvail(s.id, day, start, end)}
-                        onRemove={avail ? () => removeAvail(s.id, avail.id) : undefined}
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Time-off — admin only */}
-              {isAdmin && (
+              {s.role === 'toiletteur' ? (
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
-                    <CalendarOff className="h-3.5 w-3.5" /> Congés & absences
-                  </p>
-                  {s.timeOff.length > 0 && (
-                    <div className="mb-3 space-y-1">
-                      {s.timeOff.map((t) => (
-                        <div
-                          key={t.id}
-                          className="flex items-center justify-between text-sm rounded-lg bg-gray-50 px-3 py-2"
-                        >
-                          <span className="text-[#1D164E] font-medium">
-                            {new Date(t.date + 'T00:00:00').toLocaleDateString('fr-FR', {
-                              weekday: 'short',
-                              day: 'numeric',
-                              month: 'short',
-                            })}
-                          </span>
-                          {t.note && (
-                            <span className="text-gray-400 text-xs mx-2 truncate">{t.note}</span>
-                          )}
-                          <button
-                            onClick={() => removeTimeOff(s.id, t.id)}
-                            className="text-gray-300 hover:text-red-400 transition-colors shrink-0"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ))}
+                  {/* Tab switcher for toiletteurs */}
+                  <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4 w-fit">
+                    {(['planning', 'disponibilites', 'absences'] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveStaffTab((prev) => ({ ...prev, [s.id]: tab }))}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                          (activeStaffTab[s.id] ?? 'planning') === tab
+                            ? 'bg-white text-[#1D164E] shadow-sm'
+                            : 'text-gray-500 hover:text-[#1D164E]'
+                        }`}
+                      >
+                        {tab === 'planning'
+                          ? 'Planning mensuel'
+                          : tab === 'disponibilites'
+                            ? 'Dispos hebdo'
+                            : 'Absences'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {(activeStaffTab[s.id] ?? 'planning') === 'planning' && (
+                    <StaffScheduleEditor staffId={s.id} staffName={s.name} />
+                  )}
+
+                  {(activeStaffTab[s.id] ?? 'planning') === 'disponibilites' && (
+                    <div className="space-y-2">
+                      {[1, 2, 3, 4, 5, 6].map((day) => {
+                        const avail = s.availabilities.find((a) => a.day_of_week === day)
+                        return (
+                          <AvailRow
+                            key={day}
+                            dayLabel={DAYS[day]}
+                            avail={avail}
+                            onSave={(start, end) => upsertAvail(s.id, day, start, end)}
+                            onRemove={avail ? () => removeAvail(s.id, avail.id) : undefined}
+                          />
+                        )
+                      })}
                     </div>
                   )}
-                  <TimeOffRow onAdd={(date, note) => addTimeOff(s.id, date, note)} />
+
+                  {(activeStaffTab[s.id] ?? 'planning') === 'absences' && isAdmin && (
+                    <div>
+                      {s.timeOff.length > 0 && (
+                        <div className="mb-3 space-y-1">
+                          {s.timeOff.map((t) => (
+                            <div
+                              key={t.id}
+                              className="flex items-center justify-between text-sm rounded-lg bg-gray-50 px-3 py-2"
+                            >
+                              <span className="text-[#1D164E] font-medium">
+                                {new Date(t.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                                  weekday: 'short',
+                                  day: 'numeric',
+                                  month: 'short',
+                                })}
+                              </span>
+                              {t.note && (
+                                <span className="text-gray-400 text-xs mx-2 truncate">
+                                  {t.note}
+                                </span>
+                              )}
+                              <button
+                                onClick={() => removeTimeOff(s.id, t.id)}
+                                className="text-gray-300 hover:text-red-400 transition-colors shrink-0"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <TimeOffRow onAdd={(date, note) => addTimeOff(s.id, date, note)} />
+                    </div>
+                  )}
                 </div>
+              ) : (
+                <>
+                  {/* Non-toiletteurs: existing UI unchanged */}
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
+                      Disponibilités hebdomadaires
+                    </p>
+                    <div className="space-y-2">
+                      {[1, 2, 3, 4, 5, 6].map((day) => {
+                        const avail = s.availabilities.find((a) => a.day_of_week === day)
+                        return (
+                          <AvailRow
+                            key={day}
+                            dayLabel={DAYS[day]}
+                            avail={avail}
+                            onSave={(start, end) => upsertAvail(s.id, day, start, end)}
+                            onRemove={avail ? () => removeAvail(s.id, avail.id) : undefined}
+                          />
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {isAdmin && (
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
+                        <CalendarOff className="h-3.5 w-3.5" /> Congés & absences
+                      </p>
+                      {s.timeOff.length > 0 && (
+                        <div className="mb-3 space-y-1">
+                          {s.timeOff.map((t) => (
+                            <div
+                              key={t.id}
+                              className="flex items-center justify-between text-sm rounded-lg bg-gray-50 px-3 py-2"
+                            >
+                              <span className="text-[#1D164E] font-medium">
+                                {new Date(t.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                                  weekday: 'short',
+                                  day: 'numeric',
+                                  month: 'short',
+                                })}
+                              </span>
+                              {t.note && (
+                                <span className="text-gray-400 text-xs mx-2 truncate">
+                                  {t.note}
+                                </span>
+                              )}
+                              <button
+                                onClick={() => removeTimeOff(s.id, t.id)}
+                                className="text-gray-300 hover:text-red-400 transition-colors shrink-0"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <TimeOffRow onAdd={(date, note) => addTimeOff(s.id, date, note)} />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

@@ -370,6 +370,55 @@ export async function deleteTimeOff(id: string): Promise<void> {
   if (error) throw error
 }
 
+// --- Staff Schedule ---
+
+export interface StaffSchedule {
+  id: string
+  staff_id: string
+  date: string // YYYY-MM-DD
+  start_time: string // HH:MM
+  end_time: string // HH:MM
+}
+
+export async function getStaffSchedule(
+  staffId: string,
+  from: string,
+  to: string
+): Promise<StaffSchedule[]> {
+  const { data, error } = await supabaseAdmin
+    .from('staff_schedule')
+    .select('*')
+    .eq('staff_id', staffId)
+    .gte('date', from)
+    .lte('date', to)
+    .order('date')
+  if (error) throw error
+  return (data ?? []) as StaffSchedule[]
+}
+
+export async function upsertStaffSchedule(
+  staffId: string,
+  date: string,
+  startTime: string,
+  endTime: string
+): Promise<StaffSchedule> {
+  const { data, error } = await supabaseAdmin
+    .from('staff_schedule')
+    .upsert(
+      { staff_id: staffId, date, start_time: startTime, end_time: endTime },
+      { onConflict: 'staff_id,date' }
+    )
+    .select()
+    .single()
+  if (error) throw error
+  return data as StaffSchedule
+}
+
+export async function deleteStaffSchedule(id: string): Promise<void> {
+  const { error } = await supabaseAdmin.from('staff_schedule').delete().eq('id', id)
+  if (error) throw error
+}
+
 // --- Visits for staff ---
 
 export async function getVisitsForStaff(
