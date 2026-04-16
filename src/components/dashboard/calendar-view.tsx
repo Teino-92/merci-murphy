@@ -30,6 +30,10 @@ const SPA_TABS = [
 const BIENETRE_TABS = [
   { slug: 'massage', label: 'Massage', showStaff: false },
   { slug: 'osteo', label: 'Ostéopathie', showStaff: false },
+]
+
+const CRECHE_EDUCATION_TABS = [
+  { slug: 'creche', label: 'Crèche', showStaff: false },
   { slug: 'education', label: 'Éducation', showStaff: false },
 ]
 
@@ -84,19 +88,24 @@ function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
     .slice(0, 16)
 
   const [newDatetime, setNewDatetime] = useState(initialParis)
+  const [duration, setDuration] = useState<string>('')
+  const [notify, setNotify] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function submit() {
     setSaving(true)
     setError(null)
-    // newDatetime is a Paris-local "YYYY-MM-DDTHH:MM" string — send date/time directly
-    // to avoid timezone conversion issues when constructing an ISO string
     const [dateStr, timeStr] = newDatetime.split('T')
     const res = await fetch(`/api/dashboard/visits/${visit.id}/reschedule`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: dateStr, time: timeStr }),
+      body: JSON.stringify({
+        date: dateStr,
+        time: timeStr,
+        duration: duration ? Number(duration) : undefined,
+        notify,
+      }),
     })
     const json = await res.json()
     if (!res.ok) {
@@ -126,15 +135,42 @@ function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
           {visit.nom_chien ?? visit.client_nom} — {SERVICE_LABELS[visit.service] ?? visit.service}
           {visit.staff ? ` · ${visit.staff}` : ''}
         </p>
-        <label className="block text-xs font-medium text-gray-500 mb-1">
-          Nouvelle date et heure
-        </label>
-        <input
-          type="datetime-local"
-          value={newDatetime}
-          onChange={(e) => setNewDatetime(e.target.value)}
-          className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E] mb-4"
-        />
+        <div className="space-y-3 mb-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Nouvelle date et heure
+            </label>
+            <input
+              type="datetime-local"
+              value={newDatetime}
+              onChange={(e) => setNewDatetime(e.target.value)}
+              className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Durée (min){' '}
+              <span className="text-gray-400 font-normal">— laisser vide pour ne pas modifier</span>
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="Ex : 75"
+              className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+            />
+          </div>
+          <label className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={notify}
+              onChange={(e) => setNotify(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 accent-[#1D164E]"
+            />
+            <span className="text-xs text-gray-600">Envoyer un email au client</span>
+          </label>
+        </div>
         {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
         <div className="flex gap-2">
           <button
@@ -553,13 +589,13 @@ export function CalendarView() {
       {/* Spa POILUS — Toilettage / Bains / Balnéo */}
       <CalendarSection title="Spa POILUS" tabs={SPA_TABS} onReschedule={setRescheduling} />
 
-      {/* Bien-être — Massage / Ostéopathie / Éducation */}
+      {/* Bien-être — Massage / Ostéopathie */}
       <CalendarSection title="Bien-être" tabs={BIENETRE_TABS} onReschedule={setRescheduling} />
 
-      {/* Crèche — standalone */}
+      {/* Crèche & Éducation — Aurore */}
       <CalendarSection
-        title="Crèche"
-        tabs={[{ slug: 'creche', label: 'Crèche', showStaff: false }]}
+        title="Crèche & Éducation"
+        tabs={CRECHE_EDUCATION_TABS}
         onReschedule={setRescheduling}
       />
     </div>

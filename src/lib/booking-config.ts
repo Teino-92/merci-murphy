@@ -13,7 +13,7 @@ export const SERVICE_DURATIONS: Record<string, number> = {
   osteo: 60,
   massage: 30,
   education: 60,
-  creche: 0, // variable — client picks 1h/2h/3h/4h
+  creche: 240, // fixed 4h drop-off session (14:00 or 14:30 start)
 }
 
 // Buffer added AFTER each appointment before the next slot opens

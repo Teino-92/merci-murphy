@@ -12,12 +12,11 @@ import {
 import type { Availability, TimeOff, Staff, StaffSchedule } from '@/lib/supabase-admin'
 
 // ─── Crèche slot logic ────────────────────────────────────────────────────────
-// Returns up to 4 hourly start times in the last 4 hours of the day's closing time.
-// Filters out already-booked slots and slots within min-notice window.
+// Two fixed drop-off times: 14:00 and 14:30, always 4h duration (pickup at 18:00 / 18:30).
+// Available Tue–Fri only (matching SERVICE_HOURS creche config).
 function getCrecheSlots(
   dateStr: string,
-  durationMins: number,
-  bookedTimes: string[], // HH:MM already booked
+  bookedTimes: string[], // HH:MM UTC already booked
   nowMs: number,
   minNotice: number
 ): { timeUtc: string; timeParis: string }[] {
@@ -26,43 +25,22 @@ function getCrecheSlots(
   const match = hours.find((h) => h.days.includes(dow))
   if (!match) return [] // crèche closed this day
 
-  // Parse closing time (Paris local) — convert to UTC offset (Paris is UTC+1 or UTC+2)
-  // We store Paris time in SERVICE_HOURS; crèche slots are returned as Paris time for display
-  // and UTC for storage. Use a simple offset: CEST (+2) Apr–Oct, CET (+1) Nov–Mar.
-  const [closeH, closeM] = match.end.split(':').map(Number)
-  const closeMins = closeH * 60 + closeM // Paris local minutes from midnight
+  const month = parseInt(dateStr.slice(5, 7), 10)
+  const utcOffset = month >= 4 && month <= 10 ? 2 : 1 // Paris: CEST Apr–Oct, CET Nov–Mar
 
+  const FIXED_PARIS_TIMES = ['14:00', '14:30']
   const slots: { timeUtc: string; timeParis: string }[] = []
 
-  // 4 possible start times: closing - 4h, closing - 3h, closing - 2h, closing - 1h
-  for (let offset = 4; offset >= 1; offset--) {
-    const startMins = closeMins - offset * 60
-    if (startMins < 0) continue
-    if (startMins + durationMins > closeMins) continue // would exceed closing time
-
-    const startH = Math.floor(startMins / 60)
-    const startMinPart = startMins % 60
-    const parisTime = `${String(startH).padStart(2, '0')}:${String(startMinPart).padStart(2, '0')}`
-
-    // Convert Paris → UTC: determine DST offset for this date
-    // Test if this Paris date is in CEST (UTC+2) or CET (UTC+1)
-    const testDate = new Date(`${dateStr}T${parisTime}:00`)
-    const parisOffsetMs = testDate.getTimezoneOffset() // local machine offset — not reliable on server
-    // Use a reliable approach: format as UTC via a known Paris offset
-    // Paris is UTC+1 in winter, UTC+2 in summer (last Sun Mar → last Sun Oct)
-    const month = parseInt(dateStr.slice(5, 7), 10)
-    const utcOffset = month >= 4 && month <= 10 ? 2 : 1 // approximate: Apr–Oct = CEST
-    void parisOffsetMs // suppress unused
-
+  for (const parisTime of FIXED_PARIS_TIMES) {
+    const [h, m] = parisTime.split(':').map(Number)
+    const startMins = h * 60 + m
     const utcMins = startMins - utcOffset * 60
     const utcH = Math.floor(((utcMins + 1440) % 1440) / 60)
     const utcMin = (utcMins + 1440) % 60
     const utcTime = `${String(utcH).padStart(2, '0')}:${String(utcMin).padStart(2, '0')}`
 
-    // Skip if already booked at this time
     if (bookedTimes.some((t) => t.slice(0, 5) === utcTime)) continue
 
-    // Skip if within min-notice window
     const slotMs = new Date(`${dateStr}T${utcTime}:00Z`).getTime()
     if (minNotice > 0 && slotMs - nowMs < minNotice * 60 * 1000) continue
 
@@ -137,7 +115,7 @@ export async function GET(req: NextRequest) {
       .not('status', 'eq', 'cancelled')
 
     const bookedTimes = (existing ?? []).map((v) => v.time ?? '')
-    const slots = getCrecheSlots(dateStr, duration, bookedTimes, nowMs, minNotice)
+    const slots = getCrecheSlots(dateStr, bookedTimes, nowMs, minNotice)
     return NextResponse.json({ slots })
   }
 
