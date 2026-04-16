@@ -24,18 +24,26 @@ export async function GET(req: NextRequest) {
   // Fetch all dogs for matched profiles to show alongside results
   const { data: dogs } = await supabaseAdmin
     .from('dogs')
-    .select('owner_id, name')
+    .select('id, owner_id, name, grooming_duration')
     .in('owner_id', profileIds)
 
-  const dogsByOwner: Record<string, string[]> = {}
+  const dogsByOwner: Record<
+    string,
+    { id: string; name: string; grooming_duration: number | null }[]
+  > = {}
   for (const dog of dogs ?? []) {
     if (!dogsByOwner[dog.owner_id]) dogsByOwner[dog.owner_id] = []
-    dogsByOwner[dog.owner_id].push(dog.name)
+    dogsByOwner[dog.owner_id].push({
+      id: dog.id,
+      name: dog.name,
+      grooming_duration: dog.grooming_duration,
+    })
   }
 
   const results = profiles.map((p) => ({
     ...p,
-    dog_names: dogsByOwner[p.id] ?? [],
+    dog_names: (dogsByOwner[p.id] ?? []).map((d) => d.name),
+    dogs: dogsByOwner[p.id] ?? [],
   }))
 
   return NextResponse.json(results)

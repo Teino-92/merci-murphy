@@ -125,6 +125,10 @@ export function CustomerDetail({
   const [visitNotesInputs, setVisitNotesInputs] = useState<Record<string, string>>({})
   const [savingVisitNotes, setSavingVisitNotes] = useState<Record<string, boolean>>({})
 
+  // Invite link
+  const [sendingInvite, setSendingInvite] = useState(false)
+  const [inviteSent, setInviteSent] = useState(false)
+
   // Add visit state
   const [showVisitForm, setShowVisitForm] = useState(false)
   const [visitService, setVisitService] = useState('toilettage')
@@ -283,6 +287,14 @@ export function CustomerDetail({
     setSavingFinalPrice((s) => ({ ...s, [visitId]: false }))
   }
 
+  async function sendInvite() {
+    setSendingInvite(true)
+    await fetch(`/api/dashboard/customers/${profile.id}/invite`, { method: 'POST' })
+    setSendingInvite(false)
+    setInviteSent(true)
+    setTimeout(() => setInviteSent(false), 4000)
+  }
+
   async function saveVisitNotes(visitId: string) {
     const val = visitNotesInputs[visitId]
     if (val === undefined) return
@@ -429,7 +441,22 @@ L'équipe merci murphy`
               <div>
                 <h1 className="text-xl font-bold text-[#1D164E]">{profile.nom}</h1>
                 <p className="text-sm text-gray-400 mt-0.5">{profile.telephone}</p>
-                {email && <p className="text-sm text-gray-400 mt-0.5">{email}</p>}
+                {email && !email.endsWith('@mercimurphy.internal') && (
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-sm text-gray-400">{email}</p>
+                    <button
+                      onClick={sendInvite}
+                      disabled={sendingInvite || inviteSent}
+                      className="text-xs text-[#1D164E] underline underline-offset-2 hover:text-[#1D164E]/70 disabled:opacity-50 transition-colors shrink-0"
+                    >
+                      {inviteSent
+                        ? '✓ Lien envoyé'
+                        : sendingInvite
+                          ? '…'
+                          : 'Envoyer lien de connexion'}
+                    </button>
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => setEditing((e) => !e)}

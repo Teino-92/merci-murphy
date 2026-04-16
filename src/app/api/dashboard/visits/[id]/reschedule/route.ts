@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!hasDashboardAccess(user.email))
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { date: dateStr, time: timeStr } = await req.json()
+  const { date: dateStr, time: timeStr, duration, notify } = await req.json()
   if (!dateStr || !timeStr)
     return NextResponse.json({ error: 'Missing date/time' }, { status: 400 })
 
@@ -39,10 +39,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   if (fetchError || !visit) return NextResponse.json({ error: 'Visit not found' }, { status: 404 })
 
-  // Update Supabase visit date/time
+  // Update Supabase visit date/time (+ optional duration)
+  const updatePayload: Record<string, unknown> = { date: dateStr, time: `${timeStr}:00` }
+  if (duration != null && Number(duration) > 0) updatePayload.duration = Number(duration)
+
   const { error: updateError } = await supabaseAdmin
     .from('visits')
-    .update({ date: dateStr, time: `${timeStr}:00` })
+    .update(updatePayload)
     .eq('id', params.id)
 
   if (updateError) {
@@ -72,7 +75,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(visit.profile_id)
   const clientEmail = authUser?.user?.email
 
-  if (clientEmail) {
+  if (clientEmail && notify) {
     await resend.emails
       .send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,

@@ -73,7 +73,8 @@ export function DogForm({ dog, onClose, required = false }: DogFormProps) {
             <SelectValue placeholder="Âge" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="moins-de-1-an">Moins d&apos;1 an</SelectItem>
+            <SelectItem value="3-5-mois">3 à 5 mois</SelectItem>
+            <SelectItem value="6-mois-1-an">6 mois à 1 an</SelectItem>
             <SelectItem value="1-an">1 an</SelectItem>
             <SelectItem value="2-ans">2 ans</SelectItem>
             <SelectItem value="3-ans">3 ans</SelectItem>
