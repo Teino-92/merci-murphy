@@ -21,20 +21,14 @@ export default async function StaffPage() {
 
   const staffWithDetails = await Promise.all(
     staff.map(async (s) => {
-      const [availRes, timeOffRes] = await Promise.all([
-        supabaseAdmin.from('availabilities').select('*').eq('staff_id', s.id).order('day_of_week'),
-        supabaseAdmin
-          .from('time_off')
-          .select('*')
-          .eq('staff_id', s.id)
-          .gte('date', new Date().toISOString().slice(0, 10))
-          .order('date')
-          .limit(30),
-      ])
+      const { data: availData } = await supabaseAdmin
+        .from('availabilities')
+        .select('*')
+        .eq('staff_id', s.id)
+        .order('day_of_week')
       return {
         ...s,
-        availabilities: availRes.data ?? [],
-        timeOff: timeOffRes.data ?? [],
+        availabilities: availData ?? [],
       }
     })
   )
