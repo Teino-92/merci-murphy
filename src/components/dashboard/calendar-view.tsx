@@ -78,9 +78,10 @@ interface RescheduleModalProps {
   visit: CalVisit
   onClose: () => void
   onSaved: (id: string, date: string, time: string) => void
+  onDeleted: (id: string) => void
 }
 
-function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
+function RescheduleModal({ visit, onClose, onSaved, onDeleted }: RescheduleModalProps) {
   const utcStr = visit.time ? `${visit.date}T${visit.time.slice(0, 5)}Z` : `${visit.date}T09:00Z`
   const initialParis = new Date(utcStr)
     .toLocaleString('sv-SE', { timeZone: 'Europe/Paris' })
@@ -92,6 +93,8 @@ function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
   const [notify, setNotify] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   async function submit() {
     setSaving(true)
@@ -116,6 +119,12 @@ function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
     onSaved(visit.id, json.date, json.time)
   }
 
+  async function handleDelete() {
+    setDeleting(true)
+    await fetch(`/api/dashboard/visits/${visit.id}/cancel`, { method: 'POST' })
+    onDeleted(visit.id)
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
@@ -135,58 +144,92 @@ function RescheduleModal({ visit, onClose, onSaved }: RescheduleModalProps) {
           {visit.nom_chien ?? visit.client_nom} — {SERVICE_LABELS[visit.service] ?? visit.service}
           {visit.staff ? ` · ${visit.staff}` : ''}
         </p>
-        <div className="space-y-3 mb-4">
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Nouvelle date et heure
-            </label>
-            <input
-              type="datetime-local"
-              value={newDatetime}
-              onChange={(e) => setNewDatetime(e.target.value)}
-              className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-            />
+
+        {confirmDelete ? (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-700">
+              Vous êtes sûr de vouloir supprimer cette réservation ?
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 bg-red-500 text-white rounded-lg py-2 text-sm font-medium hover:bg-red-600 disabled:opacity-50 transition-colors"
+              >
+                {deleting ? 'Suppression…' : 'Oui, supprimer'}
+              </button>
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Durée (min){' '}
-              <span className="text-gray-400 font-normal">— laisser vide pour ne pas modifier</span>
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="Ex : 75"
-              className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-            />
-          </div>
-          <label className="flex items-center gap-2.5 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={notify}
-              onChange={(e) => setNotify(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 accent-[#1D164E]"
-            />
-            <span className="text-xs text-gray-600">Envoyer un email au client</span>
-          </label>
-        </div>
-        {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
-        <div className="flex gap-2">
-          <button
-            onClick={submit}
-            disabled={saving || !newDatetime}
-            className="flex-1 bg-[#1D164E] text-white rounded-lg py-2 text-sm font-medium hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
-          >
-            {saving ? 'Déplacement…' : 'Confirmer'}
-          </button>
-          <button
-            onClick={onClose}
-            className="px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
-          >
-            Annuler
-          </button>
-        </div>
+        ) : (
+          <>
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Nouvelle date et heure
+                </label>
+                <input
+                  type="datetime-local"
+                  value={newDatetime}
+                  onChange={(e) => setNewDatetime(e.target.value)}
+                  className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Durée (min){' '}
+                  <span className="text-gray-400 font-normal">
+                    — laisser vide pour ne pas modifier
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="Ex : 75"
+                  className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                />
+              </div>
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={notify}
+                  onChange={(e) => setNotify(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 accent-[#1D164E]"
+                />
+                <span className="text-xs text-gray-600">Envoyer un email au client</span>
+              </label>
+            </div>
+            {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
+            <div className="flex gap-2">
+              <button
+                onClick={submit}
+                disabled={saving || !newDatetime}
+                className="flex-1 bg-[#1D164E] text-white rounded-lg py-2 text-sm font-medium hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+              >
+                {saving ? 'Déplacement…' : 'Confirmer'}
+              </button>
+              <button
+                onClick={onClose}
+                className="px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="mt-3 w-full text-xs text-red-400 hover:text-red-600 transition-colors text-center"
+            >
+              Supprimer cette réservation
+            </button>
+          </>
+        )}
       </div>
     </div>
   )
@@ -381,15 +424,15 @@ interface Tab {
 interface CalendarSectionProps {
   title: string
   tabs: Tab[]
-  onReschedule: (v: CalVisit) => void
 }
 
-function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
+function CalendarSection({ title, tabs }: CalendarSectionProps) {
   const [activeTab, setActiveTab] = useState(tabs[0].slug)
   const [monday, setMonday] = useState<Date>(() => getMondayOf(new Date()))
   const [selectedDay, setSelectedDay] = useState<Date>(() => new Date())
   const [visits, setVisits] = useState<CalVisit[]>([])
   const [loading, setLoading] = useState(true)
+  const [rescheduling, setRescheduling] = useState<CalVisit | null>(null)
 
   // On mobile fetch a wider window: Mon–Sun of the selected day's week
   useEffect(() => {
@@ -404,6 +447,16 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
       })
       .catch(() => setLoading(false))
   }, [monday])
+
+  function handleDeleted(id: string) {
+    setVisits((prev) => prev.filter((v) => v.id !== id))
+    setRescheduling(null)
+  }
+
+  function handleSaved(id: string, date: string, time: string) {
+    setVisits((prev) => prev.map((v) => (v.id === id ? { ...v, date, time } : v)))
+    setRescheduling(null)
+  }
 
   // Keep selectedDay in sync when week changes
   function goWeek(delta: number) {
@@ -427,6 +480,14 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
 
   return (
     <div className={`transition-opacity ${loading ? 'opacity-50' : ''}`}>
+      {rescheduling && (
+        <RescheduleModal
+          visit={rescheduling}
+          onClose={() => setRescheduling(null)}
+          onSaved={handleSaved}
+          onDeleted={handleDeleted}
+        />
+      )}
       {/* Header row */}
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">{title}</p>
@@ -550,7 +611,7 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
           day={selectedDay}
           visits={filtered}
           showStaff={tab.showStaff}
-          onReschedule={onReschedule}
+          onReschedule={setRescheduling}
         />
       </div>
 
@@ -560,7 +621,7 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
           monday={monday}
           visits={filtered}
           showStaff={tab.showStaff}
-          onReschedule={onReschedule}
+          onReschedule={setRescheduling}
         />
       </div>
     </div>
@@ -570,34 +631,16 @@ function CalendarSection({ title, tabs, onReschedule }: CalendarSectionProps) {
 // ─── CalendarView ─────────────────────────────────────────────────────────────
 
 export function CalendarView() {
-  const [rescheduling, setRescheduling] = useState<CalVisit | null>(null)
-
-  function handleSaved() {
-    setRescheduling(null)
-  }
-
   return (
     <div className="space-y-8">
-      {rescheduling && (
-        <RescheduleModal
-          visit={rescheduling}
-          onClose={() => setRescheduling(null)}
-          onSaved={handleSaved}
-        />
-      )}
-
       {/* Spa POILUS — Toilettage / Bains / Balnéo */}
-      <CalendarSection title="Spa POILUS" tabs={SPA_TABS} onReschedule={setRescheduling} />
+      <CalendarSection title="Spa POILUS" tabs={SPA_TABS} />
 
       {/* Bien-être — Massage / Ostéopathie */}
-      <CalendarSection title="Bien-être" tabs={BIENETRE_TABS} onReschedule={setRescheduling} />
+      <CalendarSection title="Bien-être" tabs={BIENETRE_TABS} />
 
       {/* Crèche & Éducation — Aurore */}
-      <CalendarSection
-        title="Crèche & Éducation"
-        tabs={CRECHE_EDUCATION_TABS}
-        onReschedule={setRescheduling}
-      />
+      <CalendarSection title="Crèche & Éducation" tabs={CRECHE_EDUCATION_TABS} />
     </div>
   )
 }
