@@ -4,6 +4,13 @@ import { useState, useRef, useEffect } from 'react'
 import { Search, X, Check } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 import { BreedCombobox } from '@/components/ui/breed-combobox'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
 import type { Profile } from '@/lib/supabase-admin'
 import type { ServiceOption } from '@/app/(dashboard)/dashboard/reservations/new/page'
@@ -304,58 +311,67 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Âge</label>
-                  <select
-                    className={inputCls}
+                  <Select
                     value={newClient.age_chien}
-                    onChange={(e) => setNewClient((d) => ({ ...d, age_chien: e.target.value }))}
+                    onValueChange={(v) => setNewClient((d) => ({ ...d, age_chien: v }))}
                   >
-                    <option value="">—</option>
-                    <option value="3-5-mois">3 à 5 mois</option>
-                    <option value="6-mois-1-an">6 mois à 1 an</option>
-                    <option value="1-an">1 an</option>
-                    <option value="2-ans">2 ans</option>
-                    <option value="3-ans">3 ans</option>
-                    <option value="4-ans">4 ans</option>
-                    <option value="5-ans">5 ans</option>
-                    <option value="6-ans">6 ans</option>
-                    <option value="7-ans">7 ans</option>
-                    <option value="8-ans">8 ans</option>
-                    <option value="9-ans">9 ans</option>
-                    <option value="10-ans">10 ans</option>
-                    <option value="plus-de-10-ans">Plus de 10 ans</option>
-                  </select>
+                    <SelectTrigger className={inputCls}>
+                      <SelectValue placeholder="—" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3-5-mois">3 à 5 mois</SelectItem>
+                      <SelectItem value="6-mois-1-an">6 mois à 1 an</SelectItem>
+                      <SelectItem value="1-an">1 an</SelectItem>
+                      <SelectItem value="2-ans">2 ans</SelectItem>
+                      <SelectItem value="3-ans">3 ans</SelectItem>
+                      <SelectItem value="4-ans">4 ans</SelectItem>
+                      <SelectItem value="5-ans">5 ans</SelectItem>
+                      <SelectItem value="6-ans">6 ans</SelectItem>
+                      <SelectItem value="7-ans">7 ans</SelectItem>
+                      <SelectItem value="8-ans">8 ans</SelectItem>
+                      <SelectItem value="9-ans">9 ans</SelectItem>
+                      <SelectItem value="10-ans">10 ans</SelectItem>
+                      <SelectItem value="plus-de-10-ans">Plus de 10 ans</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Poids</label>
-                  <select
-                    className={inputCls}
+                  <Select
                     value={newClient.poids_chien}
-                    onChange={(e) => setNewClient((d) => ({ ...d, poids_chien: e.target.value }))}
+                    onValueChange={(v) => setNewClient((d) => ({ ...d, poids_chien: v }))}
                   >
-                    <option value="">—</option>
-                    {POIDS.map((p) => (
-                      <option key={p.value} value={p.value}>
-                        {p.label}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className={inputCls}>
+                      <SelectValue placeholder="—" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {POIDS.map((p) => (
+                        <SelectItem key={p.value} value={p.value}>
+                          {p.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">
                     État du poil
                   </label>
-                  <select
-                    className={inputCls}
+                  <Select
                     value={newClient.etat_poil}
-                    onChange={(e) => setNewClient((d) => ({ ...d, etat_poil: e.target.value }))}
+                    onValueChange={(v) => setNewClient((d) => ({ ...d, etat_poil: v }))}
                   >
-                    <option value="">—</option>
-                    {ETAT_POIL.map((e) => (
-                      <option key={e.value} value={e.value}>
-                        {e.label}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className={inputCls}>
+                      <SelectValue placeholder="—" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ETAT_POIL.map((ep) => (
+                        <SelectItem key={ep.value} value={ep.value}>
+                          {ep.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">
