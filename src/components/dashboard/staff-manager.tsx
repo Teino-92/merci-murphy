@@ -20,7 +20,6 @@ export function StaffManager({
 }) {
   const [staffList, setStaffList] = useState(initialStaff)
   const [expanded, setExpanded] = useState<string | null>(null)
-  const [activeStaffTab, setActiveStaffTab] = useState<Record<string, string>>({})
   const [newName, setNewName] = useState('')
   const [newRole, setNewRole] = useState('toiletteur')
   const [newColor, setNewColor] = useState('#4F6072')
@@ -185,43 +184,7 @@ export function StaffManager({
             <div className="border-t border-gray-100 p-5">
               {s.role === 'toiletteur' ? (
                 <div>
-                  {/* Tab switcher */}
-                  <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4 w-fit">
-                    {(['planning', 'disponibilites'] as const).map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveStaffTab((prev) => ({ ...prev, [s.id]: tab }))}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          (activeStaffTab[s.id] ?? 'planning') === tab
-                            ? 'bg-white text-[#1D164E] shadow-sm'
-                            : 'text-gray-500 hover:text-[#1D164E]'
-                        }`}
-                      >
-                        {tab === 'planning' ? 'Planning mensuel' : 'Dispos hebdo'}
-                      </button>
-                    ))}
-                  </div>
-
-                  {(activeStaffTab[s.id] ?? 'planning') === 'planning' && (
-                    <StaffScheduleEditor staffId={s.id} staffName={s.name} />
-                  )}
-
-                  {(activeStaffTab[s.id] ?? 'planning') === 'disponibilites' && (
-                    <div className="space-y-2">
-                      {[1, 2, 3, 4, 5, 6].map((day) => {
-                        const avail = s.availabilities.find((a) => a.day_of_week === day)
-                        return (
-                          <AvailRow
-                            key={day}
-                            dayLabel={DAYS[day]}
-                            avail={avail}
-                            onSave={(start, end) => upsertAvail(s.id, day, start, end)}
-                            onRemove={avail ? () => removeAvail(s.id, avail.id) : undefined}
-                          />
-                        )
-                      })}
-                    </div>
-                  )}
+                  <StaffScheduleEditor staffId={s.id} staffName={s.name} />
                 </div>
               ) : (
                 /* Non-toiletteurs: disponibilités hebdo only */

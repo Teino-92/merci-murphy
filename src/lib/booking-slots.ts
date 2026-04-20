@@ -110,14 +110,14 @@ function getSlotsForStaffOnDate(
   let windowStartMins: number
   let windowEndMins: number
 
-  if (scheduleEntries && scheduleEntries.length > 0) {
-    // Use monthly schedule: find entry for this exact date
+  if (scheduleEntries !== undefined) {
+    // Toilettage: monthly schedule is the only source of truth
     const entry = scheduleEntries.find((e) => e.date === dateStr)
-    if (!entry) return [] // not scheduled this day
+    if (!entry) return [] // not in schedule = not available
     windowStartMins = timeToMinutes(entry.start_time.slice(0, 5))
     windowEndMins = timeToMinutes(entry.end_time.slice(0, 5))
   } else {
-    // Fall back to weekly availability + time-off
+    // Other services: weekly availability + time-off
     const hasTimeOff = timeOff.some((t) => t.date === dateStr)
     if (hasTimeOff) return []
 
