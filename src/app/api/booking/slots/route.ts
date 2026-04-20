@@ -133,7 +133,9 @@ export async function GET(req: NextRequest) {
     const staffInputs = await Promise.all(
       staff.map(async (s) => {
         const monthStart = dateStr.slice(0, 8) + '01'
-        const monthEnd = dateStr.slice(0, 8) + '31'
+        const [y, m] = dateStr.split('-').map(Number)
+        const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate()
+        const monthEnd = `${dateStr.slice(0, 8)}${String(lastDay).padStart(2, '0')}`
         const [availRows, timeOffRows, scheduleRows, visits] = await Promise.all([
           supabaseAdmin
             .from('availabilities')
