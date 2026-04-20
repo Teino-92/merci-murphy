@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
-const supabase = createSupabaseBrowserClient()
-
 export default function DashboardLogin() {
   const router = useRouter()
+  const supabase = createSupabaseBrowserClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
