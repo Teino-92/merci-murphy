@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export async function POST(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get('secret')
@@ -12,12 +12,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const handle = body?.handle as string | undefined
 
+    // Invalidate all Shopify fetches
+    revalidateTag('shopify')
+
     if (handle) {
-      // Revalidate the specific product page
       revalidatePath(`/shop/${handle}`)
     }
 
-    // Always revalidate the shop index and homepage (stock badges, featured products)
     revalidatePath('/shop')
     revalidatePath('/')
 

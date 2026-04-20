@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { getAllCollections, getAllProducts } from '@/lib/shopify'
+import { getAllCollections, getCollectionByHandle } from '@/lib/shopify'
 import { Section, Container } from '@/components/ui/section'
 import { ShopCatalog } from '@/components/shop/shop-catalog'
 import { ShopManifesto } from '@/components/shop/shop-manifesto'
@@ -18,7 +18,28 @@ export const metadata: Metadata = {
 }
 
 export default async function ShopPage() {
-  const [collections, allProducts] = await Promise.all([getAllCollections(), getAllProducts()])
+  const collections = await getAllCollections()
+
+  // Fetch chaque collection avec ses produits ordonnés (MANUAL)
+  const collectionsWithProducts = await Promise.all(
+    collections.map((c) => getCollectionByHandle(c.handle))
+  )
+
+  // Produits "Tout voir" : dédoublonné dans l'ordre COLLECTION_ORDER
+  const COLLECTION_ORDER = ['merci murphy', 'chien', 'chat', 'petshop']
+  const sortedCollections = [...collectionsWithProducts].sort((a, b) => {
+    const ai = COLLECTION_ORDER.findIndex((t) => a?.title.toLowerCase().includes(t))
+    const bi = COLLECTION_ORDER.findIndex((t) => b?.title.toLowerCase().includes(t))
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+  })
+  const seen = new Set<string>()
+  const allProducts = sortedCollections
+    .flatMap((c) => c?.products.nodes ?? [])
+    .filter((p) => {
+      if (seen.has(p.id)) return false
+      seen.add(p.id)
+      return true
+    })
 
   return (
     <>
@@ -48,7 +69,15 @@ export default async function ShopPage() {
 
       <Section className="bg-cream">
         <Container>
-          <ShopCatalog collections={collections} allProducts={allProducts} />
+          <ShopCatalog
+            collections={collections}
+            allProducts={allProducts}
+            collectionProducts={Object.fromEntries(
+              collectionsWithProducts
+                .filter((c) => c !== null)
+                .map((c) => [c!.handle, c!.products.nodes])
+            )}
+          />
         </Container>
       </Section>
     </>

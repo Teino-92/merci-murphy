@@ -9,10 +9,13 @@ import type { ShopifyCollection, ShopifyProduct } from '@/lib/shopify'
 interface ShopCatalogProps {
   collections: ShopifyCollection[]
   allProducts: ShopifyProduct[]
+  collectionProducts?: Record<string, ShopifyProduct[]>
 }
 
-export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
-  const [activeHandle, setActiveHandle] = useState<string | null>(null)
+export function ShopCatalog({ collections, allProducts, collectionProducts }: ShopCatalogProps) {
+  const defaultHandle =
+    collections.find((c) => c.title.toLowerCase().includes('merci murphy'))?.handle ?? null
+  const [activeHandle, setActiveHandle] = useState<string | null>(defaultHandle)
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -55,7 +58,8 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
   const products = query.trim()
     ? allProducts.filter((p) => p.title.toLowerCase().includes(query.toLowerCase()))
     : activeHandle
-      ? allProducts.filter((p) => p.collections.nodes.some((c) => c.handle === activeHandle))
+      ? (collectionProducts?.[activeHandle] ??
+        allProducts.filter((p) => p.collections.nodes.some((c) => c.handle === activeHandle)))
       : allProducts
 
   return (
@@ -63,17 +67,6 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
       <div className="mb-10 flex flex-wrap items-center gap-2">
         {!searchOpen && (
           <>
-            <button
-              onClick={() => setActiveHandle(null)}
-              className={cn(
-                'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
-                !activeHandle
-                  ? 'border-terracotta-dark bg-terracotta-dark text-white'
-                  : 'border-charcoal/20 text-charcoal hover:border-terracotta-dark hover:text-terracotta-dark'
-              )}
-            >
-              Tout voir
-            </button>
             {visibleCollections.map((c) => (
               <button
                 key={c.handle}
@@ -88,6 +81,17 @@ export function ShopCatalog({ collections, allProducts }: ShopCatalogProps) {
                 {c.title}
               </button>
             ))}
+            <button
+              onClick={() => setActiveHandle(null)}
+              className={cn(
+                'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors',
+                !activeHandle
+                  ? 'border-terracotta-dark bg-terracotta-dark text-white'
+                  : 'border-charcoal/20 text-charcoal hover:border-terracotta-dark hover:text-terracotta-dark'
+              )}
+            >
+              Tout voir
+            </button>
           </>
         )}
 

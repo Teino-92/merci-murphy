@@ -10,7 +10,7 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
       'X-Shopify-Storefront-Access-Token': SHOPIFY_ACCESS_TOKEN,
     },
     body: JSON.stringify({ query, variables }),
-    next: { revalidate: 3600 },
+    next: { revalidate: 3600, tags: ['shopify'] },
   })
 
   if (!res.ok) {
