@@ -140,8 +140,29 @@ export function CustomerDetail({
 
   // Deposit state — keyed by visit id
   const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
+  const [paymentUrls, setPaymentUrls] = useState<Record<string, string>>({})
   const [depositSent, setDepositSent] = useState<Record<string, number>>({})
+  const [depositSending, setDepositSending] = useState<Record<string, boolean>>({})
   const [confirmingDeposit, setConfirmingDeposit] = useState<Record<string, boolean>>({})
+
+  async function sendDepositEmail(v: Visit) {
+    const amount = depositPrices[v.id]
+    const url = paymentUrls[v.id]
+    if (!amount || Number(amount) <= 0 || !url) return
+    setDepositSending((s) => ({ ...s, [v.id]: true }))
+    const res = await fetch(`/api/dashboard/visits/${v.id}/send-deposit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ depositAmount: Number(amount), paymentUrl: url }),
+    })
+    if (res.ok) {
+      setDepositSent((s) => ({ ...s, [v.id]: Number(amount) }))
+      setVisits((prev) =>
+        prev.map((x) => (x.id === v.id ? { ...x, deposit_amount: Number(amount) } : x))
+      )
+    }
+    setDepositSending((s) => ({ ...s, [v.id]: false }))
+  }
 
   // Final price editing — keyed by visit id
   const [finalPriceInputs, setFinalPriceInputs] = useState<Record<string, string>>({})
@@ -343,41 +364,6 @@ export function CustomerDetail({
     if (!confirm('Supprimer cette visite ?')) return
     await fetch(`/api/dashboard/customers/${profile.id}/visits/${visitId}`, { method: 'DELETE' })
     setVisits((v) => v.filter((x) => x.id !== visitId))
-  }
-
-  async function copyDepositEmail(visit: (typeof visits)[0]) {
-    const finalPrice = depositPrices[visit.id]
-    if (!finalPrice || isNaN(Number(finalPrice)) || Number(finalPrice) <= 0) return
-    const deposit = Number(finalPrice)
-
-    const startDate = new Date(`${visit.date}T${visit.time?.slice(0, 5) ?? '00:00'}Z`)
-    const appointmentDate = startDate.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      ...(visit.time ? { hour: '2-digit', minute: '2-digit' } : {}),
-      timeZone: 'Europe/Paris',
-    })
-
-    const dogName = dogs[0]?.name ?? 'votre chien'
-    const serviceName = SERVICE_LABELS[visit.service] ?? visit.service
-
-    const text = `Bonjour,
-
-Nous vous rappelons le rendez-vous de ${dogName} ${appointmentDate} chez merci murphy pour son ${serviceName.toLowerCase()}.
-Afin de valider définitivement votre créneau, merci de bien vouloir procéder au paiement d'un acompte de ${deposit}€ via le lien ci-dessous.
-
-[LIEN SUMUP]
-
-En effet en raison d'un grand nombre de non présentations, nous sommes contraints de procéder ainsi pour gérer au mieux le planning.
-
-Merci de votre compréhension.
-
-Nous vous souhaitons une bonne journée,
-L'équipe merci murphy`
-
-    await navigator.clipboard.writeText(text)
-    setDepositSent((s) => ({ ...s, [visit.id]: deposit }))
   }
 
   async function uploadFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -1112,29 +1098,47 @@ L'équipe merci murphy`
                             >
                               {deadlineLabel}
                             </p>
-                            {depositSent[v.id] == null && (
-                              <div className="flex items-center gap-2">
-                                <input
-                                  type="number"
-                                  min="0"
-                                  step="0.01"
-                                  placeholder="Acompte (€)"
-                                  value={depositPrices[v.id] ?? ''}
-                                  onChange={(e) =>
-                                    setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
-                                  }
-                                  className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
-                                />
-                                <button
-                                  onClick={() => copyDepositEmail(v)}
-                                  disabled={
-                                    !depositPrices[v.id] || Number(depositPrices[v.id]) <= 0
-                                  }
-                                  className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
-                                >
-                                  Copier le texte
-                                </button>
+                            {depositSent[v.id] == null ? (
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Acompte (€)"
+                                    value={depositPrices[v.id] ?? ''}
+                                    onChange={(e) =>
+                                      setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
+                                    }
+                                    className="w-32 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                                  />
+                                  <input
+                                    type="url"
+                                    placeholder="Lien SumUp"
+                                    value={paymentUrls[v.id] ?? ''}
+                                    onChange={(e) =>
+                                      setPaymentUrls((d) => ({ ...d, [v.id]: e.target.value }))
+                                    }
+                                    className="flex-1 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                                  />
+                                  <button
+                                    onClick={() => sendDepositEmail(v)}
+                                    disabled={
+                                      depositSending[v.id] ||
+                                      !depositPrices[v.id] ||
+                                      Number(depositPrices[v.id]) <= 0 ||
+                                      !paymentUrls[v.id]
+                                    }
+                                    className="text-xs font-medium bg-[#8B5A3A] text-white px-3 py-1.5 rounded-lg hover:bg-[#8B5A3A]/90 disabled:opacity-50 transition-colors whitespace-nowrap"
+                                  >
+                                    {depositSending[v.id] ? '…' : '📧 Envoyer'}
+                                  </button>
+                                </div>
                               </div>
+                            ) : (
+                              <p className="text-xs text-green-600">
+                                ✓ Mail acompte envoyé ({depositSent[v.id]?.toFixed(2)} €)
+                              </p>
                             )}
                             <button
                               onClick={() => confirmDeposit(v.id)}
@@ -1153,7 +1157,7 @@ L'équipe merci murphy`
                         <p className="text-xs font-medium text-emerald-600">
                           ✅ Créneau accepté par le client
                         </p>
-                        {depositSent[v.id] == null && (
+                        {depositSent[v.id] == null ? (
                           <div className="flex items-center gap-2">
                             <input
                               type="number"
@@ -1164,16 +1168,34 @@ L'équipe merci murphy`
                               onChange={(e) =>
                                 setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
                               }
-                              className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                              className="w-32 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                            />
+                            <input
+                              type="url"
+                              placeholder="Lien SumUp"
+                              value={paymentUrls[v.id] ?? ''}
+                              onChange={(e) =>
+                                setPaymentUrls((d) => ({ ...d, [v.id]: e.target.value }))
+                              }
+                              className="flex-1 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
                             />
                             <button
-                              onClick={() => copyDepositEmail(v)}
-                              disabled={!depositPrices[v.id] || Number(depositPrices[v.id]) <= 0}
-                              className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+                              onClick={() => sendDepositEmail(v)}
+                              disabled={
+                                depositSending[v.id] ||
+                                !depositPrices[v.id] ||
+                                Number(depositPrices[v.id]) <= 0 ||
+                                !paymentUrls[v.id]
+                              }
+                              className="text-xs font-medium bg-[#8B5A3A] text-white px-3 py-1.5 rounded-lg hover:bg-[#8B5A3A]/90 disabled:opacity-50 transition-colors whitespace-nowrap"
                             >
-                              Copier le texte
+                              {depositSending[v.id] ? '…' : '📧 Envoyer'}
                             </button>
                           </div>
+                        ) : (
+                          <p className="text-xs text-green-600">
+                            ✓ Mail acompte envoyé ({depositSent[v.id]?.toFixed(2)} €)
+                          </p>
                         )}
                       </div>
                     )}
