@@ -71,6 +71,13 @@ export interface Lead {
   source: string
   status: string
   user_id: string | null
+  proposed_date: string | null
+  proposed_time: string | null
+  respond_token: string | null
+  client_response: string | null
+  client_counter: string | null
+  deposit_amount: number | null
+  payment_url: string | null
 }
 
 export async function getProfiles(): Promise<Profile[]> {

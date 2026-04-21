@@ -112,6 +112,32 @@ export function CustomerDetail({
     router.refresh()
   }
 
+  // Reschedule state — keyed by visit id
+  const [rescheduling, setRescheduling] = useState<Record<string, boolean>>({})
+  const [rescheduleDate, setRescheduleDate] = useState<Record<string, string>>({})
+  const [rescheduleTime, setRescheduleTime] = useState<Record<string, string>>({})
+  const [rescheduleSending, setRescheduleSending] = useState<Record<string, boolean>>({})
+  const [rescheduleDone, setRescheduleDone] = useState<Record<string, boolean>>({})
+
+  async function sendReschedule(v: Visit) {
+    const date = rescheduleDate[v.id]
+    const time = rescheduleTime[v.id]
+    if (!date || !time) return
+    setRescheduleSending((s) => ({ ...s, [v.id]: true }))
+    const res = await fetch(`/api/dashboard/visits/${v.id}/reschedule`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date, time, notify: true }),
+    })
+    if (res.ok) {
+      setVisits((prev) => prev.map((x) => (x.id === v.id ? { ...x, date, time: `${time}:00` } : x)))
+      setRescheduling((s) => ({ ...s, [v.id]: false }))
+      setRescheduleDone((s) => ({ ...s, [v.id]: true }))
+      setTimeout(() => setRescheduleDone((s) => ({ ...s, [v.id]: false })), 3000)
+    }
+    setRescheduleSending((s) => ({ ...s, [v.id]: false }))
+  }
+
   // Deposit state — keyed by visit id
   const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
   const [depositSent, setDepositSent] = useState<Record<string, number>>({})
@@ -987,6 +1013,66 @@ L'équipe merci murphy`
                             </button>
                           )}
                         </div>
+                        {v.status !== 'cancelled' &&
+                          v.date >= new Date().toISOString().slice(0, 10) && (
+                            <div className="mt-2">
+                              {rescheduling[v.id] ? (
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <input
+                                    type="date"
+                                    value={rescheduleDate[v.id] ?? v.date}
+                                    onChange={(e) =>
+                                      setRescheduleDate((s) => ({ ...s, [v.id]: e.target.value }))
+                                    }
+                                    className="text-xs rounded-lg border border-gray-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                                  />
+                                  <input
+                                    type="time"
+                                    value={rescheduleTime[v.id] ?? v.time?.slice(0, 5) ?? ''}
+                                    onChange={(e) =>
+                                      setRescheduleTime((s) => ({ ...s, [v.id]: e.target.value }))
+                                    }
+                                    className="text-xs rounded-lg border border-gray-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                                  />
+                                  <button
+                                    onClick={() => sendReschedule(v)}
+                                    disabled={
+                                      rescheduleSending[v.id] ||
+                                      !rescheduleDate[v.id] ||
+                                      !rescheduleTime[v.id]
+                                    }
+                                    className="text-xs font-medium bg-[#1D164E] text-white px-2.5 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-40 transition-colors"
+                                  >
+                                    {rescheduleSending[v.id] ? '…' : 'Envoyer'}
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      setRescheduling((s) => ({ ...s, [v.id]: false }))
+                                    }
+                                    className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                                  >
+                                    Annuler
+                                  </button>
+                                </div>
+                              ) : rescheduleDone[v.id] ? (
+                                <p className="text-xs text-green-600">✓ Mail envoyé</p>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    setRescheduleDate((s) => ({ ...s, [v.id]: v.date }))
+                                    setRescheduleTime((s) => ({
+                                      ...s,
+                                      [v.id]: v.time?.slice(0, 5) ?? '',
+                                    }))
+                                    setRescheduling((s) => ({ ...s, [v.id]: true }))
+                                  }}
+                                  className="text-xs text-gray-400 hover:text-[#1D164E] transition-colors"
+                                >
+                                  📅 Déplacer
+                                </button>
+                              )}
+                            </div>
+                          )}
                         {depositSent[v.id] != null && (
                           <p className="text-xs text-green-600 mt-1">
                             ✓ Acompte de {depositSent[v.id].toFixed(2)} € envoyé

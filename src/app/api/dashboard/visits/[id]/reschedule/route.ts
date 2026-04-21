@@ -1,10 +1,10 @@
-// src/app/api/dashboard/visits/[id]/reschedule/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 import { bookingRescheduledHtml } from '@/lib/emails/booking-rescheduled'
 import { Resend } from 'resend'
+import { randomBytes } from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -39,8 +39,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   if (fetchError || !visit) return NextResponse.json({ error: 'Visit not found' }, { status: 404 })
 
+  // Generate respond token
+  const respondToken = randomBytes(32).toString('hex')
+
   // Update Supabase visit date/time (+ optional duration)
-  const updatePayload: Record<string, unknown> = { date: dateStr, time: `${timeStr}:00` }
+  const updatePayload: Record<string, unknown> = {
+    date: dateStr,
+    time: `${timeStr}:00`,
+    respond_token: respondToken,
+  }
   if (duration != null && Number(duration) > 0) updatePayload.duration = Number(duration)
 
   const { error: updateError } = await supabaseAdmin
@@ -76,15 +83,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const clientEmail = authUser?.user?.email
 
   if (clientEmail && notify) {
+    const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercimurphy.com'
     await resend.emails
       .send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: clientEmail,
-        subject: `Votre rendez-vous a été déplacé chez merci murphy®`,
+        subject: `Nouveau créneau proposé chez merci murphy®`,
         html: bookingRescheduledHtml({
           dogName: firstDog?.name ?? null,
           serviceName,
           newDate: formattedDate,
+          acceptUrl: `${BASE_URL}/api/booking/visit-respond?token=${respondToken}`,
         }),
       })
       .catch(() => {})
