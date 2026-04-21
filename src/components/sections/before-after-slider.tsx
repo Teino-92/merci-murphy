@@ -11,6 +11,7 @@ interface BeforeAfterSliderProps {
   zoom?: number
   beforeZoom?: number
   afterZoom?: number
+  className?: string
 }
 
 export function BeforeAfterSlider({
@@ -21,6 +22,7 @@ export function BeforeAfterSlider({
   zoom = 1,
   beforeZoom,
   afterZoom,
+  className,
 }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50)
   const [active, setActive] = useState(false)
@@ -43,7 +45,7 @@ export function BeforeAfterSlider({
     <div
       ref={containerRef}
       // Portrait 3:4 for real photos, square for color placeholders
-      className={`relative w-full overflow-hidden rounded-2xl cursor-none select-none bg-[#F5F0E8] ${isPhoto ? 'aspect-[3/4]' : 'aspect-square'}`}
+      className={`relative w-full overflow-hidden rounded-2xl cursor-none select-none bg-[#F5F0E8] ${isPhoto ? 'aspect-[3/4]' : 'aspect-square'} ${className ?? ''}`}
       onMouseMove={onMouseMove}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}

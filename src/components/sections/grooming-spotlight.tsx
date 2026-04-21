@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { Section, Container } from '@/components/ui/section'
+import { Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
-import { FloatingIcons } from '@/components/sections/floating-icons'
+import { PolaroidFan } from '@/components/sections/polaroid-fan'
 import { TestimonialsCarousel } from '@/components/sections/testimonials-carousel'
 import type { Testimonial } from '@/sanity/queries/testimonials'
 
@@ -12,10 +12,14 @@ interface GroomingSpotlightProps {
 
 export function GroomingSpotlight({ testimonials }: GroomingSpotlightProps) {
   return (
-    <Section className="bg-cream overflow-hidden">
+    <div
+      className="overflow-hidden px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
+      style={{
+        backgroundImage:
+          'repeating-linear-gradient(90deg, transparent 0px, transparent 28px, rgba(139,90,58,0.15) 28px, rgba(139,90,58,0.15) 48px)',
+      }}
+    >
       <Container className="relative">
-        <FloatingIcons />
-
         <Reveal>
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
@@ -39,29 +43,37 @@ export function GroomingSpotlight({ testimonials }: GroomingSpotlightProps) {
           </div>
         </Reveal>
 
+        {/* Mobile — 1 polaroid simple */}
         <Reveal delay={100}>
-          <div className="mx-auto mt-10 max-w-sm">
-            <BeforeAfterSlider
-              before={{ src: '/avant-apres-2-avant.jpg', alt: 'Avant toilettage' }}
-              after={{ src: '/avant-apres-2-apres.jpg', alt: 'Après toilettage' }}
-              zoom={1}
-            />
+          <div
+            className="mx-auto mt-10 max-w-sm sm:hidden"
+            style={{ transform: 'rotate(-1.5deg)' }}
+          >
+            <div className="bg-white shadow-xl" style={{ padding: '12px 12px 48px 12px' }}>
+              <BeforeAfterSlider
+                before={{ src: '/avant-apres-2-avant.jpg', alt: 'Avant toilettage' }}
+                after={{ src: '/avant-apres-2-apres.jpg', alt: 'Après toilettage' }}
+                zoom={1}
+                className="rounded-none"
+              />
+              <div className="mt-3 text-center">
+                <Link
+                  href="/services/le-toilettage-maison-poilus-r"
+                  className="text-sm text-charcoal/60 hover:text-terracotta transition-colors font-medium tracking-wide"
+                  style={{ fontFamily: 'var(--font-display, serif)', fontStyle: 'italic' }}
+                >
+                  Voir toutes les transformations →
+                </Link>
+              </div>
+            </div>
           </div>
         </Reveal>
 
-        <Reveal delay={150}>
-          <div className="mt-6 text-center">
-            <Link
-              href="/services/le-toilettage-maison-poilus-r"
-              className="text-sm text-charcoal/50 hover:text-terracotta transition-colors"
-            >
-              Voir toutes les transformations →
-            </Link>
-          </div>
-        </Reveal>
+        {/* Desktop — éventail polaroid */}
+        <PolaroidFan />
       </Container>
 
       {testimonials.length > 0 && <TestimonialsCarousel testimonials={testimonials} />}
-    </Section>
+    </div>
   )
 }
