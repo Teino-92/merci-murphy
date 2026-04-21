@@ -1146,6 +1146,37 @@ L'équipe merci murphy`
                           </div>
                         )
                       })()}
+
+                    {/* Acompte pour visite confirmed sans deposit_amount */}
+                    {v.status === 'confirmed' && v.deposit_amount == null && (
+                      <div className="px-4 pb-4 space-y-2">
+                        <p className="text-xs font-medium text-emerald-600">
+                          ✅ Créneau accepté par le client
+                        </p>
+                        {depositSent[v.id] == null && (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder="Acompte (€)"
+                              value={depositPrices[v.id] ?? ''}
+                              onChange={(e) =>
+                                setDepositPrices((d) => ({ ...d, [v.id]: e.target.value }))
+                              }
+                              className="w-36 text-sm rounded-lg border border-gray-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
+                            />
+                            <button
+                              onClick={() => copyDepositEmail(v)}
+                              disabled={!depositPrices[v.id] || Number(depositPrices[v.id]) <= 0}
+                              className="text-xs font-medium bg-[#1D164E] text-white px-3 py-1.5 rounded-lg hover:bg-[#1D164E]/90 disabled:opacity-50 transition-colors"
+                            >
+                              Copier le texte
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )
 
