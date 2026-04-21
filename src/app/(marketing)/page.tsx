@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 import { Hero } from '@/components/sections/hero'
 import { ServicesGrid } from '@/components/sections/services-grid'
+import { GroomingSpotlight } from '@/components/sections/grooming-spotlight'
 import { Values } from '@/components/sections/values'
 import { ShopTeaser } from '@/components/sections/shop-teaser'
 import { InstagramFeed } from '@/components/sections/instagram-feed'
@@ -19,6 +20,7 @@ import { FeaturedPost } from '@/components/sections/featured-post'
 import { getAllServices } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { getLatestPost } from '@/sanity/queries/posts'
+import { getGroomingTestimonials } from '@/sanity/queries/testimonials'
 import { getProductsByHandles, getCollectionByHandle } from '@/lib/shopify'
 
 const SHOP_TEASER_HANDLES = [
@@ -31,13 +33,15 @@ const SHOP_TEASER_HANDLES = [
 ]
 
 export default async function HomePage() {
-  const [services, settings, shopProducts, petloversCollection, latestPost] = await Promise.all([
-    getAllServices(),
-    getSiteSettings(),
-    getProductsByHandles(SHOP_TEASER_HANDLES),
-    getCollectionByHandle('petlovers'),
-    getLatestPost(),
-  ])
+  const [services, settings, shopProducts, petloversCollection, latestPost, groomingTestimonials] =
+    await Promise.all([
+      getAllServices(),
+      getSiteSettings(),
+      getProductsByHandles(SHOP_TEASER_HANDLES),
+      getCollectionByHandle('petlovers'),
+      getLatestPost(),
+      getGroomingTestimonials(),
+    ])
 
   const usedHandles = new Set(shopProducts.map((p) => p.handle))
 
@@ -292,6 +296,8 @@ export default async function HomePage() {
       <ShopTeaser products={finalProducts} />
 
       {services.length > 0 && <ServicesGrid services={services} preview />}
+
+      <GroomingSpotlight testimonials={groomingTestimonials} />
 
       <Values />
 

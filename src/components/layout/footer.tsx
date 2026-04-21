@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { SITE_CONFIG } from '@/config/site'
 import { Container } from '@/components/ui/section'
 import { NewsletterForm } from '@/components/forms/newsletter-form'
+import { ScrollToTop } from '@/components/layout/scroll-to-top'
 
 interface FooterProps {
   showBlog?: boolean
@@ -35,14 +36,16 @@ export function Footer({ showBlog = false }: FooterProps) {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
             {/* Logo + tagline */}
             <div>
-              <Image
-                src="/logo.avif"
-                alt="merci murphy®"
-                width={280}
-                height={96}
-                loading="lazy"
-                className="h-9 w-auto brightness-0 opacity-80"
-              />
+              <Link href="/">
+                <Image
+                  src="/logo.avif"
+                  alt="merci murphy®"
+                  width={280}
+                  height={96}
+                  loading="lazy"
+                  className="h-9 w-auto brightness-0 opacity-80"
+                />
+              </Link>
               <p className="mt-3 text-sm text-charcoal/60">
                 Connecting cats & dogs wellness and city lifestyle.
               </p>
@@ -166,27 +169,31 @@ export function Footer({ showBlog = false }: FooterProps) {
                 </Link>
               </p>
 
-              {/* Payment icons */}
-              <div className="flex min-h-[24px] items-center gap-1.5 flex-wrap">
-                {[
-                  { src: '/payments/visa.svg', alt: 'Visa' },
-                  { src: '/payments/mastercard.svg', alt: 'Mastercard' },
-                  { src: '/payments/amex.svg', alt: 'American Express' },
-                  { src: '/payments/apple-pay.svg', alt: 'Apple Pay' },
-                  { src: '/payments/paypal.svg', alt: 'PayPal' },
-                  { src: '/payments/shop-pay.svg', alt: 'Shop Pay' },
-                  { src: '/payments/google-pay.svg', alt: 'Google Pay' },
-                ].map((pm) => (
-                  <Image
-                    key={pm.alt}
-                    src={pm.src}
-                    alt={pm.alt}
-                    width={38}
-                    height={24}
-                    loading="lazy"
-                    className="h-6 w-auto"
-                  />
-                ))}
+              <div className="flex items-center gap-4">
+                {/* Payment icons */}
+                <div className="flex min-h-[24px] items-center gap-1.5 flex-wrap">
+                  {[
+                    { src: '/payments/visa.svg', alt: 'Visa' },
+                    { src: '/payments/mastercard.svg', alt: 'Mastercard' },
+                    { src: '/payments/amex.svg', alt: 'American Express' },
+                    { src: '/payments/apple-pay.svg', alt: 'Apple Pay' },
+                    { src: '/payments/paypal.svg', alt: 'PayPal' },
+                    { src: '/payments/shop-pay.svg', alt: 'Shop Pay' },
+                    { src: '/payments/google-pay.svg', alt: 'Google Pay' },
+                  ].map((pm) => (
+                    <Image
+                      key={pm.alt}
+                      src={pm.src}
+                      alt={pm.alt}
+                      width={38}
+                      height={24}
+                      loading="lazy"
+                      className="h-6 w-auto"
+                    />
+                  ))}
+                </div>
+
+                <ScrollToTop />
               </div>
             </div>
           </div>
