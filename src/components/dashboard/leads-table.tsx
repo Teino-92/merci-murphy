@@ -385,12 +385,14 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex flex-col gap-1.5">
-                      <button
-                        onClick={() => setProposeModal(lead)}
-                        className="whitespace-nowrap rounded-full bg-[#1D164E] px-3 py-1 text-xs font-medium text-white hover:bg-[#1D164E]/80 transition-colors"
-                      >
-                        📅 Proposer créneau
-                      </button>
+                      {lead.status === 'new' && (
+                        <button
+                          onClick={() => setProposeModal(lead)}
+                          className="whitespace-nowrap rounded-full bg-[#1D164E] px-3 py-1 text-xs font-medium text-white hover:bg-[#1D164E]/80 transition-colors"
+                        >
+                          📅 Proposer créneau
+                        </button>
+                      )}
                       {lead.client_response === 'accepted' && (
                         <button
                           onClick={() => setDepositModal(lead)}
