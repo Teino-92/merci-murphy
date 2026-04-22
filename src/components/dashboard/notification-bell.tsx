@@ -11,7 +11,7 @@ const STORAGE_KEY = 'dashboard_notifications_seen_at'
 
 interface Notification {
   id: string
-  type: 'pending_deposit' | 'visit' | 'lead' | 'newsletter'
+  type: 'pending_deposit' | 'visit' | 'lead' | 'newsletter' | 'declined' | 'deposit_paid'
   label: string
   sub: string
   href: string
@@ -27,6 +27,54 @@ function markSeen() {
   localStorage.setItem(STORAGE_KEY, new Date().toISOString())
 }
 
+const SERVICE_LABELS: Record<string, string> = {
+  toilettage: 'Toilettage',
+  bains: 'Bains',
+  balneo: 'Balnéo',
+  massage: 'Massage',
+  osteo: 'Ostéopathie',
+  education: 'Éducation',
+  creche: 'Crèche',
+}
+
+type VisitRow = {
+  id: string
+  profile_id: string
+  service: string
+  status: string
+  date: string
+  time: string | null
+  created_at: string
+  deposit_paid_at?: string | null
+  profiles:
+    | { nom?: string; dogs?: { name?: string }[] }
+    | { nom?: string; dogs?: { name?: string }[] }[]
+    | null
+}
+
+function visitToNotif(v: VisitRow, type: Notification['type'], label: string): Notification {
+  const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
+  const clientName = profile?.nom ?? '—'
+  const firstDog = profile?.dogs?.[0]?.name
+  const slug = v.service.split('-')[0]
+  const serviceLabel = SERVICE_LABELS[slug] ?? v.service
+  const dateLabel = v.date
+    ? new Date(`${v.date}T12:00:00Z`).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+      })
+    : ''
+  const dogOrClient = firstDog ?? clientName
+  return {
+    id: `visit-${v.id}-${type}`,
+    type,
+    label: label.replace('{name}', dogOrClient),
+    sub: `${serviceLabel}${dateLabel ? ` · ${dateLabel}` : ''}`,
+    href: `/dashboard/customers/${v.profile_id}`,
+    created_at: type === 'deposit_paid' ? (v.deposit_paid_at ?? v.created_at) : v.created_at,
+  }
+}
+
 export function NotificationBell() {
   const [open, setOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -38,62 +86,34 @@ export function NotificationBell() {
 
     const res = await fetch('/api/dashboard/notifications')
     if (!res.ok) return
-    const { visits, leads, newsletter } = (await res.json()) as {
-      visits: {
-        id: string
-        profile_id: string
-        service: string
-        status: string
-        date: string
-        time: string | null
-        created_at: string
-        profiles:
-          | { nom?: string; dogs?: { name?: string }[] }
-          | { nom?: string; dogs?: { name?: string }[] }[]
-          | null
-      }[]
+    const { visits, declined, depositPaid, leads, newsletter } = (await res.json()) as {
+      visits: VisitRow[]
+      declined: VisitRow[]
+      depositPaid: VisitRow[]
       leads: { id: string; nom: string; service: string; created_at: string }[]
       newsletter: { id: string; email: string; created_at: string }[]
-    }
-
-    const SERVICE_LABELS: Record<string, string> = {
-      toilettage: 'Toilettage',
-      bains: 'Bains',
-      balneo: 'Balnéo',
-      massage: 'Massage',
-      osteo: 'Ostéopathie',
-      education: 'Éducation',
-      creche: 'Crèche',
     }
 
     const items: Notification[] = []
 
     for (const v of visits) {
-      const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
-      const clientName = profile?.nom ?? '—'
-      const firstDog = profile?.dogs?.[0]?.name
-      const slug = v.service.split('-')[0]
-      const serviceLabel = SERVICE_LABELS[slug] ?? v.service
-      const dateLabel = v.date
-        ? new Date(`${v.date}T12:00:00Z`).toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'short',
-          })
-        : ''
-      const dogOrClient = firstDog ?? clientName
-      items.push({
-        id: `visit-${v.id}`,
-        type: v.status === 'pending_deposit' ? 'pending_deposit' : 'visit',
-        label:
-          v.status === 'pending_deposit'
-            ? `Acompte en attente · ${dogOrClient}`
-            : v.status === 'new'
-              ? `Nouvelle visite · ${dogOrClient}`
-              : `Rdv confirmé · ${dogOrClient}`,
-        sub: `${serviceLabel}${dateLabel ? ` · ${dateLabel}` : ''}`,
-        href: `/dashboard/customers/${v.profile_id}`,
-        created_at: v.created_at,
-      })
+      const type: Notification['type'] =
+        v.status === 'pending_deposit' ? 'pending_deposit' : 'visit'
+      const label =
+        v.status === 'pending_deposit'
+          ? 'Acompte en attente · {name}'
+          : v.status === 'new'
+            ? 'Nouvelle visite · {name}'
+            : 'Rdv confirmé · {name}'
+      items.push(visitToNotif(v, type, label))
+    }
+
+    for (const v of declined) {
+      items.push(visitToNotif(v, 'declined', 'Créneau refusé · {name}'))
+    }
+
+    for (const v of depositPaid) {
+      items.push(visitToNotif(v, 'deposit_paid', 'Acompte reçu · {name}'))
     }
 
     for (const l of leads) {
@@ -133,8 +153,10 @@ export function NotificationBell() {
         { event: 'UPDATE', schema: 'public', table: 'visits' },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (payload: { new: Record<string, any>; old: Record<string, any> }) => {
-          // Client accepted a reschedule: respond_token went from non-null to null
-          if (payload.old.respond_token && !payload.new.respond_token) {
+          const tokenCleared = payload.old.respond_token && !payload.new.respond_token
+          const depositJustPaid = !payload.old.deposit_paid_at && payload.new.deposit_paid_at
+
+          if (tokenCleared || depositJustPaid) {
             setUnseenCount((c) => c + 1)
           }
           load()
@@ -187,6 +209,8 @@ export function NotificationBell() {
     visit: 'bg-emerald-400',
     lead: 'bg-blue-400',
     newsletter: 'bg-purple-400',
+    declined: 'bg-red-400',
+    deposit_paid: 'bg-teal-400',
   }
 
   function relativeTime(iso: string) {
