@@ -40,6 +40,7 @@ const SERVICE_LABELS: Record<string, string> = {
 type VisitRow = {
   id: string
   profile_id: string
+  dog_id?: string | null
   service: string
   status: string
   date: string
@@ -47,16 +48,14 @@ type VisitRow = {
   created_at: string
   updated_at?: string | null
   deposit_paid_at?: string | null
-  profiles:
-    | { nom?: string; dogs?: { name?: string }[] }
-    | { nom?: string; dogs?: { name?: string }[] }[]
-    | null
+  profiles: { nom?: string } | { nom?: string }[] | null
+  dogs: { name?: string } | null
 }
 
 function visitToNotif(v: VisitRow, type: Notification['type'], label: string): Notification {
   const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
   const clientName = profile?.nom ?? '—'
-  const firstDog = profile?.dogs?.[0]?.name
+  const firstDog = v.dogs?.name
   const slug = v.service.split('-')[0]
   const serviceLabel = SERVICE_LABELS[slug] ?? v.service
   const dateLabel = v.date

@@ -14,7 +14,7 @@ export async function GET() {
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
   const selectVisit =
-    'id, profile_id, service, status, date, time, created_at, updated_at, deposit_paid_at, profiles(nom, dogs(name))'
+    'id, profile_id, dog_id, service, status, date, time, created_at, updated_at, deposit_paid_at, profiles(nom), dogs(name)'
 
   const [newVisitsRes, pendingRes, depositRes, leadsRes, nlRes] = await Promise.all([
     // New visits (not yet confirmed) — all
@@ -56,11 +56,25 @@ export async function GET() {
       .limit(10),
   ])
 
-  return NextResponse.json({
+  const payload = {
     visits: [...(newVisitsRes.data ?? []), ...(pendingRes.data ?? [])],
     depositPaid: depositRes.data ?? [],
     declined: [],
     leads: leadsRes.data ?? [],
     newsletter: nlRes.data ?? [],
+  }
+  // eslint-disable-next-line no-console
+  console.log('[notifications] payload counts:', {
+    visits: payload.visits.length,
+    depositPaid: payload.depositPaid.length,
+    leads: payload.leads.length,
+    newsletter: payload.newsletter.length,
+    errors: {
+      newVisits: newVisitsRes.error?.message,
+      pending: pendingRes.error?.message,
+      deposit: depositRes.error?.message,
+      leads: leadsRes.error?.message,
+    },
   })
+  return NextResponse.json(payload)
 }
