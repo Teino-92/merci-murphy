@@ -7,7 +7,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase'
 
 const supabase = createSupabaseBrowserClient()
 
-const STORAGE_KEY = 'dashboard_notifications_seen_at'
+const STORAGE_KEY = 'dashboard_notifications_seen_ids'
 
 interface Notification {
   id: string
@@ -18,13 +18,17 @@ interface Notification {
   created_at: string
 }
 
-function getSeenAt(): string {
-  if (typeof window === 'undefined') return new Date(0).toISOString()
-  return localStorage.getItem(STORAGE_KEY) ?? new Date(0).toISOString()
+function getSeenIds(): Set<string> {
+  if (typeof window === 'undefined') return new Set()
+  try {
+    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as string[])
+  } catch {
+    return new Set()
+  }
 }
 
-function markSeen() {
-  localStorage.setItem(STORAGE_KEY, new Date().toISOString())
+function markAllSeen(ids: string[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
 }
 
 const SERVICE_LABELS: Record<string, string> = {
@@ -78,11 +82,13 @@ function visitToNotif(v: VisitRow, type: Notification['type'], label: string): N
 export function NotificationBell() {
   const [open, setOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
-  const [unseenCount, setUnseenCount] = useState(0)
+  const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
   const panelRef = useRef<HTMLDivElement>(null)
 
+  const unseenCount = notifications.filter((n) => !seenIds.has(n.id)).length
+
   async function load() {
-    const seenAt = getSeenAt()
+    const currentSeenIds = getSeenIds()
 
     const res = await fetch('/api/dashboard/notifications')
     if (!res.ok) return
@@ -140,7 +146,7 @@ export function NotificationBell() {
 
     items.sort((a, b) => b.created_at.localeCompare(a.created_at))
     setNotifications(items)
-    setUnseenCount(items.filter((n) => n.created_at > seenAt).length)
+    setSeenIds(currentSeenIds)
   }
 
   useEffect(() => {
@@ -148,26 +154,13 @@ export function NotificationBell() {
 
     const channel = supabase
       .channel('notif-bell')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'visits' },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (payload: { new: Record<string, any>; old: Record<string, any> }) => {
-          const tokenCleared = payload.old.respond_token && !payload.new.respond_token
-          const depositJustPaid = !payload.old.deposit_paid_at && payload.new.deposit_paid_at
-
-          if (tokenCleared || depositJustPaid) {
-            setUnseenCount((c) => c + 1)
-          }
-          load()
-        }
-      )
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'visits' }, () => {
+        load()
+      })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'visits' }, () => {
-        setUnseenCount((c) => c + 1)
         load()
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'leads' }, () => {
-        setUnseenCount((c) => c + 1)
         load()
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'leads' }, load)
@@ -194,11 +187,16 @@ export function NotificationBell() {
     return () => document.removeEventListener('mousedown', handler)
   }, [open])
 
+  function markAllRead() {
+    const ids = notifications.map((n) => n.id)
+    markAllSeen(ids)
+    setSeenIds(new Set(ids))
+  }
+
   function toggle() {
     if (!open) {
       setOpen(true)
-      markSeen()
-      setUnseenCount(0)
+      markAllRead()
     } else {
       setOpen(false)
     }
@@ -242,30 +240,50 @@ export function NotificationBell() {
         <div className="absolute right-0 lg:right-auto lg:left-0 top-8 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <p className="text-sm font-semibold text-[#1D164E]">Notifications</p>
-            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-[#1D164E]">
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-3">
+              {unseenCount > 0 && (
+                <button onClick={markAllRead} className="text-xs text-[#B85C38] hover:underline">
+                  Tout marquer lu
+                </button>
+              )}
+              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-[#1D164E]">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
           <div className="max-h-96 overflow-y-auto divide-y divide-gray-50">
             {notifications.length === 0 ? (
               <p className="px-4 py-6 text-sm text-gray-400 text-center">Aucune notification</p>
             ) : (
-              notifications.map((n) => (
-                <Link
-                  key={n.id}
-                  href={n.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                >
-                  <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${TYPE_COLORS[n.type]}`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#1D164E] truncate">{n.label}</p>
-                    <p className="text-xs text-gray-400">
-                      {n.sub} · {relativeTime(n.created_at)}
-                    </p>
-                  </div>
-                </Link>
-              ))
+              notifications.map((n) => {
+                const read = seenIds.has(n.id)
+                return (
+                  <Link
+                    key={n.id}
+                    href={n.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  >
+                    <span
+                      className={`mt-1.5 w-2 h-2 rounded-full shrink-0 border-2 ${
+                        read
+                          ? 'bg-transparent border-gray-300'
+                          : `${TYPE_COLORS[n.type]} border-transparent`
+                      }`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className={`text-sm truncate ${read ? 'font-normal text-gray-500' : 'font-semibold text-[#1D164E]'}`}
+                      >
+                        {n.label}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {n.sub} · {relativeTime(n.created_at)}
+                      </p>
+                    </div>
+                  </Link>
+                )
+              })
             )}
           </div>
         </div>
