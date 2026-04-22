@@ -26,7 +26,7 @@ export function depositRequestHtml(params: {
         "En effet en raison d'un grand nombre de non présentations, nous sommes contraints de procéder ainsi pour gérer au mieux le planning.<br><br>Merci de votre compréhension."
       ),
       btn(`Payer l'acompte de ${depositAmount}€`, paymentUrl),
-      p("Nous vous souhaitons une bonne journée,<br><strong>L'équipe merci murphy</strong>"),
+      p("À très bientôt,<br><strong>L'équipe merci murphy</strong>"),
     ].join('\n'),
   })
 }
