@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 
@@ -45,13 +45,9 @@ function notify(title: string, body: string) {
 }
 
 export function RealtimeNotifications() {
-  const mounted = useRef(false)
   const router = useRouter()
 
   useEffect(() => {
-    if (mounted.current) return
-    mounted.current = true
-
     // Request notification permission on mount (silent — no prompt if already decided)
     if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
       Notification.requestPermission()
