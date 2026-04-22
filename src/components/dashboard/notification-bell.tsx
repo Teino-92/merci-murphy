@@ -36,28 +36,25 @@ export function NotificationBell() {
   async function load() {
     const seenAt = getSeenAt()
 
-    const [visitsRes, leadsRes, nlRes] = await Promise.all([
-      supabase
-        .from('visits')
-        .select(
-          'id, profile_id, service, status, date, time, created_at, profiles(nom, dogs(name))'
-        )
-        .in('status', ['new', 'confirmed', 'pending_deposit'])
-        .order('created_at', { ascending: false })
-        .limit(20),
-      supabase
-        .from('leads')
-        .select('id, nom, service, created_at')
-        .eq('status', 'new')
-        .order('created_at', { ascending: false })
-        .limit(20),
-      supabase
-        .from('newsletter_subscribers')
-        .select('id, email, created_at')
-        .eq('active', true)
-        .order('created_at', { ascending: false })
-        .limit(10),
-    ])
+    const res = await fetch('/api/dashboard/notifications')
+    if (!res.ok) return
+    const { visits, leads, newsletter } = (await res.json()) as {
+      visits: {
+        id: string
+        profile_id: string
+        service: string
+        status: string
+        date: string
+        time: string | null
+        created_at: string
+        profiles:
+          | { nom?: string; dogs?: { name?: string }[] }
+          | { nom?: string; dogs?: { name?: string }[] }[]
+          | null
+      }[]
+      leads: { id: string; nom: string; service: string; created_at: string }[]
+      newsletter: { id: string; email: string; created_at: string }[]
+    }
 
     const SERVICE_LABELS: Record<string, string> = {
       toilettage: 'Toilettage',
@@ -71,11 +68,10 @@ export function NotificationBell() {
 
     const items: Notification[] = []
 
-    for (const v of visitsRes.data ?? []) {
+    for (const v of visits) {
       const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
-      const profileTyped = profile as { nom?: string; dogs?: { name?: string }[] } | null
-      const clientName = profileTyped?.nom ?? '—'
-      const firstDog = profileTyped?.dogs?.[0]?.name
+      const clientName = profile?.nom ?? '—'
+      const firstDog = profile?.dogs?.[0]?.name
       const slug = v.service.split('-')[0]
       const serviceLabel = SERVICE_LABELS[slug] ?? v.service
       const dateLabel = v.date
@@ -84,9 +80,7 @@ export function NotificationBell() {
             month: 'short',
           })
         : ''
-
       const dogOrClient = firstDog ?? clientName
-
       items.push({
         id: `visit-${v.id}`,
         type: v.status === 'pending_deposit' ? 'pending_deposit' : 'visit',
@@ -102,7 +96,7 @@ export function NotificationBell() {
       })
     }
 
-    for (const l of leadsRes.data ?? []) {
+    for (const l of leads) {
       items.push({
         id: `lead-${l.id}`,
         type: 'lead',
@@ -113,7 +107,7 @@ export function NotificationBell() {
       })
     }
 
-    for (const s of nlRes.data ?? []) {
+    for (const s of newsletter) {
       items.push({
         id: `nl-${s.id}`,
         type: 'newsletter',
