@@ -64,11 +64,6 @@ function formatHeader(monday: Date): string {
   return `${monday.toLocaleDateString('fr-FR', opts)} — ${saturday.toLocaleDateString('fr-FR', { ...opts, year: 'numeric' })}`
 }
 
-function getParisHour(dateStr: string, timeStr: string | null): number {
-  if (!timeStr) return 9
-  return parseInt(timeStr.slice(0, 2), 10)
-}
-
 // ─── RescheduleModal ──────────────────────────────────────────────────────────
 
 interface RescheduleModalProps {
@@ -239,78 +234,118 @@ interface WeekGridProps {
   onReschedule: (v: CalVisit) => void
 }
 
+const PX_PER_MIN = 1 // 1px per minute → 60px per hour
+
 function WeekGrid({ monday, visits, showStaff, onReschedule }: WeekGridProps) {
   const weekDays = Array.from({ length: 6 }, (_, i) => addDays(monday, i))
   const today = toLocalDateStr(new Date())
+  const totalMinutes = HOURS.length * 60
 
-  function getVisitsAt(day: Date, hour: number): CalVisit[] {
+  function getVisitsForDay(day: Date): CalVisit[] {
     const dateStr = toLocalDateStr(day)
-    return visits.filter((v) => v.date === dateStr && getParisHour(v.date, v.time) === hour)
+    return visits.filter((v) => v.date === dateStr && v.time)
+  }
+
+  function topOffset(timeStr: string): number {
+    const h = parseInt(timeStr.slice(0, 2), 10)
+    const m = parseInt(timeStr.slice(3, 5), 10)
+    return (h - HOURS[0]) * 60 * PX_PER_MIN + m * PX_PER_MIN
+  }
+
+  function blockHeight(duration: number | null): number {
+    return Math.max((duration ?? 60) * PX_PER_MIN, 28)
   }
 
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-auto">
-      <table className="w-full border-collapse text-xs" style={{ minWidth: 640 }}>
-        <thead>
-          <tr>
-            <th className="w-12 border-b border-r border-gray-100 py-3 text-gray-400 font-normal" />
-            {weekDays.map((day, i) => {
-              const dateStr = toLocalDateStr(day)
-              const isToday = dateStr === today
-              return (
-                <th
-                  key={i}
-                  className={`border-b border-gray-100 py-3 px-2 font-medium text-center ${isToday ? 'text-[#B85C38]' : 'text-[#1D164E]'}`}
-                >
-                  <div>{DAYS[i]}</div>
-                  <div className={`text-lg font-bold ${isToday ? 'text-[#B85C38]' : ''}`}>
-                    {day.getDate()}
-                  </div>
-                </th>
-              )
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {HOURS.map((hour) => (
-            <tr key={hour} className="border-b border-gray-50">
-              <td className="border-r border-gray-100 py-2 px-2 text-gray-300 text-right align-top whitespace-nowrap">
+      <div style={{ minWidth: 640 }}>
+        {/* Header */}
+        <div className="flex border-b border-gray-100">
+          <div className="w-12 shrink-0" />
+          {weekDays.map((day, i) => {
+            const dateStr = toLocalDateStr(day)
+            const isToday = dateStr === today
+            return (
+              <div
+                key={i}
+                className={`flex-1 py-3 px-2 font-medium text-center text-xs border-l border-gray-100 ${isToday ? 'text-[#B85C38]' : 'text-[#1D164E]'}`}
+              >
+                <div>{DAYS[i]}</div>
+                <div className={`text-lg font-bold ${isToday ? 'text-[#B85C38]' : ''}`}>
+                  {day.getDate()}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Grid body */}
+        <div className="flex">
+          {/* Hour labels */}
+          <div className="w-12 shrink-0 relative" style={{ height: totalMinutes * PX_PER_MIN }}>
+            {HOURS.map((hour) => (
+              <div
+                key={hour}
+                className="absolute right-2 text-gray-300 text-xs"
+                style={{ top: (hour - HOURS[0]) * 60 * PX_PER_MIN - 7 }}
+              >
                 {hour}h
-              </td>
-              {weekDays.map((day, di) => {
-                const slot = getVisitsAt(day, hour)
-                return (
-                  <td key={di} className="align-top p-1" style={{ minWidth: 90 }}>
-                    {slot.map((v) => (
-                      <div
-                        key={v.id}
-                        className="rounded-lg px-2 py-1.5 mb-1 group relative text-white"
-                        style={{ backgroundColor: showStaff ? v.staff_color : '#4F6072' }}
-                        title={`${v.client_nom}${v.nom_chien ? ` — ${v.nom_chien}` : ''} · ${SERVICE_LABELS[v.service] ?? v.service}`}
-                      >
-                        <p className="font-semibold truncate leading-tight">
-                          {v.nom_chien ?? v.client_nom}
-                        </p>
-                        <p className="opacity-80 truncate leading-tight">
-                          {v.time ? v.time.slice(0, 5) : ''}
-                          {showStaff && v.staff ? ` · ${v.staff}` : ''}
-                        </p>
-                        <button
-                          onClick={() => onReschedule(v)}
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 hover:bg-white/40 rounded p-0.5"
-                          title="Déplacer"
-                        >
-                          <Clock className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </td>
-                )
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            ))}
+          </div>
+
+          {/* Day columns */}
+          {weekDays.map((day, di) => {
+            const dayVisits = getVisitsForDay(day)
+            return (
+              <div
+                key={di}
+                className="flex-1 relative border-l border-gray-100"
+                style={{ height: totalMinutes * PX_PER_MIN }}
+              >
+                {/* Hour lines */}
+                {HOURS.map((hour) => (
+                  <div
+                    key={hour}
+                    className="absolute w-full border-t border-gray-50"
+                    style={{ top: (hour - HOURS[0]) * 60 * PX_PER_MIN }}
+                  />
+                ))}
+
+                {/* Visit blocks */}
+                {dayVisits.map((v) => (
+                  <div
+                    key={v.id}
+                    className="absolute left-1 right-1 rounded-lg px-2 py-1 group text-white overflow-hidden"
+                    style={{
+                      top: topOffset(v.time!),
+                      height: blockHeight(v.duration),
+                      backgroundColor: showStaff ? v.staff_color : '#4F6072',
+                      minHeight: 28,
+                    }}
+                    title={`${v.client_nom}${v.nom_chien ? ` — ${v.nom_chien}` : ''} · ${SERVICE_LABELS[v.service] ?? v.service}`}
+                  >
+                    <p className="font-semibold truncate leading-tight text-xs">
+                      {v.nom_chien ?? v.client_nom}
+                    </p>
+                    <p className="opacity-80 truncate leading-tight text-xs">
+                      {v.time ? v.time.slice(0, 5) : ''}
+                      {showStaff && v.staff ? ` · ${v.staff}` : ''}
+                    </p>
+                    <button
+                      onClick={() => onReschedule(v)}
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 hover:bg-white/40 rounded p-0.5"
+                      title="Déplacer"
+                    >
+                      <Clock className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
