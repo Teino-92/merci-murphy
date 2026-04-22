@@ -166,15 +166,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: visitError.message }, { status: 500 })
   }
 
-  const startDate = new Date(`${date}T${timeUtc}:00Z`)
-  const appointmentDate = startDate.toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Paris',
-  })
+  const [hh, mm] = timeUtc.split(':')
+  const appointmentDate =
+    new Date(`${date}T12:00:00Z`).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      timeZone: 'Europe/Paris',
+    }) + ` à ${hh}h${mm}`
 
   const EMAIL_SERVICE_LABELS: Record<string, string> = {
     toilettage: 'Toilettage',

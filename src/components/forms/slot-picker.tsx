@@ -380,7 +380,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
       const body: Record<string, unknown> = {
         serviceSlug: slugBase,
         date: selectedDate,
-        timeUtc,
+        timeUtc: timeParis,
         staffId: staffId ?? null,
       }
       if (slugBase === 'toilettage' && selectedDog?.grooming_duration) {
