@@ -3,12 +3,14 @@ import { emailHtml, btn, p, divider, esc } from './base'
 const BOUTIQUE_EMAIL = process.env.RESEND_INTERNAL_EMAIL ?? 'bonjour@mercimurphy.com'
 
 export function bookingServiceChangedHtml(params: {
+  clientName: string
   dogName: string | null
   serviceName: string
   appointmentDate: string
   newDuration: number | null
 }): string {
-  const { dogName, serviceName, appointmentDate, newDuration } = params
+  const { clientName, dogName, serviceName, appointmentDate, newDuration } = params
+  const prenom = clientName.split(' ')[0]
   const serviceLabel = esc(serviceName).toLowerCase()
 
   const subject = dogName
@@ -21,7 +23,7 @@ export function bookingServiceChangedHtml(params: {
   return emailHtml({
     title: 'Modification de prestation — merci murphy®',
     body: [
-      p('Bonjour,'),
+      p(`Bonjour ${esc(prenom)},`),
       p(`Suite à votre demande, nous avons modifié ${subject}.`),
       p(`📅 <strong>${esc(appointmentDate)}</strong>${durationLine}`),
       p('📍 18 rue Victor Massé, 75009 Paris'),
@@ -37,12 +39,14 @@ export function bookingServiceChangedHtml(params: {
 }
 
 export function bookingRescheduledHtml(params: {
+  clientName: string
   dogName: string | null
   serviceName: string
   newDate: string
   acceptUrl: string
 }): string {
-  const { dogName, serviceName, newDate, acceptUrl } = params
+  const { clientName, dogName, serviceName, newDate, acceptUrl } = params
+  const prenom = clientName.split(' ')[0]
 
   const dogLabel = dogName ? esc(dogName) : 'mon chien'
   const serviceLabel = esc(serviceName).toLowerCase()
@@ -61,7 +65,7 @@ export function bookingRescheduledHtml(params: {
   return emailHtml({
     title: 'Nouveau créneau — merci murphy®',
     body: [
-      p('Bonjour,'),
+      p(`Bonjour ${esc(prenom)},`),
       p(`Nous vous proposons un nouveau créneau pour ${subject}.`),
       p(`📅 <strong>${esc(newDate)}</strong>`),
       p('📍 18 rue Victor Massé, 75009 Paris'),

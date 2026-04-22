@@ -9,7 +9,7 @@ export function accountWelcomeHtml(prenom: string, nomChien?: string): string {
   return emailHtml({
     title: 'Votre compte merci murphy® est créé',
     body: [
-      p('Bonjour,'),
+      p(`Bonjour ${esc(prenom)},`),
       p(greeting),
       p(
         'Votre compte merci murphy® a bien été créé. Notre équipe va vérifier votre profil et activer la réservation en ligne après votre première visite en boutique.'

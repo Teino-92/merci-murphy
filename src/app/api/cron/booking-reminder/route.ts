@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   // Fetch visits scheduled for tomorrow that are not cancelled
   const { data: visits, error } = await supabaseAdmin
     .from('visits')
-    .select('id, profile_id, service, date, time')
+    .select('id, profile_id, service, date, time, profiles(nom)')
     .eq('date', tomorrowStr)
     .neq('status', 'cancelled')
 
@@ -85,11 +85,14 @@ export async function GET(req: NextRequest) {
     const serviceName = SERVICE_LABELS[visit.service] ?? visit.service
 
     try {
+      const profile = Array.isArray(visit.profiles) ? visit.profiles[0] : visit.profiles
+      const clientName = (profile as { nom?: string } | null)?.nom ?? ''
       await resend.emails.send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: authUser.email,
         subject: `Rappel — votre rendez-vous demain chez merci murphy®`,
         html: bookingReminderHtml({
+          clientName,
           dogName: firstDog?.name ?? null,
           serviceName,
           appointmentDate,

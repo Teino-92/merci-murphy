@@ -2,14 +2,15 @@
 import { emailHtml, btn, p } from './base'
 
 export function depositRequestHtml(params: {
-  clientName: string // kept for future use
+  clientName: string
   dogName: string | null
   serviceName: string
   appointmentDate: string
   depositAmount: number
   paymentUrl: string
 }): string {
-  const { dogName, serviceName, appointmentDate, depositAmount, paymentUrl } = params
+  const { clientName, dogName, serviceName, appointmentDate, depositAmount, paymentUrl } = params
+  const prenom = clientName.split(' ')[0]
   const subject = dogName
     ? `le rendez-vous de <strong>${dogName}</strong> ${appointmentDate} chez merci murphy pour son ${serviceName.toLowerCase()}`
     : `votre rendez-vous ${appointmentDate} chez merci murphy pour le ${serviceName.toLowerCase()}`
@@ -17,7 +18,7 @@ export function depositRequestHtml(params: {
   return emailHtml({
     title: 'Confirmez votre réservation — merci murphy®',
     body: [
-      p('Bonjour,'),
+      p(`Bonjour ${prenom},`),
       p(`Nous vous rappelons ${subject}.`),
       p(
         `Afin de valider définitivement votre créneau, merci de bien vouloir procéder au paiement d'un acompte de <strong>${depositAmount}€</strong> via le lien ci-dessous.`

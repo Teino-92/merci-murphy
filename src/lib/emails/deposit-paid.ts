@@ -8,6 +8,7 @@ export function depositPaidHtml(params: {
   appointmentDate: string
 }): string {
   const { clientName, dogName, serviceName, appointmentDate } = params
+  const prenom = clientName.split(' ')[0]
   const subject = dogName
     ? `le rendez-vous de <strong>${esc(dogName)}</strong>`
     : `votre rendez-vous`
@@ -15,9 +16,9 @@ export function depositPaidHtml(params: {
   return emailHtml({
     title: 'Acompte reçu — merci murphy®',
     body: [
-      p('Bonjour,'),
+      p(`Bonjour ${esc(prenom)},`),
       p(
-        `Nous avons bien reçu votre acompte pour ${subject} — <strong>${esc(serviceName)}</strong> le <strong>${esc(appointmentDate)}</strong>, ${esc(clientName)}.`
+        `Nous avons bien reçu votre acompte pour ${subject} — <strong>${esc(serviceName)}</strong> le <strong>${esc(appointmentDate)}</strong>.`
       ),
       p('Votre créneau est désormais confirmé. Nous avons hâte de vous accueillir !'),
       p(

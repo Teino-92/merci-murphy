@@ -67,16 +67,19 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const slugBase = visit.service.split('-')[0]
   const serviceName = SERVICE_LABELS[slugBase] ?? visit.service
 
-  const { data: firstDog } = await supabaseAdmin
-    .from('dogs')
-    .select('name')
-    .eq('owner_id', visit.profile_id)
-    .order('created_at', { ascending: true })
-    .limit(1)
-    .single()
-
-  const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(visit.profile_id)
+  const [{ data: firstDog }, { data: clientProfile }, { data: authUser }] = await Promise.all([
+    supabaseAdmin
+      .from('dogs')
+      .select('name')
+      .eq('owner_id', visit.profile_id)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single(),
+    supabaseAdmin.from('profiles').select('nom').eq('id', visit.profile_id).single(),
+    supabaseAdmin.auth.admin.getUserById(visit.profile_id),
+  ])
   const clientEmail = authUser?.user?.email
+  const clientName = clientProfile?.nom ?? ''
 
   if (clientEmail && notify) {
     const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercimurphy.com'
@@ -98,6 +101,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           to: clientEmail,
           subject: `Modification de votre prestation chez merci murphy®`,
           html: bookingServiceChangedHtml({
+            clientName,
             dogName: firstDog?.name ?? null,
             serviceName,
             appointmentDate: formattedDate,
@@ -113,6 +117,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           to: clientEmail,
           subject: `Nouveau créneau proposé chez merci murphy®`,
           html: bookingRescheduledHtml({
+            clientName,
             dogName: firstDog?.name ?? null,
             serviceName,
             newDate: formattedDate,
