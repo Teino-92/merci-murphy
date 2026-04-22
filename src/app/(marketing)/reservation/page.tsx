@@ -53,6 +53,7 @@ export default async function ReservationPage({
                 nom: profile?.nom ?? '',
                 email: user.email ?? '',
                 telephone: profile?.telephone ?? '',
+                nom_chien: firstDog?.name ?? '',
                 race_chien: firstDog?.breed ?? '',
                 poids_chien: firstDog?.poids ?? '',
                 etat_poil: firstDog?.etat_poil ?? '',

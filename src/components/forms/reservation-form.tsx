@@ -31,6 +31,7 @@ interface DefaultValues {
   nom?: string
   email?: string
   telephone?: string
+  nom_chien?: string
   race_chien?: string
   poids_chien?: string
   etat_poil?: string
@@ -54,6 +55,7 @@ export function ReservationForm({
     nom: defaultValues.nom,
     email: defaultValues.email,
     telephone: defaultValues.telephone,
+    nom_chien: defaultValues.nom_chien,
     race_chien: defaultValues.race_chien,
     poids_chien: defaultValues.poids_chien as LeadFormData['poids_chien'],
     etat_poil: defaultValues.etat_poil as LeadFormData['etat_poil'],
