@@ -12,37 +12,29 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  const since7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
-  const [visitsRes, declinedRes, depositRes, leadsRes, nlRes] = await Promise.all([
-    // new + pending_deposit (all) + confirmed only last 7 days
+  const selectVisit =
+    'id, profile_id, service, status, date, time, created_at, updated_at, deposit_paid_at, profiles(nom, dogs(name))'
+
+  const [newVisitsRes, pendingRes, depositRes, leadsRes, nlRes] = await Promise.all([
+    // New visits (not yet confirmed) — all
     supabaseAdmin
       .from('visits')
-      .select(
-        'id, profile_id, service, status, date, time, created_at, deposit_paid_at, profiles(nom, dogs(name))'
-      )
-      .or(
-        `status.eq.new,status.eq.pending_deposit,and(status.eq.confirmed,created_at.gte.${since7})`
-      )
+      .select(selectVisit)
+      .eq('status', 'new')
       .order('created_at', { ascending: false })
       .limit(20),
-    // Cancelled (client declined reschedule) — last 30 days, sort by updated_at
+    // Pending deposit — all
     supabaseAdmin
       .from('visits')
-      .select(
-        'id, profile_id, service, status, date, time, created_at, updated_at, profiles(nom, dogs(name))'
-      )
-      .eq('status', 'cancelled')
-      .is('respond_token', null)
-      .gte('updated_at', since30)
-      .order('updated_at', { ascending: false })
-      .limit(10),
-    // Deposit paid — last 30 days
+      .select(selectVisit)
+      .eq('status', 'pending_deposit')
+      .order('created_at', { ascending: false })
+      .limit(20),
+    // Deposit just paid — last 30 days (pending_deposit → confirmed via confirm-deposit route)
     supabaseAdmin
       .from('visits')
-      .select(
-        'id, profile_id, service, status, date, time, created_at, deposit_paid_at, profiles(nom, dogs(name))'
-      )
+      .select(selectVisit)
       .eq('status', 'confirmed')
       .not('deposit_paid_at', 'is', null)
       .gte('deposit_paid_at', since30)
@@ -65,9 +57,9 @@ export async function GET() {
   ])
 
   return NextResponse.json({
-    visits: visitsRes.data ?? [],
-    declined: declinedRes.data ?? [],
+    visits: [...(newVisitsRes.data ?? []), ...(pendingRes.data ?? [])],
     depositPaid: depositRes.data ?? [],
+    declined: [],
     leads: leadsRes.data ?? [],
     newsletter: nlRes.data ?? [],
   })
