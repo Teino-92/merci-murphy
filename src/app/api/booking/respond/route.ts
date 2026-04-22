@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   const { data: lead, error } = await supabaseAdmin
     .from('leads')
-    .select('id, status, respond_token, proposed_date, proposed_time')
+    .select('id, status, respond_token, proposed_date, proposed_time, service, user_id, email')
     .eq('respond_token', token)
     .single()
 
@@ -28,10 +28,41 @@ export async function GET(req: NextRequest) {
     .from('leads')
     .update({
       client_response: 'accepted',
-      status: 'contacted',
+      status: 'confirmed',
       respond_token: null,
     })
     .eq('id', lead.id)
+
+  // Crée la visite si on a les infos nécessaires
+  if (lead.proposed_date && lead.proposed_time) {
+    // Résout le profile_id : d'abord user_id du lead, sinon cherche par email
+    let profileId = lead.user_id as string | null
+    if (!profileId && lead.email) {
+      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
+      const match = (authUsers?.users ?? []).find((u) => u.email === lead.email)
+      if (match) profileId = match.id
+    }
+
+    if (profileId) {
+      // Récupère grooming_duration du premier chien
+      const { data: firstDog } = await supabaseAdmin
+        .from('dogs')
+        .select('grooming_duration')
+        .eq('owner_id', profileId)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single()
+
+      await supabaseAdmin.from('visits').insert({
+        profile_id: profileId,
+        service: lead.service,
+        date: lead.proposed_date,
+        time: `${lead.proposed_time}:00`,
+        duration: firstDog?.grooming_duration ?? null,
+        status: 'confirmed',
+      })
+    }
+  }
 
   return NextResponse.redirect(new URL('/booking/respond/accepted', req.url))
 }
