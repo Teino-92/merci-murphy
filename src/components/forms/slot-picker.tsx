@@ -409,17 +409,10 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
           {SERVICE_LABELS[confirmedService?.split('-')[0] ?? ''] ?? confirmedService}
           {durationLabel} · {confirmedDate ? formatDateFr(confirmedDate) : ''} à {confirmedTime}
         </p>
-        {confirmedService?.split('-')[0] === 'toilettage' ? (
-          <p className="text-xs text-charcoal/40">
-            Vous recevrez un email avec un lien de paiement d&apos;acompte dans la journée. Pensez à
-            vérifier vos spams.
-          </p>
-        ) : (
-          <p className="text-xs text-charcoal/40">
-            Nous vous rappelons que l&apos;horaire choisit sera confirmé par l&apos;équipe merci
-            murphy®.
-          </p>
-        )}
+        <p className="text-xs text-charcoal/40">
+          Nous avons bien pris en compte votre demande de rendez-vous. Le planning peut évoluer et
+          nous faisons au mieux pour nous adapter à vos disponibilités et à vos souhaits.
+        </p>
         <button
           onClick={resetAll}
           className="text-xs underline underline-offset-2 text-charcoal/40 hover:text-charcoal transition-colors"
