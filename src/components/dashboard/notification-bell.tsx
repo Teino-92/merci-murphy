@@ -45,6 +45,7 @@ type VisitRow = {
   date: string
   time: string | null
   created_at: string
+  updated_at?: string | null
   deposit_paid_at?: string | null
   profiles:
     | { nom?: string; dogs?: { name?: string }[] }
@@ -65,13 +66,19 @@ function visitToNotif(v: VisitRow, type: Notification['type'], label: string): N
       })
     : ''
   const dogOrClient = firstDog ?? clientName
+  const eventAt =
+    type === 'deposit_paid'
+      ? (v.deposit_paid_at ?? v.created_at)
+      : type === 'declined'
+        ? (v.updated_at ?? v.created_at)
+        : v.created_at
   return {
     id: `visit-${v.id}-${type}`,
     type,
     label: label.replace('{name}', dogOrClient),
     sub: `${serviceLabel}${dateLabel ? ` · ${dateLabel}` : ''}`,
     href: `/dashboard/customers/${v.profile_id}`,
-    created_at: type === 'deposit_paid' ? (v.deposit_paid_at ?? v.created_at) : v.created_at,
+    created_at: eventAt,
   }
 }
 
