@@ -382,13 +382,7 @@ function DayList({ day, visits, showStaff, onReschedule }: DayListProps) {
   return (
     <div className="space-y-2">
       {dayVisits.map((v) => {
-        const timeLabel = v.time
-          ? new Date(`${v.date}T${v.time.slice(0, 5)}Z`).toLocaleTimeString('fr-FR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              timeZone: 'Europe/Paris',
-            })
-          : null
+        const timeLabel = v.time ? v.time.slice(0, 5) : null
         const color = showStaff
           ? v.staff_color
           : (SERVICE_COLOR[v.service.split('-')[0]] ?? '#4F6072')
