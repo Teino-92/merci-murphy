@@ -14,7 +14,7 @@ export async function GET() {
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
   const selectVisit =
-    'id, profile_id, dog_id, service, status, date, time, created_at, updated_at, deposit_paid_at, profiles(nom), dogs(name)'
+    'id, profile_id, dog_id, service, status, date, time, created_at, deposit_paid_at, profiles(nom), dogs(name)'
 
   const [newVisitsRes, pendingRes, depositRes, leadsRes, nlRes] = await Promise.all([
     // New visits (not yet confirmed) — all
