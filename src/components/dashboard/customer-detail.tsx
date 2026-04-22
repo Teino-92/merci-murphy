@@ -288,6 +288,7 @@ export function CustomerDetail({
       body: JSON.stringify({
         service: visitService,
         date: visitDate,
+        duration: dogs[0]?.grooming_duration ?? null,
         notes: visitNotes,
         staff: visitStaff,
         price: visitPrice,

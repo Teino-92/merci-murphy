@@ -9,6 +9,7 @@ interface CalVisit {
   service: string
   date: string
   time: string | null
+  duration: number | null
   staff: string | null
   staff_color: string
   status: string
@@ -65,11 +66,7 @@ function formatHeader(monday: Date): string {
 
 function getParisHour(dateStr: string, timeStr: string | null): number {
   if (!timeStr) return 9
-  const dt = new Date(`${dateStr}T${timeStr.slice(0, 5)}Z`)
-  return parseInt(
-    dt.toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }),
-    10
-  )
+  return parseInt(timeStr.slice(0, 2), 10)
 }
 
 // ─── RescheduleModal ──────────────────────────────────────────────────────────
@@ -82,14 +79,12 @@ interface RescheduleModalProps {
 }
 
 function RescheduleModal({ visit, onClose, onSaved, onDeleted }: RescheduleModalProps) {
-  const utcStr = visit.time ? `${visit.date}T${visit.time.slice(0, 5)}Z` : `${visit.date}T09:00Z`
-  const initialParis = new Date(utcStr)
-    .toLocaleString('sv-SE', { timeZone: 'Europe/Paris' })
-    .replace(' ', 'T')
-    .slice(0, 16)
+  const initialParis = visit.time
+    ? `${visit.date}T${visit.time.slice(0, 5)}`
+    : `${visit.date}T09:00`
 
   const [newDatetime, setNewDatetime] = useState(initialParis)
-  const [duration, setDuration] = useState<string>('')
+  const [duration, setDuration] = useState<string>(visit.duration?.toString() ?? '')
   const [notify, setNotify] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -297,12 +292,7 @@ function WeekGrid({ monday, visits, showStaff, onReschedule }: WeekGridProps) {
                           {v.nom_chien ?? v.client_nom}
                         </p>
                         <p className="opacity-80 truncate leading-tight">
-                          {v.time
-                            ? new Date(`${v.date}T${v.time.slice(0, 5)}Z`).toLocaleTimeString(
-                                'fr-FR',
-                                { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }
-                              )
-                            : ''}
+                          {v.time ? v.time.slice(0, 5) : ''}
                           {showStaff && v.staff ? ` · ${v.staff}` : ''}
                         </p>
                         <button
