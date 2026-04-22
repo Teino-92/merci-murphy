@@ -134,7 +134,19 @@ export function NotificationBell() {
 
     const channel = supabase
       .channel('notif-bell')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'visits' }, load)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'visits' },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (payload: { new: Record<string, any>; old: Record<string, any> }) => {
+          // Client accepted a reschedule: respond_token went from non-null to null
+          if (payload.old.respond_token && !payload.new.respond_token) {
+            setUnseenCount((c) => c + 1)
+          }
+          load()
+        }
+      )
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'visits' }, load)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, load)
       .on(
         'postgres_changes',

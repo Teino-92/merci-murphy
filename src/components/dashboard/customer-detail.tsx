@@ -891,12 +891,16 @@ export function CustomerDetail({
                     <div className="flex gap-4 p-4">
                       <div className="shrink-0 text-center">
                         <p className="text-xs font-bold text-[#1D164E]">
-                          {new Date(v.date).toLocaleDateString('fr-FR', {
+                          {new Date(`${v.date}T12:00:00Z`).toLocaleDateString('fr-FR', {
                             day: '2-digit',
                             month: 'short',
                           })}
                         </p>
-                        <p className="text-xs text-gray-400">{new Date(v.date).getFullYear()}</p>
+                        <p className="text-xs text-gray-400">
+                          {v.time
+                            ? v.time.slice(0, 5)
+                            : new Date(`${v.date}T12:00:00Z`).getFullYear()}
+                        </p>
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
