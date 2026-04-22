@@ -51,7 +51,7 @@ ${params.body}
 export function btn(label: string, url: string): string {
   return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
   <tr><td align="center">
-    <a href="${url}" style="display:inline-block;background:${TERRACOTTA};color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:100px;">
+    <a href="${url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:${TERRACOTTA};color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:100px;">
       ${label}
     </a>
   </td></tr>
