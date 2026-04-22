@@ -115,21 +115,52 @@ function MonthCalendar({
   disableSunday = true,
   disableWeekends = false,
   allowedDows,
+  serviceSlug,
+  staffId,
+  dogDuration,
+  crecheDuration,
 }: {
   onSelectDate: (date: string) => void
   disableSunday?: boolean
   disableWeekends?: boolean
   allowedDows?: number[] // e.g. [2,3,4,5] for Tue–Fri
+  serviceSlug?: string | null
+  staffId?: string | null
+  dogDuration?: number | null
+  crecheDuration?: number | null
 }) {
   const today = isoToday()
   const horizon = addDays(today, BOOKING_HORIZON_DAYS)
 
   const [year, setYear] = useState(() => parseInt(today.slice(0, 4), 10))
   const [month, setMonth] = useState(() => parseInt(today.slice(5, 7), 10) - 1)
+  const [availableDates, setAvailableDates] = useState<Set<string> | null>(null)
+  const [datesLoading, setDatesLoading] = useState(false)
 
   const dates = getDatesInMonth(year, month)
   const firstDow = getDayOfWeek(dates[0])
   const gridOffset = firstDow === 0 ? 6 : firstDow - 1
+
+  // Fetch available dates when month/service/staff changes
+  useEffect(() => {
+    if (!serviceSlug) return
+    const slugBase = serviceSlug.split('-')[0]
+    const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`
+    let url = `/api/booking/available-dates?service=${slugBase}&month=${monthStr}`
+    if (staffId) url += `&staffId=${staffId}`
+    if (slugBase === 'toilettage' && dogDuration) url += `&duration=${dogDuration}`
+    if (slugBase === 'creche' && crecheDuration) url += `&duration=${crecheDuration}`
+
+    setDatesLoading(true)
+    setAvailableDates(null)
+    fetch(url)
+      .then((r) => r.json())
+      .then((data: { availableDates?: string[] }) => {
+        setAvailableDates(new Set(data.availableDates ?? []))
+      })
+      .catch(() => setAvailableDates(null))
+      .finally(() => setDatesLoading(false))
+  }, [serviceSlug, staffId, dogDuration, crecheDuration, year, month])
 
   const prevMonth = () => {
     if (month === 0) {
@@ -185,6 +216,8 @@ function MonthCalendar({
         ))}
       </div>
 
+      {datesLoading && <p className="text-center text-xs text-charcoal/30 py-1">Chargement…</p>}
+
       <div className="grid grid-cols-7 gap-y-1">
         {Array.from({ length: gridOffset }).map((_, i) => (
           <div key={`empty-${i}`} />
@@ -196,12 +229,15 @@ function MonthCalendar({
           const isPast = date < today
           const isBeyondHorizon = date > horizon
           const notAllowed = allowedDows ? !allowedDows.includes(dow) : false
+          // If availableDates loaded and date not in set → no slots
+          const noSlots = availableDates !== null && !availableDates.has(date)
           const disabled =
             isPast ||
             isBeyondHorizon ||
             (disableSunday && isSunday) ||
             (disableWeekends && (isSunday || isSaturday)) ||
-            notAllowed
+            notAllowed ||
+            noSlots
           const isToday = date === today
 
           return (
@@ -657,6 +693,10 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
           }}
           // Crèche: Tue–Fri only (days 2,3,4,5); Sunday always disabled
           allowedDows={isCreche ? [2, 3, 4, 5] : undefined}
+          serviceSlug={selectedService}
+          staffId={selectedStaffId}
+          dogDuration={selectedDog?.grooming_duration ?? null}
+          crecheDuration={crecheDuration}
         />
       </div>
     )
