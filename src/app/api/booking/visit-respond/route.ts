@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
 
   const { data: visit, error } = await supabaseAdmin
     .from('visits')
-    .select('id, status')
+    .select('id, status, deposit_amount')
     .eq('respond_token', token)
     .single()
 
@@ -18,5 +18,9 @@ export async function GET(req: NextRequest) {
     .update({ status: 'confirmed', respond_token: null })
     .eq('id', visit.id)
 
-  return NextResponse.redirect(new URL('/booking/respond/accepted', req.url))
+  const depositAlreadyPaid = visit.deposit_amount != null && visit.deposit_amount > 0
+  const dest = new URL('/booking/respond/accepted', req.url)
+  if (depositAlreadyPaid) dest.searchParams.set('deposit', 'paid')
+
+  return NextResponse.redirect(dest)
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
-import { bookingRescheduledHtml } from '@/lib/emails/booking-rescheduled'
+import { bookingRescheduledHtml, bookingServiceChangedHtml } from '@/lib/emails/booking-rescheduled'
 import { Resend } from 'resend'
 import { randomBytes } from 'crypto'
 
@@ -30,19 +30,24 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!dateStr || !timeStr)
     return NextResponse.json({ error: 'Missing date/time' }, { status: 400 })
 
-  // Fetch visit
+  // Fetch current visit to compare date/time
   const { data: visit, error: fetchError } = await supabaseAdmin
     .from('visits')
-    .select('profile_id, service')
+    .select('profile_id, service, date, time, deposit_amount')
     .eq('id', params.id)
     .single()
 
   if (fetchError || !visit) return NextResponse.json({ error: 'Visit not found' }, { status: 404 })
 
-  // Generate respond token
-  const respondToken = randomBytes(32).toString('hex')
+  // Detect if only duration changed (date + time unchanged)
+  const oldDate = visit.date
+  const oldTime = visit.time?.slice(0, 5) ?? ''
+  const onlyDurationChanged = dateStr === oldDate && timeStr === oldTime
 
-  // Update Supabase visit date/time (+ optional duration)
+  // Generate respond token (only needed for reschedule, not duration-only change)
+  const respondToken = onlyDurationChanged ? null : randomBytes(32).toString('hex')
+
+  // Update visit
   const updatePayload: Record<string, unknown> = {
     date: dateStr,
     time: `${timeStr}:00`,
@@ -59,15 +64,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
 
-  // Format for email — treat as Paris local time
-  const formattedDate = new Date(`${dateStr}T${timeStr}:00`).toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Paris',
-  })
   const slugBase = visit.service.split('-')[0]
   const serviceName = SERVICE_LABELS[slugBase] ?? visit.service
 
@@ -84,19 +80,47 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   if (clientEmail && notify) {
     const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercimurphy.com'
-    await resend.emails
-      .send({
-        from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
-        to: clientEmail,
-        subject: `Nouveau créneau proposé chez merci murphy®`,
-        html: bookingRescheduledHtml({
-          dogName: firstDog?.name ?? null,
-          serviceName,
-          newDate: formattedDate,
-          acceptUrl: `${BASE_URL}/api/booking/visit-respond?token=${respondToken}`,
-        }),
-      })
-      .catch(() => {})
+
+    const formattedDate = new Date(`${dateStr}T${timeStr}:00`).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Paris',
+    })
+
+    if (onlyDurationChanged) {
+      // Mail info simple — pas de OUI/NON
+      await resend.emails
+        .send({
+          from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
+          to: clientEmail,
+          subject: `Modification de votre prestation chez merci murphy®`,
+          html: bookingServiceChangedHtml({
+            dogName: firstDog?.name ?? null,
+            serviceName,
+            appointmentDate: formattedDate,
+            newDuration: duration != null && Number(duration) > 0 ? Number(duration) : null,
+          }),
+        })
+        .catch(() => {})
+    } else {
+      // Mail nouveau créneau avec boutons OUI/NON
+      await resend.emails
+        .send({
+          from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
+          to: clientEmail,
+          subject: `Nouveau créneau proposé chez merci murphy®`,
+          html: bookingRescheduledHtml({
+            dogName: firstDog?.name ?? null,
+            serviceName,
+            newDate: formattedDate,
+            acceptUrl: `${BASE_URL}/api/booking/visit-respond?token=${respondToken}`,
+          }),
+        })
+        .catch(() => {})
+    }
   }
 
   return NextResponse.json({ ok: true, date: dateStr, time: `${timeStr}:00` })

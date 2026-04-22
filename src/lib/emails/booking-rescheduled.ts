@@ -2,6 +2,40 @@ import { emailHtml, btn, p, divider, esc } from './base'
 
 const BOUTIQUE_EMAIL = process.env.RESEND_INTERNAL_EMAIL ?? 'bonjour@mercimurphy.com'
 
+export function bookingServiceChangedHtml(params: {
+  dogName: string | null
+  serviceName: string
+  appointmentDate: string
+  newDuration: number | null
+}): string {
+  const { dogName, serviceName, appointmentDate, newDuration } = params
+  const serviceLabel = esc(serviceName).toLowerCase()
+
+  const subject = dogName
+    ? `la prestation de <strong>${esc(dogName)}</strong> pour son ${serviceLabel}`
+    : `votre prestation pour ${serviceLabel}`
+
+  const durationLine =
+    newDuration != null ? `<br>⏱ Durée ajustée : <strong>${newDuration} min</strong>` : ''
+
+  return emailHtml({
+    title: 'Modification de prestation — merci murphy®',
+    body: [
+      p('Bonjour,'),
+      p(`Suite à votre demande, nous avons modifié ${subject}.`),
+      p(`📅 <strong>${esc(appointmentDate)}</strong>${durationLine}`),
+      p('📍 18 rue Victor Massé, 75009 Paris'),
+      divider(),
+      p(
+        `Votre acompte reste valable pour ce rendez-vous. Aucune action de votre part n'est nécessaire.`
+      ),
+      p(`Si vous avez des questions, n'hésitez pas à nous contacter.`),
+      divider(),
+      p(`À bientôt chez merci murphy® !<br><strong>L'équipe merci murphy®</strong>`),
+    ].join('\n'),
+  })
+}
+
 export function bookingRescheduledHtml(params: {
   dogName: string | null
   serviceName: string
