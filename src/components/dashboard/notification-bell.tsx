@@ -39,7 +39,9 @@ export function NotificationBell() {
     const [visitsRes, leadsRes, nlRes] = await Promise.all([
       supabase
         .from('visits')
-        .select('id, profile_id, service, status, created_at, profiles(nom)')
+        .select(
+          'id, profile_id, service, status, date, time, created_at, profiles(nom, dogs(name))'
+        )
         .in('status', ['new', 'confirmed', 'pending_deposit'])
         .order('created_at', { ascending: false })
         .limit(20),
@@ -71,18 +73,30 @@ export function NotificationBell() {
 
     for (const v of visitsRes.data ?? []) {
       const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
-      const name = (profile as { nom?: string } | null)?.nom ?? '—'
+      const profileTyped = profile as { nom?: string; dogs?: { name?: string }[] } | null
+      const clientName = profileTyped?.nom ?? '—'
+      const firstDog = profileTyped?.dogs?.[0]?.name
       const slug = v.service.split('-')[0]
+      const serviceLabel = SERVICE_LABELS[slug] ?? v.service
+      const dateLabel = v.date
+        ? new Date(`${v.date}T12:00:00Z`).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'short',
+          })
+        : ''
+
+      const dogOrClient = firstDog ?? clientName
+
       items.push({
         id: `visit-${v.id}`,
         type: v.status === 'pending_deposit' ? 'pending_deposit' : 'visit',
         label:
           v.status === 'pending_deposit'
-            ? `Acompte en attente — ${name}`
+            ? `Acompte en attente · ${dogOrClient}`
             : v.status === 'new'
-              ? `Nouvelle visite — ${name}`
-              : `Résa confirmée — ${name}`,
-        sub: SERVICE_LABELS[slug] ?? v.service,
+              ? `Nouvelle visite · ${dogOrClient}`
+              : `Rdv confirmé · ${dogOrClient}`,
+        sub: `${serviceLabel}${dateLabel ? ` · ${dateLabel}` : ''}`,
         href: `/dashboard/customers/${v.profile_id}`,
         created_at: v.created_at,
       })
