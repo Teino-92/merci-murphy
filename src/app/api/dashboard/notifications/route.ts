@@ -21,7 +21,9 @@ export async function GET() {
       .select(
         'id, profile_id, service, status, date, time, created_at, deposit_paid_at, profiles(nom, dogs(name))'
       )
-      .or(`status.in.(new,pending_deposit),and(status.eq.confirmed,created_at.gte.${since7})`)
+      .or(
+        `status.eq.new,status.eq.pending_deposit,and(status.eq.confirmed,created_at.gte.${since7})`
+      )
       .order('created_at', { ascending: false })
       .limit(20),
     // Cancelled (client declined reschedule) — last 30 days, sort by updated_at
