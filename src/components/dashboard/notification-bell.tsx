@@ -146,8 +146,15 @@ export function NotificationBell() {
           load()
         }
       )
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'visits' }, load)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, load)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'visits' }, () => {
+        setUnseenCount((c) => c + 1)
+        load()
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'leads' }, () => {
+        setUnseenCount((c) => c + 1)
+        load()
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'leads' }, load)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'newsletter_subscribers' },
