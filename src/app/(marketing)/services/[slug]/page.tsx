@@ -225,6 +225,9 @@ export default async function ServicePage({ params }: Props) {
             <Reveal>
               <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
               <TarifsToilettageTable data={service.tarifsToilettage} />
+              <p className="mt-4 text-xs text-charcoal/50 italic">
+                Merci de noter que toute prestation annulée moins de 24h à l&apos;avance est due.
+              </p>
             </Reveal>
           </Container>
         </Section>
