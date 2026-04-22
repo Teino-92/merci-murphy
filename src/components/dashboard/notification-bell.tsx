@@ -40,7 +40,7 @@ export function NotificationBell() {
       supabase
         .from('visits')
         .select('id, profile_id, service, status, created_at, profiles(nom)')
-        .in('status', ['confirmed', 'pending_deposit'])
+        .in('status', ['new', 'confirmed', 'pending_deposit'])
         .order('created_at', { ascending: false })
         .limit(20),
       supabase
@@ -79,7 +79,9 @@ export function NotificationBell() {
         label:
           v.status === 'pending_deposit'
             ? `Acompte en attente — ${name}`
-            : `Nouvelle résa — ${name}`,
+            : v.status === 'new'
+              ? `Nouvelle visite — ${name}`
+              : `Résa confirmée — ${name}`,
         sub: SERVICE_LABELS[slug] ?? v.service,
         href: `/dashboard/customers/${v.profile_id}`,
         created_at: v.created_at,
