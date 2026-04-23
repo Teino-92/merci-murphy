@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 import { depositPaidHtml } from '@/lib/emails/deposit-paid'
+import { sendPushToStaff } from '@/lib/push'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -53,6 +54,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .eq('id', params.id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  await sendPushToStaff('deposit-paid', {
+    service: SERVICE_LABELS[visit.service.split('-')[0]] ?? visit.service,
+    date: visit.date ?? undefined,
+    visitId: params.id,
+  })
 
   // Send deposit-paid email to client
   const [profileRes, authUserRes, dogRes] = await Promise.all([
