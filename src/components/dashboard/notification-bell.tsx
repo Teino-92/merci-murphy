@@ -194,12 +194,7 @@ export function NotificationBell() {
   }
 
   function toggle() {
-    if (!open) {
-      setOpen(true)
-      markAllRead()
-    } else {
-      setOpen(false)
-    }
+    setOpen((prev) => !prev)
   }
 
   const TYPE_COLORS: Record<string, string> = {
@@ -237,7 +232,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 lg:right-auto lg:left-0 top-8 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div className="absolute right-0 lg:right-auto lg:left-0 top-8 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <p className="text-sm font-semibold text-[#1D164E]">Notifications</p>
             <div className="flex items-center gap-3">
@@ -261,7 +256,13 @@ export function NotificationBell() {
                   <Link
                     key={n.id}
                     href={n.href}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      const next = new Set(seenIds)
+                      next.add(n.id)
+                      markAllSeen(Array.from(next))
+                      setSeenIds(next)
+                      setOpen(false)
+                    }}
                     className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                   >
                     <span

@@ -40,18 +40,20 @@ export async function GET() {
       .gte('deposit_paid_at', since30)
       .order('deposit_paid_at', { ascending: false })
       .limit(10),
-    // New leads
+    // New leads — last 30 days
     supabaseAdmin
       .from('leads')
       .select('id, nom, service, created_at')
       .eq('status', 'new')
+      .gte('created_at', since30)
       .order('created_at', { ascending: false })
       .limit(20),
-    // Newsletter
+    // Newsletter — last 30 days
     supabaseAdmin
       .from('newsletter_subscribers')
       .select('id, email, created_at')
       .eq('active', true)
+      .gte('created_at', since30)
       .order('created_at', { ascending: false })
       .limit(10),
   ])
