@@ -66,6 +66,7 @@ const MOBILE_NAV = [
   { href: '/dashboard/reservations/new', label: 'Calendrier', icon: CalendarDays },
   { href: '/dashboard/customers', label: 'Clients', icon: Users },
   { href: '/dashboard/leads', label: 'Demandes', icon: ClipboardList },
+  { href: '/dashboard/settings', label: 'Réglages', icon: Settings },
 ]
 
 export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
