@@ -124,12 +124,12 @@ export function PushToggle() {
       const reg = await navigator.serviceWorker.ready
       const sub = await reg.pushManager.getSubscription()
       if (sub) {
+        await sub.unsubscribe().catch(() => {})
         await fetch('/api/push/subscribe', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint: sub.endpoint }),
         }).catch(() => {})
-        await sub.unsubscribe().catch(() => {})
       }
       setState('granted-unsubbed')
     } catch {

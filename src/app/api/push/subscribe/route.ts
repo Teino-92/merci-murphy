@@ -23,7 +23,7 @@ async function requireStaffUser() {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
-  if (!hasDashboardAccess(user.email))
+  if (!hasDashboardAccess(user.email ?? undefined))
     return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) }
   return { user }
 }
@@ -39,6 +39,19 @@ export async function POST(req: NextRequest) {
   }
 
   const now = new Date().toISOString()
+
+  // Check if a sub with this endpoint already exists for a different user.
+  // If so, delete it first — endpoint is being re-issued to the current user.
+  const { data: existing } = await supabaseAdmin
+    .from('push_subscriptions')
+    .select('id, user_id')
+    .eq('endpoint', parsed.data.endpoint)
+    .maybeSingle()
+
+  if (existing && existing.user_id !== gate.user.id) {
+    await supabaseAdmin.from('push_subscriptions').delete().eq('id', existing.id)
+  }
+
   const { error } = await supabaseAdmin.from('push_subscriptions').upsert(
     {
       user_id: gate.user.id,
