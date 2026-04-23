@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { Bell, X } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
@@ -238,71 +239,76 @@ export function NotificationBell() {
         )}
       </button>
 
-      {open && (
-        <div
-          ref={panelRef}
-          className="fixed z-[200] w-80 bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col max-h-[min(24rem,calc(100dvh-6rem))]"
-          style={panelPos ? { top: panelPos.top, left: panelPos.left } : {}}
-        >
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
-            <p className="text-sm font-semibold text-[#1D164E]">Notifications</p>
-            <div className="flex items-center gap-3">
-              {unseenCount > 0 && (
-                <button onClick={markAllRead} className="text-xs text-[#B85C38] hover:underline">
-                  Tout marquer lu
-                </button>
-              )}
-              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-[#1D164E]">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+      {open &&
+        createPortal(
           <div
-            className="overflow-y-auto divide-y divide-gray-50 overscroll-contain"
-            onWheel={(e) => e.stopPropagation()}
+            ref={panelRef}
+            className="fixed z-[200] w-80 bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col max-h-[min(24rem,calc(100dvh-6rem))]"
+            style={panelPos ? { top: panelPos.top, left: panelPos.left } : {}}
           >
-            {notifications.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-gray-400 text-center">Aucune notification</p>
-            ) : (
-              notifications.map((n) => {
-                const read = seenIds.has(n.id)
-                return (
-                  <Link
-                    key={n.id}
-                    href={n.href}
-                    onClick={() => {
-                      const next = new Set(seenIds)
-                      next.add(n.id)
-                      markAllSeen(Array.from(next))
-                      setSeenIds(next)
-                      setOpen(false)
-                    }}
-                    className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                  >
-                    <span
-                      className={`mt-1.5 w-2 h-2 rounded-full shrink-0 border-2 ${
-                        read
-                          ? 'bg-transparent border-gray-300'
-                          : `${TYPE_COLORS[n.type]} border-transparent`
-                      }`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm truncate ${read ? 'font-normal text-gray-500' : 'font-semibold text-[#1D164E]'}`}
-                      >
-                        {n.label}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {n.sub} · {relativeTime(n.created_at)}
-                      </p>
-                    </div>
-                  </Link>
-                )
-              })
-            )}
-          </div>
-        </div>
-      )}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
+              <p className="text-sm font-semibold text-[#1D164E]">Notifications</p>
+              <div className="flex items-center gap-3">
+                {unseenCount > 0 && (
+                  <button onClick={markAllRead} className="text-xs text-[#B85C38] hover:underline">
+                    Tout marquer lu
+                  </button>
+                )}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="text-gray-400 hover:text-[#1D164E]"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <div
+              className="overflow-y-auto divide-y divide-gray-50 overscroll-contain"
+              onWheel={(e) => e.stopPropagation()}
+            >
+              {notifications.length === 0 ? (
+                <p className="px-4 py-6 text-sm text-gray-400 text-center">Aucune notification</p>
+              ) : (
+                notifications.map((n) => {
+                  const read = seenIds.has(n.id)
+                  return (
+                    <Link
+                      key={n.id}
+                      href={n.href}
+                      onClick={() => {
+                        const next = new Set(seenIds)
+                        next.add(n.id)
+                        markAllSeen(Array.from(next))
+                        setSeenIds(next)
+                        setOpen(false)
+                      }}
+                      className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                    >
+                      <span
+                        className={`mt-1.5 w-2 h-2 rounded-full shrink-0 border-2 ${
+                          read
+                            ? 'bg-transparent border-gray-300'
+                            : `${TYPE_COLORS[n.type]} border-transparent`
+                        }`}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className={`text-sm truncate ${read ? 'font-normal text-gray-500' : 'font-semibold text-[#1D164E]'}`}
+                        >
+                          {n.label}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {n.sub} · {relativeTime(n.created_at)}
+                        </p>
+                      </div>
+                    </Link>
+                  )
+                })
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }
