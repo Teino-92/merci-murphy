@@ -4,6 +4,7 @@ import { DashboardNav } from '@/components/dashboard/nav'
 import { RealtimeNotifications } from '@/components/dashboard/realtime-notifications'
 import { PwaGate } from '@/components/dashboard/pwa-gate'
 import { BfcacheRefresh } from '@/components/dashboard/bfcache-refresh'
+import { SwRegister } from '@/components/dashboard/sw-register'
 import { isAdminEmail, hasDashboardAccess } from '@/lib/auth-role'
 
 export const dynamic = 'force-dynamic'
@@ -25,6 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <PwaGate>
       <BfcacheRefresh />
+      <SwRegister />
       <div className="min-h-screen bg-[#F5F0EB] flex">
         <RealtimeNotifications />
         <DashboardNav isAdmin={isAdmin} />
