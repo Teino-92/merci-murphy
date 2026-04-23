@@ -16,7 +16,7 @@ export function PawStamp({ active, className, inline }: PawStampProps) {
         'pointer-events-none transition-all duration-300',
         inline
           ? 'inline-flex items-center ml-2 shrink-0 -translate-y-2'
-          : 'absolute bottom-6 sm:bottom-1.5 -right-9',
+          : 'absolute bottom-1 -right-9',
         active
           ? 'opacity-100 scale-100'
           : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100',
@@ -25,13 +25,7 @@ export function PawStamp({ active, className, inline }: PawStampProps) {
       style={{}}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/cursor-dog-sm.png"
-        alt=""
-        width={32}
-        height={32}
-        style={{ transform: 'rotate(20deg)' }}
-      />
+      <img src="/cursor-dog-sm.png" alt="" width={32} height={32} style={{}} />
     </span>
   )
 }
