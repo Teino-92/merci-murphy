@@ -84,6 +84,8 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set())
   const panelRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [panelPos, setPanelPos] = useState<{ top: number; left: number } | null>(null)
 
   const unseenCount = notifications.filter((n) => !seenIds.has(n.id)).length
 
@@ -194,6 +196,10 @@ export function NotificationBell() {
   }
 
   function toggle() {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setPanelPos({ top: rect.bottom + 8, left: rect.left })
+    }
     setOpen((prev) => !prev)
   }
 
@@ -217,8 +223,9 @@ export function NotificationBell() {
   }
 
   return (
-    <div className="relative" ref={panelRef}>
+    <div className="relative">
       <button
+        ref={buttonRef}
         onClick={toggle}
         className="relative text-white/60 hover:text-white transition-colors"
         aria-label="Notifications"
@@ -232,7 +239,11 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-8 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col lg:left-full lg:right-auto lg:top-0 lg:ml-3 max-h-[min(24rem,calc(100dvh-6rem))]">
+        <div
+          ref={panelRef}
+          className="fixed z-[200] w-80 bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col max-h-[min(24rem,calc(100dvh-6rem))]"
+          style={panelPos ? { top: panelPos.top, left: panelPos.left } : {}}
+        >
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
             <p className="text-sm font-semibold text-[#1D164E]">Notifications</p>
             <div className="flex items-center gap-3">
