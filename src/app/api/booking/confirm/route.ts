@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { SERVICE_DURATIONS, SERVICE_BUFFER } from '@/lib/booking-config'
 import { bookingConfirmedHtml } from '@/lib/emails/booking-confirmed'
+import { sendPushToStaff } from '@/lib/push'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -185,6 +186,22 @@ export async function POST(req: NextRequest) {
     creche: 'Crèche',
   }
   const serviceName = EMAIL_SERVICE_LABELS[slugBase] ?? serviceSlug
+
+  await sendPushToStaff('new-visit', {
+    nom: profile?.nom ?? undefined,
+    service: serviceName,
+    date: appointmentDate,
+    visitId: visit?.id,
+  })
+
+  if (status === 'pending_deposit') {
+    await sendPushToStaff('pending-deposit', {
+      nom: profile?.nom ?? undefined,
+      service: serviceName,
+      date: appointmentDate,
+      visitId: visit?.id,
+    })
+  }
 
   if (status === 'confirmed') {
     // Confirmation email to client
