@@ -150,8 +150,8 @@ export function PushToggle() {
   if (state === 'ios-needs-install') {
     return (
       <p className="text-sm text-charcoal/70">
-        Sur iPhone/iPad : ouvrez ce site dans Safari → Partager → « Sur l'écran d'accueil ». Rouvrez
-        ensuite l'app depuis l'icône pour activer les notifications.
+        Sur iPhone/iPad : ouvrez ce site dans Safari → Partager → « Sur l&apos;écran d&apos;accueil ». Rouvrez
+        ensuite l&apos;app depuis l&apos;icône pour activer les notifications.
       </p>
     )
   }
