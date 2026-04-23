@@ -257,7 +257,10 @@ export function NotificationBell() {
               </button>
             </div>
           </div>
-          <div className="overflow-y-auto divide-y divide-gray-50 overscroll-contain">
+          <div
+            className="overflow-y-auto divide-y divide-gray-50 overscroll-contain"
+            onWheel={(e) => e.stopPropagation()}
+          >
             {notifications.length === 0 ? (
               <p className="px-4 py-6 text-sm text-gray-400 text-center">Aucune notification</p>
             ) : (
