@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { newsletterWelcomeHtml } from '@/lib/emails/newsletter-welcome'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 import { esc } from '@/lib/emails/base'
+import { sendPushToStaff } from '@/lib/push'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -39,8 +40,18 @@ export async function submitLead(data: LeadFormData) {
   const parsed = LeadSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: 'Données invalides.' }
 
-  const { error } = await supabaseAdmin.from('leads').insert([parsed.data])
+  const { data: inserted, error } = await supabaseAdmin
+    .from('leads')
+    .insert([parsed.data])
+    .select('id')
+    .single()
   if (error) return { success: false, error: 'Une erreur est survenue. Veuillez réessayer.' }
+
+  await sendPushToStaff('new-lead', {
+    nom: parsed.data.nom,
+    service: SERVICE_LABELS[parsed.data.service] ?? parsed.data.service,
+    leadId: inserted?.id,
+  })
 
   // Notification interne via Resend
   const d = parsed.data
