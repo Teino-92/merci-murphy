@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { sendPushToStaff } from '@/lib/push'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -53,13 +54,23 @@ export async function GET(req: NextRequest) {
         .limit(1)
         .single()
 
-      await supabaseAdmin.from('visits').insert({
-        profile_id: profileId,
+      const { data: newVisit } = await supabaseAdmin
+        .from('visits')
+        .insert({
+          profile_id: profileId,
+          service: lead.service,
+          date: lead.proposed_date,
+          time: `${lead.proposed_time}:00`,
+          duration: firstDog?.grooming_duration ?? null,
+          status: 'confirmed',
+        })
+        .select('id')
+        .single()
+
+      await sendPushToStaff('new-visit', {
         service: lead.service,
-        date: lead.proposed_date,
-        time: `${lead.proposed_time}:00`,
-        duration: firstDog?.grooming_duration ?? null,
-        status: 'confirmed',
+        date: `${lead.proposed_date} ${lead.proposed_time}`,
+        visitId: newVisit?.id,
       })
     }
   }
