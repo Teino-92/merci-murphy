@@ -232,8 +232,8 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 lg:right-auto lg:left-0 top-8 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <div className="absolute right-0 top-8 z-50 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col lg:left-full lg:right-auto lg:top-0 lg:ml-3 max-h-[min(24rem,calc(100dvh-6rem))]">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
             <p className="text-sm font-semibold text-[#1D164E]">Notifications</p>
             <div className="flex items-center gap-3">
               {unseenCount > 0 && (
@@ -246,7 +246,7 @@ export function NotificationBell() {
               </button>
             </div>
           </div>
-          <div className="max-h-96 overflow-y-auto divide-y divide-gray-50">
+          <div className="overflow-y-auto divide-y divide-gray-50 overscroll-contain">
             {notifications.length === 0 ? (
               <p className="px-4 py-6 text-sm text-gray-400 text-center">Aucune notification</p>
             ) : (
