@@ -152,33 +152,35 @@ export function Footer({ showBlog = false }: FooterProps) {
 
           {/* Bottom bar */}
           <div className="mt-8 pt-6" style={{ borderTop: '2px solid rgba(26,26,26,0.15)' }}>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               {/* Legal links */}
-              <p className="text-xs text-charcoal/60">
-                © {new Date().getFullYear()} merci murphy®.{' '}
-                <Link href="/mentions-legales" className="hover:text-charcoal">
-                  Mentions légales
-                </Link>{' '}
-                ·{' '}
-                <Link href="/cgv" className="hover:text-charcoal">
-                  CGV
-                </Link>{' '}
-                ·{' '}
-                <Link href="/confidentialite" className="hover:text-charcoal">
-                  Confidentialité
-                </Link>
-              </p>
-              <p>
-                Made by{' '}
-                <a
-                  href="https://matteo.garbugli.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-charcoal"
-                >
-                  Matteo Garbugli
-                </a>
-              </p>
+              <div className="flex flex-col gap-1">
+                <p className="text-xs text-charcoal/60">
+                  © {new Date().getFullYear()} merci murphy®.{' '}
+                  <Link href="/mentions-legales" className="hover:text-charcoal">
+                    Mentions légales
+                  </Link>{' '}
+                  ·{' '}
+                  <Link href="/cgv" className="hover:text-charcoal">
+                    CGV
+                  </Link>{' '}
+                  ·{' '}
+                  <Link href="/confidentialite" className="hover:text-charcoal">
+                    Confidentialité
+                  </Link>
+                </p>
+                <p className="text-xs text-charcoal/30">
+                  Made by{' '}
+                  <a
+                    href="https://matteogarbugli.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-charcoal/50"
+                  >
+                    Matteo Garbugli
+                  </a>
+                </p>
+              </div>
 
               <div className="flex items-center gap-4">
                 {/* Payment icons */}
