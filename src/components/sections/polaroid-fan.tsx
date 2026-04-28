@@ -17,7 +17,7 @@ const ITEMS: PolaroidItem[] = [
 
 const ROTATIONS = [-7, -1.5, 5]
 const HOVER_ROTATIONS = [-10, 0, 8]
-const OFFSETS = [-60, 0, 60] // décalage horizontal
+const OFFSETS = [-80, 0, 80] // décalage horizontal
 
 export function PolaroidFan() {
   const [hovered, setHovered] = useState<number | null>(null)
@@ -25,7 +25,7 @@ export function PolaroidFan() {
   return (
     <div
       className="relative mx-auto mt-10 hidden sm:flex items-center justify-center"
-      style={{ height: 520, width: 500 }}
+      style={{ height: 640, width: 660 }}
     >
       {ITEMS.map((item, i) => {
         const isHovered = hovered === i
@@ -41,7 +41,7 @@ export function PolaroidFan() {
               transform: `translateX(${tx}px) rotate(${rot}deg)`,
               zIndex,
               transition: 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)',
-              width: 280,
+              width: 360,
             }}
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
