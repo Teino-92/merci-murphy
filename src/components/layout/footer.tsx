@@ -168,6 +168,17 @@ export function Footer({ showBlog = false }: FooterProps) {
                   Confidentialité
                 </Link>
               </p>
+              <p>
+                Made by{' '}
+                <a
+                  href="https://matteo.garbugli.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-charcoal"
+                >
+                  Matteo Garbugli
+                </a>
+              </p>
 
               <div className="flex items-center gap-4">
                 {/* Payment icons */}
