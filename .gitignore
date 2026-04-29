@@ -37,3 +37,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tools
+.playwright-mcp/
+docs/superpowers/
+supabase/.temp/
+
+# local assets
+project/newsletter-*.html
+public/icons/
