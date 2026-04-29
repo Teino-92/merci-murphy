@@ -37,6 +37,7 @@ export default function DashboardLogin() {
             alt="Merci Murphy"
             width={160}
             height={56}
+            priority
             className="brightness-0 invert"
           />
         </div>
