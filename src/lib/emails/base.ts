@@ -30,8 +30,8 @@ export function emailHtml(params: { title: string; body: string }): string {
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr><td align="center" style="padding:48px 16px;">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;">
-<tr><td style="padding:40px 48px;background:${NAVY};text-align:center;">
-  <p style="margin:0;color:${CREAM};font-size:22px;font-weight:600;letter-spacing:0.02em;">merci murphy®</p>
+<tr><td style="padding:32px 48px;background:${NAVY};text-align:center;">
+  <img src="https://mercimurphy.com/logo-email-white.png" alt="merci murphy®" width="200" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
 </td></tr>
 <tr><td style="padding:40px 48px;">
 ${params.body}
