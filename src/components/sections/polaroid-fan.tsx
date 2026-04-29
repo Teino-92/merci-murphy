@@ -7,12 +7,14 @@ import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 interface PolaroidItem {
   before: string
   after: string
+  name: string
+  zoom?: number
 }
 
 const ITEMS: PolaroidItem[] = [
-  { before: '/avant-apres-1-avant.jpg', after: '/avant-apres-1-apres.jpg' },
-  { before: '/avant-apres-2-avant.jpg', after: '/avant-apres-2-apres.jpg' },
-  { before: '/avant-apres-4-avant.jpg', after: '/avant-apres-4-apres.jpg' },
+  { before: '/avant-apres-1-avant.jpg', after: '/avant-apres-1-apres.jpg', name: 'Samy' },
+  { before: '/avant-apres-2-avant.jpg', after: '/avant-apres-2-apres.jpg', name: 'Maui' },
+  { before: '/ariel-avant.jpg', after: '/ariel-apres.jpg', name: 'Ariel', zoom: 0.85 },
 ]
 
 const ROTATIONS = [-7, -1.5, 5]
@@ -50,13 +52,19 @@ export function PolaroidFan() {
               <BeforeAfterSlider
                 before={{ src: item.before, alt: 'Avant' }}
                 after={{ src: item.after, alt: 'Après' }}
-                zoom={1}
+                zoom={item.zoom ?? 1}
                 className="rounded-none"
               />
               <div className="mt-2 text-center">
+                <p
+                  className="text-lg font-semibold text-charcoal tracking-wide"
+                  style={{ fontFamily: 'var(--font-display, serif)', fontStyle: 'italic' }}
+                >
+                  {item.name}
+                </p>
                 <Link
                   href="/services/le-toilettage-maison-poilus-r"
-                  className="text-sm text-charcoal/60 hover:text-terracotta transition-colors font-medium tracking-wide"
+                  className="mt-1 block text-xs text-charcoal/50 hover:text-terracotta transition-colors font-medium tracking-wide"
                   style={{ fontFamily: 'var(--font-display, serif)', fontStyle: 'italic' }}
                   onClick={(e) => e.stopPropagation()}
                 >
