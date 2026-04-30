@@ -57,9 +57,15 @@ export function GroomingSpotlight({ testimonials }: GroomingSpotlightProps) {
                 className="rounded-none"
               />
               <div className="mt-3 text-center">
+                <p
+                  className="text-lg font-semibold text-charcoal tracking-wide"
+                  style={{ fontFamily: 'var(--font-display, serif)', fontStyle: 'italic' }}
+                >
+                  Samy
+                </p>
                 <Link
                   href="/services/le-toilettage-maison-poilus-r"
-                  className="text-sm text-charcoal/60 hover:text-terracotta transition-colors font-medium tracking-wide"
+                  className="mt-1 block text-xs text-charcoal/50 hover:text-terracotta transition-colors font-medium tracking-wide"
                   style={{ fontFamily: 'var(--font-display, serif)', fontStyle: 'italic' }}
                 >
                   Voir toutes les transformations →
