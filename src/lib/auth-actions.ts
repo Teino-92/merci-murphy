@@ -107,6 +107,15 @@ export async function signUp(data: SignUpData) {
         .from('newsletter_subscribers')
         .upsert({ email: parsed.data.email, active: true }, { onConflict: 'email' })
     ).catch(() => {})
+    if (process.env.RESEND_AUDIENCE_ID) {
+      await resend.contacts
+        .create({
+          email: parsed.data.email,
+          audienceId: process.env.RESEND_AUDIENCE_ID,
+          unsubscribed: false,
+        })
+        .catch(() => {})
+    }
   }
 
   // Welcome email
@@ -237,6 +246,15 @@ export async function updateNewsletter(subscribed: boolean) {
         .from('newsletter_subscribers')
         .upsert({ email: user.email, active: true }, { onConflict: 'email' })
     ).catch(() => {})
+    if (process.env.RESEND_AUDIENCE_ID) {
+      await resend.contacts
+        .create({
+          email: user.email!,
+          audienceId: process.env.RESEND_AUDIENCE_ID,
+          unsubscribed: false,
+        })
+        .catch(() => {})
+    }
   } else {
     await Promise.resolve(
       supabaseAdmin
