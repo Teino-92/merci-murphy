@@ -1,7 +1,24 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// Routes that need session refresh / auth gating.
+// Public marketing pages skip Supabase entirely for faster TTFB.
+const AUTH_PREFIXES = [
+  '/dashboard',
+  '/compte',
+  '/login',
+  '/reservation',
+  '/booking',
+  '/auth',
+  '/api',
+  '/studio',
+]
+
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  const needsAuth = AUTH_PREFIXES.some((p) => pathname.startsWith(p))
+  if (!needsAuth) return NextResponse.next({ request })
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(

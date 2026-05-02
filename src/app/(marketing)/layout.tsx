@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -83,22 +84,6 @@ export default async function MarketingRootLayout({
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://cdn.shopify.com" />
         <link rel="dns-prefetch" href="https://feeds.behold.so" />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-C25GTVLGR0" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer=window.dataLayer||[];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('consent','default',{
-                analytics_storage:'denied',
-                ad_storage:'denied',
-                wait_for_update:500
-              });
-              gtag('js',new Date());
-              gtag('config','G-C25GTVLGR0');
-            `,
-          }}
-        />
       </head>
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased overflow-x-hidden`}
@@ -110,6 +95,23 @@ export default async function MarketingRootLayout({
         <CookieBanner />
         <Analytics />
         <SpeedInsights />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-C25GTVLGR0"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer=window.dataLayer||[];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('consent','default',{
+              analytics_storage:'denied',
+              ad_storage:'denied',
+              wait_for_update:500
+            });
+            gtag('js',new Date());
+            gtag('config','G-C25GTVLGR0');
+          `}
+        </Script>
       </body>
     </html>
   )

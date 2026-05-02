@@ -1,23 +1,41 @@
 'use client'
 
 import { useEffect } from 'react'
-import Lenis from 'lenis'
 
 export function SmoothScroll() {
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    })
+    let cancelled = false
+    let cleanup: (() => void) | null = null
 
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
+    const start = async () => {
+      const { default: Lenis } = await import('lenis')
+      if (cancelled) return
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      })
+      let rafId = 0
+      const raf = (time: number) => {
+        lenis.raf(time)
+        rafId = requestAnimationFrame(raf)
+      }
+      rafId = requestAnimationFrame(raf)
+      cleanup = () => {
+        cancelAnimationFrame(rafId)
+        lenis.destroy()
+      }
     }
 
-    requestAnimationFrame(raf)
+    const idle = (cb: () => void) =>
+      'requestIdleCallback' in window
+        ? (window as Window & typeof globalThis).requestIdleCallback(cb)
+        : setTimeout(cb, 200)
+    idle(start)
 
-    return () => lenis.destroy()
+    return () => {
+      cancelled = true
+      cleanup?.()
+    }
   }, [])
 
   return null

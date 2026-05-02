@@ -7,9 +7,14 @@ import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { ContactForm } from '@/components/forms/contact-form'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import dynamic from 'next/dynamic'
 import { HorairesAccordion } from '@/components/sections/horaires-accordion'
-import { MapboxMap } from '@/components/sections/mapbox-map'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
+
+const MapboxMap = dynamic(
+  () => import('@/components/sections/mapbox-map').then((m) => m.MapboxMap),
+  { ssr: false, loading: () => <div className="h-[420px] w-full bg-cream/50" /> }
+)
 
 export const metadata: Metadata = {
   title: 'Contact',
