@@ -14,7 +14,7 @@ interface PolaroidItem {
 const ITEMS: PolaroidItem[] = [
   { before: '/avant-apres-1-avant.jpg', after: '/avant-apres-1-apres.jpg', name: 'Maui' },
   { before: '/avant-apres-2-avant.jpg', after: '/avant-apres-2-apres.jpg', name: 'Samy' },
-  { before: '/ariel-avant.jpg', after: '/ariel-apres.jpg', name: 'Ariel', zoom: 0.85 },
+  { before: '/ariel-avant.jpg', after: '/ariel-apres.jpg', name: 'Ariel' },
 ]
 
 const ROTATIONS = [-7, -1.5, 5]
