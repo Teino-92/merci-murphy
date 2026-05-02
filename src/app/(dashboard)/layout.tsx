@@ -1,18 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { fontVariables } from '@/lib/fonts'
 import '../globals.css'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -28,9 +16,7 @@ export const metadata: Metadata = {
 export default function DashboardRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        {children}
-      </body>
+      <body className={`${fontVariables} font-sans antialiased`}>{children}</body>
     </html>
   )
 }

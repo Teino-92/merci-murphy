@@ -32,7 +32,7 @@ export async function getAllPosts(): Promise<PostSummary[]> {
   return sanityClient.fetch(
     `*[_type == "post" && publishedAt <= now()] | order(publishedAt desc) { ${POST_SUMMARY_FIELDS} }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:post'] } }
   )
 }
 
@@ -43,7 +43,7 @@ export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
       body
     }`,
     { slug },
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:post'] } }
   )
 }
 
@@ -51,7 +51,7 @@ export async function getRelatedPosts(currentSlug: string): Promise<PostSummary[
   return sanityClient.fetch(
     `*[_type == "post" && slug.current != $currentSlug && publishedAt <= now()] | order(publishedAt desc) [0...3] { ${POST_SUMMARY_FIELDS} }`,
     { currentSlug },
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:post'] } }
   )
 }
 
@@ -59,7 +59,7 @@ export async function getLatestPost(): Promise<PostSummary | null> {
   return sanityClient.fetch(
     `*[_type == "post" && publishedAt <= now()] | order(publishedAt desc) [0] { ${POST_SUMMARY_FIELDS} }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:post'] } }
   )
 }
 
@@ -67,6 +67,6 @@ export async function getPublishedPostCount(): Promise<number> {
   return sanityClient.fetch(
     `count(*[_type == "post" && publishedAt <= now()])`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:post'] } }
   )
 }

@@ -1,10 +1,19 @@
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
-import { PolaroidFan } from '@/components/sections/polaroid-fan'
-import { TestimonialsCarousel } from '@/components/sections/testimonials-carousel'
 import type { Testimonial } from '@/sanity/queries/testimonials'
+
+const PolaroidFan = dynamic(
+  () => import('@/components/sections/polaroid-fan').then((m) => m.PolaroidFan),
+  { loading: () => <div className="hidden sm:block" style={{ height: 640 }} /> }
+)
+
+const TestimonialsCarousel = dynamic(
+  () => import('@/components/sections/testimonials-carousel').then((m) => m.TestimonialsCarousel),
+  { loading: () => <div style={{ minHeight: 200 }} /> }
+)
 
 interface GroomingSpotlightProps {
   testimonials: Testimonial[]

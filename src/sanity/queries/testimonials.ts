@@ -20,7 +20,7 @@ export async function getTestimonials(limit = 50): Promise<Testimonial[]> {
       date
     }`,
     { limit },
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:testimonial'] } }
   )
 }
 
@@ -29,13 +29,13 @@ export async function getGroomingTestimonials(): Promise<Testimonial[]> {
   const grooming = await sanityClient.fetch<Testimonial[]>(
     `*[_type == "testimonial" && service->slug.current == "le-toilettage-maison-poilus-r"] | order(date desc) [0...4] { ${FIELDS} }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:testimonial'] } }
   )
   if (grooming.length >= 4) return grooming
 
   return sanityClient.fetch<Testimonial[]>(
     `*[_type == "testimonial"] | order(date desc) [0...4] { ${FIELDS} }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:testimonial'] } }
   )
 }

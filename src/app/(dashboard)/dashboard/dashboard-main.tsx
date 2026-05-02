@@ -1,8 +1,13 @@
 'use client'
 
 import { useState, useTransition, useCallback } from 'react'
-import { RevenueChart } from '@/components/dashboard/revenue-chart'
+import dynamic from 'next/dynamic'
 import { StatCard } from '@/components/dashboard/stat-card'
+
+const RevenueChart = dynamic(
+  () => import('@/components/dashboard/revenue-chart').then((m) => m.RevenueChart),
+  { ssr: false, loading: () => <div className="h-[400px] w-full bg-cream/30 animate-pulse" /> }
+)
 import type { DailyRevenue, TopProduct } from '@/lib/shopify-admin'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 

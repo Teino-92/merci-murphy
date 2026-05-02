@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
-import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CookieBanner } from '@/components/ui/cookie-banner'
@@ -8,19 +7,8 @@ import { CartProvider } from '@/context/cart-context'
 import { SiteShell } from '@/components/layout/site-shell'
 import { SmoothScroll } from '@/components/layout/smooth-scroll'
 import { getPublishedPostCount } from '@/sanity/queries/posts'
+import { fontVariables } from '@/lib/fonts'
 import '../globals.css'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -85,9 +73,7 @@ export default async function MarketingRootLayout({
         <link rel="preconnect" href="https://cdn.shopify.com" />
         <link rel="dns-prefetch" href="https://feeds.behold.so" />
       </head>
-      <body
-        className={`${inter.variable} ${playfair.variable} font-sans antialiased overflow-x-hidden`}
-      >
+      <body className={`${fontVariables} font-sans antialiased overflow-x-hidden`}>
         <SmoothScroll />
         <CartProvider>
           <SiteShell showBlog={showBlog}>{children}</SiteShell>

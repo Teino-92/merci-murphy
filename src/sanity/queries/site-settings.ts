@@ -39,6 +39,6 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       calendly_url
     }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:site-settings'] } }
   )
 }

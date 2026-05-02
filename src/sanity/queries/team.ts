@@ -20,6 +20,6 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
       ordre
     }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600, tags: ['sanity:team'] } }
   )
 }
