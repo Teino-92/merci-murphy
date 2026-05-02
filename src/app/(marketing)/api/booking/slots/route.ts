@@ -12,8 +12,8 @@ import {
 import type { Availability, TimeOff, Staff, StaffSchedule } from '@/lib/supabase-admin'
 
 // ─── Crèche slot logic ────────────────────────────────────────────────────────
-// Two fixed drop-off times: 14:00 and 14:30, always 4h duration (pickup at 18:00 / 18:30).
-// Available Tue–Fri only (matching SERVICE_HOURS creche config).
+// Three fixed drop-off times: 13:30, 14:00, 14:30. Always 4h duration.
+// Last pickup 18:30. Available Tue–Fri only (matching SERVICE_HOURS creche config).
 function getCrecheSlots(
   dateStr: string,
   bookedTimes: string[], // HH:MM UTC already booked
@@ -28,7 +28,7 @@ function getCrecheSlots(
   const month = parseInt(dateStr.slice(5, 7), 10)
   const utcOffset = month >= 4 && month <= 10 ? 2 : 1 // Paris: CEST Apr–Oct, CET Nov–Mar
 
-  const FIXED_PARIS_TIMES = ['14:00', '14:30']
+  const FIXED_PARIS_TIMES = ['13:30', '14:00', '14:30']
   const slots: { timeUtc: string; timeParis: string }[] = []
 
   for (const parisTime of FIXED_PARIS_TIMES) {

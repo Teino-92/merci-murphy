@@ -50,14 +50,9 @@ interface Toiletteur {
   color: string
 }
 
-type Step = 'service' | 'dog' | 'staff' | 'creche-duration' | 'date' | 'time' | 'confirmed'
+type Step = 'service' | 'dog' | 'staff' | 'date' | 'time' | 'confirmed'
 
-const CRECHE_DURATIONS = [
-  { value: 60, label: '1 heure' },
-  { value: 120, label: '2 heures' },
-  { value: 180, label: '3 heures' },
-  { value: 240, label: '4 heures' },
-]
+const CRECHE_FIXED_DURATION = 240
 
 const BOOKABLE_SERVICES = (ONLINE_BOOKABLE as readonly string[]).map((slug) => ({
   slug,
@@ -285,8 +280,8 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null)
   const [selectedStaffName, setSelectedStaffName] = useState<string | null>(null)
 
-  // Crèche duration state
-  const [crecheDuration, setCrecheDuration] = useState<number | null>(null)
+  // Crèche duration — always fixed 4h
+  const crecheDuration = CRECHE_FIXED_DURATION
 
   // Selected dog state
   const [selectedDog, setSelectedDog] = useState<Dog | null>(dogs.length === 1 ? dogs[0] : null)
@@ -422,7 +417,6 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
     setSelectedCrecheSlot(null)
     setSelectedStaffId(null)
     setSelectedStaffName(null)
-    setCrecheDuration(null)
     setSelectedDog(dogs.length === 1 ? dogs[0] : null)
     setConfirmedService(null)
     setConfirmedDate(null)
@@ -487,7 +481,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
                     // single dog already set via useState default
                     setStep('staff')
                   } else if (slugBase === 'creche') {
-                    setStep('creche-duration')
+                    setStep('date')
                   } else {
                     setStep('date')
                   }
@@ -622,50 +616,10 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
     )
   }
 
-  // ── Crèche duration ───────────────────────────────────────────────────────────
-  if (step === 'creche-duration') {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setStep('service')}
-            className="text-xs text-charcoal/40 hover:text-charcoal underline underline-offset-2 transition-colors"
-          >
-            ← Retour
-          </button>
-          <p className="text-sm font-semibold text-charcoal flex items-center gap-1.5">
-            <PawPrint className="h-3.5 w-3.5" /> Crèche
-          </p>
-        </div>
-        <p className="text-sm text-charcoal/50 text-center tracking-wide uppercase text-xs font-semibold">
-          Durée souhaitée
-        </p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {CRECHE_DURATIONS.map((d) => (
-            <button
-              key={d.value}
-              onClick={() => {
-                setCrecheDuration(d.value)
-                setStep('date')
-              }}
-              className="group flex flex-col items-center justify-center rounded-2xl border border-charcoal/10 bg-white px-4 py-6 hover:border-[#B5A89A] hover:shadow-md transition-all"
-            >
-              <span className="text-3xl font-bold text-charcoal group-hover:text-charcoal/80">
-                {d.value / 60}h
-              </span>
-              <span className="text-xs text-charcoal/40 mt-1">{d.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   // ── Date ─────────────────────────────────────────────────────────────────────
   if (step === 'date') {
     const isCreche = selectedService?.split('-')[0] === 'creche'
-    const backStep =
-      selectedService === 'toilettage' ? 'staff' : isCreche ? 'creche-duration' : 'service'
+    const backStep = selectedService === 'toilettage' ? 'staff' : 'service'
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
