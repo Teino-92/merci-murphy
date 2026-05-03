@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 
 export function SmoothScroll() {
   useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return
+
     let cancelled = false
     let cleanup: (() => void) | null = null
 
