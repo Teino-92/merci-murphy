@@ -69,8 +69,8 @@ export default async function MarketingRootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="merci murphy" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="preconnect" href="https://cdn.sanity.io" />
-        <link rel="preconnect" href="https://cdn.shopify.com" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://cdn.shopify.com" />
         <link rel="dns-prefetch" href="https://feeds.behold.so" />
       </head>
       <body className={`${fontVariables} font-sans antialiased overflow-x-hidden`}>
@@ -83,9 +83,9 @@ export default async function MarketingRootLayout({
         <SpeedInsights />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-C25GTVLGR0"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="lazyOnload">
           {`
             window.dataLayer=window.dataLayer||[];
             function gtag(){dataLayer.push(arguments);}

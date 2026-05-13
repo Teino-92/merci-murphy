@@ -166,7 +166,6 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
               className="h-full"
             >
               {isVideo ? (
-                // Video plays inline in the card
                 <div className="group relative w-full h-full overflow-hidden rounded-2xl bg-black">
                   <video
                     src={post.mediaUrl}
@@ -177,7 +176,6 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover"
                   />
-                  {/* Link to Instagram on hover */}
                   <a
                     href={post.permalink}
                     target="_blank"
@@ -203,6 +201,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 640px) 50vw, 25vw"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-[#4F6072]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
                     {post.caption && (

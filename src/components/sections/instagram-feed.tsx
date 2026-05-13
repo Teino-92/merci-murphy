@@ -1,11 +1,7 @@
-import dynamic from 'next/dynamic'
 import { Instagram } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
+import { InstagramGridLazy } from './instagram-grid-lazy'
 import type { FeedPost } from './instagram-grid'
-
-const InstagramGrid = dynamic(() => import('./instagram-grid').then((m) => m.InstagramGrid), {
-  loading: () => <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 min-h-[400px]" />,
-})
 
 async function getInstagramPosts(feedId: string): Promise<FeedPost[]> {
   try {
@@ -51,7 +47,7 @@ export async function InstagramFeed({ feedId }: InstagramFeedProps) {
           </a>
         </div>
 
-        <InstagramGrid posts={posts} />
+        <InstagramGridLazy posts={posts} />
       </Container>
     </Section>
   )

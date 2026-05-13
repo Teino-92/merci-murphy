@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['lucide-react'],
     staleTimes: {
       dynamic: 30,
       static: 180,
@@ -28,4 +30,10 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+async function withAnalyzer(config) {
+  if (process.env.ANALYZE !== 'true') return config
+  const mod = await import('@next/bundle-analyzer')
+  return mod.default({ enabled: true })(config)
+}
+
+export default await withAnalyzer(nextConfig)
