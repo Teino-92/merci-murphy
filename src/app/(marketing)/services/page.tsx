@@ -11,8 +11,9 @@ import { BLUR_PLACEHOLDER } from '@/lib/utils'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Nos services',
-  description: 'Toilettage, bains, crèche, éducation et ostéopathie pour votre chien à Paris.',
+  title: 'Toilettage, spa & crèche pour chiens à Paris 9e',
+  description:
+    'Toilettage sans stress, balnéothérapie, crèche, éducation et ostéopathie pour chiens — 8 prestations sous un même toit à Paris 9e. Réservez en ligne 7j/7.',
   openGraph: {
     images: [
       { url: '/og/og-services.jpg', width: 1200, height: 630, alt: 'Nos services — Merci Murphy' },
@@ -44,7 +45,8 @@ export default async function ServicesPage() {
             Nos services
           </h1>
           <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-            Toute l&apos;attention et l&apos;expertise que votre chien mérite, dans un lieu unique.
+            Toilettage, balnéo, crèche, éducation, ostéopathie : toute l&apos;attention et
+            l&apos;expertise que votre chien mérite, réunies dans un lieu unique à Paris 9e.
           </p>
         </div>
       </div>

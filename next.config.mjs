@@ -15,6 +15,13 @@ const nextConfig = {
         destination: '/',
         permanent: true, // 301
       },
+      // Anciennes URLs (site Wix) encore indexées — captent des impressions
+      // GSC à ~0% CTR. 301 vers les équivalents Next.js.
+      { source: '/services-1', destination: '/services', permanent: true },
+      { source: '/services-1-1', destination: '/services', permanent: true },
+      { source: '/services-1-2', destination: '/services', permanent: true },
+      { source: '/etaussi', destination: '/services', permanent: true },
+      { source: '/about', destination: '/concept', permanent: true },
     ]
   },
   images: {

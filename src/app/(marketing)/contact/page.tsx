@@ -17,8 +17,9 @@ const MapboxMap = dynamic(
 )
 
 export const metadata: Metadata = {
-  title: 'Contact',
-  description: 'Contactez merci murphy® — adresse, horaires et formulaire de contact.',
+  title: 'Contact & accès — 18 rue Victor Massé, Paris 9e',
+  description:
+    'Téléphone, email, horaires et plan d’accès — métro Pigalle / Saint-Georges. merci murphy®, 18 rue Victor Massé, Paris 9e. Ouvert du mardi au samedi.',
   openGraph: {
     images: [{ url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Contact — Merci Murphy' }],
   },
@@ -51,7 +52,8 @@ export default async function ContactPage() {
             Contact
           </h1>
           <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-            Une question ? N&apos;hésitez pas à nous écrire ou nous appeler.
+            Une question ? Écrivez-nous, appelez-nous, ou passez nous voir au 18 rue Victor Massé —
+            entre Pigalle et Saint-Georges, Paris 9e.
           </p>
         </div>
       </div>
