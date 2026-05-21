@@ -134,20 +134,21 @@ export default async function ToilettageChienParisPage() {
       'Toilettage, spa, crèche et bien-être pour chiens à Paris 75009. Un lieu premium et engagé pour prendre soin de votre compagnon.',
     url: 'https://mercimurphy.com',
     image: 'https://mercimurphy.com/logo.avif',
-    telephone: settings?.telephone ?? '09 78 81 04 21',
-    email: settings?.email ?? 'hello@mercimurphy.com',
+    telephone: settings?.telephone ?? '+33 9 78 81 04 21',
+    email: settings?.email ?? 'bonjour@mercimurphy.com',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: settings?.adresse ?? '18, rue Victor Massé',
+      streetAddress: settings?.adresse ?? '18 rue Victor Massé',
       postalCode: settings?.codePostal ?? '75009',
       addressLocality: settings?.ville ?? 'Paris',
       addressCountry: 'FR',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 48.8825,
-      longitude: 2.3378,
+      latitude: 48.880805,
+      longitude: 2.338646,
     },
+    hasMap: settings?.google_maps_url ?? undefined,
     openingHoursSpecification: settings?.horairesGroupes?.flatMap(
       (g) =>
         g.lignes?.map((h) => ({
@@ -159,7 +160,6 @@ export default async function ToilettageChienParisPage() {
     ),
     sameAs: [settings?.instagram].filter(Boolean),
     priceRange: '€€',
-    servesCuisine: undefined,
     areaServed: [
       { '@type': 'City', name: 'Paris' },
       { '@type': 'AdministrativeArea', name: 'Paris 9ème' },

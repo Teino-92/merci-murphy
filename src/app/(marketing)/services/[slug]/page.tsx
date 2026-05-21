@@ -131,6 +131,8 @@ export default async function ServicePage({ params }: Props) {
     provider: {
       '@type': 'LocalBusiness',
       name: 'merci murphy®',
+      url: 'https://mercimurphy.com',
+      telephone: '+33 9 78 81 04 21',
       address: {
         '@type': 'PostalAddress',
         streetAddress: '18 rue Victor Massé',
