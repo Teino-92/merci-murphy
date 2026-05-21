@@ -1,6 +1,7 @@
 export const revalidate = 3600
 
 import { notFound } from 'next/navigation'
+import { toPlainText } from '@portabletext/toolkit'
 import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
 import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
@@ -117,8 +118,78 @@ export default async function ServicePage({ params }: Props) {
     ? urlFor(service.image).width(1200).auto('format').quality(80).url()
     : null
 
+  const pageUrl = `https://mercimurphy.com/services/${params.slug}`
+
+  const serviceLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.title,
+    description: service.description,
+    serviceType: service.title,
+    url: pageUrl,
+    ...(imageUrl ? { image: imageUrl } : {}),
+    provider: {
+      '@type': 'LocalBusiness',
+      name: 'merci murphy®',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '18 rue Victor Massé',
+        postalCode: '75009',
+        addressLocality: 'Paris',
+        addressCountry: 'FR',
+      },
+    },
+    areaServed: { '@type': 'City', name: 'Paris' },
+  }
+
+  const faqLd =
+    service.faq && service.faq.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: service.faq.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: toPlainText(f.reponse),
+            },
+          })),
+        }
+      : null
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://mercimurphy.com' },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Services',
+        item: 'https://mercimurphy.com/services',
+      },
+      { '@type': 'ListItem', position: 3, name: service.title, item: pageUrl },
+    ],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
+
       {/* Header */}
       <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
         {imageUrl && (
