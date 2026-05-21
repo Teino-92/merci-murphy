@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { getAllServices } from '@/sanity/queries/services'
 import { getTestimonials } from '@/sanity/queries/testimonials'
 import { ServicesGrid } from '@/components/sections/services-grid'
@@ -59,6 +60,20 @@ export default async function ServicesPage() {
           </Container>
         </Section>
       )}
+      <Section className="bg-cream pt-0">
+        <Container className="max-w-3xl">
+          <p className="text-charcoal/70 leading-relaxed">
+            Notre cœur de métier reste le{' '}
+            <Link
+              href="/toilettage-chien-paris"
+              className="font-medium text-terracotta-dark underline-offset-2 hover:underline"
+            >
+              toilettage pour chien à Paris
+            </Link>{' '}
+            : une mise en beauté sans stress, pensée pour le confort de votre compagnon.
+          </p>
+        </Container>
+      </Section>
       {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
       <FaqServices />
     </>
