@@ -39,15 +39,18 @@ export function GroomingSpotlight({ testimonials }: GroomingSpotlightProps) {
             </p>
             <p className="mt-5 text-base text-charcoal/65 leading-relaxed">
               Trois années de formation exigeante, un diplôme de BTM toiletteur, des récompenses en
-              concours nationaux — et surtout, une attention sincère portée au bien-être de chaque
-              chien. Andrea et Titouan ne font pas que toiletter — ils prennent soin. Leur
-              philosophie : zéro stress, zéro précipitation. Chaque séance est pensée pour que votre
-              chien reparte plus léger, plus beau, et surtout plus heureux qu&apos;à son arrivée.
+              concours nationaux. Et surtout, une attention sincère portée au bien-être de chaque
+              chien.
+            </p>
+            <p className="mt-4 text-base text-charcoal/65 leading-relaxed">
+              Andrea et Titouan ne font pas que toiletter, ils prennent soin. Leur philosophie :
+              zéro stress, zéro précipitation. Chaque séance est pensée pour que votre chien reparte
+              plus léger, plus beau, et surtout plus heureux qu&apos;à son arrivée.
             </p>
             <p className="mt-4 text-base text-charcoal/65 leading-relaxed">
               Passionnés depuis l&apos;enfance par le monde animal, ils ont tous les deux choisi de
-              faire de cet amour un métier d&apos;excellence. Résultat : des mains expertes, un
-              regard bienveillant, et des transformations qui parlent d&apos;elles-mêmes.
+              faire de cet amour leur métier. Résultat : des mains expertes, un vrai regard pour
+              chaque chien, et des transformations qui parlent d&apos;elles-mêmes.
             </p>
           </div>
         </Reveal>
