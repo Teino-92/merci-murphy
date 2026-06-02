@@ -5,7 +5,7 @@ import { getAllServices } from '@/sanity/queries/services'
 import { getTestimonials } from '@/sanity/queries/testimonials'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { TestimonialsSection } from '@/components/sections/testimonials-section'
-import { FaqServices } from '@/components/sections/faq-services'
+import { FaqServices, FAQ_SERVICES } from '@/components/sections/faq-services'
 import { Section, Container } from '@/components/ui/section'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
@@ -25,8 +25,25 @@ export const metadata: Metadata = {
 export default async function ServicesPage() {
   const [services, testimonials] = await Promise.all([getAllServices(), getTestimonials()])
 
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ_SERVICES.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.reponse,
+      },
+    })),
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
       {/* Hero */}
       <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
         <Image

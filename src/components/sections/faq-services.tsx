@@ -6,8 +6,7 @@ import { cn } from '@/lib/utils'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 
-const FAQ: { question: string; reponse: string }[] = [
-  // TODO: add FAQ items
+export const FAQ_SERVICES: { question: string; reponse: string }[] = [
   {
     question: 'À quelle fréquence faut-il faire toiletter son chien ?',
     reponse:
@@ -55,7 +54,7 @@ export function FaqServices() {
             </div>
           </Reveal>
           <div className="divide-y divide-cream/20">
-            {FAQ.map((item, i) => (
+            {FAQ_SERVICES.map((item, i) => (
               <div key={i}>
                 <button
                   className="flex w-full items-center justify-between py-5 text-left"
