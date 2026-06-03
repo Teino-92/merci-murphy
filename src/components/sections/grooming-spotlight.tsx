@@ -37,7 +37,7 @@ export function GroomingSpotlight({ testimonials }: GroomingSpotlightProps) {
             <p className="mt-3 text-sm font-medium tracking-widest text-terracotta uppercase">
               Par Andrea &amp; Titouan
             </p>
-            <p className="mt-5 text-base text-charcoal/65 leading-relaxed">
+            <p className="mt-5 text-base text-charcoal/65 leading-relaxed text-balance">
               Trois années de formation exigeante, un diplôme de BTM toiletteur, des récompenses en
               concours nationaux. Et surtout, une attention sincère portée au bien-être de chaque
               chien.
