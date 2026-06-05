@@ -167,7 +167,16 @@ export function Footer({ showBlog = false }: FooterProps) {
                   ·{' '}
                   <Link href="/confidentialite" className="hover:text-charcoal">
                     Confidentialité
-                  </Link>
+                  </Link>{' '}
+                  ·{' '}
+                  <a
+                    href="https://mercimurphy.faire.com/?utm_source=mercimurphy.com&utm_medium=footer&utm_campaign=wholesale"
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                    className="hover:text-charcoal"
+                  >
+                    Revendeurs
+                  </a>
                 </p>
                 <p className="text-xs text-charcoal/30">
                   Made by{' '}
