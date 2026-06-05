@@ -46,4 +46,5 @@ supabase/.temp/
 
 # local assets
 project/newsletter-*.html
+project/newsletter-templates/
 public/icons/
