@@ -68,6 +68,10 @@ export default async function ProductPage({ params }: Props) {
     description: product.description,
     image: images.map((i) => i.url),
     url: `https://mercimurphy.com/shop/${product.handle}`,
+    brand: {
+      '@type': 'Brand',
+      name: product.vendor?.trim() || 'Merci Murphy',
+    },
     offers: {
       '@type': 'Offer',
       price: firstVariant.price.amount,
@@ -76,6 +80,46 @@ export default async function ProductPage({ params }: Props) {
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       url: `https://mercimurphy.com/shop/${product.handle}`,
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'FR',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/ReturnShippingFees',
+        returnShippingFeesAmount: {
+          '@type': 'MonetaryAmount',
+          value: 7,
+          currency: 'EUR',
+        },
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: 7,
+          currency: 'EUR',
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'FR',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 2,
+            unitCode: 'DAY',
+          },
+          transitTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 2,
+            maxValue: 5,
+            unitCode: 'DAY',
+          },
+        },
+      },
     },
   }
 
