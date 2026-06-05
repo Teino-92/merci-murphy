@@ -4,15 +4,12 @@ export const dynamicParams = false
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import {
-  getAllProducts,
-  getProductByHandle,
-  getCollectionByHandle,
-  formatPrice,
-} from '@/lib/shopify'
+import { getAllProducts, getProductByHandle, getCollectionByHandle } from '@/lib/shopify'
 import { AddToCart } from '@/components/shop/add-to-cart'
 import { ProductGallery } from '@/components/shop/product-gallery'
 import { ProductCard } from '@/components/shop/product-card'
+import { ProductPromoBadge } from '@/components/shop/promo-badge'
+import { ProductPrice } from '@/components/shop/product-price'
 import { Section, Container } from '@/components/ui/section'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
@@ -123,10 +120,6 @@ export default async function ProductPage({ params }: Props) {
     },
   }
 
-  const isOnSale =
-    firstVariant.compareAtPrice &&
-    parseFloat(firstVariant.compareAtPrice.amount) > parseFloat(firstVariant.price.amount)
-
   return (
     <>
       <script
@@ -149,13 +142,14 @@ export default async function ProductPage({ params }: Props) {
 
             {/* Info */}
             <div className="flex flex-col">
-              {product.collections.nodes.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-3">
+              {(product.collections.nodes.length > 0 || product.tags.length > 0) && (
+                <div className="flex flex-wrap items-center gap-2 mb-3">
                   {product.collections.nodes.map((c) => (
                     <Badge key={c.handle} variant="secondary" className="text-xs">
                       {c.title}
                     </Badge>
                   ))}
+                  <ProductPromoBadge tags={product.tags} />
                 </div>
               )}
 
@@ -163,16 +157,11 @@ export default async function ProductPage({ params }: Props) {
                 {product.title}
               </h1>
 
-              <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-2xl font-bold text-terracotta-dark">
-                  {formatPrice(firstVariant.price)}
-                </span>
-                {isOnSale && firstVariant.compareAtPrice && (
-                  <span className="text-base text-charcoal/40 line-through">
-                    {formatPrice(firstVariant.compareAtPrice)}
-                  </span>
-                )}
-              </div>
+              <ProductPrice
+                tags={product.tags}
+                catalogPrice={firstVariant.price}
+                compareAtPrice={firstVariant.compareAtPrice}
+              />
 
               {product.description && (
                 <div

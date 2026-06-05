@@ -36,7 +36,7 @@ export function Navbar({ showBlog = false }: NavbarProps) {
     : SITE_CONFIG.nav
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-charcoal/10 bg-cream/95 backdrop-blur-sm">
+    <header className="w-full border-b border-charcoal/10 bg-cream/95 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" aria-label="Merci Murphy — Accueil">
           <Image

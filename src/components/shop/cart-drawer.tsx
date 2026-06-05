@@ -74,9 +74,28 @@ export function CartDrawer() {
                     {line.variantTitle !== 'Default Title' && (
                       <p className="mt-0.5 text-sm text-charcoal/50">{line.variantTitle}</p>
                     )}
-                    <p className="mt-1 font-semibold text-terracotta-dark">
-                      {formatPrice(line.price)}
-                    </p>
+                    {(() => {
+                      const sub = parseFloat(line.subtotal.amount)
+                      const disc = parseFloat(line.discountedTotal.amount)
+                      const hasDiscount = sub > disc
+                      return (
+                        <div className="mt-1">
+                          <p className="flex items-baseline gap-2 font-semibold text-terracotta-dark">
+                            <span>{formatPrice(line.discountedTotal)}</span>
+                            {hasDiscount && (
+                              <span className="text-xs text-charcoal/40 line-through">
+                                {formatPrice(line.subtotal)}
+                              </span>
+                            )}
+                          </p>
+                          {hasDiscount && line.discounts.length > 0 && (
+                            <p className="mt-0.5 text-xs font-medium text-terracotta-dark/80">
+                              {line.discounts.map((d) => d.title).join(' · ')}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    })()}
 
                     {/* Qty controls */}
                     <div className="mt-3 flex items-center gap-3">
@@ -115,9 +134,36 @@ export function CartDrawer() {
 
             {/* Footer */}
             <div className="border-t border-charcoal/10 px-6 py-6 space-y-4">
+              {(() => {
+                if (!cart) return null
+                const sub = parseFloat(cart.subtotalAmount.amount)
+                const tot = parseFloat(cart.totalAmount.amount)
+                const cartDiscount = sub - tot
+                if (cartDiscount <= 0.001) return null
+                return (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-terracotta-dark">Réduction</span>
+                    <span className="font-medium text-terracotta-dark">
+                      -
+                      {formatPrice({
+                        amount: cartDiscount.toFixed(2),
+                        currencyCode: cart.totalAmount.currencyCode,
+                      })}
+                    </span>
+                  </div>
+                )
+              })()}
               <div className="flex items-center justify-between">
                 <span className="text-charcoal/70">Total</span>
-                <span className="text-xl font-bold text-charcoal">
+                <span className="flex items-baseline gap-2 text-xl font-bold text-charcoal">
+                  {cart?.subtotalAmount &&
+                    cart?.totalAmount &&
+                    parseFloat(cart.subtotalAmount.amount) >
+                      parseFloat(cart.totalAmount.amount) && (
+                      <span className="text-sm font-normal text-charcoal/40 line-through">
+                        {formatPrice(cart.subtotalAmount)}
+                      </span>
+                    )}
                   {cart?.totalAmount && formatPrice(cart.totalAmount)}
                 </span>
               </div>

@@ -4,9 +4,11 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CookieBanner } from '@/components/ui/cookie-banner'
 import { CartProvider } from '@/context/cart-context'
+import { PromoProvider } from '@/context/promo-context'
 import { SiteShell } from '@/components/layout/site-shell'
 import { SmoothScroll } from '@/components/layout/smooth-scroll'
 import { getPublishedPostCount } from '@/sanity/queries/posts'
+import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { fontVariables } from '@/lib/fonts'
 import '../globals.css'
 
@@ -59,8 +61,9 @@ export default async function MarketingRootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const postCount = await getPublishedPostCount()
+  const [postCount, siteSettings] = await Promise.all([getPublishedPostCount(), getSiteSettings()])
   const showBlog = postCount > 0
+  const promoBanner = siteSettings?.promoBanner ?? null
 
   return (
     <html lang="fr">
@@ -76,7 +79,11 @@ export default async function MarketingRootLayout({
       <body className={`${fontVariables} font-sans antialiased overflow-x-hidden`}>
         <SmoothScroll />
         <CartProvider>
-          <SiteShell showBlog={showBlog}>{children}</SiteShell>
+          <PromoProvider banner={promoBanner}>
+            <SiteShell showBlog={showBlog} promoBanner={promoBanner}>
+              {children}
+            </SiteShell>
+          </PromoProvider>
         </CartProvider>
         <CookieBanner />
         <Analytics />

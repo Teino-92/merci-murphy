@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ShopifyImage as Image } from '@/components/ui/shopify-image'
 import { formatPrice, type ShopifyProduct } from '@/lib/shopify'
 import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
+import { useProductPromoBadge, useProductPromoPrice } from '@/context/promo-context'
 
 interface ProductCardProps {
   product: ShopifyProduct
@@ -12,7 +13,21 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className, imageOverride }: ProductCardProps) {
-  const price = product.priceRange.minVariantPrice
+  const catalogPrice = product.priceRange.minVariantPrice
+  const nativeCompareAt = product.compareAtPriceRange?.minVariantPrice
+  const promoBadge = useProductPromoBadge(product.tags)
+  const promoPrice = useProductPromoPrice(product.tags, catalogPrice.amount)
+
+  // Priority: tag-based promo (Sanity) > native compareAtPrice (Shopify).
+  const displayPrice = promoPrice
+    ? { amount: promoPrice.discountedAmount, currencyCode: catalogPrice.currencyCode }
+    : catalogPrice
+  const compareAt = promoPrice
+    ? { amount: promoPrice.compareAtAmount, currencyCode: catalogPrice.currencyCode }
+    : nativeCompareAt && parseFloat(nativeCompareAt.amount) > parseFloat(catalogPrice.amount)
+      ? nativeCompareAt
+      : null
+
   const nodes = product.images?.nodes ?? []
   const firstImage = imageOverride
     ? (nodes[imageOverride[0]] ?? product.featuredImage)
@@ -62,12 +77,22 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
             </span>
           </div>
         )}
+        {promoBadge && product.availableForSale && (
+          <span className="absolute left-3 top-3 rounded-full bg-terracotta-dark px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white shadow-sm">
+            {promoBadge}
+          </span>
+        )}
       </div>
       <div className="mt-3">
         <p className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-terracotta-dark transition-colors">
           {product.title}
         </p>
-        <p className="mt-1 text-sm font-semibold text-terracotta-dark">{formatPrice(price)}</p>
+        <p className="mt-1 flex items-baseline gap-2 text-sm">
+          <span className="font-semibold text-terracotta-dark">{formatPrice(displayPrice)}</span>
+          {compareAt && (
+            <span className="text-xs text-charcoal/40 line-through">{formatPrice(compareAt)}</span>
+          )}
+        </p>
       </div>
     </Link>
   )

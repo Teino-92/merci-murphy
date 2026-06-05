@@ -55,9 +55,11 @@ export interface ShopifyProduct {
   availableForSale: boolean
   vendor: string
   productType: string
+  tags: string[]
   featuredImage: ShopifyImage | null
   images: { nodes: ShopifyImage[] }
   priceRange: { minVariantPrice: ShopifyPrice }
+  compareAtPriceRange: { minVariantPrice: ShopifyPrice }
   variants: { nodes: ShopifyProductVariant[] }
   collections: { nodes: { handle: string; title: string }[] }
 }
@@ -81,9 +83,11 @@ const PRODUCT_FRAGMENT = `
   availableForSale
   vendor
   productType
+  tags
   featuredImage { url altText width height }
   images(first: 3) { nodes { url altText width height } }
   priceRange { minVariantPrice { amount currencyCode } }
+  compareAtPriceRange { minVariantPrice { amount currencyCode } }
   collections(first: 3) { nodes { handle title } }
 `
 
@@ -95,8 +99,10 @@ const PRODUCT_BASE_FRAGMENT = `
   availableForSale
   vendor
   productType
+  tags
   featuredImage { url altText width height }
   priceRange { minVariantPrice { amount currencyCode } }
+  compareAtPriceRange { minVariantPrice { amount currencyCode } }
   collections(first: 3) { nodes { handle title } }
 `
 
@@ -183,13 +189,24 @@ export async function getProductsByHandles(handles: string[]): Promise<ShopifyPr
 
 // ─── Cart Types ───────────────────────────────────────────────────────────────
 
+export interface CartLineDiscount {
+  title: string
+  amount: ShopifyPrice
+}
+
 export interface CartLine {
   id: string
   quantity: number
   variantId: string
   title: string
   variantTitle: string
+  /** Original unit price (before discount auto). */
   price: ShopifyPrice
+  /** Line total after auto discounts. */
+  discountedTotal: ShopifyPrice
+  /** Line total before auto discounts (price * quantity). */
+  subtotal: ShopifyPrice
+  discounts: CartLineDiscount[]
   image: ShopifyImage | null
   handle: string
 }
@@ -198,14 +215,26 @@ export interface Cart {
   id: string
   checkoutUrl: string
   lines: CartLine[]
+  /** Total after auto discounts. */
   totalAmount: ShopifyPrice
+  /** Total before auto discounts. */
+  subtotalAmount: ShopifyPrice
   totalQuantity: number
 }
 
 interface CartApiLine {
   id: string
   quantity: number
-  cost: { totalAmount: ShopifyPrice }
+  cost: {
+    totalAmount: ShopifyPrice
+    subtotalAmount: ShopifyPrice
+    amountPerQuantity: ShopifyPrice
+  }
+  discountAllocations: {
+    discountedAmount: ShopifyPrice
+    title?: string
+    code?: string
+  }[]
   merchandise: {
     id: string
     title: string
@@ -218,19 +247,34 @@ interface CartApiLine {
 interface CartApiResponse {
   id: string
   checkoutUrl: string
-  cost: { totalAmount: ShopifyPrice }
+  cost: {
+    totalAmount: ShopifyPrice
+    subtotalAmount: ShopifyPrice
+  }
   lines: { nodes: CartApiLine[] }
 }
 
 const CART_FRAGMENT = `
   id
   checkoutUrl
-  cost { totalAmount { amount currencyCode } }
+  cost {
+    totalAmount { amount currencyCode }
+    subtotalAmount { amount currencyCode }
+  }
   lines(first: 100) {
     nodes {
       id
       quantity
-      cost { totalAmount { amount currencyCode } }
+      cost {
+        totalAmount { amount currencyCode }
+        subtotalAmount { amount currencyCode }
+        amountPerQuantity { amount currencyCode }
+      }
+      discountAllocations {
+        discountedAmount { amount currencyCode }
+        ... on CartAutomaticDiscountAllocation { title }
+        ... on CartCodeDiscountAllocation { code }
+      }
       merchandise {
         ... on ProductVariant {
           id
@@ -252,6 +296,12 @@ function mapCart(cart: CartApiResponse): Cart {
     title: node.merchandise.product.title,
     variantTitle: node.merchandise.title,
     price: node.merchandise.price,
+    discountedTotal: node.cost.totalAmount,
+    subtotal: node.cost.subtotalAmount,
+    discounts: (node.discountAllocations ?? []).map((d) => ({
+      title: d.title ?? d.code ?? 'Promotion',
+      amount: d.discountedAmount,
+    })),
     image: node.merchandise.image,
     handle: node.merchandise.product.handle,
   }))
@@ -260,6 +310,7 @@ function mapCart(cart: CartApiResponse): Cart {
     checkoutUrl: cart.checkoutUrl,
     lines,
     totalAmount: cart.cost.totalAmount,
+    subtotalAmount: cart.cost.subtotalAmount,
     totalQuantity: lines.reduce((sum, l) => sum + l.quantity, 0),
   }
 }
