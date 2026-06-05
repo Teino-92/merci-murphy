@@ -87,8 +87,26 @@ export function RealtimeNotifications() {
       )
       .subscribe()
 
+    // PWA fallback: when the SW receives a Web Push (lead/visit/etc.) while the
+    // Supabase WebSocket was suspended (backgrounded standalone app), refresh.
+    function handleSwMessage(e: MessageEvent) {
+      if (e.data?.type === 'push-received') routerRef.current.refresh()
+    }
+    // Also refresh when the user brings the tab back to foreground.
+    function handleVisibility() {
+      if (document.visibilityState === 'visible') routerRef.current.refresh()
+    }
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', handleSwMessage)
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+
     return () => {
       supabase.removeChannel(channel)
+      if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('message', handleSwMessage)
+      }
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [])
 

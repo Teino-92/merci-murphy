@@ -127,6 +127,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#1D164E] flex items-center justify-between px-4 py-3">
+        <NotificationBell />
         <Image
           src="/logo.avif"
           alt="Merci Murphy"
@@ -134,16 +135,13 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
           height={32}
           className="brightness-0 invert"
         />
-        <div className="flex items-center gap-3">
-          <NotificationBell />
-          <button
-            onClick={handleLogout}
-            className="text-white/60 hover:text-white transition-colors"
-            aria-label="Se déconnecter"
-          >
-            <LogOut className="h-5 w-5" />
-          </button>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="text-white/60 hover:text-white transition-colors"
+          aria-label="Se déconnecter"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Mobile bottom tab bar — Calendrier, Clients, Demandes only */}

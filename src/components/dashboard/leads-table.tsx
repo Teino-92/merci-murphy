@@ -288,28 +288,28 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
       {filtered.length === 0 ? (
         <p className="text-gray-400">Aucune demande.</p>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left px-5 py-3 font-medium text-gray-500">Nom</th>
-                <th className="text-left px-5 py-3 font-medium text-gray-500 hidden sm:table-cell">
+                <th className="text-left px-3 sm:px-5 py-3 font-medium text-gray-500">Nom</th>
+                <th className="text-left px-3 sm:px-5 py-3 font-medium text-gray-500 hidden sm:table-cell">
                   Service
                 </th>
-                <th className="text-left px-5 py-3 font-medium text-gray-500 hidden md:table-cell">
+                <th className="text-left px-3 sm:px-5 py-3 font-medium text-gray-500 hidden md:table-cell">
                   Contact
                 </th>
-                <th className="text-left px-5 py-3 font-medium text-gray-500">Statut</th>
-                <th className="text-left px-5 py-3 font-medium text-gray-500 hidden lg:table-cell">
+                <th className="text-left px-3 sm:px-5 py-3 font-medium text-gray-500">Statut</th>
+                <th className="text-left px-3 sm:px-5 py-3 font-medium text-gray-500 hidden lg:table-cell">
                   Date
                 </th>
-                <th className="text-left px-5 py-3 font-medium text-gray-500">Actions</th>
+                <th className="text-left px-3 sm:px-5 py-3 font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((lead) => (
                 <tr key={lead.id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="px-5 py-4">
+                  <td className="px-3 sm:px-5 py-4">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-[#1D164E]">{lead.nom}</p>
                       <span
@@ -366,7 +366,7 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
                     <p className="text-gray-700">{lead.email}</p>
                     <p className="text-xs text-gray-400">{lead.telephone}</p>
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-3 sm:px-5 py-4">
                     <select
                       value={lead.status}
                       disabled={updating !== null}
@@ -383,7 +383,7 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
                   <td className="px-5 py-4 text-gray-400 hidden lg:table-cell">
                     {new Date(lead.created_at).toLocaleDateString('fr-FR')}
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-3 sm:px-5 py-4">
                     <div className="flex flex-col gap-1.5">
                       {lead.status === 'new' && (
                         <button

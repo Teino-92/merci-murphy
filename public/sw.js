@@ -1,5 +1,6 @@
 // Service Worker for merci murphy® dashboard web push notifications.
 // No caching, no offline — only push + notificationclick handlers.
+// v2 — broadcast push events to open clients for in-app realtime refresh.
 
 self.addEventListener('install', () => {
   self.skipWaiting()
@@ -24,7 +25,23 @@ self.addEventListener('push', (event) => {
     data: { url: data.url || '/dashboard' },
     tag: data.tag,
   }
-  event.waitUntil(self.registration.showNotification(title, options))
+
+  // Notify any open dashboard clients so the in-app bell refreshes without reload.
+  const broadcast = (async () => {
+    try {
+      const windows = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+      for (const w of windows) {
+        w.postMessage({ type: 'push-received', payload: data })
+      }
+    } catch (_) {
+      // ignore
+    }
+  })()
+
+  event.waitUntil(Promise.all([self.registration.showNotification(title, options), broadcast]))
 })
 
 self.addEventListener('notificationclick', (event) => {

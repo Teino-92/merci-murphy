@@ -29,7 +29,7 @@ export function ShopifyCustomersTable({ customers }: { customers: ShopifyCustome
       {filtered.length === 0 ? (
         <p className="text-sm text-gray-400">Aucun résultat.</p>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">

@@ -174,8 +174,27 @@ export function NotificationBell() {
       )
       .subscribe()
 
+    // PWA-safe refresh paths:
+    // 1) Service Worker push → posts a message to all dashboard clients.
+    //    Catches notifications even when the realtime WebSocket was suspended.
+    // 2) visibilitychange → reload when the user brings the app back to foreground.
+    function handleSwMessage(e: MessageEvent) {
+      if (e.data?.type === 'push-received') load()
+    }
+    function handleVisibility() {
+      if (document.visibilityState === 'visible') load()
+    }
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', handleSwMessage)
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+
     return () => {
       supabase.removeChannel(channel)
+      if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('message', handleSwMessage)
+      }
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [])
 
