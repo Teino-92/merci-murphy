@@ -1,0 +1,290 @@
+/**
+ * Référentiel des races canines ciblées par le SEO programmatique.
+ * Trié approximativement par popularité française.
+ * priorite : 1 = max, 3 = min — pilote l'ordre de génération/publication.
+ */
+
+export type TypePoil = 'ras' | 'court' | 'mi-long' | 'long' | 'bouclé' | 'frisé' | 'double' | 'dur'
+export type Gabarit = 'très petit' | 'petit' | 'moyen' | 'grand' | 'très grand'
+export type VolumeEstime = 'low' | 'medium' | 'high'
+
+export interface BreedDef {
+  race: string
+  slugRace: string
+  typePoil: TypePoil
+  gabarit: Gabarit
+  volumeEstime: VolumeEstime
+  priorite: 1 | 2 | 3
+}
+
+export const BREEDS: BreedDef[] = [
+  // Priorité 1 — top volume Paris
+  {
+    race: 'Labrador',
+    slugRace: 'labrador',
+    typePoil: 'court',
+    gabarit: 'grand',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Golden Retriever',
+    slugRace: 'golden-retriever',
+    typePoil: 'long',
+    gabarit: 'grand',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Berger Allemand',
+    slugRace: 'berger-allemand',
+    typePoil: 'mi-long',
+    gabarit: 'grand',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Bouledogue Français',
+    slugRace: 'bouledogue-francais',
+    typePoil: 'ras',
+    gabarit: 'petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Chihuahua',
+    slugRace: 'chihuahua',
+    typePoil: 'court',
+    gabarit: 'très petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Yorkshire Terrier',
+    slugRace: 'yorkshire-terrier',
+    typePoil: 'long',
+    gabarit: 'très petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Caniche Toy',
+    slugRace: 'caniche-toy',
+    typePoil: 'bouclé',
+    gabarit: 'très petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Caniche Nain',
+    slugRace: 'caniche-nain',
+    typePoil: 'bouclé',
+    gabarit: 'petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Caniche Moyen',
+    slugRace: 'caniche-moyen',
+    typePoil: 'bouclé',
+    gabarit: 'moyen',
+    volumeEstime: 'medium',
+    priorite: 1,
+  },
+  {
+    race: 'Caniche Grand',
+    slugRace: 'caniche-grand',
+    typePoil: 'bouclé',
+    gabarit: 'grand',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Bichon Frisé',
+    slugRace: 'bichon-frise',
+    typePoil: 'frisé',
+    gabarit: 'petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Shih Tzu',
+    slugRace: 'shih-tzu',
+    typePoil: 'long',
+    gabarit: 'petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Cavalier King Charles',
+    slugRace: 'cavalier-king-charles',
+    typePoil: 'long',
+    gabarit: 'petit',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Berger Australien',
+    slugRace: 'berger-australien',
+    typePoil: 'mi-long',
+    gabarit: 'moyen',
+    volumeEstime: 'high',
+    priorite: 1,
+  },
+  {
+    race: 'Border Collie',
+    slugRace: 'border-collie',
+    typePoil: 'mi-long',
+    gabarit: 'moyen',
+    volumeEstime: 'medium',
+    priorite: 1,
+  },
+
+  // Priorité 2 — volume moyen
+  {
+    race: 'Beagle',
+    slugRace: 'beagle',
+    typePoil: 'court',
+    gabarit: 'moyen',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Cocker Spaniel',
+    slugRace: 'cocker-spaniel',
+    typePoil: 'long',
+    gabarit: 'moyen',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Jack Russell',
+    slugRace: 'jack-russell',
+    typePoil: 'court',
+    gabarit: 'petit',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Husky',
+    slugRace: 'husky',
+    typePoil: 'double',
+    gabarit: 'grand',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Teckel',
+    slugRace: 'teckel',
+    typePoil: 'court',
+    gabarit: 'petit',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Spitz Nain',
+    slugRace: 'spitz-nain',
+    typePoil: 'long',
+    gabarit: 'très petit',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Maltais',
+    slugRace: 'maltais',
+    typePoil: 'long',
+    gabarit: 'très petit',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Lhassa Apso',
+    slugRace: 'lhassa-apso',
+    typePoil: 'long',
+    gabarit: 'petit',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'West Highland White Terrier',
+    slugRace: 'west-highland-white-terrier',
+    typePoil: 'dur',
+    gabarit: 'petit',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+  {
+    race: 'Boxer',
+    slugRace: 'boxer',
+    typePoil: 'ras',
+    gabarit: 'grand',
+    volumeEstime: 'medium',
+    priorite: 2,
+  },
+
+  // Priorité 3 — niche
+  {
+    race: 'Samoyède',
+    slugRace: 'samoyede',
+    typePoil: 'double',
+    gabarit: 'grand',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Schnauzer',
+    slugRace: 'schnauzer',
+    typePoil: 'dur',
+    gabarit: 'moyen',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Pékinois',
+    slugRace: 'pekinois',
+    typePoil: 'long',
+    gabarit: 'petit',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Setter Irlandais',
+    slugRace: 'setter-irlandais',
+    typePoil: 'long',
+    gabarit: 'grand',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Dalmatien',
+    slugRace: 'dalmatien',
+    typePoil: 'ras',
+    gabarit: 'grand',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Doberman',
+    slugRace: 'doberman',
+    typePoil: 'ras',
+    gabarit: 'grand',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Rottweiler',
+    slugRace: 'rottweiler',
+    typePoil: 'court',
+    gabarit: 'très grand',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+  {
+    race: 'Shar Pei',
+    slugRace: 'shar-pei',
+    typePoil: 'ras',
+    gabarit: 'moyen',
+    volumeEstime: 'low',
+    priorite: 3,
+  },
+]

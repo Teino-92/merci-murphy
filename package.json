@@ -8,7 +8,14 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "seo:keywords": "tsx scripts/seo/01-keyword-research.ts",
+    "seo:competitors": "tsx scripts/seo/02-competitor-analysis.ts",
+    "seo:generate": "tsx scripts/seo/03-generate-content.ts",
+    "seo:publish": "tsx scripts/seo/04-publish-scheduler.ts",
+    "seo:monitor": "tsx scripts/seo/05-monitor.ts",
+    "seo:bootstrap": "tsx scripts/seo/06-bootstrap-state.ts",
+    "seo:full": "npm run seo:keywords && npm run seo:competitors && npm run seo:generate && npm run seo:publish"
   },
   "browserslist": [
     "last 2 Chrome versions",
@@ -69,6 +76,7 @@
     "@types/react-dom": "^18",
     "@types/web-push": "^3.6.4",
     "critters": "^0.0.23",
+    "dotenv": "^16.6.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "husky": "^9.1.7",
@@ -76,6 +84,7 @@
     "postcss": "^8",
     "prettier": "^3.8.1",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

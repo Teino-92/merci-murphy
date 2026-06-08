@@ -48,3 +48,6 @@ supabase/.temp/
 project/newsletter-*.html
 project/newsletter-templates/
 public/icons/
+
+# SEO pipeline artifacts (générés localement — state vit dans Sanity)
+scripts/seo/data/

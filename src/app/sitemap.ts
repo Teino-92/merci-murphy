@@ -1,11 +1,16 @@
 import type { MetadataRoute } from 'next'
 import { getAllServicesForSitemap } from '@/sanity/queries/services'
+import { getAllPublishedSeoPagesForSitemap } from '@/sanity/queries/seo-pages'
 import { getAllProducts } from '@/lib/shopify'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://mercimurphy.com'
 
-  const [services, products] = await Promise.all([getAllServicesForSitemap(), getAllProducts()])
+  const [services, products, seoPages] = await Promise.all([
+    getAllServicesForSitemap(),
+    getAllProducts(),
+    getAllPublishedSeoPagesForSitemap(),
+  ])
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
@@ -14,6 +19,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.9,
+    },
+    {
+      url: `${base}/toilettage`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.85,
     },
     { url: `${base}/concept`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     {
@@ -64,5 +75,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...serviceRoutes, ...productRoutes]
+  const seoRouteList: MetadataRoute.Sitemap = seoPages.map((p) => ({
+    url: `${base}/toilettage/${p.slugRace}`,
+    lastModified: new Date(p.publishedAt ?? p._updatedAt),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...serviceRoutes, ...productRoutes, ...seoRouteList]
 }
