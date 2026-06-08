@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation'
 import { toPlainText } from '@portabletext/toolkit'
 import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { getAllPublishedSeoPages } from '@/sanity/queries/seo-pages'
 import { urlFor } from '@/sanity/client'
 import { getProductsByHandles } from '@/lib/shopify'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
@@ -106,10 +108,13 @@ export default async function ServicePage({ params }: Props) {
     params.slug === 'le-bain-en-libre-service-maison-poilus-r' ||
     params.slug === 'les-bains-en-libre-service-maison-poilus-r'
 
-  const [service, settings, bainsProducts] = await Promise.all([
+  const isToilettage = params.slug === 'le-toilettage-maison-poilus-r'
+
+  const [service, settings, bainsProducts, seoRaces] = await Promise.all([
     getServiceBySlug(params.slug),
     getSiteSettings(),
     isBains ? getProductsByHandles(BAINS_SHOP_HANDLES) : Promise.resolve([]),
+    isToilettage ? getAllPublishedSeoPages() : Promise.resolve([]),
   ])
 
   if (!service) notFound()
@@ -325,6 +330,46 @@ export default async function ServicePage({ params }: Props) {
                   </div>
                 ))}
               </div>
+            </Reveal>
+          </Container>
+        </Section>
+      )}
+
+      {/* Toilettage par race — maillage SEO */}
+      {isToilettage && seoRaces.length > 0 && (
+        <Section className="bg-white">
+          <Container className="max-w-5xl">
+            <Reveal>
+              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
+                Toilettage par race
+              </h2>
+              <p className="mt-4 max-w-2xl text-charcoal/70">
+                Chaque race a son pelage, ses besoins, son rythme. Découvrez nos conseils adaptés.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {seoRaces.map((p) => (
+                  <Link
+                    key={p._id}
+                    href={`/toilettage/${p.slugRace}`}
+                    className="group rounded-2xl border border-charcoal/10 bg-cream px-5 py-4 transition hover:border-terracotta-dark/40 hover:shadow-sm"
+                  >
+                    <p className="font-display text-base font-semibold text-charcoal group-hover:text-terracotta-dark">
+                      {p.race}
+                    </p>
+                    {p.typePoil && (
+                      <p className="mt-0.5 text-xs text-charcoal/50 capitalize">
+                        Pelage {p.typePoil}
+                      </p>
+                    )}
+                  </Link>
+                ))}
+              </div>
+              <Link
+                href="/toilettage"
+                className="mt-8 inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
+              >
+                Voir toutes les races →
+              </Link>
             </Reveal>
           </Container>
         </Section>

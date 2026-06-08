@@ -133,6 +133,14 @@ export function Footer({ showBlog = false }: FooterProps) {
                       </Link>
                     </li>
                   ))}
+                  <li>
+                    <Link
+                      href="/toilettage"
+                      className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
+                    >
+                      Toilettage par race
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>
