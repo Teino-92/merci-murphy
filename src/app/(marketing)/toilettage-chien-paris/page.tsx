@@ -3,16 +3,16 @@ import Link from 'next/link'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 
 export const metadata: Metadata = {
-  title: 'Toilettage chien Paris 75009 | merci murphy® — Spa & Bien-être canin',
+  title: 'Toiletteur chien Paris, merci murphy® · Salon de toilettage Paris 9e',
   description:
-    'Toilettage, bain libre-service, balnéothérapie, massage, crèche, éducation et ostéopathie pour chiens à Paris 75009. Réservez en ligne — merci murphy®, 18 rue Victor Massé.',
+    'Toiletteur pour chien à Paris 9e (75009), rue Victor Massé. Toilettage, bain libre-service, balnéothérapie, massage. Salon de toilettage premium, sans cage, réservation en ligne.',
   alternates: {
     canonical: 'https://mercimurphy.com/toilettage-chien-paris',
   },
   openGraph: {
-    title: 'Toilettage chien Paris 75009 | merci murphy®',
+    title: 'Toiletteur chien Paris, merci murphy® · Salon Paris 9e',
     description:
-      'Le spa bien-être canin de Paris 75009 : toilettage, balnéo, massage, crèche et plus. Réservez en ligne.',
+      'Toiletteur chien à Paris 9e (75009). Spa canin premium, sans cage, toilettage par des experts. Rue Victor Massé.',
     url: 'https://mercimurphy.com/toilettage-chien-paris',
     siteName: 'merci murphy®',
     locale: 'fr_FR',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: '/og/og-home.jpg',
         width: 1200,
         height: 630,
-        alt: 'merci murphy® — Toilettage chien Paris 75009',
+        alt: 'merci murphy®, toiletteur chien Paris 9e',
       },
     ],
   },
@@ -84,7 +84,7 @@ const FAQ = [
   {
     question: 'Où se trouve merci murphy® à Paris ?',
     answer:
-      'merci murphy® est situé au 18 rue Victor Massé, Paris 75009 — dans le quartier Pigalle / Notre-Dame-de-Lorette, facilement accessible en métro (ligne 12, station Pigalle ou Saint-Georges).',
+      'merci murphy® est situé au 18 rue Victor Massé, Paris 75009, dans le quartier Pigalle et Notre-Dame-de-Lorette, accessible en métro (ligne 12, station Pigalle ou Saint-Georges).',
   },
   {
     question: 'Quels services de toilettage proposez-vous pour les chiens à Paris ?',
@@ -99,7 +99,7 @@ const FAQ = [
   {
     question: 'Acceptez-vous toutes les races de chiens ?',
     answer:
-      'Oui, nous accueillons toutes les races. Nos toiletteuses sont formées aux spécificités de chaque type de pelage — longs, frisés, à poils durs ou ras.',
+      'Oui, nous accueillons toutes les races. Nos toiletteuses sont formées aux spécificités de chaque type de pelage : longs, frisés, à poils durs ou ras.',
   },
   {
     question: "Qu'est-ce que la balnéothérapie pour chiens ?",
@@ -119,7 +119,7 @@ const FAQ = [
   {
     question: 'Y a-t-il un parking ou un accès facile en transports en commun ?',
     answer:
-      "Oui — arrêt Pigalle (M12) et Saint-Georges (M12) à 5 minutes à pied. Accès Vélib' devant la boutique. Parking Pigalle à 200m.",
+      "Oui. Arrêt Pigalle (M12) et Saint-Georges (M12) à 5 minutes à pied. Accès Vélib' devant la boutique. Parking Pigalle à 200m.",
   },
 ]
 
@@ -239,14 +239,14 @@ export default async function ToilettageChienParisPage() {
               Paris 75009 · Pigalle · Saint-Georges
             </p>
             <h1 className="font-display text-4xl font-bold leading-tight text-charcoal sm:text-5xl lg:text-6xl">
-              Toilettage & bien-être
+              Toiletteur chien
               <br />
-              <span className="text-terracotta-dark">chien à Paris</span>
+              <span className="text-terracotta-dark">à Paris</span>
             </h1>
             <p className="mt-6 text-lg text-charcoal/70 max-w-2xl mx-auto">
-              merci murphy® est le spa canin de référence à Paris 75009. Toilettage professionnel,
-              balnéothérapie, massage, crèche, éducation et ostéopathie — tout sous un même toit, 18
-              rue Victor Massé.
+              merci murphy® est votre toiletteur chien à Paris 9e. Salon de toilettage premium rue
+              Victor Massé : toilettage complet, bain libre-service, balnéothérapie, massage, crèche
+              et éducation, tout sous un même toit.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link
@@ -272,8 +272,8 @@ export default async function ToilettageChienParisPage() {
               Nos services à Paris 9ème
             </h2>
             <p className="mt-3 text-charcoal/60">
-              Du toilettage quotidien aux soins thérapeutiques — une offre complète pour le
-              bien-être de votre chien.
+              Du toilettage quotidien aux soins thérapeutiques. Une offre complète pour le bien-être
+              de votre chien.
             </p>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {SERVICES.map((service) => (
@@ -298,17 +298,17 @@ export default async function ToilettageChienParisPage() {
         <section className="bg-[#f5f0eb] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
             <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-              Pourquoi choisir merci murphy® à Paris ?
+              Pourquoi choisir notre salon de toilettage à Paris ?
             </h2>
             <div className="mt-10 grid gap-8 sm:grid-cols-2">
               {[
                 {
                   title: 'Une approche sans stress',
-                  text: 'Nos équipes utilisent la méthode maison POILUS® — patience, douceur, techniques adaptées à chaque chien pour une expérience positive.',
+                  text: 'Nos équipes utilisent la méthode maison POILUS® : patience, douceur, techniques adaptées à chaque chien pour une expérience positive.',
                 },
                 {
                   title: 'Des experts passionnés',
-                  text: 'Toiletteuses diplômées, éducateur canin certifié, ostéopathe animalier — chaque professionnel est sélectionné pour son expertise et son amour des animaux.',
+                  text: 'Toiletteuses diplômées, éducateur canin certifié, ostéopathe animalier. Chaque professionnel est sélectionné pour son expertise et son amour des animaux.',
                 },
                 {
                   title: 'Un lieu premium au cœur de Paris',
@@ -316,7 +316,7 @@ export default async function ToilettageChienParisPage() {
                 },
                 {
                   title: 'Une offre globale unique',
-                  text: 'Du bain hebdomadaire au suivi ostéopathique mensuel — vous trouverez tout ce dont votre chien a besoin en un seul endroit, avec une équipe qui le connaît.',
+                  text: 'Du bain hebdomadaire au suivi ostéopathique mensuel, vous trouverez tout ce dont votre chien a besoin en un seul endroit, avec une équipe qui le connaît.',
                 },
               ].map((item) => (
                 <div key={item.title}>
@@ -368,7 +368,7 @@ export default async function ToilettageChienParisPage() {
         <section className="bg-[#f5f0eb] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl">
             <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-              Questions fréquentes — toilettage chien Paris
+              Questions fréquentes sur notre salon de toilettage Paris
             </h2>
             <dl className="mt-10 divide-y divide-charcoal/10">
               {FAQ.map((item) => (
@@ -390,7 +390,7 @@ export default async function ToilettageChienParisPage() {
               Prenez rendez-vous pour votre chien à Paris
             </h2>
             <p className="mt-4 text-charcoal/65">
-              Réservez en ligne en 2 minutes — toilettage, bain, massage ou crèche.
+              Réservez en ligne en 2 minutes : toilettage, bain, massage ou crèche.
               <br />
               18 rue Victor Massé, Paris 75009 · 09 78 81 04 21
             </p>

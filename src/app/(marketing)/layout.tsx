@@ -21,20 +21,22 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://mercimurphy.com'),
   title: {
-    default: 'merci murphy® | Toilettage & Bien-être pour chiens à Paris 75009',
+    default: 'Toiletteur chien Paris 9e, merci murphy® · Spa canin Paris 75009',
     template: '%s | Merci Murphy',
   },
   description:
-    'Toilettage, spa, crèche et bien-être pour chiens à Paris 75009. Un lieu premium et engagé pour prendre soin de votre compagnon.',
+    'Toiletteur chien à Paris 9e (75009), rue Victor Massé. Salon de toilettage premium, bain, spa, crèche et bien-être canin. Sans cage, par des experts.',
   applicationName: 'Merci Murphy',
   alternates: {
     canonical: 'https://mercimurphy.com',
   },
   keywords: [
+    'toiletteur chien Paris',
+    'toiletteur chien Paris 9',
+    'salon de toilettage Paris',
     'toilettage chien Paris',
     'spa chien Paris',
     'crèche chien Paris',
-    'bien-être chien Paris',
   ],
   openGraph: {
     url: 'https://mercimurphy.com',

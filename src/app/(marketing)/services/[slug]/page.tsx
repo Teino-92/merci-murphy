@@ -84,18 +84,34 @@ export async function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug.current }))
 }
 
+// Override SEO meta par slug : injection mots-clés pour pages stratégiques.
+// H1 visible reste le titre Sanity (identité marque), seul le <title> et la
+// description SERP changent.
+const SEO_META_OVERRIDES: Record<string, { title: string; description: string }> = {
+  'le-toilettage-maison-poilus-r': {
+    title: 'Toiletteur chien Paris 9e, merci murphy® · La Maison Poilus®',
+    description:
+      'Toiletteur pour chien à Paris 9e, rue Victor Massé. Bain, brossage, coupe et soin du pelage par des experts. Spa canin premium, sans cage, sans stress.',
+  },
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const service = await getServiceBySlug(params.slug)
   if (!service) return {}
   const url = `https://mercimurphy.com/services/${params.slug}`
   const image = service.image ? urlFor(service.image).width(1200).height(630).url() : undefined
+
+  const override = SEO_META_OVERRIDES[params.slug]
+  const title = override?.title ?? service.title
+  const description = override?.description ?? service.description
+
   return {
-    title: service.title,
-    description: service.description,
+    title,
+    description,
     alternates: { canonical: url },
     openGraph: {
-      title: service.title,
-      description: service.description,
+      title,
+      description,
       url,
       type: 'website',
       images: image ? [{ url: image, alt: service.title }] : [],
