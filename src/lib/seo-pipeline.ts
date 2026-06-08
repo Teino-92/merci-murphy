@@ -16,19 +16,32 @@ import { BREEDS, type BreedDef } from './seo-breeds'
 const ANTHROPIC_ENDPOINT = 'https://api.anthropic.com/v1/messages'
 const ANTHROPIC_VERSION = '2023-06-01'
 const DEFAULT_MODEL = 'claude-sonnet-4-6'
-const SYSTEM_PROMPT = `Tu es un expert en contenu SEO pour le secteur du toilettage canin haut de gamme à Paris.
-Tu rédiges pour merci murphy®, un spa canin premium situé rue Victor Massé à Paris 9e.
+const SYSTEM_PROMPT = `Tu es Margot, fondatrice et toiletteuse senior de merci murphy®, spa canin rue Victor Massé Paris 9e.
 
-Ton style : chaleureux, expert, jamais clinique. On parle à des propriétaires qui chouchoutent leur chien.
-Pas de superlatifs vides. Des infos concrètes sur la race (type de pelage, besoins spécifiques, fréquence recommandée).
+Tu écris comme tu parles à un client en boutique : direct, concret, sans chichi.
 
-Chaque page doit contenir :
-1. Un H1 naturel intégrant la race et Paris
-2. Un paragraphe d'intro (120-150 mots) sur les spécificités du pelage de cette race
-3. Une section "Notre approche pour [race]" (150-200 mots) — ce que merci murphy fait différemment
-4. Une section "À quelle fréquence faire toiletter un [race] à Paris ?" (100-150 mots)
-5. Une FAQ de 4 questions/réponses spécifiques à la race (pas génériques)
-6. Un meta title (60 car. max) et meta description (155 car. max)
+Règles STRICTES :
+1. INTERDIT : tirets longs cadratin (—) et demi-cadratin (–). Jamais. Utilise virgules, points, parenthèses ou deux-points.
+2. INTERDIT : ces tournures IA :
+   - "nous savons que", "il est important de", "il convient de"
+   - "véritable", "vraie machine à", "spectaculaire", "incroyable"
+   - "n'hésitez pas à", "c'est une question qu'on nous pose souvent"
+   - "véritablement", "particulièrement", "notamment", "naturellement"
+   - "en effet", "par ailleurs", "en outre", "de surcroît"
+   - "à savoir", "c'est-à-dire", "à proprement parler"
+   - listes triples rythmées artificielles ("X, Y et Z" répétés)
+3. INTERDIT : adjectifs grandiloquents en chaîne. Max un adjectif par nom.
+4. INTERDIT : phrases qui commencent par "Lorsque" ou "Afin de".
+5. Phrases courtes. Concret. Tu peux dire "je", "on", "nous". Naturel.
+6. Vocabulaire métier OK (cardage, démuage, sous-poil) si utile à l'info.
+
+Chaque page contient :
+1. H1 naturel avec la race et Paris
+2. Intro (120-150 mots) sur le pelage de la race
+3. Section "Notre approche pour [race]" (150-200 mots), ce qu'on fait différemment
+4. Section "À quelle fréquence toiletter un [race] à Paris ?" (100-150 mots)
+5. FAQ 4 questions/réponses spécifiques à la race
+6. Meta title (60 car max), meta description (155 car max)
 
 Réponds UNIQUEMENT en JSON valide, sans markdown ni backticks.`
 
@@ -96,8 +109,22 @@ interface PortableBlock {
   children: { _type: 'span'; _key: string; text: string; marks: string[] }[]
 }
 
+// Safety net : Claude obéit parfois mal au "pas de tirets longs".
+// On purge en post-process avant push Sanity.
+function stripDashes(s: string): string {
+  return s
+    .replace(/\s—\s/g, ', ')
+    .replace(/\s–\s/g, ', ')
+    .replace(/—/g, ',')
+    .replace(/–/g, ',')
+    .replace(/ +/g, ' ')
+    .replace(/ ,/g, ',')
+    .replace(/,,+/g, ',')
+    .trim()
+}
+
 function textToBlocks(text: string): PortableBlock[] {
-  return text
+  return stripDashes(text)
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean)
@@ -259,17 +286,17 @@ export async function runSeoPipeline(opts: { batchSize?: number } = {}): Promise
         _type: 'seoPage',
         race: breed.race,
         slugRace,
-        title: parsed.title,
+        title: stripDashes(parsed.title),
         slug: { _type: 'slug', current: slugCurrent },
-        metaTitle: parsed.metaTitle.slice(0, 60),
-        metaDescription: parsed.metaDescription.slice(0, 160),
+        metaTitle: stripDashes(parsed.metaTitle).slice(0, 60),
+        metaDescription: stripDashes(parsed.metaDescription).slice(0, 160),
         intro: textToBlocks(parsed.intro),
         approche: textToBlocks(parsed.approche),
         frequence: textToBlocks(parsed.frequence),
         faq: parsed.faq.map((f) => ({
           _type: 'faqItem',
           _key: key(),
-          question: f.question,
+          question: stripDashes(f.question),
           reponse: textToBlocks(f.reponse),
         })),
         typePoil: breed.typePoil,
