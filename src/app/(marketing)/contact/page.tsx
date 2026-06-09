@@ -10,6 +10,7 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import dynamic from 'next/dynamic'
 import { HorairesAccordion } from '@/components/sections/horaires-accordion'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
+import { LocalBusinessSchema } from '@/components/seo/local-business-schema'
 
 const MapboxMap = dynamic(
   () => import('@/components/sections/mapbox-map').then((m) => m.MapboxMap),
@@ -32,8 +33,27 @@ export default async function ContactPage() {
     .filter(Boolean)
     .join(', ')
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://mercimurphy.com' },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Contact',
+        item: 'https://mercimurphy.com/contact',
+      },
+    ],
+  }
+
   return (
     <>
+      <LocalBusinessSchema settings={settings} pageUrl="https://mercimurphy.com/contact" />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
         <Image
           src="/contact-hero.jpg"
@@ -119,6 +139,24 @@ export default async function ContactPage() {
 
                 <div className="mt-8 h-64 rounded-2xl overflow-hidden">
                   <MapboxMap lat={48.880805} lng={2.338646} />
+                </div>
+                <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=18+rue+Victor+Mass%C3%A9+75009+Paris"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-terracotta-dark hover:underline"
+                  >
+                    Itinéraire Google Maps →
+                  </a>
+                  <a
+                    href="https://maps.apple.com/?address=18+rue+Victor+Mass%C3%A9,+75009+Paris,+France"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-charcoal/60 hover:text-charcoal"
+                  >
+                    Apple Plans →
+                  </a>
                 </div>
               </div>
             </Reveal>
