@@ -221,8 +221,10 @@ export default async function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'merci murphy®',
+    alternateName: ['Merci Murphy', 'merci murphy'],
     url: 'https://mercimurphy.com',
     inLanguage: 'fr-FR',
+    publisher: { '@id': 'https://mercimurphy.com/#organization' },
     potentialAction: {
       '@type': 'SearchAction',
       target: {

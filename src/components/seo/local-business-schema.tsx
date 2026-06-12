@@ -33,7 +33,9 @@ export function LocalBusinessSchema({ settings, pageUrl, extraTypes = [] }: Prop
     '@type': types,
     '@id': LOCAL_BUSINESS_ID,
     name: 'merci murphy®',
+    alternateName: ['Merci Murphy', 'merci murphy'],
     legalName: 'Merci Murphy',
+    parentOrganization: { '@id': 'https://mercimurphy.com/#organization' },
     description:
       'Toilettage, spa, crèche et bien-être pour chiens à Paris 75009. Un lieu premium et engagé pour prendre soin de votre compagnon.',
     url: 'https://mercimurphy.com',

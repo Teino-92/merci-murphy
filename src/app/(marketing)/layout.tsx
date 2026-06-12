@@ -6,6 +6,7 @@ import { CookieBanner } from '@/components/ui/cookie-banner'
 import { CartProvider } from '@/context/cart-context'
 import { PromoProvider } from '@/context/promo-context'
 import { SiteShell } from '@/components/layout/site-shell'
+import { OrganizationSchema } from '@/components/seo/organization-schema'
 import { SmoothScroll } from '@/components/layout/smooth-scroll'
 import { getPublishedPostCount } from '@/sanity/queries/posts'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
@@ -79,6 +80,7 @@ export default async function MarketingRootLayout({
         <link rel="dns-prefetch" href="https://feeds.behold.so" />
       </head>
       <body className={`${fontVariables} font-sans antialiased overflow-x-hidden`}>
+        <OrganizationSchema />
         <SmoothScroll />
         <CartProvider>
           <PromoProvider banner={promoBanner}>
