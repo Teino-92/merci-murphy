@@ -5,14 +5,14 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 export const metadata: Metadata = {
   title: 'Toiletteur chien Paris, merci murphy® · Salon de toilettage Paris 9e',
   description:
-    'Toiletteur pour chien à Paris 9e (75009), rue Victor Massé. Toilettage, bain libre-service, balnéothérapie, massage. Salon de toilettage premium, sans cage, réservation en ligne.',
+    'Toiletteur pour chien à Paris 9e (75009), rue Victor Massé. Toilettage, bain libre-service, balnéothérapie, massage. Salon de toilettage premium, sans stress, réservation en ligne.',
   alternates: {
     canonical: 'https://mercimurphy.com/toilettage-chien-paris',
   },
   openGraph: {
     title: 'Toiletteur chien Paris, merci murphy® · Salon Paris 9e',
     description:
-      'Toiletteur chien à Paris 9e (75009). Spa canin premium, sans cage, toilettage par des experts. Rue Victor Massé.',
+      'Toiletteur chien à Paris 9e (75009). Spa canin premium, sans stress, toilettage par des experts. Rue Victor Massé.',
     url: 'https://mercimurphy.com/toilettage-chien-paris',
     siteName: 'merci murphy®',
     locale: 'fr_FR',

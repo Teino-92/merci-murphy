@@ -91,7 +91,7 @@ const SEO_META_OVERRIDES: Record<string, { title: string; description: string }>
   'le-toilettage-maison-poilus-r': {
     title: 'Toiletteur chien Paris 9e, merci murphy® · La Maison Poilus®',
     description:
-      'Toiletteur pour chien à Paris 9e, rue Victor Massé. Bain, brossage, coupe et soin du pelage par des experts. Spa canin premium, sans cage, sans stress.',
+      'Toiletteur pour chien à Paris 9e, rue Victor Massé. Bain, brossage, coupe et soin du pelage par des experts. Spa canin premium, sans stress, par des experts.',
   },
 }
 
