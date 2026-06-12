@@ -177,14 +177,21 @@ export async function setNewsletterActive(id: string, active: boolean): Promise<
 }
 
 export async function searchProfiles(query: string): Promise<Profile[]> {
-  // Search profiles by name or phone directly
-  const { data: directMatches, error } = await supabaseAdmin
-    .from('profiles')
-    .select('*')
-    .or(`nom.ilike.%${query}%,telephone.ilike.%${query}%`)
-    .order('nom', { ascending: true })
-    .limit(10)
-  if (error) throw error
+  // PostgREST `.or()` interpolates raw filter syntax — `,` and `()` in the
+  // query would inject extra conditions. Two parameterized .ilike() queries
+  // merged instead.
+  const pattern = `%${query}%`
+  const [nomRes, telRes] = await Promise.all([
+    supabaseAdmin.from('profiles').select('*').ilike('nom', pattern).limit(10),
+    supabaseAdmin.from('profiles').select('*').ilike('telephone', pattern).limit(10),
+  ])
+  if (nomRes.error) throw nomRes.error
+
+  const byId = new Map<string, Profile>()
+  for (const p of [...(nomRes.data ?? []), ...(telRes.data ?? [])]) byId.set(p.id, p)
+  const directMatches = Array.from(byId.values())
+    .sort((a, b) => (a.nom ?? '').localeCompare(b.nom ?? ''))
+    .slice(0, 10)
 
   // Also search by dog name and collect matching owner_ids
   const { data: dogMatches } = await supabaseAdmin

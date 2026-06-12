@@ -36,7 +36,6 @@ export async function createSumUpCheckout(params: {
     throw new Error(`SumUp checkout creation failed: ${res.status} ${body}`)
   }
   const data = await res.json()
-  console.log('SumUp checkout response:', JSON.stringify(data))
   return data
 }
 
