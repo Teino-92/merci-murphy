@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { CartIcon } from '@/components/shop/cart-icon'
 import { AuthButton } from '@/components/layout/auth-button'
 import { PawStamp } from '@/components/ui/paw-stamp'
+import { useCart } from '@/context/cart-context'
 
 interface NavbarProps {
   showBlog?: boolean
@@ -20,7 +21,10 @@ export function Navbar({ showBlog = false }: NavbarProps) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const showCart = pathname.startsWith('/shop')
+  const { cart } = useCart()
+  // Always show the cart on shop pages; elsewhere only when it holds items so
+  // a shopper never loses sight of their cart while browsing other pages.
+  const showCart = pathname.startsWith('/shop') || (cart?.totalQuantity ?? 0) > 0
 
   function navigate(href: string) {
     setOpen(false)
