@@ -98,7 +98,7 @@ export default async function ToilettageHubPage() {
                   <h2 className="font-display text-2xl font-bold text-charcoal capitalize sm:text-3xl">
                     {gabarit === 'autres' ? 'Autres races' : `Chiens ${gabarit}s`}
                   </h2>
-                  <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
                     {list.map((p) => (
                       <Link
                         key={p._id}

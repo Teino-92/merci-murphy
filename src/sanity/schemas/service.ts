@@ -194,13 +194,6 @@ export const service = defineType({
       ],
     }),
     defineField({
-      name: 'calendlyUrl',
-      title: 'Lien Calendly',
-      description:
-        'URL de réservation Calendly pour ce service (laisser vide si pas encore disponible)',
-      type: 'url',
-    }),
-    defineField({
       name: 'cta',
       title: "Appel à l'action",
       type: 'object',

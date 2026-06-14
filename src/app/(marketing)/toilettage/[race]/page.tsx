@@ -8,13 +8,13 @@ import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
-import { RappelButton } from '@/components/sections/rappel-button'
-import { CalendlyCta } from '@/components/sections/calendly-cta'
+import { BookingCta } from '@/components/sections/booking-cta'
 import {
   getAllPublishedSeoPages,
   getSeoPageBySlugRace,
   getRelatedSeoPages,
 } from '@/sanity/queries/seo-pages'
+import { getSiteSettings } from '@/sanity/queries/site-settings'
 
 interface Props {
   params: { race: string }
@@ -102,6 +102,7 @@ export default async function RacePage({ params }: Props) {
   if (!page) notFound()
 
   const related = await getRelatedSeoPages(page.slugRace, page.gabarit, page.typePoil)
+  const settings = await getSiteSettings()
   const jsonLd = buildJsonLd(page)
 
   return (
@@ -211,7 +212,7 @@ export default async function RacePage({ params }: Props) {
               <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
                 Autres races à découvrir
               </h2>
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
                 {related.map((r) => (
                   <Link
                     key={r._id}
@@ -237,7 +238,7 @@ export default async function RacePage({ params }: Props) {
         </Section>
       )}
 
-      {/* CTA */}
+      {/* CTA desktop */}
       <div style={{ backgroundColor: '#B5A89A' }}>
         <Section className="text-charcoal">
           <Container className="max-w-2xl text-center">
@@ -245,16 +246,21 @@ export default async function RacePage({ params }: Props) {
               <h2 className="font-display text-2xl font-bold sm:text-3xl">
                 Prêt.e à prendre rendez-vous pour votre {page.race} ?
               </h2>
-              <p className="mt-4 text-charcoal/70">
-                Réservez en ligne ou demandez à être rappelé·e.
-              </p>
+              <p className="mt-4 text-charcoal/70">Réservez en ligne en quelques clics.</p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <CalendlyCta calendlyUrl="/reservation" href="/reservation" />
-                <RappelButton />
+                <BookingCta />
               </div>
             </Reveal>
           </Container>
         </Section>
+      </div>
+
+      {/* Mobile sticky CTA */}
+      <BookingCta mobile phone={settings?.telephone} />
+
+      {/* Spacer for mobile CTA + divider before footer (same bg color) */}
+      <div style={{ backgroundColor: '#B5A89A' }}>
+        <div className="h-20 lg:hidden" />
       </div>
     </>
   )

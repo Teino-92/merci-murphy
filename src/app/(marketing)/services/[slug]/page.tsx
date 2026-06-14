@@ -16,11 +16,9 @@ import { PortableText } from '@/components/sections/portable-text'
 import { FaqAccordion } from '@/components/sections/faq-accordion'
 import { TarifsToilettageTable } from '@/components/sections/tarifs-toilettage'
 import { ServiceShopTeaser } from '@/components/sections/service-shop-teaser'
-import { MobileCta } from '@/components/sections/mobile-cta'
-import { RappelButton } from '@/components/sections/rappel-button'
+import { BookingCta } from '@/components/sections/booking-cta'
 import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
 import { Reveal } from '@/components/ui/reveal'
-import { CalendlyCta } from '@/components/sections/calendly-cta'
 
 const BAINS_SHOP_HANDLES = [
   'shampoing',
@@ -28,16 +26,6 @@ const BAINS_SHOP_HANDLES = [
   'spray-demelant-pour-chiens-et-chats',
   'apres-shampooing-adoucissant-et-demelant-pour-chiens-et-chats',
   'dog-cologne',
-]
-
-// All services with a native booking CTA pointing to /reservation
-const NATIVE_BOOKING_SLUGS = [
-  'le-toilettage-maison-poilus-r',
-  'les-bains-en-libre-service-maison-poilus-r',
-  'le-bain-en-libre-service-maison-poilus-r',
-  'balneo-maison-poilus-r',
-  'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
-  'la-creche',
 ]
 
 // Avant/après pour Maison Poilus
@@ -418,20 +406,9 @@ export default async function ServicePage({ params }: Props) {
               <h2 className="font-display text-2xl font-bold sm:text-3xl">
                 Prêt.e à prendre rendez-vous ?
               </h2>
-              <p className="mt-4 text-charcoal/70">
-                {service.calendlyUrl
-                  ? 'Réservez directement en ligne ou demandez à être rappelé·e.'
-                  : 'Demandez à être rappelé·e et notre équipe vous contactera.'}
-              </p>
+              <p className="mt-4 text-charcoal/70">Réservez en ligne en quelques clics.</p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                {(service.calendlyUrl || NATIVE_BOOKING_SLUGS.includes(params.slug)) && (
-                  <CalendlyCta
-                    calendlyUrl={service.calendlyUrl ?? '/reservation'}
-                    label={service.cta?.label}
-                    href={NATIVE_BOOKING_SLUGS.includes(params.slug) ? '/reservation' : undefined}
-                  />
-                )}
-                <RappelButton />
+                <BookingCta label={service.cta?.label} />
               </div>
             </Reveal>
           </Container>
@@ -439,21 +416,7 @@ export default async function ServicePage({ params }: Props) {
       </div>
 
       {/* Mobile sticky CTA */}
-      {service.calendlyUrl || NATIVE_BOOKING_SLUGS.includes(params.slug) ? (
-        <CalendlyCta
-          mobile
-          calendlyUrl={service.calendlyUrl ?? '/reservation'}
-          label={service.cta?.label}
-          phone={settings?.telephone}
-          href={NATIVE_BOOKING_SLUGS.includes(params.slug) ? '/reservation' : undefined}
-        />
-      ) : (
-        <MobileCta
-          phone={settings?.telephone}
-          type={service.cta?.type ?? 'reservation'}
-          label={service.cta?.label}
-        />
-      )}
+      <BookingCta mobile phone={settings?.telephone} label={service.cta?.label} />
 
       {/* Spacer for mobile CTA + divider before footer (same bg color) */}
       <div style={{ backgroundColor: '#B5A89A' }}>

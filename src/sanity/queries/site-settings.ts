@@ -43,7 +43,6 @@ export interface SiteSettings {
   horairesGroupes: HoraireGroupe[]
   instagram: string
   google_maps_url: string
-  calendly_url: string
   promoBanner: PromoBanner | null
 }
 
@@ -61,7 +60,6 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       },
       instagram,
       google_maps_url,
-      calendly_url,
       promoBanner {
         active,
         startDate,

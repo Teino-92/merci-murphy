@@ -89,11 +89,6 @@ export const siteSettings = defineType({
       type: 'url',
     }),
     defineField({
-      name: 'calendly_url',
-      title: 'Calendly (URL)',
-      type: 'url',
-    }),
-    defineField({
       name: 'promoBanner',
       title: 'Bandeau promo (haut de site)',
       type: 'object',
