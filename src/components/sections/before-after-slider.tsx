@@ -150,15 +150,10 @@ function BeforeAfterFlip({
             zoom={beforeZoom ?? zoom}
           />
           {isPhoto && (
-            <>
-              <span className="absolute bottom-3 left-3 z-10 rounded-full bg-black/40 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                Avant
-              </span>
-              <span className="absolute bottom-3 right-3 z-10 flex items-center gap-1 rounded-full bg-terracotta-dark/90 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                <RotateIcon />
-                Voir l&apos;après
-              </span>
-            </>
+            <span className="absolute inset-x-0 bottom-3 z-10 mx-auto flex w-fit items-center gap-1.5 rounded-full bg-terracotta-dark/90 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+              <RotateIcon />
+              Voir l&apos;après
+            </span>
           )}
         </div>
 
