@@ -278,7 +278,12 @@ export default async function ServicePage({ params }: Props) {
                 Avant & après
               </h2>
               <p className="mt-2 text-center text-charcoal/50 text-sm">
-                Glissez le curseur pour découvrir la transformation.
+                <span className="lg:hidden">
+                  Touchez une photo pour découvrir la transformation.
+                </span>
+                <span className="hidden lg:inline">
+                  Glissez le curseur pour découvrir la transformation.
+                </span>
               </p>
             </Reveal>
             <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
