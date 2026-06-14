@@ -350,7 +350,7 @@ export default async function ServicePage({ params }: Props) {
               <p className="mt-4 max-w-2xl text-charcoal/70">
                 Chaque race a son pelage, ses besoins, son rythme. Découvrez nos conseils adaptés.
               </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
                 {seoRaces.map((p) => (
                   <Link
                     key={p._id}
