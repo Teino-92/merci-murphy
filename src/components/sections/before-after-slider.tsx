@@ -24,6 +24,180 @@ export function BeforeAfterSlider({
   afterZoom,
   className,
 }: BeforeAfterSliderProps) {
+  const isPhoto = !!(before?.src || after?.src)
+  const aspect = isPhoto ? 'aspect-[3/4]' : 'aspect-square'
+
+  return (
+    <div className={`w-full ${className ?? ''}`}>
+      {/* Mobile: tap-to-flip card (slider drag fights page scroll on touch) */}
+      <div className={`lg:hidden ${aspect} w-full`}>
+        <BeforeAfterFlip
+          before={before}
+          after={after}
+          beforeColor={beforeColor}
+          afterColor={afterColor}
+          zoom={zoom}
+          beforeZoom={beforeZoom}
+          afterZoom={afterZoom}
+          isPhoto={isPhoto}
+        />
+      </div>
+
+      {/* Desktop: drag slider */}
+      <div className="hidden lg:block">
+        <BeforeAfterDragSlider
+          before={before}
+          after={after}
+          beforeColor={beforeColor}
+          afterColor={afterColor}
+          zoom={zoom}
+          beforeZoom={beforeZoom}
+          afterZoom={afterZoom}
+          isPhoto={isPhoto}
+          aspect={aspect}
+        />
+      </div>
+    </div>
+  )
+}
+
+interface FaceProps {
+  before?: { src: string; alt?: string; position?: string }
+  after?: { src: string; alt?: string; position?: string }
+  beforeColor?: string
+  afterColor?: string
+  zoom: number
+  beforeZoom?: number
+  afterZoom?: number
+  isPhoto: boolean
+}
+
+function Face({
+  image,
+  fallbackColor,
+  fallbackLabel,
+  zoom,
+}: {
+  image?: { src: string; alt?: string; position?: string }
+  fallbackColor?: string
+  fallbackLabel: string
+  zoom: number
+}) {
+  if (image) {
+    return (
+      <Image
+        src={image.src}
+        alt={image.alt ?? fallbackLabel}
+        fill
+        className="object-cover"
+        style={{ transform: `scale(${zoom})`, objectPosition: image.position ?? 'center' }}
+        sizes="(max-width: 640px) 100vw, 25vw"
+      />
+    )
+  }
+  return (
+    <div
+      className="h-full w-full flex items-center justify-center"
+      style={{ background: fallbackColor }}
+    >
+      <span className="text-white/60 text-sm font-medium">{fallbackLabel}</span>
+    </div>
+  )
+}
+
+function BeforeAfterFlip({
+  before,
+  after,
+  beforeColor,
+  afterColor,
+  zoom,
+  beforeZoom,
+  afterZoom,
+  isPhoto,
+}: FaceProps) {
+  const [flipped, setFlipped] = useState(false)
+
+  return (
+    <button
+      type="button"
+      onClick={() => setFlipped((f) => !f)}
+      aria-label={flipped ? "Revenir à l'avant" : "Voir l'après"}
+      aria-pressed={flipped}
+      className="group relative block h-full w-full select-none rounded-2xl bg-[#F5F0E8] [perspective:1200px]"
+    >
+      <div
+        className="relative h-full w-full rounded-2xl transition-transform duration-500 [transform-style:preserve-3d]"
+        style={{ transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+      >
+        {/* Front — Avant */}
+        <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden]">
+          <Face
+            image={before}
+            fallbackColor={beforeColor}
+            fallbackLabel="Avant"
+            zoom={beforeZoom ?? zoom}
+          />
+          {isPhoto && (
+            <>
+              <span className="absolute bottom-3 left-3 z-10 rounded-full bg-black/40 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                Avant
+              </span>
+              <span className="absolute bottom-3 right-3 z-10 flex items-center gap-1 rounded-full bg-terracotta-dark/90 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                <RotateIcon />
+                Voir l&apos;après
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Back — Après */}
+        <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <Face
+            image={after}
+            fallbackColor={afterColor}
+            fallbackLabel="Après"
+            zoom={afterZoom ?? zoom}
+          />
+          {isPhoto && (
+            <span className="absolute bottom-3 right-3 z-10 rounded-full bg-black/40 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+              Après
+            </span>
+          )}
+        </div>
+      </div>
+    </button>
+  )
+}
+
+function RotateIcon() {
+  return (
+    <svg
+      className="h-3.5 w-3.5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+      />
+    </svg>
+  )
+}
+
+function BeforeAfterDragSlider({
+  before,
+  after,
+  beforeColor,
+  afterColor,
+  zoom,
+  beforeZoom,
+  afterZoom,
+  isPhoto,
+  aspect,
+}: FaceProps & { aspect: string }) {
   const [position, setPosition] = useState(50)
   const [active, setActive] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -36,70 +210,35 @@ export function BeforeAfterSlider({
     setPosition((x / rect.width) * 100)
   }, [])
 
-  const onMouseMove = (e: React.MouseEvent) => updateFromClient(e.clientX)
-  const onTouchMove = (e: React.TouchEvent) => updateFromClient(e.touches[0].clientX)
-
-  const isPhoto = !!(before?.src || after?.src)
-
   return (
     <div
       ref={containerRef}
-      // Portrait 3:4 for real photos, square for color placeholders
-      className={`relative w-full overflow-hidden rounded-2xl cursor-none select-none bg-[#F5F0E8] ${isPhoto ? 'aspect-[3/4]' : 'aspect-square'} ${className ?? ''}`}
-      onMouseMove={onMouseMove}
+      className={`relative w-full overflow-hidden rounded-2xl cursor-none select-none bg-[#F5F0E8] ${aspect}`}
+      onMouseMove={(e) => updateFromClient(e.clientX)}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
-      onTouchMove={onTouchMove}
     >
       {/* After (base layer) */}
       <div className="absolute inset-0">
-        {after ? (
-          <Image
-            src={after.src}
-            alt={after.alt ?? 'Après'}
-            fill
-            className="object-cover"
-            style={{
-              transform: `scale(${afterZoom ?? zoom})`,
-              objectPosition: after.position ?? 'center',
-            }}
-            sizes="(max-width: 640px) 100vw, 25vw"
-          />
-        ) : (
-          <div
-            className="h-full w-full flex items-center justify-center"
-            style={{ background: afterColor }}
-          >
-            <span className="text-white/60 text-sm font-medium">Après</span>
-          </div>
-        )}
+        <Face
+          image={after}
+          fallbackColor={afterColor}
+          fallbackLabel="Après"
+          zoom={afterZoom ?? zoom}
+        />
       </div>
 
-      {/* Before (clipped layer) — clips the full-width container, not just a narrow div */}
+      {/* Before (clipped layer) */}
       <div
         className="absolute inset-0 overflow-hidden"
         style={{ clipPath: `inset(0 ${100 - position}% 0 0 round 16px 0 0 16px)` }}
       >
-        {before ? (
-          <Image
-            src={before.src}
-            alt={before.alt ?? 'Avant'}
-            fill
-            className="object-cover"
-            style={{
-              transform: `scale(${beforeZoom ?? zoom})`,
-              objectPosition: before.position ?? 'center',
-            }}
-            sizes="(max-width: 640px) 100vw, 25vw"
-          />
-        ) : (
-          <div
-            className="h-full w-full flex items-center justify-center"
-            style={{ background: beforeColor }}
-          >
-            <span className="text-white/60 text-sm font-medium">Avant</span>
-          </div>
-        )}
+        <Face
+          image={before}
+          fallbackColor={beforeColor}
+          fallbackLabel="Avant"
+          zoom={beforeZoom ?? zoom}
+        />
       </div>
 
       {/* Divider line */}
