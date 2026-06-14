@@ -125,12 +125,24 @@ function BeforeAfterFlip({
       aria-pressed={flipped}
       className="group relative block h-full w-full select-none rounded-2xl bg-[#F5F0E8] [perspective:1200px]"
     >
+      {/* Rotating + breathing scale/shadow for a tactile flip effect.
+          Each face is shown/hidden by opacity at mid-flip rather than relying
+          on backface-visibility, which is unreliable on iOS Safari with filled
+          images and would otherwise show a mirrored face. */}
       <div
-        className="relative h-full w-full rounded-2xl transition-transform duration-500 [transform-style:preserve-3d]"
-        style={{ transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+        className="relative h-full w-full rounded-2xl transition-[transform,box-shadow] duration-500 ease-out [transform-style:preserve-3d]"
+        style={{
+          transform: `rotateY(${flipped ? 180 : 0}deg) scale(${flipped ? 1.04 : 1})`,
+          boxShadow: flipped
+            ? '0 20px 40px -12px rgba(58,42,38,0.35)'
+            : '0 6px 16px -8px rgba(58,42,38,0.2)',
+        }}
       >
         {/* Front — Avant */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden]">
+        <div
+          className="absolute inset-0 overflow-hidden rounded-2xl transition-opacity duration-200"
+          style={{ opacity: flipped ? 0 : 1 }}
+        >
           <Face
             image={before}
             fallbackColor={beforeColor}
@@ -150,8 +162,11 @@ function BeforeAfterFlip({
           )}
         </div>
 
-        {/* Back — Après */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+        {/* Back — Après. Counter-rotated so its content reads correctly. */}
+        <div
+          className="absolute inset-0 overflow-hidden rounded-2xl transition-opacity duration-200 [transform:rotateY(180deg)]"
+          style={{ opacity: flipped ? 1 : 0 }}
+        >
           <Face
             image={after}
             fallbackColor={afterColor}
