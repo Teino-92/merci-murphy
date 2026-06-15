@@ -297,6 +297,7 @@ export default async function ServicePage({ params }: Props) {
                     zoom={'zoom' in pair ? (pair.zoom as number) : undefined}
                     beforeZoom={'beforeZoom' in pair ? (pair.beforeZoom as number) : undefined}
                     afterZoom={'afterZoom' in pair ? (pair.afterZoom as number) : undefined}
+                    mobileFlip
                   />
                 </Reveal>
               ))}

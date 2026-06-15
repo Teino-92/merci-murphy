@@ -12,6 +12,8 @@ interface BeforeAfterSliderProps {
   beforeZoom?: number
   afterZoom?: number
   className?: string
+  /** When true, mobile shows a tap-to-flip card instead of the drag slider. */
+  mobileFlip?: boolean
 }
 
 export function BeforeAfterSlider({
@@ -23,9 +25,30 @@ export function BeforeAfterSlider({
   beforeZoom,
   afterZoom,
   className,
+  mobileFlip = false,
 }: BeforeAfterSliderProps) {
   const isPhoto = !!(before?.src || after?.src)
   const aspect = isPhoto ? 'aspect-[3/4]' : 'aspect-square'
+
+  // Default: drag slider everywhere (with touch support). Opt-in mobileFlip
+  // swaps the slider for a tap-to-flip card below the lg breakpoint.
+  if (!mobileFlip) {
+    return (
+      <div className={`w-full ${className ?? ''}`}>
+        <BeforeAfterDragSlider
+          before={before}
+          after={after}
+          beforeColor={beforeColor}
+          afterColor={afterColor}
+          zoom={zoom}
+          beforeZoom={beforeZoom}
+          afterZoom={afterZoom}
+          isPhoto={isPhoto}
+          aspect={aspect}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className={`w-full ${className ?? ''}`}>
@@ -227,6 +250,9 @@ function BeforeAfterDragSlider({
       onMouseMove={(e) => updateFromClient(e.clientX)}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
+      onTouchStart={() => setActive(true)}
+      onTouchMove={(e) => updateFromClient(e.touches[0].clientX)}
+      onTouchEnd={() => setActive(false)}
     >
       {/* After (base layer) */}
       <div className="absolute inset-0">
