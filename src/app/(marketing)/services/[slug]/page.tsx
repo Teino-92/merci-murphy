@@ -75,11 +75,15 @@ export async function generateStaticParams() {
 // Override SEO meta par slug : injection mots-clés pour pages stratégiques.
 // H1 visible reste le titre Sanity (identité marque), seul le <title> et la
 // description SERP changent.
+//
+// Anti-cannibalisation : la requête géo « toiletteur chien Paris 9e » est
+// RÉSERVÉE au pilier /toilettage-chien-paris. Cette fiche cible la
+// micro-intention « process / méthode du toilettage Maison » (sans géo).
 const SEO_META_OVERRIDES: Record<string, { title: string; description: string }> = {
   'le-toilettage-maison-poilus-r': {
-    title: 'Toiletteur chien Paris 9e, merci murphy® · La Maison Poilus®',
+    title: 'Le Toilettage Maison POILUS® — bain, coupe & soin | merci murphy®',
     description:
-      'Toiletteur pour chien à Paris 9e, rue Victor Massé. Bain, brossage, coupe et soin du pelage par des experts. Spa canin premium, sans stress, par des experts.',
+      'Comment se passe un toilettage chez merci murphy® : bain, brossage, coupe et soin du pelage par des toiletteuses expertes. Méthode sans stress, adaptée à chaque race.',
   },
 }
 
@@ -374,12 +378,21 @@ export default async function ServicePage({ params }: Props) {
                   </Link>
                 ))}
               </div>
-              <Link
-                href="/toilettage"
-                className="mt-8 inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
-              >
-                Voir toutes les races →
-              </Link>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-6">
+                <Link
+                  href="/toilettage"
+                  className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
+                >
+                  Voir toutes les races →
+                </Link>
+                {/* Maillage anti-cannibalisation : ancre géo vers le pilier */}
+                <Link
+                  href="/toilettage-chien-paris"
+                  className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
+                >
+                  Notre toiletteur chien à Paris →
+                </Link>
+              </div>
             </Reveal>
           </Container>
         </Section>

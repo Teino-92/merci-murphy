@@ -23,6 +23,15 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // Canonicalisation hôte : www → non-www (301).
+      // GSC indexe les deux hôtes (ex. /reservation : 275 impr non-www vs 94 www,
+      // /compte/connexion : 539 vs 28) → duplication d'hôte. On force non-www.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.mercimurphy.com' }],
+        destination: 'https://mercimurphy.com/:path*',
+        permanent: true,
+      },
       {
         source: '/home',
         destination: '/',

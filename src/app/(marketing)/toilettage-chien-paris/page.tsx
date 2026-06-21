@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 
 export const metadata: Metadata = {
-  title: 'Toiletteur chien Paris, merci murphy® · Salon de toilettage Paris 9e',
+  title: 'Toiletteur chien Paris 9e — Toilettage sans stress | merci murphy®',
   description:
-    'Toiletteur pour chien à Paris 9e (75009), rue Victor Massé. Toilettage, bain libre-service, balnéothérapie, massage. Salon de toilettage premium, sans stress, réservation en ligne.',
+    'Salon de toilettage pour chien à Paris 9e (rue Victor Massé). Bain, coupe, balnéo et massage par des toiletteuses expertes. Méthode sans stress ✓ Réservez en ligne en 2 min.',
   alternates: {
     canonical: 'https://mercimurphy.com/toilettage-chien-paris',
   },
@@ -61,7 +61,7 @@ const SERVICES = [
     name: 'Crèche canine',
     slug: 'la-creche',
     description:
-      'Garde de jour encadrée par un éducateur canin. Socialisation, jeux et stimulation dans un environnement sécurisé.',
+      'Garde en demi-journée encadrée par un éducateur canin. Socialisation, jeux et stimulation dans un environnement sécurisé.',
     keywords: 'crèche chien Paris, garde chien Paris 9',
   },
   {
@@ -109,7 +109,7 @@ const FAQ = [
   {
     question: 'Proposez-vous une crèche canine à Paris ?',
     answer:
-      'Oui, notre crèche canine est ouverte à la journée. Les chiens sont encadrés par un éducateur canin diplômé dans un environnement sécurisé avec espace de jeux et de repos.',
+      'Oui, notre crèche canine accueille les chiens en demi-journée. Ils sont encadrés par un éducateur canin diplômé dans un environnement sécurisé avec espace de jeux et de repos.',
   },
   {
     question: 'Quels sont vos horaires ?',
@@ -120,6 +120,11 @@ const FAQ = [
     question: 'Y a-t-il un parking ou un accès facile en transports en commun ?',
     answer:
       "Oui. Arrêt Pigalle (M12) et Saint-Georges (M12) à 5 minutes à pied. Accès Vélib' devant la boutique. Parking Pigalle à 200m.",
+  },
+  {
+    question: 'Vous cherchez un toiletteur pour chien autour de vous à Paris ?',
+    answer:
+      'Notre salon, au 18 rue Victor Massé (Paris 9e), est central et accessible depuis tout Paris. Nous recevons régulièrement des clients des 9ème, 18ème, 17ème, 10ème et 2ème arrondissements, ainsi que de Pigalle, Montmartre et Batignolles.',
   },
 ]
 
@@ -361,6 +366,20 @@ export default async function ToilettageChienParisPage() {
                 </li>
               ))}
             </ul>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-6">
+              <Link
+                href="/creche-canine-paris"
+                className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
+              >
+                Crèche canine à Paris →
+              </Link>
+              <Link
+                href="/toilettage-chat-paris"
+                className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
+              >
+                Toilettage chat à Paris →
+              </Link>
+            </div>
           </div>
         </section>
 
