@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
-import { getAllPublishedSeoPages } from '@/sanity/queries/seo-pages'
+import { getAllPublishedSeoPages, type SeoPageSummary } from '@/sanity/queries/seo-pages'
 import { urlFor } from '@/sanity/client'
 import { getProductsByHandles } from '@/lib/shopify'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
@@ -27,6 +27,35 @@ const BAINS_SHOP_HANDLES = [
   'apres-shampooing-adoucissant-et-demelant-pour-chiens-et-chats',
   'dog-cologne',
 ]
+
+/**
+ * Sélectionne jusqu'à `limit` races en maximisant la diversité visuelle :
+ * on ne reprend une combinaison (type de poil + gabarit) déjà vue
+ * que si on n'a pas atteint `limit` avec des combinaisons inédites.
+ */
+function pickDiverseRaces(races: SeoPageSummary[], limit: number): SeoPageSummary[] {
+  const seen = new Set<string>()
+  const picked: SeoPageSummary[] = []
+  const leftovers: SeoPageSummary[] = []
+
+  for (const race of races) {
+    const key = `${race.typePoil ?? ''}|${race.gabarit ?? ''}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      picked.push(race)
+    } else {
+      leftovers.push(race)
+    }
+    if (picked.length === limit) return picked
+  }
+
+  // Complète si pas assez de combinaisons distinctes
+  for (const race of leftovers) {
+    if (picked.length === limit) break
+    picked.push(race)
+  }
+  return picked
+}
 
 // Avant/après pour Maison Poilus
 const BEFORE_AFTER_PAIRS = [
@@ -118,7 +147,7 @@ export default async function ServicePage({ params }: Props) {
 
   const isToilettage = params.slug === 'le-toilettage-maison-poilus-r'
 
-  const [service, settings, bainsProducts, seoRaces] = await Promise.all([
+  const [service, settings, bainsProducts, allSeoRaces] = await Promise.all([
     getServiceBySlug(params.slug),
     getSiteSettings(),
     isBains ? getProductsByHandles(BAINS_SHOP_HANDLES) : Promise.resolve([]),
@@ -126,6 +155,9 @@ export default async function ServicePage({ params }: Props) {
   ])
 
   if (!service) notFound()
+
+  // Aperçu de 6 races max, diversifiées par type de poil + gabarit
+  const seoRaces = pickDiverseRaces(allSeoRaces, 6)
 
   const imageUrl = service.image
     ? urlFor(service.image).width(1200).auto('format').quality(80).url()
