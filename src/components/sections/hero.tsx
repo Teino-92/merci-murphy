@@ -37,8 +37,9 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
             </span>
           </div>
           <h1 className="font-display text-[7.5vw] font-normal leading-tight text-charcoal mb-4">
-            Toilettage et spa,{' '}
-            <em style={{ fontStyle: 'italic', color: '#8B5A3A' }}>crèche canine</em> et éducation
+            Toiletteur à Paris :{' '}
+            <em style={{ fontStyle: 'italic', color: '#8B5A3A' }}>toilettage, spa</em>, crèche &
+            éducation
           </h1>
           <p
             className="text-sm leading-relaxed text-charcoal/60 mb-6 reveal-anim"
@@ -85,11 +86,11 @@ export function Hero({ subtitle, imageSrc, className }: HeroProps) {
               </span>
             </div>
             <h1 className="font-display text-[3.4vw] font-normal leading-[1.08] text-charcoal tracking-[-0.02em]">
-              Toilettage et spa,{' '}
+              Toiletteur à Paris :{' '}
               <em className="not-italic" style={{ fontStyle: 'italic', color: '#8B5A3A' }}>
-                crèche canine
-              </em>{' '}
-              et éducation
+                toilettage, spa
+              </em>
+              , crèche &amp; éducation
             </h1>
           </div>
 

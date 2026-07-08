@@ -3,6 +3,22 @@ export const revalidate = 300
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  // Home = pilier "toiletteur Paris" généraliste (chien + chat), qui chapeaute
+  // les satellites /toilettage-chien-paris et /toilettage-chat-paris. On garde
+  // "chien" en tête (rank #1 acquis) mais on élargit l'entité au chat pour
+  // capter la requête large "toiletteur Paris" (aujourd'hui rank 5-6).
+  title: 'Toiletteur chien & chat à Paris 9e — merci murphy® · Spa Paris 75009',
+  description:
+    'Toiletteur pour chien et chat à Paris 9e (75009), rue Victor Massé. Salon de toilettage premium, bain, spa, crèche et bien-être animal. Sans stress, par des experts.',
+  keywords: [
+    'toiletteur Paris',
+    'toiletteur chien Paris',
+    'toiletteur chat Paris',
+    'salon de toilettage Paris',
+    'toilettage chien Paris',
+    'toilettage chat Paris',
+    'spa chien Paris',
+  ],
   alternates: {
     canonical: 'https://mercimurphy.com',
   },
@@ -291,7 +307,7 @@ export default async function HomePage() {
       />
 
       <Hero
-        subtitle="merci murphy® propose des services de toilettage, spa et crèche pour chiens à Paris 9, dans un cadre premium dédié au bien-être animal."
+        subtitle="merci murphy® propose des services de toilettage, spa et crèche pour chiens et chats à Paris 9, dans un cadre premium dédié au bien-être animal."
         imageSrc="/concept-hero.jpg"
       />
 

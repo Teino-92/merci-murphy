@@ -141,6 +141,22 @@ export function Footer({ showBlog = false }: FooterProps) {
                       Toilettage par race
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      href="/toilettage-chien-paris"
+                      className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
+                    >
+                      Toiletteur chien Paris
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/toilettage-chat-paris"
+                      className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
+                    >
+                      Toiletteur chat Paris
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>

@@ -6,8 +6,12 @@ export const metadata: Metadata = {
   title: 'Toiletteur chien Paris 9e — Toilettage sans stress | merci murphy®',
   description:
     'Salon de toilettage pour chien à Paris 9e (rue Victor Massé). Bain, coupe, balnéo et massage par des toiletteuses expertes. Méthode sans stress ✓ Réservez en ligne en 2 min.',
+  // Canonical → home : on veut que "/" gagne "toiletteur chien Paris" ET
+  // "toiletteur Paris" (data GSC : cette page disputait la requête tête à la
+  // home). Le canonical consolide le signal ranking vers "/". La page reste
+  // accessible aux visiteurs via le maillage interne.
   alternates: {
-    canonical: 'https://mercimurphy.com/toilettage-chien-paris',
+    canonical: 'https://mercimurphy.com/',
   },
   openGraph: {
     title: 'Toiletteur chien Paris, merci murphy® · Salon Paris 9e',
