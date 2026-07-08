@@ -75,6 +75,9 @@ export default async function MarketingRootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="merci murphy" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {/* preconnect sur l'origine qui sert les images above-the-fold (Sanity CDN)
+            → DNS + TCP + TLS établis avant la requête LCP. */}
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://cdn.shopify.com" />
         <link rel="dns-prefetch" href="https://feeds.behold.so" />
