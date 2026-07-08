@@ -14,7 +14,11 @@ export function ShopManifesto() {
       <div className="text-center lg:text-left lg:order-1">
         <Reveal>
           <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
-            Boutique merci murphy® — éthique & éco-responsable pour chiens et chats
+            Boutique merci murphy®
+            <br />
+            éthique &amp; éco-responsable
+            <br />
+            pour chiens et chats
           </h1>
           <h2 className="mt-2 text-sm font-medium uppercase tracking-widest text-terracotta-dark">
             Une seule planète
