@@ -13,7 +13,7 @@ export function ShopManifesto() {
     <>
       <div className="text-center lg:text-left lg:order-1">
         <Reveal>
-          <h1 className="mt-3 font-display text-4xl font-bold sm:text-6xl">
+          <h1 className="mt-3 font-display text-3xl font-bold text-nowrap sm:text-6xl">
             Boutique merci murphy®
             <br />
             éthique &amp; éco-responsable
