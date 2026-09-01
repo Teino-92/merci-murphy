@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { submitLead, type LeadFormData } from '@/lib/actions'
+import { useAntiSpam } from '@/hooks/use-anti-spam'
 import { CheckCircle } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 
@@ -48,6 +49,7 @@ export function ReservationForm({
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const { getPayload, honeypotProps } = useAntiSpam()
 
   const [form, setForm] = useState<Partial<LeadFormData>>({
     service: (defaultService as LeadFormData['service']) ?? undefined,
@@ -70,7 +72,7 @@ export function ReservationForm({
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
-    const result = await submitLead(form as LeadFormData)
+    const result = await submitLead({ ...(form as LeadFormData), ...getPayload() })
     setLoading(false)
     if (result.success) {
       setSubmitted(true)
@@ -93,6 +95,7 @@ export function ReservationForm({
 
   return (
     <div>
+      <input {...honeypotProps} />
       {/* Progress */}
       <div className="mb-8 flex gap-2">
         {STEPS.map((label, i) => (

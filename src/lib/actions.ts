@@ -10,12 +10,73 @@ import { sendPushToStaff } from '@/lib/push'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+// ─── Anti-spam ───────────────────────────────────────────────────────────────
+
+/** Minimum time a human needs to fill a multi-field form. Faster means a script. */
+const MIN_FILL_MS = 3000
+/** Single-field forms (newsletter) are legitimately faster to submit. */
+const MIN_FILL_MS_SHORT = 1200
+
+const AntiSpamSchema = z.object({
+  website: z.string().optional(),
+  elapsedMs: z.number().optional(),
+})
+
+export type AntiSpamInput = z.infer<typeof AntiSpamSchema>
+
+/**
+ * Returns true when the submission looks automated: the honeypot field was
+ * filled, or the form was submitted faster than a human could type it.
+ */
+function isBotSubmission(input: unknown, minFillMs = MIN_FILL_MS) {
+  const parsed = AntiSpamSchema.safeParse(input)
+  if (!parsed.success) return true
+  const { website, elapsedMs } = parsed.data
+  if (website && website.trim().length > 0) return true
+  if (typeof elapsedMs !== 'number' || elapsedMs < minFillMs) return true
+  return false
+}
+
+/**
+ * Rejects bot-generated names like "cDPshepRWwtNLPMGtc" or "iDHHbdsMihyCGAXov".
+ * Only applies to single words of 12+ characters — real names that long are
+ * virtually always multi-word ("Anne-Sophie de la Rochefoucauld").
+ */
+function looksLikeGibberish(value: string) {
+  const trimmed = value.trim()
+  if (trimmed.length < 12) return false
+  if (/[\s'-]/.test(trimmed)) return false
+  if (!/^[A-Za-z]+$/.test(trimmed)) return false
+
+  // Random case flips: real names capitalise the first letter, at most one
+  // internal cap (McDonald, DiCaprio). Bot output flips case constantly.
+  const caseFlips = trimmed
+    .slice(1)
+    .split('')
+    .filter((c, i, a) => {
+      const prev = i === 0 ? trimmed[0] : a[i - 1]
+      return (c === c.toUpperCase()) !== (prev === prev.toUpperCase())
+    }).length
+  if (caseFlips >= 4) return true
+
+  const vowels = (trimmed.match(/[aeiouy]/gi) ?? []).length
+  return vowels / trimmed.length < 0.25
+}
+
 // ─── Lead (reservation + contact) ───────────────────────────────────────────
 
 const LeadSchema = z.object({
-  nom: z.string().min(2),
-  email: z.string().email(),
-  telephone: z.string().min(8),
+  nom: z
+    .string()
+    .min(2)
+    .max(80)
+    .refine((v) => !looksLikeGibberish(v), 'Nom invalide.'),
+  email: z.string().email().max(120),
+  telephone: z
+    .string()
+    .min(8)
+    .max(25)
+    .regex(/^[+()\d\s.-]+$/, 'Téléphone invalide.'),
   service: z.enum([
     'toilettage',
     'bains',
@@ -26,17 +87,22 @@ const LeadSchema = z.object({
     'osteo',
     'autre',
   ]),
-  nom_chien: z.string().optional(),
-  race_chien: z.string().optional(),
-  poids_chien: z.string().optional(),
-  etat_poil: z.string().optional(),
-  message: z.string().optional(),
+  nom_chien: z.string().max(60).optional(),
+  race_chien: z.string().max(60).optional(),
+  poids_chien: z.string().max(30).optional(),
+  etat_poil: z.string().max(60).optional(),
+  message: z.string().max(3000).optional(),
   source: z.enum(['reservation', 'contact']),
 })
 
 export type LeadFormData = z.infer<typeof LeadSchema>
 
-export async function submitLead(data: LeadFormData) {
+export async function submitLead(data: LeadFormData & Partial<AntiSpamInput>) {
+  // Silent drop: returning an error would let bots iterate until they pass.
+  if (isBotSubmission({ website: data.website, elapsedMs: data.elapsedMs })) {
+    return { success: true }
+  }
+
   const parsed = LeadSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: 'Données invalides.' }
 
@@ -137,7 +203,11 @@ const NewsletterSchema = z.object({
   email: z.string().email(),
 })
 
-export async function subscribeNewsletter(data: { email: string }) {
+export async function subscribeNewsletter(data: { email: string } & Partial<AntiSpamInput>) {
+  if (isBotSubmission({ website: data.website, elapsedMs: data.elapsedMs }, MIN_FILL_MS_SHORT)) {
+    return { success: true }
+  }
+
   const parsed = NewsletterSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: 'Email invalide.' }
 

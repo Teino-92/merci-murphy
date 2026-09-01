@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { submitLead, type LeadFormData } from '@/lib/actions'
+import { useAntiSpam } from '@/hooks/use-anti-spam'
 import { CheckCircle } from 'lucide-react'
 
 export function ContactForm() {
@@ -12,6 +13,7 @@ export function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const { getPayload, honeypotProps } = useAntiSpam()
 
   const set = (key: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -24,6 +26,7 @@ export function ContactForm() {
       ...form,
       service: 'autre',
       source: 'contact',
+      ...getPayload(),
     } as LeadFormData)
     setLoading(false)
     if (result.success) setSubmitted(true)
@@ -83,6 +86,7 @@ export function ContactForm() {
           onChange={(e) => set('message', e.target.value)}
         />
       </div>
+      <input {...honeypotProps} />
       {error && <p className="text-sm text-red-500">{error}</p>}
       <Button
         type="submit"

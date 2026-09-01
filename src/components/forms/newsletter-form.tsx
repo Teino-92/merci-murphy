@@ -4,18 +4,20 @@ import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { subscribeNewsletter } from '@/lib/actions'
+import { useAntiSpam } from '@/hooks/use-anti-spam'
 
 export function NewsletterForm() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const { getPayload, honeypotProps } = useAntiSpam()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    const result = await subscribeNewsletter({ email })
+    const result = await subscribeNewsletter({ email, ...getPayload() })
     setLoading(false)
     if (result.success) setSubmitted(true)
     else setError(result.error ?? 'Une erreur est survenue.')
@@ -39,6 +41,7 @@ export function NewsletterForm() {
         onChange={(e) => setEmail(e.target.value)}
         className="w-72 border-charcoal/30 bg-cream text-charcoal placeholder:text-charcoal/50 focus-visible:ring-terracotta-dark/30"
       />
+      <input {...honeypotProps} />
       <Button
         type="submit"
         disabled={loading}
