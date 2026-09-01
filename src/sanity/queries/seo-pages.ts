@@ -88,3 +88,15 @@ export async function getRelatedSeoPages(
     REVALIDATE_OPTS
   )
 }
+
+export async function getAllPublishedSeoPagesForLlmsTxt(): Promise<
+  { race: string; slugRace: string; metaDescription: string | null }[]
+> {
+  return sanityClient.fetch(
+    `*[_type == "seoPage" && status == "published"] | order(race asc) {
+      race, slugRace, metaDescription
+    }`,
+    {},
+    REVALIDATE_OPTS
+  )
+}

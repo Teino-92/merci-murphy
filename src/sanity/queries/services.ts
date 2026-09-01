@@ -75,3 +75,13 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetail | nu
     { next: { revalidate: 3600, tags: ['sanity:service'] } }
   )
 }
+
+export async function getAllServicesForLlmsTxt(): Promise<
+  { title: string; slug: { current: string }; description: string | null }[]
+> {
+  return sanityClient.fetch(
+    `*[_type == "service"] | order(ordre asc) { title, "slug": slug, description }`,
+    {},
+    { next: { revalidate: 3600, tags: ['sanity:service'] } }
+  )
+}
