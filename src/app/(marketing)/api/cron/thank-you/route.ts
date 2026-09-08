@@ -11,7 +11,7 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 const GOOGLE_REVIEW_URL =
-  'https://www.google.com/search?q=merci+murphy+Avis&tbm=lcl#lkt=LocalPoiReviews'
+  process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL ?? 'https://g.page/r/CX_sCK3JxpRZEAE/review'
 
 const SERVICE_LABELS: Record<string, string> = {
   toilettage: 'Toilettage',

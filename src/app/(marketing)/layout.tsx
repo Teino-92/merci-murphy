@@ -3,6 +3,7 @@ import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CookieBanner } from '@/components/ui/cookie-banner'
+import { ReviewPrompt } from '@/components/ui/review-prompt'
 import { CartProvider } from '@/context/cart-context'
 import { PromoProvider } from '@/context/promo-context'
 import { SiteShell } from '@/components/layout/site-shell'
@@ -93,6 +94,7 @@ export default async function MarketingRootLayout({
           </PromoProvider>
         </CartProvider>
         <CookieBanner />
+        <ReviewPrompt />
         <Analytics />
         <SpeedInsights />
         <Script
