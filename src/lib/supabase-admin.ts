@@ -69,6 +69,12 @@ export interface Lead {
   etat_poil: string | null
   message: string | null
   source: string
+  // Reseller leads (source = 'revendeur') — null on B2C rows
+  entreprise: string | null
+  ville: string | null
+  type_commerce: string | null
+  siret: string | null
+  site_web: string | null
   status: string
   user_id: string | null
   proposed_date: string | null

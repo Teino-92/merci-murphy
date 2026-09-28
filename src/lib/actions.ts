@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { newsletterWelcomeHtml } from '@/lib/emails/newsletter-welcome'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 import { esc } from '@/lib/emails/base'
+import { TYPE_COMMERCE_LABELS } from '@/lib/revendeur-constants'
 import { sendPushToStaff } from '@/lib/push'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -235,6 +236,161 @@ export async function subscribeNewsletter(data: { email: string } & Partial<Anti
       to: parsed.data.email,
       subject: 'Bienvenue dans la communauté merci murphy®',
       html: newsletterWelcomeHtml(),
+    })
+    .catch(() => {})
+
+  return { success: true }
+}
+
+// ─── Lead revendeur (B2B) ────────────────────────────────────────────────────
+
+const RevendeurLeadSchema = z.object({
+  nom: z
+    .string()
+    .min(2)
+    .max(80)
+    .refine((v) => !looksLikeGibberish(v), 'Nom invalide.'),
+  entreprise: z
+    .string()
+    .min(2)
+    .max(120)
+    .refine((v) => !looksLikeGibberish(v), 'Nom d’enseigne invalide.'),
+  email: z.string().email().max(120),
+  telephone: z
+    .string()
+    .min(8)
+    .max(25)
+    .regex(/^[+()\d\s.-]+$/, 'Téléphone invalide.'),
+  ville: z.string().min(2).max(80),
+  type_commerce: z.enum([
+    'boutique',
+    'concept-store',
+    'toiletteur',
+    'animalerie',
+    'ecommerce',
+    'autre',
+  ]),
+  // Self-declared, never validated against the SIRENE registry: a wrong SIRET
+  // must not block a legitimate enquiry.
+  siret: z
+    .string()
+    .max(20)
+    .regex(/^[\d\s]*$/, 'SIRET invalide.')
+    .optional()
+    .or(z.literal('')),
+  site_web: z.string().max(200).optional().or(z.literal('')),
+  message: z.string().max(3000).optional(),
+})
+
+export type RevendeurLeadFormData = z.infer<typeof RevendeurLeadSchema>
+
+export async function submitRevendeurLead(data: RevendeurLeadFormData & Partial<AntiSpamInput>) {
+  // Silent drop: returning an error would let bots iterate until they pass.
+  if (isBotSubmission({ website: data.website, elapsedMs: data.elapsedMs })) {
+    return { success: true }
+  }
+
+  const parsed = RevendeurLeadSchema.safeParse(data)
+  if (!parsed.success) return { success: false, error: 'Données invalides.' }
+
+  const d = parsed.data
+  const { data: inserted, error } = await supabaseAdmin
+    .from('leads')
+    .insert([
+      {
+        nom: d.nom,
+        email: d.email,
+        telephone: d.telephone,
+        message: d.message || null,
+        entreprise: d.entreprise,
+        ville: d.ville,
+        type_commerce: d.type_commerce,
+        siret: d.siret || null,
+        site_web: d.site_web || null,
+        // Reseller enquiries share the leads inbox but are filtered on `source`.
+        service: 'autre',
+        source: 'revendeur',
+      },
+    ])
+    .select('id')
+    .single()
+  if (error) return { success: false, error: 'Une erreur est survenue. Veuillez réessayer.' }
+
+  const commerceLabel = TYPE_COMMERCE_LABELS[d.type_commerce] ?? d.type_commerce
+
+  await sendPushToStaff('new-lead', {
+    nom: d.entreprise,
+    service: `Revendeur · ${commerceLabel}`,
+    leadId: inserted?.id,
+  })
+
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:4px 0;color:#888;font-size:14px;">${label}</td><td style="padding:4px 0 4px 16px;font-size:14px;color:#1D164E;">${value}</td></tr>`
+
+  const internalHtml = `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f5f0eb;font-family:Inter,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr><td align="center" style="padding:48px 16px;">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;">
+<tr><td style="padding:40px 48px;background:#1D164E;text-align:center;">
+  <p style="margin:0;color:#f5f0eb;font-size:22px;font-weight:600;letter-spacing:0.02em;">merci murphy®</p>
+</td></tr>
+<tr><td style="padding:40px 48px;">
+  <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1D164E;">Nouvelle demande revendeur</p>
+  <p style="margin:0 0 32px;font-size:14px;color:#888;">Type de commerce : <strong style="color:#1D164E;">${esc(commerceLabel)}</strong></p>
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
+    <tr><td>
+      <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Enseigne</p>
+      <table cellpadding="0" cellspacing="0">
+        ${row('Nom', `<strong style="font-weight:600;">${esc(d.entreprise)}</strong>`)}
+        ${row('Ville', esc(d.ville))}
+        ${d.siret ? row('SIRET', esc(d.siret)) : ''}
+        ${
+          d.site_web
+            ? row(
+                'Site / Insta',
+                `<a href="${esc(d.site_web)}" style="color:#B85C38;">${esc(d.site_web)}</a>`
+              )
+            : ''
+        }
+      </table>
+    </td></tr>
+  </table>
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
+    <tr><td>
+      <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Contact</p>
+      <table cellpadding="0" cellspacing="0">
+        ${row('Nom', `<strong style="font-weight:600;">${esc(d.nom)}</strong>`)}
+        ${row('Email', `<a href="mailto:${esc(d.email)}" style="color:#B85C38;">${esc(d.email)}</a>`)}
+        ${row('Téléphone', `<a href="tel:${esc(d.telephone)}" style="color:#B85C38;">${esc(d.telephone)}</a>`)}
+      </table>
+    </td></tr>
+  </table>
+  ${
+    d.message
+      ? `<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
+    <tr><td>
+      <p style="margin:0 0 8px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Message</p>
+      <p style="margin:0;font-size:14px;color:#1D164E;line-height:1.6;">${esc(d.message)}</p>
+    </td></tr>
+  </table>`
+      : ''
+  }
+  <p style="margin:0;font-size:14px;color:#888;">Demande professionnelle — à traiter depuis le dashboard.</p>
+</td></tr>
+<tr><td style="padding:24px 48px;background:#f5f0eb;text-align:center;">
+  <p style="margin:0;font-size:12px;color:#888;">merci murphy® · 18 rue Victor Massé, 75009 Paris · bonjour@mercimurphy.com</p>
+</td></tr>
+</table></td></tr></table>
+</body></html>`
+
+  await resend.emails
+    .send({
+      from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
+      to: 'bonjour@mercimurphy.com',
+      subject: `🏪 Demande revendeur — ${d.entreprise} (${d.ville})`,
+      html: internalHtml,
     })
     .catch(() => {})
 

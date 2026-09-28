@@ -79,6 +79,16 @@ export function Footer({ showBlog = false }: FooterProps) {
                       </Link>
                     </li>
                   )}
+                  {SITE_CONFIG.secondaryNav.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="text-sm text-charcoal/70 transition-colors hover:text-charcoal"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
@@ -191,10 +201,6 @@ export function Footer({ showBlog = false }: FooterProps) {
                   ·{' '}
                   <Link href="/confidentialite" className="hover:text-charcoal">
                     Confidentialité
-                  </Link>{' '}
-                  ·{' '}
-                  <Link href="/revendeurs" className="hover:text-charcoal">
-                    Revendeurs
                   </Link>
                 </p>
                 <p className="text-xs text-charcoal/30">

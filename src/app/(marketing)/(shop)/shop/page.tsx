@@ -4,6 +4,7 @@ import { getAllCollections, getCollectionByHandle } from '@/lib/shopify'
 import { Section, Container } from '@/components/ui/section'
 import { ShopCatalog } from '@/components/shop/shop-catalog'
 import { ShopManifesto } from '@/components/shop/shop-manifesto'
+import { ProBanner } from '@/components/shop/pro-banner'
 import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 export const revalidate = 3600
@@ -80,6 +81,8 @@ export default async function ShopPage() {
           />
         </Container>
       </Section>
+
+      <ProBanner />
     </>
   )
 }

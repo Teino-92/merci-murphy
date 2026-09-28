@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Lead } from '@/lib/supabase-admin'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
+import { TYPE_COMMERCE_LABELS } from '@/lib/revendeur-constants'
 
 const MESSAGE_TRUNCATE = 80
 
@@ -244,7 +245,9 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
       ? leads
       : filter === 'no_account'
         ? leads.filter((l) => !l.has_account)
-        : leads.filter((l) => l.status === filter)
+        : filter === 'revendeur'
+          ? leads.filter((l) => l.source === 'revendeur')
+          : leads.filter((l) => l.status === filter)
 
   return (
     <div>
@@ -265,24 +268,36 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
 
       {/* Filter tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {['new', 'contacted', 'confirmed', 'cancelled', 'no_account', 'all'].map((s) => (
-          <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              filter === s ? 'bg-[#1D164E] text-white' : 'bg-white text-gray-500 hover:bg-gray-100'
-            }`}
-          >
-            {s === 'all' ? 'Tout' : s === 'no_account' ? 'Sans compte' : STATUS_LABELS[s]}
-            <span className="ml-1.5 text-xs opacity-70">
+        {['new', 'contacted', 'confirmed', 'cancelled', 'no_account', 'revendeur', 'all'].map(
+          (s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                filter === s
+                  ? 'bg-[#1D164E] text-white'
+                  : 'bg-white text-gray-500 hover:bg-gray-100'
+              }`}
+            >
               {s === 'all'
-                ? leads.length
+                ? 'Tout'
                 : s === 'no_account'
-                  ? leads.filter((l) => !l.has_account).length
-                  : leads.filter((l) => l.status === s).length}
-            </span>
-          </button>
-        ))}
+                  ? 'Sans compte'
+                  : s === 'revendeur'
+                    ? 'Revendeurs'
+                    : STATUS_LABELS[s]}
+              <span className="ml-1.5 text-xs opacity-70">
+                {s === 'all'
+                  ? leads.length
+                  : s === 'no_account'
+                    ? leads.filter((l) => !l.has_account).length
+                    : s === 'revendeur'
+                      ? leads.filter((l) => l.source === 'revendeur').length
+                      : leads.filter((l) => l.status === s).length}
+              </span>
+            </button>
+          )
+        )}
       </div>
 
       {filtered.length === 0 ? (
@@ -322,6 +337,12 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
                         </span>
                       )}
                     </div>
+                    {lead.source === 'revendeur' && (
+                      <p className="text-xs text-terracotta-dark">
+                        🏪 {[lead.entreprise, lead.ville].filter(Boolean).join(' · ')}
+                        {lead.site_web ? ` · ${lead.site_web}` : ''}
+                      </p>
+                    )}
                     {(lead.nom_chien || lead.race_chien) && (
                       <p className="text-xs text-gray-400">
                         🐾 {[lead.nom_chien, lead.race_chien].filter(Boolean).join(' · ')}
@@ -360,7 +381,9 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
                     )}
                   </td>
                   <td className="px-5 py-4 text-gray-600 hidden sm:table-cell">
-                    {SERVICE_LABELS[lead.service] ?? lead.service}
+                    {lead.source === 'revendeur'
+                      ? (TYPE_COMMERCE_LABELS[lead.type_commerce ?? ''] ?? 'Revendeur')
+                      : (SERVICE_LABELS[lead.service] ?? lead.service)}
                   </td>
                   <td className="px-5 py-4 hidden md:table-cell">
                     <p className="text-gray-700">{lead.email}</p>

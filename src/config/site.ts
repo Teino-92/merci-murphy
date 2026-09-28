@@ -15,4 +15,13 @@ export const SITE_CONFIG = {
     { label: 'Le concept', href: '/concept' },
     { label: 'Contact', href: '/contact' },
   ],
+  // Secondary entry points. Kept out of `nav` because the navbar slices that
+  // array positionally to insert the blog link.
+  secondaryNav: [
+    {
+      label: 'Espace revendeurs',
+      href: '/revendeurs',
+      description: 'Boutiques, concept-stores et toiletteurs : découvrez nos conditions pro.',
+    },
+  ],
 }
