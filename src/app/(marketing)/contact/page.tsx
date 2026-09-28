@@ -2,6 +2,7 @@ export const revalidate = 3600
 
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
@@ -166,6 +167,22 @@ export default async function ContactPage() {
                 <h2 className="font-display text-2xl font-bold text-charcoal">Nous écrire</h2>
                 <div className="mt-6">
                   <ContactForm />
+                </div>
+
+                <div className="mt-8 rounded-2xl border border-charcoal/10 bg-white/60 p-5">
+                  <p className="font-display text-base font-semibold text-charcoal">
+                    Vous êtes un professionnel ?
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-charcoal/70">
+                    Boutique, concept-store, toiletteur ou animalerie : nos conditions revendeur et
+                    notre catalogue professionnel sont sur une page dédiée.
+                  </p>
+                  <Link
+                    href="/revendeurs"
+                    className="mt-3 inline-block text-sm font-medium text-terracotta-dark hover:underline"
+                  >
+                    Découvrir l’espace revendeurs →
+                  </Link>
                 </div>
               </div>
             </Reveal>

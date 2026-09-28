@@ -11,6 +11,36 @@ import { sendPushToStaff } from '@/lib/push'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+/** Where internal lead notifications land. */
+const INTERNAL_EMAIL = process.env.RESEND_INTERNAL_EMAIL ?? 'bonjour@mercimurphy.com'
+
+/**
+ * Sends an internal notification without ever breaking the caller: a lead that
+ * is already stored must not fail because Resend is down or misconfigured.
+ * Failures are logged rather than swallowed — a silent catch here hid a missing
+ * sender address for weeks.
+ */
+async function notifyInternal(subject: string, html: string) {
+  const from = process.env.RESEND_AUTH_FROM
+  if (!from) {
+    // eslint-disable-next-line no-console
+    console.error('[mail] RESEND_AUTH_FROM missing, internal notification skipped:', subject)
+    return
+  }
+
+  const { error } = await resend.emails.send({
+    from: `merci murphy® <${from}>`,
+    to: INTERNAL_EMAIL,
+    subject,
+    html,
+  })
+
+  if (error) {
+    // eslint-disable-next-line no-console
+    console.error('[mail] internal notification failed:', subject, error)
+  }
+}
+
 // ─── Anti-spam ───────────────────────────────────────────────────────────────
 
 /** Minimum time a human needs to fill a multi-field form. Faster means a script. */
@@ -186,14 +216,10 @@ export async function submitLead(data: LeadFormData & Partial<AntiSpamInput>) {
 </table></td></tr></table>
 </body></html>`
 
-  await resend.emails
-    .send({
-      from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
-      to: 'bonjour@mercimurphy.com',
-      subject: `🐾 Nouvelle demande — ${d.nom}${d.nom_chien ? ` & ${d.nom_chien}` : ''} (${serviceLabel})`,
-      html: internalHtml,
-    })
-    .catch(() => {})
+  await notifyInternal(
+    `🐾 Nouvelle demande — ${d.nom}${d.nom_chien ? ` & ${d.nom_chien}` : ''} (${serviceLabel})`,
+    internalHtml
+  )
 
   return { success: true }
 }
@@ -385,14 +411,7 @@ export async function submitRevendeurLead(data: RevendeurLeadFormData & Partial<
 </table></td></tr></table>
 </body></html>`
 
-  await resend.emails
-    .send({
-      from: `merci murphy® <${process.env.RESEND_FROM_EMAIL}>`,
-      to: 'bonjour@mercimurphy.com',
-      subject: `🏪 Demande revendeur — ${d.entreprise} (${d.ville})`,
-      html: internalHtml,
-    })
-    .catch(() => {})
+  await notifyInternal(`🏪 Demande revendeur — ${d.entreprise} (${d.ville})`, internalHtml)
 
   return { success: true }
 }

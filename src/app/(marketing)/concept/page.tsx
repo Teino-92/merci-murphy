@@ -2,6 +2,7 @@ export const revalidate = 3600
 
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Section, Container } from '@/components/ui/section'
 import { Reveal } from '@/components/ui/reveal'
 import { Values } from '@/components/sections/values'
@@ -87,6 +88,18 @@ export default async function ConceptPage() {
                     Le temps d&apos;une journée à la crèche canine, pour un toilettage, pour un
                     moment détente au spa maison POILUS pour profiter d&apos;un massage, d&apos;un
                     bain, d&apos;une balnéo, ou même juste pour un conseil d&apos;éducation.
+                  </p>
+                  <p>
+                    Ce que nous vendons en boutique, nous le proposons aussi aux détaillants qui
+                    partagent cette exigence : boutiques indépendantes, concept-stores et
+                    toiletteurs peuvent consulter nos{' '}
+                    <Link
+                      href="/revendeurs"
+                      className="text-terracotta-dark underline underline-offset-2 hover:text-charcoal"
+                    >
+                      conditions revendeur
+                    </Link>
+                    .
                   </p>
                 </div>
               </div>
