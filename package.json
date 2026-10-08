@@ -15,7 +15,9 @@
     "seo:publish": "tsx scripts/seo/04-publish-scheduler.ts",
     "seo:monitor": "tsx scripts/seo/05-monitor.ts",
     "seo:bootstrap": "tsx scripts/seo/06-bootstrap-state.ts",
-    "seo:full": "npm run seo:keywords && npm run seo:competitors && npm run seo:generate && npm run seo:publish"
+    "seo:full": "npm run seo:keywords && npm run seo:competitors && npm run seo:generate && npm run seo:publish",
+    "blog:seed": "tsx scripts/blog/seed-topics.ts",
+    "blog:dry": "tsx scripts/blog/dry-run.ts"
   },
   "browserslist": [
     "last 2 Chrome versions",
@@ -36,6 +38,7 @@
     ]
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.1",
     "@portabletext/react": "^4.0.3",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",

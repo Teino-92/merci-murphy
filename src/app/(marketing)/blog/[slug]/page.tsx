@@ -1,8 +1,14 @@
 // src/app/(marketing)/blog/[slug]/page.tsx
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
-import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/sanity/queries/posts'
+import {
+  getAllPosts,
+  getPostBySlug,
+  getRelatedPosts,
+  type PostDetail,
+} from '@/sanity/queries/posts'
 import { urlFor } from '@/sanity/client'
 import { PortableText } from '@/components/sections/portable-text'
 import { PostCard } from '@/components/sections/post-card'
@@ -10,8 +16,11 @@ import { BlogShopTeaser } from '@/components/sections/blog-shop-teaser'
 import { Section, Container } from '@/components/ui/section'
 import { BLUR_PLACEHOLDER, blurDataURL } from '@/lib/utils'
 import { getAllProducts } from '@/lib/shopify'
+import { pickBlogProducts } from '@/lib/blog-products'
 
 export const revalidate = 3600
+
+const SITE_URL = 'https://mercimurphy.com'
 
 interface Props {
   params: { slug: string }
@@ -30,26 +39,80 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? urlFor(post.coverImage).width(1200).height(630).url()
     : '/og/og-home.jpg'
 
+  const title = post.metaTitle ?? post.title
+  const description = post.metaDescription ?? post.excerpt
+  const url = `${SITE_URL}/blog/${post.slug.current}`
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
-      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
+      title,
+      description,
+      url,
+      type: 'article',
+      publishedTime: post.publishedAt,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: post.coverImage?.alt ?? post.title }],
     },
   }
 }
 
-export default async function BlogArticlePage({ params }: Props) {
-  const [post, related, allProducts] = await Promise.all([
-    getPostBySlug(params.slug),
-    getRelatedPosts(params.slug),
-    getAllProducts(24),
-  ])
+function buildJsonLd(post: PostDetail) {
+  const url = `${SITE_URL}/blog/${post.slug.current}`
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.metaDescription ?? post.excerpt,
+    url,
+    mainEntityOfPage: url,
+    datePublished: post.publishedAt,
+    dateModified: post._updatedAt,
+    inLanguage: 'fr-FR',
+    ...(post.coverImage ? { image: urlFor(post.coverImage).width(1200).height(630).url() } : {}),
+    author: { '@type': 'Organization', name: 'merci murphy®', url: SITE_URL },
+    publisher: {
+      '@type': 'Organization',
+      name: 'merci murphy®',
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo-email-white.png` },
+    },
+  }
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: url },
+    ],
+  }
+  if (!post.faq || post.faq.length === 0) return [article, breadcrumb]
+  const faqPage = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: post.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  }
+  return [article, faqPage, breadcrumb]
+}
 
-  // Randomize and pick 6 products for the shop teaser
-  const shopProducts = [...allProducts].sort(() => Math.random() - 0.5).slice(0, 6)
+export default async function BlogArticlePage({ params }: Props) {
+  const [post, allProducts] = await Promise.all([getPostBySlug(params.slug), getAllProducts()])
 
   if (!post) notFound()
+
+  const related = await getRelatedPosts({
+    slug: params.slug,
+    category: post.category,
+    animal: post.animal,
+  })
+
+  const shopProducts = pickBlogProducts(allProducts, post)
 
   const coverImageUrl = post.coverImage
     ? urlFor(post.coverImage).width(1400).height(788).auto('format').quality(85).url()
@@ -64,8 +127,13 @@ export default async function BlogArticlePage({ params }: Props) {
     year: 'numeric',
   })
 
+  // Échappe "<" : le contenu est généré et ne doit pas pouvoir fermer la balise <script>.
+  const jsonLd = JSON.stringify(buildJsonLd(post)).replace(/</g, '\\u003c')
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+
       {/* Cover image */}
       {coverImageUrl && (
         <div className="relative w-full aspect-[16/9] max-h-[560px] overflow-hidden bg-charcoal/10">
@@ -79,6 +147,32 @@ export default async function BlogArticlePage({ params }: Props) {
             className="object-cover"
             sizes="100vw"
           />
+          {post.coverImage?.creditName && (
+            <p className="absolute bottom-2 right-3 rounded bg-charcoal/50 px-2 py-0.5 text-[11px] text-cream/90">
+              Photo :{' '}
+              {post.coverImage.creditUrl ? (
+                <a
+                  href={post.coverImage.creditUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2"
+                >
+                  {post.coverImage.creditName}
+                </a>
+              ) : (
+                post.coverImage.creditName
+              )}{' '}
+              sur{' '}
+              <a
+                href="https://unsplash.com/?utm_source=merci_murphy&utm_medium=referral"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+              >
+                Unsplash
+              </a>
+            </p>
+          )}
         </div>
       )}
 
@@ -115,8 +209,41 @@ export default async function BlogArticlePage({ params }: Props) {
         </Container>
       </Section>
 
+      {/* FAQ — rendue en clair (pas d'accordéon) pour être lisible par Google et les LLM */}
+      {post.faq && post.faq.length > 0 && (
+        <Section className="pt-0 pb-16">
+          <Container className="max-w-2xl">
+            <h2 className="mb-6 font-display text-2xl font-semibold text-charcoal">
+              Questions fréquentes
+            </h2>
+            <div className="divide-y divide-charcoal/10">
+              {post.faq.map((f) => (
+                <div key={f._key} className="py-5">
+                  <h3 className="mb-2 font-medium text-charcoal">{f.question}</h3>
+                  <p className="leading-relaxed text-charcoal/70">{f.answer}</p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* CTA page race */}
+      {post.race && (
+        <Section className="pt-0 pb-16">
+          <Container className="max-w-2xl text-center">
+            <Link
+              href={`/toilettage/${post.race}`}
+              className="inline-block rounded-full bg-terracotta-dark px-8 py-3 text-sm font-semibold text-cream transition-opacity hover:opacity-90"
+            >
+              Le toilettage de cette race chez merci murphy
+            </Link>
+          </Container>
+        </Section>
+      )}
+
       {/* Shop teaser */}
-      <BlogShopTeaser products={shopProducts} />
+      <BlogShopTeaser products={shopProducts} animal={post.race ? 'chien' : post.animal} />
 
       {/* À lire aussi — only when >= 2 related posts */}
       {related.length >= 2 && (

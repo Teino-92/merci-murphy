@@ -51,3 +51,6 @@ public/icons/
 
 # SEO pipeline artifacts (générés localement — state vit dans Sanity)
 scripts/seo/data/
+
+# blog pipeline dry runs
+scripts/blog/dry-run-*.json

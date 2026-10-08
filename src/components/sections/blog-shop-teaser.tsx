@@ -4,7 +4,18 @@ import { Section, Container } from '@/components/ui/section'
 import { ProductCard } from '@/components/shop/product-card'
 import type { ShopifyProduct } from '@/lib/shopify'
 
-export function BlogShopTeaser({ products }: { products: ShopifyProduct[] }) {
+const HEADINGS: Record<string, string> = {
+  chien: 'Pour votre chien',
+  chat: 'Pour votre chat',
+}
+
+export function BlogShopTeaser({
+  products,
+  animal,
+}: {
+  products: ShopifyProduct[]
+  animal?: string | null
+}) {
   if (products.length === 0) return null
 
   return (
@@ -19,7 +30,7 @@ export function BlogShopTeaser({ products }: { products: ShopifyProduct[] }) {
               </span>
             </div>
             <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-              Nos coups de cœur
+              {HEADINGS[animal ?? ''] ?? 'Nos coups de cœur'}
             </h2>
           </div>
           <Link

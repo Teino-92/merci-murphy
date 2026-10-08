@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { PortableText as SanityPortableText, type PortableTextBlock } from '@portabletext/react'
 
 interface PortableTextProps {
@@ -31,6 +32,24 @@ export function PortableText({ value, className, light }: PortableTextProps) {
                 {children}
               </h3>
             ),
+          },
+          marks: {
+            link: ({ value, children }) => {
+              const href = typeof value?.href === 'string' ? value.href : ''
+              const cls = `underline decoration-terracotta-dark/50 underline-offset-4 transition-colors hover:text-terracotta-dark ${heading}`
+              if (href.startsWith('/')) {
+                return (
+                  <Link href={href} className={cls}>
+                    {children}
+                  </Link>
+                )
+              }
+              return (
+                <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+                  {children}
+                </a>
+              )
+            },
           },
           list: {
             bullet: ({ children }) => (

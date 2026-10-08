@@ -1,6 +1,7 @@
 import { getAllServicesForLlmsTxt } from '@/sanity/queries/services'
 import { getAllPublishedSeoPagesForLlmsTxt } from '@/sanity/queries/seo-pages'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { getAllPosts } from '@/sanity/queries/posts'
 import { getAllProducts } from '@/lib/shopify'
 
 export const revalidate = 3600
@@ -21,11 +22,12 @@ function entry(label: string, path: string, description?: string | null) {
 }
 
 export async function GET() {
-  const [services, seoPages, products, settings] = await Promise.all([
+  const [services, seoPages, products, settings, posts] = await Promise.all([
     getAllServicesForLlmsTxt().catch(() => []),
     getAllPublishedSeoPagesForLlmsTxt().catch(() => []),
     getAllProducts().catch(() => []),
     getSiteSettings().catch(() => null),
+    getAllPosts().catch(() => []),
   ])
 
   // Each group is a distinct set of opening hours (salon, boutique…), so keep
@@ -77,6 +79,10 @@ ${services.map((s) => entry(s.title, `/services/${s.slug.current}`, s.descriptio
       `## Toilettage par race
 
 ${seoPages.map((p) => entry(p.race, `/toilettage/${p.slugRace}`, p.metaDescription)).join('\n')}`,
+    posts.length > 0 &&
+      `## Blog
+
+${posts.map((p) => entry(p.title, `/blog/${p.slug.current}`, p.excerpt)).join('\n')}`,
     products.length > 0 &&
       `## Boutique
 

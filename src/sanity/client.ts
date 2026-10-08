@@ -12,6 +12,9 @@ export const sanityClient = createClient({
   apiVersion: '2024-01-01',
   useCdn: !SANITY_READ_TOKEN,
   token: SANITY_READ_TOKEN,
+  // Avec token + apiVersion 2024 la perspective par défaut est "raw" : les brouillons
+  // (drafts.*) remonteraient sur le site. On force les seuls documents publiés.
+  perspective: 'published',
 })
 
 const builder = imageUrlBuilder(sanityClient)

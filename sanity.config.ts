@@ -23,6 +23,7 @@ export default defineConfig({
             S.documentTypeListItem('teamMember').title('Équipe'),
             S.documentTypeListItem('testimonial').title('Témoignages'),
             S.documentTypeListItem('post').title('Articles de blog'),
+            S.documentTypeListItem('blogTopic').title('Sujets de blog (file auto)'),
             S.divider(),
             S.documentTypeListItem('seoPage').title('Pages SEO races'),
             S.listItem()
