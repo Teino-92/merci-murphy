@@ -14,7 +14,6 @@
     "seo:generate": "tsx scripts/seo/03-generate-content.ts",
     "seo:publish": "tsx scripts/seo/04-publish-scheduler.ts",
     "seo:monitor": "tsx scripts/seo/05-monitor.ts",
-    "seo:bootstrap": "tsx scripts/seo/06-bootstrap-state.ts",
     "seo:full": "npm run seo:keywords && npm run seo:competitors && npm run seo:generate && npm run seo:publish",
     "blog:seed": "tsx scripts/blog/seed-topics.ts",
     "blog:dry": "tsx scripts/blog/dry-run.ts"

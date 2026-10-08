@@ -26,10 +26,6 @@ export default defineConfig({
             S.documentTypeListItem('blogTopic').title('Sujets de blog (file auto)'),
             S.divider(),
             S.documentTypeListItem('seoPage').title('Pages SEO races'),
-            S.listItem()
-              .title('État pipeline SEO')
-              .id('seoState')
-              .child(S.document().schemaType('seoState').documentId('seoState.singleton')),
           ]),
     }),
   ],

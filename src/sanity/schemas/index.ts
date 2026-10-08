@@ -4,7 +4,6 @@ import { testimonial } from './testimonial'
 import { siteSettings } from './site-settings'
 import { post } from './post'
 import { seoPage } from './seo-page'
-import { seoState } from './seo-state'
 import { blogTopic } from './blog-topic'
 
 export const schemaTypes = [
@@ -15,5 +14,4 @@ export const schemaTypes = [
   post,
   blogTopic,
   seoPage,
-  seoState,
 ]
