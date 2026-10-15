@@ -31,6 +31,8 @@ const SITE = 'https://mercimurphy.com'
 const MIN_WORDS = 800
 const MAX_WORDS = 1500
 const IMAGE_CANDIDATES = 6
+// Recherches Unsplash successives (de la plus précise à la plus large) avant de passer en brouillon
+const IMAGE_MAX_ROUNDS = 3
 const IMAGE_MIN_CONFIDENCE = 0.85
 
 const key = () => randomBytes(6).toString('hex')
@@ -247,7 +249,7 @@ const ArticleSchema = z.object({
   intro: z.array(z.string()),
   sections: z.array(z.object({ heading: z.string(), paragraphs: z.array(z.string()) })),
   faq: z.array(z.object({ question: z.string(), answer: z.string() })),
-  imageQuery: z.string(),
+  imageQueries: z.array(z.string()),
   imageSubject: z.string(),
 })
 type Article = z.infer<typeof ArticleSchema>
@@ -346,6 +348,7 @@ INTERDIT ABSOLU, CONSEILS MÉDICAUX :
 
 INTERDIT, FAITS INVENTÉS :
 - Pas d'anecdote client inventée, pas de "une cliente nous a dit", pas de statistique, pas de pourcentage, pas de citation.
+- Pas d'observation sur notre clientèle ou ce qu'on voit au salon ("on en voit beaucoup passer chez nous", "nos clients nous disent", "au salon, on remarque"). Parle de l'animal, pas de ce qui se passe chez nous.
 - Pas de chiffres précis risqués (poids, espérance de vie, dates exactes, kilomètres par jour). Préfère le qualitatif ou des fourchettes très prudentes.
 - Lieux parisiens : cite seulement le bois de Boulogne, le bois de Vincennes, les quais de Seine, le canal Saint-Martin ou les squares de quartier. N'affirme aucun règlement précis (laisse, horaires, zones autorisées) : dis plutôt de vérifier l'affichage à l'entrée.
 - Pas de promesse sur nos prestations au-delà de ce qui est évident (toilettage, crèche, boutique).
@@ -363,7 +366,7 @@ LIENS INTERNES : 1 à 3 liens, uniquement vers les chemins fournis dans la liste
 LONGUEUR : 900 à 1300 mots pour intro + sections (FAQ non comprise).
 FAQ : 3 à 5 questions locales et concrètes, réponses de 2 à 4 phrases.
 metaTitle : 60 caractères max. metaDescription : 150 caractères max. excerpt : 1 à 2 phrases, 250 caractères max.
-imageQuery : requête Unsplash en anglais, 2 à 4 mots, centrée sur l'animal. imageSubject : description en anglais de la photo idéale.`
+imageQueries : 3 requêtes Unsplash en anglais, 2 à 4 mots chacune, centrées sur l'animal, de la plus précise à la plus large (ex. "dog raincoat rain", "dog walk rain", "dog walk city"). imageSubject : en anglais, l'ambiance de la photo de couverture en une phrase simple.`
 
 function linksBlock(links: LinkTarget[]): string {
   return links.map((l) => `- ${l.path} (${l.label})`).join('\n')
@@ -669,13 +672,15 @@ function imageBlock(url: string): BetaContentBlockParam {
 async function verifyCandidate(
   c: UnsplashCandidate,
   subject: Subject,
+  articleTitle: string,
   imageSubject: string
 ): Promise<{ ok: boolean; alt: string; why: string }> {
   const expected = expectedSpecies(subject)
+  const animalEn = expected === 'chat' ? 'a cat' : expected === 'chien' ? 'a dog' : 'a dog or a cat'
   const judgeQuestion =
     subject.kind === 'race'
       ? `Is the main animal in this photo clearly a purebred ${subject.englishNames[0]}? Be strict: similar-looking breeds, mixes, puppies too young to tell, or a partial/blurry view = isMatch false.`
-      : `Is this photo a good, tasteful blog cover for this subject: "${imageSubject}"? It must clearly show ${expected === 'chat' ? 'a cat' : expected === 'chien' ? 'a dog' : 'a dog or a cat'}, with no visible text or watermark and no recognizable human face.`
+      : `Would this photo work as the cover of a French blog article titled "${articleTitle}" (mood: ${imageSubject})? It must clearly show ${animalEn} as the main subject, be well shot and tasteful. It does NOT need to show every detail of the article: a photo coherent with the theme is a match. isMatch false only if the animal is not clearly visible, the photo is poor, or it contradicts the theme (e.g. a sunny beach for an article about rain).`
 
   const [identity, judge] = await Promise.all([
     ask(
@@ -710,20 +715,33 @@ async function verifyCandidate(
   if (identity.prominentHumanFace) why.push('visage humain')
   if (!identity.isPhotograph) why.push('pas une photo')
   if (!judge.isMatch || judge.confidence < IMAGE_MIN_CONFIDENCE)
-    why.push(`juge ${judge.isMatch ? 'ok' : 'non'} (${judge.confidence})`)
+    why.push(
+      `juge ${judge.isMatch ? 'ok' : 'non'} (${judge.confidence}) : ${judge.reason.slice(0, 80)}`
+    )
 
   return { ok: why.length === 0, alt: stripDashes(judge.altFr).slice(0, 140), why: why.join(', ') }
+}
+
+function imageQueries(subject: Subject, article: Article): string[] {
+  if (subject.kind === 'race') {
+    const [main, alt] = subject.englishNames
+    return [`${main} dog`, main, ...(alt ? [`${alt} dog`] : [])]
+  }
+  const generic =
+    subject.topic.animal === 'chat'
+      ? 'cat at home'
+      : subject.topic.animal === 'chien'
+        ? 'happy dog'
+        : 'dog and cat'
+  return Array.from(
+    new Set([...article.imageQueries, generic].map((q) => q.trim()).filter(Boolean))
+  )
 }
 
 async function chooseImage(
   subject: Subject,
   article: Article
 ): Promise<{ image: ChosenImage | null; issue?: string }> {
-  const query = subject.kind === 'race' ? `${subject.englishNames[0]} dog` : article.imageQuery
-  const results = await searchUnsplash(query)
-  if (results.length === 0)
-    return { image: null, issue: `[image] aucun résultat Unsplash pour « ${query} »` }
-
   // Priorité aux photos dont la description mentionne déjà la race / l'animal attendu.
   const keywords =
     subject.kind === 'race'
@@ -735,27 +753,38 @@ async function chooseImage(
           : ['dog', 'cat']
   const score = (c: UnsplashCandidate) =>
     keywords.some((k) => c.description.toLowerCase().includes(k)) ? 0 : 1
-  const ordered = [...results].sort((a, b) => score(a) - score(b)).slice(0, IMAGE_CANDIDATES)
 
-  const verdicts = await Promise.all(
-    ordered.map(async (c) => {
-      try {
-        return await verifyCandidate(c, subject, article.imageSubject)
-      } catch (err) {
-        return { ok: false, alt: '', why: err instanceof Error ? err.message : 'erreur' }
-      }
-    })
-  )
+  const seen = new Set<string>()
+  const report: string[] = []
 
-  const idx = verdicts.findIndex((v) => v.ok)
-  if (idx === -1) {
-    const detail = verdicts.map((v, i) => `${ordered[i].id}: ${v.why}`).join(' | ')
-    return {
-      image: null,
-      issue: `[image] aucune photo validée par la double vérification (${detail})`,
+  for (const query of imageQueries(subject, article).slice(0, IMAGE_MAX_ROUNDS)) {
+    const results = (await searchUnsplash(query)).filter((c) => !seen.has(c.id))
+    if (results.length === 0) {
+      report.push(`« ${query} » : aucun résultat`)
+      continue
     }
+    const ordered = [...results].sort((a, b) => score(a) - score(b)).slice(0, IMAGE_CANDIDATES)
+    ordered.forEach((c) => seen.add(c.id))
+
+    const verdicts = await Promise.all(
+      ordered.map(async (c) => {
+        try {
+          return await verifyCandidate(c, subject, article.title, article.imageSubject)
+        } catch (err) {
+          return { ok: false, alt: '', why: err instanceof Error ? err.message : 'erreur' }
+        }
+      })
+    )
+
+    const idx = verdicts.findIndex((v) => v.ok)
+    if (idx !== -1) return { image: { candidate: ordered[idx], alt: verdicts[idx].alt } }
+    report.push(`« ${query} » : ${verdicts.map((v, i) => `${ordered[i].id} ${v.why}`).join(' | ')}`)
   }
-  return { image: { candidate: ordered[idx], alt: verdicts[idx].alt } }
+
+  return {
+    image: null,
+    issue: `[image] aucune photo validée par la double vérification (${report.join(' ;; ')})`,
+  }
 }
 
 // ─── Portable Text ────────────────────────────────────────────────────────
