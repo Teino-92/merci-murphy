@@ -92,10 +92,10 @@ export async function getRelatedPosts(
   )
 }
 
-export async function getLatestPost(): Promise<PostSummary | null> {
+export async function getLatestPosts(limit: number): Promise<PostSummary[]> {
   return sanityClient.fetch(
-    `*[_type == "post" && !(_id in path("drafts.**")) && publishedAt <= now()] | order(publishedAt desc) [0] { ${POST_SUMMARY_FIELDS} }`,
-    {},
+    `*[_type == "post" && !(_id in path("drafts.**")) && publishedAt <= now()] | order(publishedAt desc) [0...$limit] { ${POST_SUMMARY_FIELDS} }`,
+    { limit },
     { next: { revalidate: 3600, tags: ['sanity:post'] } }
   )
 }

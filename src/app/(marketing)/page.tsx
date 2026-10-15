@@ -31,11 +31,11 @@ import { Values } from '@/components/sections/values'
 import { ShopTeaser } from '@/components/sections/shop-teaser'
 import { InstagramFeed } from '@/components/sections/instagram-feed'
 import { InfoPratiques } from '@/components/sections/info-pratiques'
-import { FeaturedPost } from '@/components/sections/featured-post'
+import { HomeBlog } from '@/components/sections/home-blog'
 
 import { getAllServices } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
-import { getLatestPost } from '@/sanity/queries/posts'
+import { getLatestPosts } from '@/sanity/queries/posts'
 import { getGroomingTestimonials } from '@/sanity/queries/testimonials'
 import { getProductsByHandles, getCollectionByHandle } from '@/lib/shopify'
 
@@ -49,13 +49,13 @@ const SHOP_TEASER_HANDLES = [
 ]
 
 export default async function HomePage() {
-  const [services, settings, shopProducts, petloversCollection, latestPost, groomingTestimonials] =
+  const [services, settings, shopProducts, petloversCollection, latestPosts, groomingTestimonials] =
     await Promise.all([
       getAllServices(),
       getSiteSettings(),
       getProductsByHandles(SHOP_TEASER_HANDLES),
       getCollectionByHandle('petlovers'),
-      getLatestPost(),
+      getLatestPosts(3),
       getGroomingTestimonials(),
     ])
 
@@ -319,7 +319,7 @@ export default async function HomePage() {
 
       <Values />
 
-      {latestPost && <FeaturedPost post={latestPost} />}
+      <HomeBlog posts={latestPosts} />
 
       {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
         <InstagramFeed feedId={process.env.NEXT_PUBLIC_BEHOLD_FEED_ID} />
