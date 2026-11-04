@@ -902,6 +902,8 @@ export async function runBlogPipeline(opts: {
   type: BlogRunType
   dry?: boolean
   race?: string
+  // Date de publication forcée (ISO) : un article daté dans le futur reste masqué jusque-là
+  publishAt?: string
 }): Promise<BlogRunResult> {
   const dry = opts.dry ?? false
   const client = getWriteClient()
@@ -1000,7 +1002,7 @@ export async function runBlogPipeline(opts: {
     metaDescription: article.metaDescription,
     body: toBlocks(article, subject),
     faq: article.faq.map((f) => ({ _type: 'postFaqItem', _key: key(), ...f })),
-    publishedAt: new Date().toISOString(),
+    publishedAt: opts.publishAt ?? new Date().toISOString(),
     readingTime: Math.max(1, Math.ceil(words / 200)),
     aiGenerated: true,
     ...(publish ? {} : { reviewNotes: issues.join('\n') }),
