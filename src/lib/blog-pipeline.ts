@@ -33,7 +33,9 @@ const MAX_WORDS = 1500
 const IMAGE_CANDIDATES = 6
 // Recherches Unsplash successives (de la plus précise à la plus large) avant de passer en brouillon
 const IMAGE_MAX_ROUNDS = 3
-const IMAGE_MIN_CONFIDENCE = 0.85
+// Race : on doit être sûr de la race. Sujet : le juge plafonne vers 0.7-0.8 sur des photos
+// parfaitement utilisables, un seuil à 0.85 rejetait tout.
+const IMAGE_MIN_CONFIDENCE = { race: 0.85, topic: 0.7 }
 
 const key = () => randomBytes(6).toString('hex')
 
@@ -714,7 +716,7 @@ async function verifyCandidate(
   if (identity.hasTextOrWatermark) why.push('texte/filigrane')
   if (identity.prominentHumanFace) why.push('visage humain')
   if (!identity.isPhotograph) why.push('pas une photo')
-  if (!judge.isMatch || judge.confidence < IMAGE_MIN_CONFIDENCE)
+  if (!judge.isMatch || judge.confidence < IMAGE_MIN_CONFIDENCE[subject.kind])
     why.push(
       `juge ${judge.isMatch ? 'ok' : 'non'} (${judge.confidence}) : ${judge.reason.slice(0, 80)}`
     )
