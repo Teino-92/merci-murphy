@@ -10,7 +10,7 @@ import { BLUR_PLACEHOLDER } from '@/lib/utils'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Boutique merci murphy® — shampoings & soins naturels pour chien',
+  title: { absolute: 'Boutique merci murphy® — shampoings & soins naturels pour chien' },
   description:
     'La boutique merci murphy® : produits de toilettage sélectionnés par nos toiletteurs — shampoings doux, sprays démêlants, soins sans sulfate. Fabrication française, livraison en France.',
   openGraph: {

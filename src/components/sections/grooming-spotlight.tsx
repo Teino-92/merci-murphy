@@ -52,12 +52,18 @@ export function GroomingSpotlight({ testimonials }: GroomingSpotlightProps) {
               faire de cet amour leur métier. Résultat : des mains expertes, un vrai regard pour
               chaque chien, et des transformations qui parlent d&apos;elles-mêmes.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link
                 href="/services/le-toilettage-maison-poilus-r"
                 className="inline-flex items-center justify-center rounded-full bg-terracotta-dark px-7 py-3 text-sm font-medium text-white transition-colors hover:bg-terracotta-dark/90"
               >
                 Découvrir le toilettage maison POILUS®
+              </Link>
+              <Link
+                href="/services/le-toilettage-maison-poilus-r#tarifs"
+                className="text-sm font-medium text-charcoal/70 underline-offset-4 hover:text-terracotta-dark hover:underline"
+              >
+                Voir les tarifs
               </Link>
             </div>
           </div>

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 
 export const metadata: Metadata = {
-  title: 'Toiletteur chat Paris 9e — Toilettage félin sans stress | merci murphy®',
+  title: { absolute: 'Toiletteur chat Paris 9e — Toilettage félin sans stress | merci murphy®' },
   description:
     'Toiletteur pour chat à Paris 9e (rue Victor Massé) : bain, démêlage, coupe et soin du pelage par des expertes du toilettage félin. Méthode douce et sans stress ✓ Réservez en ligne.',
   alternates: {

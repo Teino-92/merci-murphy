@@ -15,6 +15,7 @@ import {
   getRelatedSeoPages,
 } from '@/sanity/queries/seo-pages'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { stripBrandSuffix } from '@/lib/utils'
 
 interface Props {
   params: { race: string }
@@ -31,12 +32,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getSeoPageBySlugRace(params.race)
   if (!page) return {}
   const url = `${SITE_URL}/toilettage/${page.slugRace}`
+  // Suffixe Sanity « merci murphy® … Paris 9e » retiré : il faisait ranker les
+  // pages races sur « toiletteur paris 9 » (réservé home/pilier) et doublait la
+  // marque avec le template du layout.
+  const title = `${stripBrandSuffix(page.metaTitle)} | merci murphy®`
   return {
-    title: page.metaTitle,
+    title: { absolute: title },
     description: page.metaDescription,
     alternates: { canonical: url },
     openGraph: {
-      title: page.metaTitle,
+      title,
       description: page.metaDescription,
       url,
       type: 'article',

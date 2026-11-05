@@ -5,7 +5,7 @@ import { toPlainText } from '@portabletext/toolkit'
 import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getAllServices, getServiceBySlug } from '@/sanity/queries/services'
+import { getAllServices, getServiceBySlug, type TarifsToilettage } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { getAllPublishedSeoPages, type SeoPageSummary } from '@/sanity/queries/seo-pages'
 import { urlFor } from '@/sanity/client'
@@ -105,15 +105,27 @@ export async function generateStaticParams() {
 // H1 visible reste le titre Sanity (identité marque), seul le <title> et la
 // description SERP changent.
 //
-// Anti-cannibalisation : la requête géo « toiletteur chien Paris 9e » est
-// RÉSERVÉE au pilier /toilettage-chien-paris. Cette fiche cible la
-// micro-intention « process / méthode du toilettage Maison » (sans géo).
+// Anti-cannibalisation : la requête « toiletteur chien Paris 9e » est
+// RÉSERVÉE au pilier /toilettage-chien-paris. Cette fiche cible l'intention
+// commerciale « prix / tarifs toilettage chien » (grille tarifaire visible).
+// Les titles contiennent déjà la marque → `absolute` pour éviter le template.
 const SEO_META_OVERRIDES: Record<string, { title: string; description: string }> = {
   'le-toilettage-maison-poilus-r': {
-    title: 'Le Toilettage Maison POILUS® — bain, coupe & soin | merci murphy®',
+    title: 'Tarifs toilettage chien Paris — prix bain & coupe | merci murphy®',
     description:
-      'Comment se passe un toilettage chez merci murphy® : bain, brossage, coupe et soin du pelage par des toiletteuses expertes. Méthode sans stress, adaptée à chaque race.',
+      'Prix du toilettage chien chez merci murphy® : bain, bain + coupe, épilation et patticure. Grille tarifaire par gabarit et type de poil, méthode sans stress.',
   },
+}
+
+// Fourchette de prix (€) des prestations principales, pour l'Offer JSON-LD.
+// Les prix Sanity sont des chaînes libres : « 50€ », « A partir de 60€ », « 70 - 90€ ».
+function getTarifsPriceRange(data: TarifsToilettage): { low: number; high: number } | null {
+  const prices = (data.gabarits ?? [])
+    .flatMap((g) => g.lignes)
+    .flatMap((l) => [l.bain, l.bainCoupe, l.bainEpilation])
+    .flatMap((p) => (p ? (p.match(/\d+/g) ?? []).map(Number) : []))
+  if (prices.length === 0) return null
+  return { low: Math.min(...prices), high: Math.max(...prices) }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -127,7 +139,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = override?.description ?? service.description
 
   return {
-    title,
+    title: override ? { absolute: override.title } : title,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -164,6 +176,7 @@ export default async function ServicePage({ params }: Props) {
     : null
 
   const pageUrl = `https://mercimurphy.com/services/${params.slug}`
+  const priceRange = service.tarifsToilettage ? getTarifsPriceRange(service.tarifsToilettage) : null
 
   const serviceLd = {
     '@context': 'https://schema.org',
@@ -187,6 +200,17 @@ export default async function ServicePage({ params }: Props) {
       },
     },
     areaServed: { '@type': 'City', name: 'Paris' },
+    ...(priceRange
+      ? {
+          offers: {
+            '@type': 'AggregateOffer',
+            priceCurrency: 'EUR',
+            lowPrice: priceRange.low,
+            highPrice: priceRange.high,
+            url: `${pageUrl}#tarifs`,
+          },
+        }
+      : {}),
   }
 
   const faqLd =
@@ -347,7 +371,12 @@ export default async function ServicePage({ params }: Props) {
         <Section className="bg-cream">
           <Container className="max-w-3xl">
             <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
+              <h2
+                id="tarifs"
+                className="scroll-mt-24 font-display text-2xl font-bold text-charcoal sm:text-3xl"
+              >
+                Tarifs du toilettage chien à Paris
+              </h2>
               <TarifsToilettageTable data={service.tarifsToilettage} />
               <p className="mt-4 text-xs text-charcoal/50 italic">
                 Merci de noter que toute prestation annulée moins de 24h à l&apos;avance est due.

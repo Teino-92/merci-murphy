@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 
 export const metadata: Metadata = {
-  title: 'Toiletteur chien Paris 9e — Toilettage sans stress | merci murphy®',
+  title: { absolute: 'Toiletteur chien Paris 9e — Toilettage sans stress | merci murphy®' },
   description:
     'Salon de toilettage pour chien à Paris 9e (rue Victor Massé). Bain, coupe, balnéo et massage par des toiletteuses expertes. Méthode sans stress ✓ Réservez en ligne en 2 min.',
   // Canonical → home : on veut que "/" gagne "toiletteur chien Paris" ET
@@ -300,6 +300,16 @@ export default async function ToilettageChienParisPage() {
                 </Link>
               ))}
             </div>
+            <p className="mt-8 text-sm text-charcoal/70">
+              Prix par gabarit et type de poil, du bain à l&apos;épilation&nbsp;:{' '}
+              <Link
+                href="/services/le-toilettage-maison-poilus-r#tarifs"
+                className="font-medium text-terracotta-dark hover:underline"
+              >
+                voir les tarifs du toilettage chien
+              </Link>
+              .
+            </p>
           </div>
         </section>
 

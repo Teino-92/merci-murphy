@@ -3,7 +3,9 @@ import Link from 'next/link'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 
 export const metadata: Metadata = {
-  title: 'Crèche canine Paris 9e — Garderie pour chien en demi-journée | merci murphy®',
+  title: {
+    absolute: 'Crèche canine Paris 9e — Garderie pour chien en demi-journée | merci murphy®',
+  },
   description:
     'Crèche canine à Paris 9e (rue Victor Massé) : garderie pour chien en demi-journée, encadrée par un éducateur canin. Socialisation, jeux, repos ✓ Réservez la demi-journée de votre chien en ligne.',
   alternates: {

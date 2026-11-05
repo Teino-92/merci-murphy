@@ -12,15 +12,21 @@ const FAIRE_DIRECT_URL = 'https://mercimurphy.faire.com'
 const FAIRE_UTM = '?utm_source=mercimurphy.com&utm_medium=revendeurs-page&utm_campaign=wholesale'
 
 export const metadata: Metadata = {
-  title: 'Devenir revendeur merci murphy® : fournisseur chien & chat pour boutiques',
+  // Intention B2B « grossiste / fournisseur » : merci murphy® est une marque
+  // (pas un grossiste multimarque), mais c'est le mot que tapent les acheteurs.
+  title: {
+    absolute: 'Grossiste accessoires chien — marque française pour boutiques et toiletteurs',
+  },
   description:
-    'Boutique, concept-store, toiletteur ou animalerie ? Référencez merci murphy® : soins, accessoires et friandises chien & chat testés dans notre propre boutique parisienne. Paiement net 60, retours offerts sur la première commande.',
+    'Fournisseur de soins et accessoires chien & chat pour boutiques, toiletteurs et animaleries. Marque française testée dans notre boutique parisienne. Net 60, retours offerts.',
   keywords: [
     'grossiste accessoires chien',
     'fournisseur produits chien',
     'revendeur produits chien',
     'wholesale chien France',
     'fournisseur toiletteur',
+    'fournisseur animalerie',
+    'grossiste shampoing chien',
     'marque chien pour boutique',
   ],
   alternates: {
@@ -38,6 +44,35 @@ export const metadata: Metadata = {
     follow: true,
   },
 }
+
+// Blocs catégories : H3 orientés requêtes B2B (« grossiste shampoing chien »,
+// « fournisseur toiletteur », « grossiste accessoires chien »).
+const CATEGORIES = [
+  {
+    title: 'Shampoings & soins chien en gros',
+    text: 'Le cœur de gamme, et la catégorie qui génère le réassort le plus régulier. Formules douces, sans sulfate.',
+    items: [
+      'Shampoing doux',
+      'Shampoing sec',
+      'Spray démêlant',
+      'Après-shampooing adoucissant',
+      'Eau de Cologne pour chien',
+    ],
+    forWho: 'Idéal toiletteurs : le client repart avec le soin adapté à son chien.',
+  },
+  {
+    title: 'Accessoires chien & lifestyle',
+    text: 'Des achats d’impulsion à l’esprit maison, qui font monter le panier moyen en caisse.',
+    items: ['Bougies parfumées', 'Mugs', 'Casquettes', 'Petits objets cadeaux'],
+    forWho: 'Idéal concept-stores et boutiques cadeaux.',
+  },
+  {
+    title: 'Produits pour chat',
+    text: 'Le rayon que beaucoup de marques oublient, souvent le plus rentable au mètre linéaire.',
+    items: ['Spray démêlant chien & chat', 'Après-shampooing chien & chat'],
+    forWho: 'Idéal animaleries et salons qui accueillent aussi les chats.',
+  },
+]
 
 const FAQ = [
   {
@@ -187,40 +222,30 @@ export default function RevendeursPage() {
         {/* ── H2 2 — Catalogue ─────────────────────────────────────────── */}
         <div className="mt-16">
           <h2 className="font-display text-2xl font-semibold text-charcoal">
-            Ce que vous référencez
+            Ce que vous référencez : soins, accessoires et produits chat en gros
           </h2>
           <p className="mt-3 max-w-2xl text-charcoal/70 leading-relaxed">
             Un assortiment resserré, pensé pour occuper peu de place et tourner vite. Trois familles
             complémentaires qui se vendent ensemble.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            <div className="rounded-lg border border-charcoal/10 bg-white/60 p-5">
-              <h3 className="font-display text-base font-semibold text-charcoal">
-                Soins &amp; toilettage
-              </h3>
-              <p className="mt-2 text-sm text-charcoal/70">
-                Shampoings doux, sprays démêlants, soins sans sulfate. Le cœur de gamme, et la
-                catégorie qui génère le réassort le plus régulier.
-              </p>
-            </div>
-            <div className="rounded-lg border border-charcoal/10 bg-white/60 p-5">
-              <h3 className="font-display text-base font-semibold text-charcoal">
-                Accessoires &amp; lifestyle
-              </h3>
-              <p className="mt-2 text-sm text-charcoal/70">
-                Bougies, mugs, casquettes et petits objets à l&apos;esprit maison. Des achats
-                d&apos;impulsion qui font monter le panier moyen en caisse.
-              </p>
-            </div>
-            <div className="rounded-lg border border-charcoal/10 bg-white/60 p-5">
-              <h3 className="font-display text-base font-semibold text-charcoal">
-                Chien &amp; chat
-              </h3>
-              <p className="mt-2 text-sm text-charcoal/70">
-                Une gamme pensée pour les deux, là où beaucoup de marques oublient le rayon chat,
-                souvent le plus rentable au mètre linéaire.
-              </p>
-            </div>
+            {CATEGORIES.map((cat) => (
+              <div key={cat.title} className="rounded-lg border border-charcoal/10 bg-white/60 p-5">
+                <h3 className="font-display text-base font-semibold text-charcoal">{cat.title}</h3>
+                <p className="mt-2 text-sm text-charcoal/70">{cat.text}</p>
+                <ul className="mt-3 space-y-1 text-sm text-charcoal/80">
+                  {cat.items.map((item) => (
+                    <li key={item} className="flex gap-2">
+                      <span aria-hidden className="text-terracotta-dark">
+                        ·
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs font-medium text-charcoal/60">{cat.forWho}</p>
+              </div>
+            ))}
           </div>
           <p className="mt-5 text-sm text-charcoal/60">
             Le détail des références, des formats et des tarifs wholesale est consultable sur{' '}

@@ -11,7 +11,7 @@ const SITE_URL = 'https://mercimurphy.com'
 const GABARIT_ORDER = ['très petit', 'petit', 'moyen', 'grand', 'très grand'] as const
 
 export const metadata: Metadata = {
-  title: 'Toilettage chien à Paris par race — merci murphy®',
+  title: { absolute: 'Toilettage chien à Paris par race — merci murphy®' },
   description:
     'Découvrez nos soins de toilettage adaptés à chaque race à Paris 9e. Golden Retriever, Caniche, Yorkshire, Berger Australien et plus encore.',
   alternates: { canonical: `${SITE_URL}/toilettage` },
