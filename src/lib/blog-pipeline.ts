@@ -36,6 +36,10 @@ const IMAGE_MAX_ROUNDS = 3
 // Race : on doit être sûr de la race. Sujet : le juge plafonne vers 0.7-0.8 sur des photos
 // parfaitement utilisables, un seuil à 0.85 rejetait tout.
 const IMAGE_MIN_CONFIDENCE = { race: 0.85, topic: 0.7 }
+// Race nommée dans la légende du photographe : indice indépendant des deux vérifications
+// visuelles. Sur les races qui se ressemblent (bichon, maltais, coton), le juge plafonne
+// vers 0.8 même sur un sujet correct, et 0.85 rejetait tout.
+const IMAGE_MIN_CONFIDENCE_CAPTIONED_RACE = 0.75
 
 const key = () => randomBytes(6).toString('hex')
 
@@ -716,7 +720,13 @@ async function verifyCandidate(
   if (identity.hasTextOrWatermark) why.push('texte/filigrane')
   if (identity.prominentHumanFace) why.push('visage humain')
   if (!identity.isPhotograph) why.push('pas une photo')
-  if (!judge.isMatch || judge.confidence < IMAGE_MIN_CONFIDENCE[subject.kind])
+  const captionNamesBreed =
+    subject.kind === 'race' &&
+    subject.englishNames.some((n) => normalize(c.description).includes(normalize(n)))
+  const minConfidence = captionNamesBreed
+    ? IMAGE_MIN_CONFIDENCE_CAPTIONED_RACE
+    : IMAGE_MIN_CONFIDENCE[subject.kind]
+  if (!judge.isMatch || judge.confidence < minConfidence)
     why.push(
       `juge ${judge.isMatch ? 'ok' : 'non'} (${judge.confidence}) : ${judge.reason.slice(0, 80)}`
     )
