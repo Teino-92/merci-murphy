@@ -5,11 +5,10 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { accountConfirmHtml } from '@/lib/emails/account-confirm'
 import type { PendingSignup } from '@/lib/signup-finalize'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercimurphy.com'
 
 // ─── Types ────────────────────────────────────────────────────────────────────

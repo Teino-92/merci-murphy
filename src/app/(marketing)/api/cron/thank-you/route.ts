@@ -6,9 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { thankYouHtml } from '@/lib/emails/thank-you'
 import { getBestsellingProducts } from '@/lib/shopify-server'
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { resend } from '@/lib/resend'
 
 const GOOGLE_REVIEW_URL =
   process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL ?? 'https://g.page/r/CX_sCK3JxpRZEAE/review'

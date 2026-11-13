@@ -4,9 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 import { depositPaidHtml } from '@/lib/emails/deposit-paid'
 import { sendPushToStaff } from '@/lib/push'
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { resend } from '@/lib/resend'
 
 const SERVICE_LABELS: Record<string, string> = {
   toilettage: 'Toilettage',

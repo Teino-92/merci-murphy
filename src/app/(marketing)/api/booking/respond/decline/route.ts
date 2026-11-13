@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { z } from 'zod'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { esc } from '@/lib/emails/base'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const bodySchema = z.object({
   token: z.string().regex(/^[a-f0-9]{64}$/),

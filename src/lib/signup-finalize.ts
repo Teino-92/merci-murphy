@@ -1,10 +1,8 @@
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { z } from 'zod'
 import type { User } from '@supabase/supabase-js'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { accountWelcomeHtml } from '@/lib/emails/account-welcome'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Shape stored in user_metadata.signup by signUp() until the email is confirmed
 export const PendingSignupSchema = z.object({

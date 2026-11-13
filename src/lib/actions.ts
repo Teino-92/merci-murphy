@@ -1,15 +1,13 @@
 'use server'
 
 import { z } from 'zod'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { newsletterWelcomeHtml } from '@/lib/emails/newsletter-welcome'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
 import { esc } from '@/lib/emails/base'
 import { TYPE_COMMERCE_LABELS } from '@/lib/revendeur-constants'
 import { sendPushToStaff } from '@/lib/push'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 /** Where internal lead notifications land. */
 const INTERNAL_EMAIL = process.env.RESEND_INTERNAL_EMAIL ?? 'bonjour@mercimurphy.com'

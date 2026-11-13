@@ -5,10 +5,8 @@ import { supabaseAdmin, updateLeadStatus } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 import { bookingProposalHtml } from '@/lib/emails/booking-proposal'
 import { depositRequestHtml } from '@/lib/emails/deposit-request'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { randomBytes } from 'crypto'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const LeadStatusSchema = z.enum(['new', 'contacted', 'confirmed', 'cancelled'])
 

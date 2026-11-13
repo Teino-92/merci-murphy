@@ -5,7 +5,7 @@
 
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { runBlogPipeline, type BlogRunType } from '@/lib/blog-pipeline'
 import {
   blogDraftHtml,
@@ -17,8 +17,6 @@ import {
 
 export const runtime = 'nodejs'
 export const maxDuration = 300
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Récap publication : Margot + Matteo. Brouillons et erreurs : Matteo uniquement.
 const RECAP_RECIPIENTS = ['margot@mercimurphy.com', 'garbugli.matteo92@gmail.com']

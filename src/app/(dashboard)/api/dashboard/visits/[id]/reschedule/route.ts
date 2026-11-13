@@ -3,10 +3,8 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 import { bookingRescheduledHtml, bookingServiceChangedHtml } from '@/lib/emails/booking-rescheduled'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { randomBytes } from 'crypto'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const SERVICE_LABELS: Record<string, string> = {
   toilettage: 'Toilettage',

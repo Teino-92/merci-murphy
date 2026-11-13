@@ -6,10 +6,8 @@ import { bookingConfirmedHtml } from '@/lib/emails/booking-confirmed'
 import { sendPushToStaff } from '@/lib/push'
 import { computeBookableSlots } from '@/lib/booking-availability'
 import { esc } from '@/lib/emails/base'
-import { Resend } from 'resend'
+import { resend } from '@/lib/resend'
 import { z } from 'zod'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const bodySchema = z.object({
   serviceSlug: z.string().min(1).max(50),
