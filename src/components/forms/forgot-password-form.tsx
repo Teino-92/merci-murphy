@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { noOrphan } from '@/lib/typo'
 
 const supabase = createSupabaseBrowserClient()
 
@@ -36,12 +37,12 @@ export function ForgotPasswordForm() {
   if (sent) {
     return (
       <div className="text-center space-y-4">
-        <p className="text-lg font-semibold text-charcoal">Email envoyé !</p>
+        <p className="text-lg font-semibold text-charcoal">Email envoyé !</p>
         <p className="text-sm text-charcoal/60">
           Si un compte existe pour <strong>{email}</strong>, vous recevrez un lien de
-          réinitialisation dans quelques instants.
+          réinitialisation dans quelques instants.
         </p>
-        <p className="text-sm text-charcoal/40">Pensez à vérifier vos spams.</p>
+        <p className="text-sm text-charcoal/40">Pensez à vérifier vos spams.</p>
         <Link
           href="/compte/connexion"
           className="text-sm text-terracotta-dark hover:underline block mt-4"
@@ -64,7 +65,7 @@ export function ForgotPasswordForm() {
           required
         />
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-500">{noOrphan(error)}</p>}
       <Button
         type="submit"
         disabled={loading}
@@ -74,7 +75,7 @@ export function ForgotPasswordForm() {
       </Button>
       <p className="text-center text-sm text-charcoal/50">
         <Link href="/compte/connexion" className="text-terracotta-dark hover:underline">
-          Retour à la connexion
+          Retour à la connexion
         </Link>
       </p>
     </form>

@@ -72,10 +72,7 @@ function buildPayload(event: PushEventType, data: PushEventData): PushPayload {
   }
 }
 
-export async function sendPushToStaff(
-  event: PushEventType,
-  data: PushEventData
-): Promise<void> {
+export async function sendPushToStaff(event: PushEventType, data: PushEventData): Promise<void> {
   try {
     // Step 1: get all staff user ids (admins + team) via auth allowlist.
     const { data: usersRes, error: usersErr } = await supabaseAdmin.auth.admin.listUsers({

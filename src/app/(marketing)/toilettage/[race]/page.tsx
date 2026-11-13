@@ -1,27 +1,37 @@
 export const revalidate = 3600
 
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import type { Metadata } from 'next'
+import type { PortableTextBlock } from '@portabletext/react'
 import { toPlainText } from '@portabletext/toolkit'
-import { Section, Container } from '@/components/ui/section'
-import { Reveal } from '@/components/ui/reveal'
-import { PortableText } from '@/components/sections/portable-text'
-import { FaqAccordion } from '@/components/sections/faq-accordion'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
 import { BookingCta } from '@/components/sections/booking-cta'
+import { FaqV2 } from '@/components/sections/faq-v2'
+import { PageHeaderV2 } from '@/components/sections/page-header-v2'
+import { PortableText } from '@/components/sections/portable-text'
+import { CONTAINER, DisplayTitle, FOCUS_RING, TEXT_LINK } from '@/components/ui/editorial'
+import { cn, stripBrandSuffix } from '@/lib/utils'
 import {
   getAllPublishedSeoPages,
-  getSeoPageBySlugRace,
   getRelatedSeoPages,
+  getSeoPageBySlugRace,
 } from '@/sanity/queries/seo-pages'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
-import { stripBrandSuffix } from '@/lib/utils'
+import { noOrphan } from '@/lib/typo'
 
 interface Props {
   params: { race: string }
 }
 
 const SITE_URL = 'https://mercimurphy.com'
+
+const SPLIT = cn(
+  CONTAINER,
+  'grid grid-cols-1 gap-y-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2.1fr)] lg:gap-x-16'
+)
+const STICKY = 'lg:sticky lg:top-28 lg:self-start'
+const BODY = 'max-w-2xl text-base lg:text-lg'
 
 export async function generateStaticParams() {
   const pages = await getAllPublishedSeoPages()
@@ -31,11 +41,13 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getSeoPageBySlugRace(params.race)
   if (!page) return {}
+
   const url = `${SITE_URL}/toilettage/${page.slugRace}`
   // Suffixe Sanity « merci murphy® … Paris 9e » retiré : il faisait ranker les
   // pages races sur « toiletteur paris 9 » (réservé home/pilier) et doublait la
   // marque avec le template du layout.
   const title = `${stripBrandSuffix(page.metaTitle)} | merci murphy®`
+
   return {
     title: { absolute: title },
     description: page.metaDescription,
@@ -49,12 +61,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// JSON-LD identique à la prod : les URL restent canoniques.
 function buildJsonLd(page: {
   race: string
   slugRace: string
   title: string
   metaDescription: string
-  faq: { question: string; reponse: import('@portabletext/react').PortableTextBlock[] }[]
+  faq: { question: string; reponse: PortableTextBlock[] }[]
 }) {
   const url = `${SITE_URL}/toilettage/${page.slugRace}`
   const service = {
@@ -102,6 +115,12 @@ function buildJsonLd(page: {
   return [service, faqPage, breadcrumb]
 }
 
+/**
+ * Page race. Même
+ * charpente que la page service : titre de section collant à gauche, texte à
+ * droite ; l'encart tarifs et les cartes « autres races » perdent leurs coins
+ * arrondis au profit des filets.
+ */
 export default async function RacePage({ params }: Props) {
   const page = await getSeoPageBySlugRace(params.race)
   if (!page) notFound()
@@ -117,155 +136,131 @@ export default async function RacePage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero — H1 sans image, fond charcoal */}
-      <Section className="bg-charcoal pt-20 pb-12 lg:pt-28 lg:pb-16">
-        <Container className="max-w-3xl text-center">
-          <Reveal>
-            <p className="mb-4 text-sm uppercase tracking-widest text-cream/60">
-              Toilettage canin · Paris 9e
-            </p>
-            <h1 className="font-display text-4xl font-bold text-cream sm:text-5xl lg:text-6xl">
-              {page.title}
-            </h1>
-          </Reveal>
-        </Container>
-      </Section>
+      <PageHeaderV2 title={page.title} sub="Toilettage canin, Paris 9e">
+        <BookingCta className="h-12 self-start px-8 text-[15px] sm:self-auto" />
+        <Link href="#tarifs" className={cn(TEXT_LINK.light, 'self-start sm:self-auto')}>
+          Voir les tarifs
+        </Link>
+      </PageHeaderV2>
 
-      {/* Intro */}
       {page.intro && page.intro.length > 0 && (
-        <Section className="bg-cream">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <PortableText value={page.intro} />
-            </Reveal>
-          </Container>
-        </Section>
+        <section className="bg-white py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div aria-hidden="true" className="hidden lg:block" />
+            <PortableText value={page.intro} className={BODY} />
+          </div>
+        </section>
       )}
 
-      {/* Notre approche — fond slate (même que déroulé des services) */}
       {page.approche && page.approche.length > 0 && (
-        <Section className="bg-[#4F6072]">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-cream sm:text-3xl">
+        <section className="bg-[#4F6072] py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle size="compact" surface="slate">
                 Notre approche pour {page.race}
-              </h2>
-              <PortableText value={page.approche} className="mt-6" light />
-            </Reveal>
-          </Container>
-        </Section>
+              </DisplayTitle>
+            </div>
+            <PortableText value={page.approche} light className={BODY} />
+          </div>
+        </section>
       )}
 
-      {/* Fréquence */}
       {page.frequence && page.frequence.length > 0 && (
-        <Section className="bg-cream">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                À quelle fréquence faire toiletter un {page.race} à Paris ?
-              </h2>
-              <PortableText value={page.frequence} className="mt-6" />
-            </Reveal>
-          </Container>
-        </Section>
+        <section className="bg-white py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle size="compact">
+                À quelle fréquence faire toiletter un {page.race} à Paris ?
+              </DisplayTitle>
+            </div>
+            <PortableText value={page.frequence} className={BODY} />
+          </div>
+        </section>
       )}
 
-      {/* Lien vers tarifs */}
-      <Section className="bg-cream pt-0">
-        <Container className="max-w-3xl">
-          <Reveal>
-            <div className="rounded-2xl border border-charcoal/10 bg-white px-6 py-6 sm:px-8 sm:py-8">
-              <h2 className="font-display text-xl font-bold text-charcoal sm:text-2xl">
-                Tarifs détaillés par gabarit
-              </h2>
-              <p className="mt-2 text-charcoal/70">
-                Nos tarifs varient selon le gabarit, l&apos;état du pelage et les prestations
-                choisies. Retrouvez la grille complète sur notre page toilettage.
-              </p>
-              <Link
-                href="/services/le-toilettage-maison-poilus-r"
-                className="mt-4 inline-block font-semibold text-terracotta-dark underline-offset-4 hover:underline"
-              >
-                Voir les tarifs →
+      <section className="bg-cream py-16 lg:py-24">
+        <div className={SPLIT}>
+          <div className={STICKY}>
+            <DisplayTitle id="tarifs" size="compact" className="scroll-mt-28">
+              Tarifs détaillés par gabarit
+            </DisplayTitle>
+          </div>
+          <div className="max-w-2xl border-t border-charcoal/15 pt-6 lg:pt-8">
+            <p className="text-base leading-relaxed text-charcoal/80 lg:text-lg">
+              Nos tarifs varient selon le gabarit, l&apos;état du pelage et les prestations
+              choisies. Retrouvez la grille complète sur notre page toilettage.
+            </p>
+            <Link
+              href="/services/le-toilettage-maison-poilus-r#tarifs"
+              className={cn(TEXT_LINK.light, 'mt-6 inline-block')}
+            >
+              Voir les tarifs
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {page.faq && page.faq.length > 0 && (
+        <FaqV2 items={page.faq} title={`Questions fréquentes — ${page.race}`} />
+      )}
+
+      {related.length > 0 && (
+        <section className="bg-white py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle size="compact">Autres races à découvrir</DisplayTitle>
+              <Link href="/toilettage" className={cn(TEXT_LINK.light, 'mt-8 inline-block')}>
+                Voir toutes les races
               </Link>
             </div>
-          </Reveal>
-        </Container>
-      </Section>
 
-      {/* FAQ */}
-      {page.faq && page.faq.length > 0 && (
-        <Section className="bg-rose/20">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                Questions fréquentes — {page.race}
-              </h2>
-              <div className="mt-8">
-                <FaqAccordion items={page.faq} />
-              </div>
-            </Reveal>
-          </Container>
-        </Section>
-      )}
-
-      {/* Maillage — autres races */}
-      {related.length > 0 && (
-        <Section className="bg-cream">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                Autres races à découvrir
-              </h2>
-              <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-                {related.map((r) => (
+            <ul className="grid grid-cols-2 gap-x-5 border-b border-charcoal/15 sm:gap-x-10 xl:grid-cols-3">
+              {related.map((r) => (
+                <li key={r._id} className="border-t border-charcoal/15">
                   <Link
-                    key={r._id}
                     href={`/toilettage/${r.slugRace}`}
-                    className="group rounded-2xl border border-charcoal/10 bg-white p-5 transition hover:border-terracotta-dark/40 hover:shadow-sm"
+                    className={cn('group block rounded-sm py-5 lg:py-6', FOCUS_RING)}
                   >
-                    <p className="font-medium text-charcoal group-hover:text-terracotta-dark">
+                    <span className="block font-display text-xl leading-snug text-charcoal transition-colors group-hover:text-terracotta-dark lg:text-2xl">
                       {r.race}
-                    </p>
-                    {r.gabarit && (
-                      <p className="mt-1 text-xs text-charcoal/50 capitalize">{r.gabarit}</p>
+                    </span>
+                    {noOrphan(
+                      r.gabarit && (
+                        <span className="mt-1 block text-sm text-charcoal/60 first-letter:uppercase">
+                          {r.gabarit}
+                        </span>
+                      )
                     )}
                   </Link>
-                ))}
-              </div>
-              <p className="mt-6 text-sm text-charcoal/60">
-                <Link href="/toilettage" className="underline-offset-4 hover:underline">
-                  ← Voir toutes les races
-                </Link>
-              </p>
-            </Reveal>
-          </Container>
-        </Section>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
 
-      {/* CTA desktop */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
-        <Section className="text-charcoal">
-          <Container className="max-w-2xl text-center">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                Prêt.e à prendre rendez-vous pour votre {page.race} ?
-              </h2>
-              <p className="mt-4 text-charcoal/70">Réservez en ligne en quelques clics.</p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <BookingCta />
-              </div>
-            </Reveal>
-          </Container>
-        </Section>
-      </div>
+      <section className="bg-[#B5A89A] py-16 lg:py-24">
+        <div className={CONTAINER}>
+          <DisplayTitle size="compact" surface="taupe" className="max-w-4xl">
+            Prêt.e à prendre rendez-vous pour votre {page.race} ?
+          </DisplayTitle>
+          <p className="mt-5 text-base text-charcoal/80 lg:text-lg">
+            Réservez en ligne en quelques clics.
+          </p>
+          <div className="mt-8">
+            <BookingCta className="h-12 bg-charcoal px-8 text-[15px] text-cream hover:bg-charcoal/90" />
+          </div>
+        </div>
+      </section>
 
-      {/* Mobile sticky CTA */}
       <BookingCta mobile phone={settings?.telephone} />
 
-      {/* Spacer for mobile CTA + divider before footer (same bg color) */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
+      {/* Espace pour la barre mobile + filet avant le footer (même fond) */}
+      <div className="bg-[#B5A89A]">
         <div className="h-20 lg:hidden" />
+        <div className={CONTAINER}>
+          <div className="border-t-2 border-charcoal/20" />
+        </div>
       </div>
     </>
   )

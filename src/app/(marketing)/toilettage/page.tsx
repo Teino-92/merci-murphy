@@ -1,14 +1,16 @@
 export const revalidate = 3600
 
-import Link from 'next/link'
 import type { Metadata } from 'next'
-import { Section, Container } from '@/components/ui/section'
-import { Reveal } from '@/components/ui/reveal'
+import Link from 'next/link'
+
+import { PageHeaderV2 } from '@/components/sections/page-header-v2'
+import { Button } from '@/components/ui/button'
+import { CONTAINER, DisplayTitle, FOCUS_RING } from '@/components/ui/editorial'
+import { cn } from '@/lib/utils'
 import { getAllPublishedSeoPages, type SeoPageSummary } from '@/sanity/queries/seo-pages'
+import { noOrphan } from '@/lib/typo'
 
 const SITE_URL = 'https://mercimurphy.com'
-
-const GABARIT_ORDER = ['très petit', 'petit', 'moyen', 'grand', 'très grand'] as const
 
 export const metadata: Metadata = {
   title: { absolute: 'Toilettage chien à Paris par race — merci murphy®' },
@@ -23,6 +25,8 @@ export const metadata: Metadata = {
     type: 'website',
   },
 }
+
+const GABARIT_ORDER = ['très petit', 'petit', 'moyen', 'grand', 'très grand'] as const
 
 function groupByGabarit(pages: SeoPageSummary[]): [string, SeoPageSummary[]][] {
   const buckets: Record<string, SeoPageSummary[]> = {}
@@ -40,6 +44,7 @@ function groupByGabarit(pages: SeoPageSummary[]): [string, SeoPageSummary[]][] {
   return ordered
 }
 
+// JSON-LD identique à la prod : les URL restent canoniques.
 function buildJsonLd(pages: SeoPageSummary[]) {
   return {
     '@context': 'https://schema.org',
@@ -54,6 +59,11 @@ function buildJsonLd(pages: SeoPageSummary[]) {
   }
 }
 
+/**
+ * Hub toilettage par race. Le surtitre
+ * est la ligne italique ; les cartes arrondies deviennent un index à
+ * filets, un gabarit par rangée, le titre à gauche et les races à droite.
+ */
 export default async function ToilettageHubPage() {
   const pages = await getAllPublishedSeoPages()
   const grouped = groupByGabarit(pages)
@@ -66,84 +76,92 @@ export default async function ToilettageHubPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <Section className="bg-charcoal pt-20 pb-12 lg:pt-28 lg:pb-16">
-        <Container className="max-w-3xl text-center">
-          <Reveal>
-            <p className="mb-4 text-sm uppercase tracking-widest text-cream/60">
-              Spa canin · Paris 9e
-            </p>
-            <h1 className="font-display text-4xl font-bold text-cream sm:text-5xl lg:text-6xl">
-              Toilettage chien à Paris par race
-            </h1>
-            <p className="mt-6 text-cream/70 sm:text-lg">
-              Chaque race a son pelage, ses besoins, son rythme. Trouvez le soin adapté à votre
-              loulou.
-            </p>
-          </Reveal>
-        </Container>
-      </Section>
+      <PageHeaderV2
+        title="Toilettage chien à Paris par race"
+        sub="Spa canin, Paris 9e"
+        intro="Chaque race a son pelage, ses besoins, son rythme. Trouvez le soin adapté à votre loulou."
+        image={{
+          src: '/avant-apres-2-apres.jpg',
+          alt: 'Un chien tout juste toiletté chez merci murphy®',
+          position: 'center 30%',
+        }}
+      />
 
-      {/* Grille par gabarit */}
-      <Section className="bg-cream">
-        <Container className="max-w-5xl">
+      <section className="bg-white py-16 lg:py-24">
+        <div className={CONTAINER}>
           {pages.length === 0 ? (
-            <p className="text-center text-charcoal/60">
-              Les pages races sont en cours de publication. Revenez bientôt.
+            <p className="max-w-lg text-base leading-relaxed text-charcoal/70">
+              Les pages races sont en cours de publication. Revenez bientôt.
             </p>
           ) : (
-            <div className="space-y-12">
+            <div className="border-b border-charcoal/15">
               {grouped.map(([gabarit, list]) => (
-                <Reveal key={gabarit}>
-                  <h2 className="font-display text-2xl font-bold text-charcoal capitalize sm:text-3xl">
-                    {gabarit === 'autres' ? 'Autres races' : `Chiens ${gabarit}s`}
+                <div
+                  key={gabarit}
+                  className="grid grid-cols-1 gap-y-6 border-t border-charcoal/15 py-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,2.2fr)] lg:gap-x-16 lg:py-14"
+                >
+                  <h2 className="font-display text-3xl font-normal leading-tight tracking-[-0.01em] text-charcoal sm:text-4xl lg:sticky lg:top-28 lg:self-start">
+                    {noOrphan(gabarit === 'autres' ? 'Autres races' : `Chiens ${gabarit}s`)}
                   </h2>
-                  <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+
+                  <ul className="grid grid-cols-2 gap-x-5 sm:gap-x-10 xl:grid-cols-3">
                     {list.map((p) => (
-                      <Link
+                      <li
                         key={p._id}
-                        href={`/toilettage/${p.slugRace}`}
-                        className="group rounded-2xl border border-charcoal/10 bg-white p-5 transition hover:border-terracotta-dark/40 hover:shadow-sm"
+                        className="border-t border-charcoal/15 [&:nth-child(-n+2)]:border-t-0 xl:[&:nth-child(-n+3)]:border-t-0"
                       >
-                        <p className="font-display text-lg font-semibold text-charcoal group-hover:text-terracotta-dark">
-                          {p.race}
-                        </p>
-                        {p.typePoil && (
-                          <p className="mt-1 text-xs text-charcoal/50 capitalize">
-                            Pelage {p.typePoil}
-                          </p>
-                        )}
-                      </Link>
+                        <Link
+                          href={`/toilettage/${p.slugRace}`}
+                          className={cn(
+                            'group block rounded-sm py-4 transition-colors lg:py-5',
+                            FOCUS_RING
+                          )}
+                        >
+                          <span className="block font-display text-xl leading-snug text-charcoal transition-colors group-hover:text-terracotta-dark lg:text-2xl">
+                            {noOrphan(p.race, 28, true)}
+                          </span>
+                          {noOrphan(
+                            p.typePoil && (
+                              <span className="mt-1 block text-sm text-charcoal/60">
+                                Pelage {p.typePoil}
+                              </span>
+                            )
+                          )}
+                        </Link>
+                      </li>
                     ))}
-                  </div>
-                </Reveal>
+                  </ul>
+                </div>
               ))}
             </div>
           )}
-        </Container>
-      </Section>
+        </div>
+      </section>
 
-      {/* CTA vers page service principale */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
-        <Section className="text-charcoal">
-          <Container className="max-w-2xl text-center">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                Une question sur le toilettage ?
-              </h2>
-              <p className="mt-4 text-charcoal/70">
-                Consultez la page complète de notre service toilettage avec tarifs et déroulé.
-              </p>
-              <Link
-                href="/services/le-toilettage-maison-poilus-r"
-                className="mt-8 inline-block rounded-full bg-charcoal px-8 py-3 font-semibold text-cream transition hover:bg-charcoal/90"
-              >
-                Voir le service toilettage
-              </Link>
-            </Reveal>
-          </Container>
-        </Section>
-      </div>
+      <section className="bg-[#B5A89A] py-16 lg:py-24">
+        <div
+          className={cn(
+            CONTAINER,
+            'flex flex-col gap-y-8 lg:flex-row lg:items-end lg:justify-between lg:gap-x-16'
+          )}
+        >
+          <div className="max-w-2xl">
+            <DisplayTitle size="compact" surface="taupe">
+              Une question sur le toilettage ?
+            </DisplayTitle>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-charcoal/80 lg:text-lg">
+              Consultez la page complète de notre service toilettage avec tarifs et déroulé.
+            </p>
+          </div>
+          <Button
+            asChild
+            size="lg"
+            className="h-12 self-start bg-charcoal px-8 text-[15px] text-cream hover:bg-charcoal/90 lg:self-auto"
+          >
+            <Link href="/services/le-toilettage-maison-poilus-r">Voir le service toilettage</Link>
+          </Button>
+        </div>
+      </section>
     </>
   )
 }

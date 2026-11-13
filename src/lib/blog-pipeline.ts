@@ -239,9 +239,9 @@ async function loadLinkTargets(client: SanityClient): Promise<LinkTarget[]> {
   ])
   return [
     ...STATIC_LINKS,
-    ...services.map((s) => ({ path: `/services/${s.slug}`, label: `Service : ${s.title}` })),
+    ...services.map((s) => ({ path: `/services/${s.slug}`, label: `Service : ${s.title}` })),
     ...breeds.map((b) => ({ path: `/toilettage/${b.slugRace}`, label: `Toilettage ${b.race}` })),
-    ...posts.map((p) => ({ path: `/blog/${p.slug}`, label: `Article : ${p.title}` })),
+    ...posts.map((p) => ({ path: `/blog/${p.slug}`, label: `Article : ${p.title}` })),
   ]
 }
 
@@ -344,35 +344,35 @@ const MEDICAL_PATTERNS: RegExp[] = [
 
 const SYSTEM_PROMPT = `Tu écris pour le blog de merci murphy®, spa et boutique bien-être pour chiens et chats, 18 rue Victor Massé, Paris 9e (toilettage, crèche canine, boutique).
 
-Voix : l'équipe parle ("nous", "on"). Ton direct, chaleureux, concret. Tu t'adresses à des propriétaires parisiens.
+Voix : l'équipe parle ("nous", "on"). Ton direct, chaleureux, concret. Tu t'adresses à des propriétaires parisiens.
 
-INTERDIT ABSOLU, CONSEILS MÉDICAUX :
+INTERDIT ABSOLU, CONSEILS MÉDICAUX :
 - Aucun conseil de santé, aucune maladie, aucun symptôme, aucun diagnostic, aucun médicament, aucune dose, aucun vaccin, aucun vermifuge ou antiparasitaire, aucune prédisposition génétique, aucune chirurgie ni stérilisation, aucune ration alimentaire chiffrée.
-- Mots interdits même en passant : maladie, symptôme, traitement, médicament, allergie, infection, dysplasie, pathologie, diagnostic, vaccin, guérir, chirurgie, stérilisation, posologie, dosage, prescription.
+- Mots interdits même en passant : maladie, symptôme, traitement, médicament, allergie, infection, dysplasie, pathologie, diagnostic, vaccin, guérir, chirurgie, stérilisation, posologie, dosage, prescription.
 - Si un point touche à la santé, tu écris une seule phrase neutre qui renvoie au vétérinaire, sans rien affirmer d'autre.
 - Pour la chaleur de l'été, tu parles de confort et d'organisation (horaires de balade, ombre, eau, sol brûlant), jamais de malaises ou d'urgences.
 
-INTERDIT, FAITS INVENTÉS :
+INTERDIT, FAITS INVENTÉS :
 - Pas d'anecdote client inventée, pas de "une cliente nous a dit", pas de statistique, pas de pourcentage, pas de citation.
 - Pas d'observation sur notre clientèle ou ce qu'on voit au salon ("on en voit beaucoup passer chez nous", "nos clients nous disent", "au salon, on remarque"). Parle de l'animal, pas de ce qui se passe chez nous.
 - Pas de chiffres précis risqués (poids, espérance de vie, dates exactes, kilomètres par jour). Préfère le qualitatif ou des fourchettes très prudentes.
-- Lieux parisiens : cite seulement le bois de Boulogne, le bois de Vincennes, les quais de Seine, le canal Saint-Martin ou les squares de quartier. N'affirme aucun règlement précis (laisse, horaires, zones autorisées) : dis plutôt de vérifier l'affichage à l'entrée.
+- Lieux parisiens : cite seulement le bois de Boulogne, le bois de Vincennes, les quais de Seine, le canal Saint-Martin ou les squares de quartier. N'affirme aucun règlement précis (laisse, horaires, zones autorisées) : dis plutôt de vérifier l'affichage à l'entrée.
 - Pas de promesse sur nos prestations au-delà de ce qui est évident (toilettage, crèche, boutique).
 
-STYLE, RÈGLES STRICTES :
-1. INTERDIT : tirets longs (—) et demi-cadratin (–). Utilise virgules, points, parenthèses ou deux-points.
-2. INTERDIT : ${FORBIDDEN_PHRASES.map((p) => `"${p}"`).join(', ')}.
-3. INTERDIT : listes triples rythmées artificielles, adjectifs grandiloquents en chaîne (un adjectif par nom max).
-4. INTERDIT : phrases qui commencent par "Lorsque" ou "Afin de".
+STYLE, RÈGLES STRICTES :
+1. INTERDIT : tirets longs (—) et demi-cadratin (–). Utilise virgules, points, parenthèses ou deux-points.
+2. INTERDIT : ${FORBIDDEN_PHRASES.map((p) => `"${p}"`).join(', ')}.
+3. INTERDIT : listes triples rythmées artificielles, adjectifs grandiloquents en chaîne (un adjectif par nom max).
+4. INTERDIT : phrases qui commencent par "Lorsque" ou "Afin de".
 5. Phrases courtes. Concret. Paragraphes de 2 à 5 phrases.
 6. Pas de markdown dans les textes (ni gras, ni titres, ni listes). Seule exception, les liens internes au format [texte du lien](/chemin).
 
-LIENS INTERNES : 1 à 3 liens, uniquement vers les chemins fournis dans la liste, au format [texte](/chemin). Jamais de lien externe.
+LIENS INTERNES : 1 à 3 liens, uniquement vers les chemins fournis dans la liste, au format [texte](/chemin). Jamais de lien externe.
 
-LONGUEUR : 900 à 1300 mots pour intro + sections (FAQ non comprise).
-FAQ : 3 à 5 questions locales et concrètes, réponses de 2 à 4 phrases.
-metaTitle : 60 caractères max. metaDescription : 150 caractères max. excerpt : 1 à 2 phrases, 250 caractères max.
-imageQueries : 3 requêtes Unsplash en anglais, 2 à 4 mots chacune, centrées sur l'animal, de la plus précise à la plus large (ex. "dog raincoat rain", "dog walk rain", "dog walk city"). imageSubject : en anglais, l'ambiance de la photo de couverture en une phrase simple.`
+LONGUEUR : 900 à 1300 mots pour intro + sections (FAQ non comprise).
+FAQ : 3 à 5 questions locales et concrètes, réponses de 2 à 4 phrases.
+metaTitle : 60 caractères max. metaDescription : 150 caractères max. excerpt : 1 à 2 phrases, 250 caractères max.
+imageQueries : 3 requêtes Unsplash en anglais, 2 à 4 mots chacune, centrées sur l'animal, de la plus précise à la plus large (ex. "dog raincoat rain", "dog walk rain", "dog walk city"). imageSubject : en anglais, l'ambiance de la photo de couverture en une phrase simple.`
 
 function linksBlock(links: LinkTarget[]): string {
   return links.map((l) => `- ${l.path} (${l.label})`).join('\n')
@@ -382,23 +382,23 @@ function racePrompt(s: RaceSubject, links: LinkTarget[]): string {
   const { breed, label } = s
   return `Écris un article "Vivre avec un ${label} à Paris".
 
-Race : ${breed.race} (gabarit ${breed.gabarit}, poil ${breed.typePoil}).
-Catégorie : Races.
+Race : ${breed.race} (gabarit ${breed.gabarit}, poil ${breed.typePoil}).
+Catégorie : Races.
 
-Structure OBLIGATOIRE :
-- intro : 2 ou 3 paragraphes courts. Origine, histoire, caractère. Le côté conte, on raconte la race comme une histoire, sans dates ni chiffres inventés.
-- sections : le cœur de l'article, en version parisienne. Une section (heading H2 naturel) pour chacun de ces points, dans cet ordre :
+Structure OBLIGATOIRE :
+- intro : 2 ou 3 paragraphes courts. Origine, histoire, caractère. Le côté conte, on raconte la race comme une histoire, sans dates ni chiffres inventés.
+- sections : le cœur de l'article, en version parisienne. Une section (heading H2 naturel) pour chacun de ces points, dans cet ordre :
   1. taille d'appartement
   2. besoin d'exercice
   3. parcs et balades adaptés
   4. chaleur l'été
   5. cohabitation avec les voisins
-  Puis une DERNIÈRE section dont le heading contient le mot "pelage", avec UN SEUL paragraphe sur le pelage (description, entretien courant à la maison, rien de médical). Ne mets pas de lien dans cette section : le lien vers notre page toilettage est ajouté automatiquement.
-- faq : 3 à 5 questions locales, par exemple "Un ${label} peut-il vivre en appartement à Paris ?".
+  Puis une DERNIÈRE section dont le heading contient le mot "pelage", avec UN SEUL paragraphe sur le pelage (description, entretien courant à la maison, rien de médical). Ne mets pas de lien dans cette section : le lien vers notre page toilettage est ajouté automatiquement.
+- faq : 3 à 5 questions locales, par exemple "Un ${label} peut-il vivre en appartement à Paris ?".
 
 Le title DOIT contenir "${label}" et "Paris".
 
-Chemins autorisés pour les liens internes (n'utilise PAS /toilettage/${breed.slugRace}, il est déjà ajouté) :
+Chemins autorisés pour les liens internes (n'utilise PAS /toilettage/${breed.slugRace}, il est déjà ajouté) :
 ${linksBlock(links.filter((l) => l.path !== `/toilettage/${breed.slugRace}`))}`
 }
 
@@ -406,54 +406,54 @@ function topicPrompt(s: TopicSubject, links: LinkTarget[]): string {
   const { topic } = s
   const animal =
     topic.animal === 'chat' ? 'chats' : topic.animal === 'chien' ? 'chiens' : 'chiens et chats'
-  return `Écris un article de blog sur ce sujet : "${topic.title}".
+  return `Écris un article de blog sur ce sujet : "${topic.title}".
 
-Angle / brief : ${topic.angle}
-Animaux concernés : ${animal}.
-Catégorie : ${topic.category}.
+Angle / brief : ${topic.angle}
+Animaux concernés : ${animal}.
+Catégorie : ${topic.category}.
 
-Structure :
-- intro : 1 ou 2 paragraphes qui posent la situation concrète.
-- sections : 3 à 5 sections avec un heading H2 naturel, ancrées dans la vie parisienne quand c'est pertinent.
-- faq : 3 à 5 questions concrètes.
+Structure :
+- intro : 1 ou 2 paragraphes qui posent la situation concrète.
+- sections : 3 à 5 sections avec un heading H2 naturel, ancrées dans la vie parisienne quand c'est pertinent.
+- faq : 3 à 5 questions concrètes.
 
-Chemins autorisés pour les liens internes :
+Chemins autorisés pour les liens internes :
 ${linksBlock(links)}`
 }
 
 function reviewPrompt(article: Article, subject: Subject): string {
   const expected =
     subject.kind === 'race'
-      ? `Article race "Vivre avec un ${subject.label} à Paris". Structure attendue : intro (origine, histoire, caractère), sections parisiennes (appartement, exercice, parcs, chaleur l'été, voisins), dernière section "pelage" d'un seul paragraphe, FAQ locale.`
-      : `Article thématique : "${subject.topic.title}". Brief : ${subject.topic.angle}`
+      ? `Article race "Vivre avec un ${subject.label} à Paris". Structure attendue : intro (origine, histoire, caractère), sections parisiennes (appartement, exercice, parcs, chaleur l'été, voisins), dernière section "pelage" d'un seul paragraphe, FAQ locale.`
+      : `Article thématique : "${subject.topic.title}". Brief : ${subject.topic.angle}`
   return `Tu es relecteur éditorial STRICT pour le blog de merci murphy® (spa canin et félin à Paris). L'article sera publié automatiquement sans relecture humaine si tu valides. Au moindre doute, verdict "fail".
 
-Faits vrais sur merci murphy® (ne pas signaler) : spa et boutique bien-être pour chiens et chats, 18 rue Victor Massé, Paris 9e. Services : toilettage chien et chat, bains, crèche canine, boutique de produits. Les liens au format [texte](/chemin) sont des liens internes déjà validés.
+Faits vrais sur merci murphy® (ne pas signaler) : spa et boutique bien-être pour chiens et chats, 18 rue Victor Massé, Paris 9e. Services : toilettage chien et chat, bains, crèche canine, boutique de produits. Les liens au format [texte](/chemin) sont des liens internes déjà validés.
 
-Règles à vérifier :
-1. AUCUN conseil médical. Échoue si l'article parle de maladie, symptôme, prédisposition, traitement, médicament, dose, vaccin, parasite, diagnostic, malaise, urgence, chirurgie, stérilisation, ration chiffrée, ou affirme un effet sur la santé. Seule exception tolérée : une phrase neutre qui renvoie vers le vétérinaire.
-2. Aucun fait inventé : pas d'anecdote client, pas de statistique, pas de chiffre précis douteux, pas de règlement parisien affirmé (laisse, horaires, zones), pas de lieu parisien autre que bois de Boulogne, bois de Vincennes, quais de Seine, canal Saint-Martin, squares de quartier.
-3. Exactitude : histoire et caractère de la race conformes au consensus. Toute affirmation que tu ne peux pas confirmer = fail.
-4. Style : pas de tirets longs, pas de ${FORBIDDEN_PHRASES.map((p) => `"${p}"`).join(', ')}, pas de phrase qui commence par "Lorsque" ou "Afin de", pas de listes triples artificielles, pas d'adjectifs empilés, ton naturel et non promotionnel, aucune tournure qui sonne "texte d'IA".
+Règles à vérifier :
+1. AUCUN conseil médical. Échoue si l'article parle de maladie, symptôme, prédisposition, traitement, médicament, dose, vaccin, parasite, diagnostic, malaise, urgence, chirurgie, stérilisation, ration chiffrée, ou affirme un effet sur la santé. Seule exception tolérée : une phrase neutre qui renvoie vers le vétérinaire.
+2. Aucun fait inventé : pas d'anecdote client, pas de statistique, pas de chiffre précis douteux, pas de règlement parisien affirmé (laisse, horaires, zones), pas de lieu parisien autre que bois de Boulogne, bois de Vincennes, quais de Seine, canal Saint-Martin, squares de quartier.
+3. Exactitude : histoire et caractère de la race conformes au consensus. Toute affirmation que tu ne peux pas confirmer = fail.
+4. Style : pas de tirets longs, pas de ${FORBIDDEN_PHRASES.map((p) => `"${p}"`).join(', ')}, pas de phrase qui commence par "Lorsque" ou "Afin de", pas de listes triples artificielles, pas d'adjectifs empilés, ton naturel et non promotionnel, aucune tournure qui sonne "texte d'IA".
 5. Structure et sujet respectés. ${expected}
 6. Français correct, pas de répétition lourde d'un paragraphe à l'autre.
 
-Pour chaque problème : severity, rule (numéro + nom), excerpt (citation exacte), fix (correction proposée).
-severity "bloquant" : règles 1, 2 et 3, mots ou tournures interdits de la règle 4, structure manquante ou hors sujet (règle 5).
-severity "mineur" : répétitions, lourdeurs, tournures améliorables, ton un peu promotionnel.
-verdict "fail" seulement s'il existe au moins un problème bloquant. Si tout est bon : verdict "pass" et issues vide.
+Pour chaque problème : severity, rule (numéro + nom), excerpt (citation exacte), fix (correction proposée).
+severity "bloquant" : règles 1, 2 et 3, mots ou tournures interdits de la règle 4, structure manquante ou hors sujet (règle 5).
+severity "mineur" : répétitions, lourdeurs, tournures améliorables, ton un peu promotionnel.
+verdict "fail" seulement s'il existe au moins un problème bloquant. Si tout est bon : verdict "pass" et issues vide.
 
-ARTICLE (JSON) :
+ARTICLE (JSON) :
 ${JSON.stringify(article, null, 2)}`
 }
 
 function rewritePrompt(article: Article, issues: string[]): string {
   return `Voici un article et la liste des problèmes relevés en relecture. Corrige TOUS les problèmes, garde la structure, la longueur et les liens valides. Ne réintroduis aucun terme médical. Renvoie l'article complet corrigé.
 
-PROBLÈMES :
+PROBLÈMES :
 ${issues.map((i) => `- ${i}`).join('\n')}
 
-ARTICLE (JSON) :
+ARTICLE (JSON) :
 ${JSON.stringify(article, null, 2)}`
 }
 
@@ -537,7 +537,7 @@ function lintArticle(a: Article, subject: Subject, allowedPaths: Set<string>): s
 
   for (const re of MEDICAL_PATTERNS) {
     const m = joined.match(re)
-    if (m) issues.push(`[médical] terme interdit détecté : « ${m[0]} »`)
+    if (m) issues.push(`[médical] terme interdit détecté : « ${m[0]} »`)
   }
 
   for (const p of FORBIDDEN_PHRASES) {
@@ -545,11 +545,11 @@ function lintArticle(a: Article, subject: Subject, allowedPaths: Set<string>): s
       `(^|[^a-zà-ÿ])${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^a-zà-ÿ]|$)`,
       'i'
     )
-    if (re.test(lower)) issues.push(`[style] tournure interdite : « ${p} »`)
+    if (re.test(lower)) issues.push(`[style] tournure interdite : « ${p} »`)
   }
 
   const badStart = joined.match(/(^|[.!?]\s+|\n)(Lorsque|Afin de)\b/)
-  if (badStart) issues.push(`[style] phrase qui commence par « ${badStart[2]} »`)
+  if (badStart) issues.push(`[style] phrase qui commence par « ${badStart[2]} »`)
 
   const words = countWords(a)
   if (words < MIN_WORDS || words > MAX_WORDS)
@@ -566,7 +566,7 @@ function lintArticle(a: Article, subject: Subject, allowedPaths: Set<string>): s
 
   const links = texts.flatMap((t) => Array.from(t.matchAll(LINK_RE)).map((m) => m[2]))
   for (const href of links) {
-    if (!allowedPaths.has(href)) issues.push(`[liens] lien non autorisé : ${href}`)
+    if (!allowedPaths.has(href)) issues.push(`[liens] lien non autorisé : ${href}`)
   }
   if (links.length > 4) issues.push(`[liens] ${links.length} liens (max 3)`)
   if (/\*\*|^#|^- /m.test(joined)) issues.push('[style] markdown dans le texte')
@@ -574,12 +574,12 @@ function lintArticle(a: Article, subject: Subject, allowedPaths: Set<string>): s
   if (subject.kind === 'race') {
     const t = normalize(a.title)
     if (!t.includes(normalize(subject.label)) || !t.includes('paris'))
-      issues.push(`[structure] le titre doit contenir « ${subject.label} » et « Paris »`)
+      issues.push(`[structure] le titre doit contenir « ${subject.label} » et « Paris »`)
     const coat = a.sections[a.sections.length - 1]
     if (!coat || !/pelage/i.test(coat.heading))
-      issues.push('[structure] dernière section « pelage » absente')
+      issues.push('[structure] dernière section « pelage » absente')
     else if (coat.paragraphs.length !== 1)
-      issues.push(`[structure] section pelage : ${coat.paragraphs.length} paragraphes (attendu 1)`)
+      issues.push(`[structure] section pelage : ${coat.paragraphs.length} paragraphes (attendu 1)`)
   }
 
   return issues
@@ -603,7 +603,7 @@ async function checkArticle(
     maxTokens: 8000,
   })
   const fmt = (i: (typeof review.issues)[number]) =>
-    `[relecture] ${i.rule} : « ${i.excerpt} » → ${i.fix}`
+    `[relecture] ${i.rule} : « ${i.excerpt} » → ${i.fix}`
   const blocking = review.issues.filter((i) => i.severity === 'bloquant').map(fmt)
   if (review.verdict === 'fail' && blocking.length === 0)
     blocking.push('[relecture] verdict fail sans problème bloquant détaillé')
@@ -728,7 +728,7 @@ async function verifyCandidate(
     : IMAGE_MIN_CONFIDENCE[subject.kind]
   if (!judge.isMatch || judge.confidence < minConfidence)
     why.push(
-      `juge ${judge.isMatch ? 'ok' : 'non'} (${judge.confidence}) : ${judge.reason.slice(0, 80)}`
+      `juge ${judge.isMatch ? 'ok' : 'non'} (${judge.confidence}) : ${judge.reason.slice(0, 80)}`
     )
 
   return { ok: why.length === 0, alt: stripDashes(judge.altFr).slice(0, 140), why: why.join(', ') }
@@ -772,7 +772,7 @@ async function chooseImage(
   for (const query of imageQueries(subject, article).slice(0, IMAGE_MAX_ROUNDS)) {
     const results = (await searchUnsplash(query)).filter((c) => !seen.has(c.id))
     if (results.length === 0) {
-      report.push(`« ${query} » : aucun résultat`)
+      report.push(`« ${query} » : aucun résultat`)
       continue
     }
     const ordered = [...results].sort((a, b) => score(a) - score(b)).slice(0, IMAGE_CANDIDATES)
@@ -790,7 +790,7 @@ async function chooseImage(
 
     const idx = verdicts.findIndex((v) => v.ok)
     if (idx !== -1) return { image: { candidate: ordered[idx], alt: verdicts[idx].alt } }
-    report.push(`« ${query} » : ${verdicts.map((v, i) => `${ordered[i].id} ${v.why}`).join(' | ')}`)
+    report.push(`« ${query} » : ${verdicts.map((v, i) => `${ordered[i].id} ${v.why}`).join(' | ')}`)
   }
 
   return {
@@ -953,7 +953,7 @@ export async function runBlogPipeline(opts: {
   const slug = await uniqueSlug(client, slugify(article.title))
   const postId = `post-${slug}`
   const subjectLabel =
-    subject.kind === 'race' ? `Race : ${subject.breed.race}` : `Sujet : ${subject.topic.title}`
+    subject.kind === 'race' ? `Race : ${subject.breed.race}` : `Sujet : ${subject.topic.title}`
   const words = countWords(article)
   const img = imageResult.image
 

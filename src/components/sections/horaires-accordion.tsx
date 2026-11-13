@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { HoraireGroupe } from '@/sanity/queries/site-settings'
+import { noOrphan } from '@/lib/typo'
 
 interface HorairesAccordionProps {
   groupes: HoraireGroupe[]
@@ -38,12 +39,12 @@ export function HorairesAccordion({ groupes, variant = 'dark' }: HorairesAccordi
               {groupe.lignes?.map((h, j) => (
                 <div key={j} className="flex justify-between">
                   <dt className={cn('text-sm', isDark ? 'text-cream/60' : 'text-charcoal/60')}>
-                    {h.jour}
+                    {noOrphan(h.jour)}
                   </dt>
                   <dd
                     className={cn('text-sm font-medium', isDark ? 'text-cream' : 'text-charcoal')}
                   >
-                    {h.heures}
+                    {noOrphan(h.heures)}
                   </dd>
                 </div>
               ))}

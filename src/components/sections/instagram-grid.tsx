@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Reveal } from '@/components/ui/reveal'
 import { InstagramLightbox } from './instagram-lightbox'
+import { noOrphan } from '@/lib/typo'
 
 interface BeholdSize {
   mediaUrl: string
@@ -185,7 +186,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                   >
                     {post.caption && (
                       <p className="text-cream text-xs leading-relaxed line-clamp-3">
-                        {post.caption.replace(/#\w+/g, '').trim()}
+                        {noOrphan(post.caption.replace(/#\w+/g, '').trim())}
                       </p>
                     )}
                   </a>
@@ -206,7 +207,7 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                   <div className="absolute inset-0 bg-[#4F6072]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
                     {post.caption && (
                       <p className="text-cream text-xs leading-relaxed line-clamp-3 text-left">
-                        {post.caption.replace(/#\w+/g, '').trim()}
+                        {noOrphan(post.caption.replace(/#\w+/g, '').trim())}
                       </p>
                     )}
                   </div>

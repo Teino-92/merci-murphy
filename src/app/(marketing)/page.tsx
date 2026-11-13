@@ -24,63 +24,31 @@ export const metadata: Metadata = {
   },
 }
 
-import { Hero } from '@/components/sections/hero'
-import { ServicesGrid } from '@/components/sections/services-grid'
-import { GroomingSpotlight } from '@/components/sections/grooming-spotlight'
-import { Values } from '@/components/sections/values'
-import { ShopTeaser } from '@/components/sections/shop-teaser'
-import { InstagramFeed } from '@/components/sections/instagram-feed'
-import { InfoPratiques } from '@/components/sections/info-pratiques'
-import { HomeBlog } from '@/components/sections/home-blog'
-
+import { GroomingSpotlightV2 } from '@/components/sections/grooming-spotlight-v2'
+import { HeroV2 } from '@/components/sections/hero-v2'
+import { HomeBlogV2 } from '@/components/sections/home-blog-v2'
+import { InfoPratiquesV2 } from '@/components/sections/info-pratiques-v2'
+import { InstagramFeedV2 } from '@/components/sections/instagram-feed-v2'
+import { ServicesV2 } from '@/components/sections/services-v2'
+import { ShopTeaserV2 } from '@/components/sections/shop-teaser-v2'
+import { ValuesV2 } from '@/components/sections/values-v2'
+import { getCollectionByHandle } from '@/lib/shopify'
+import { getLatestPosts } from '@/sanity/queries/posts'
 import { getAllServices } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
-import { getLatestPosts } from '@/sanity/queries/posts'
 import { getGroomingTestimonials } from '@/sanity/queries/testimonials'
-import { getProductsByHandles, getCollectionByHandle } from '@/lib/shopify'
-
-const SHOP_TEASER_HANDLES = [
-  'bonnet-cat-mom-marine',
-  'le-murphy-week-end-cabas-ecru-its-never-just-a-dog',
-  'bougie-merci-murphy-sans-un-mot-grand-format-copy',
-  'mug-dog-mom',
-  'le-murphy-week-end-cabas-caramel-my-dog-is-my-therapist-copy',
-  'casquette-dog-mom',
-]
 
 export default async function HomePage() {
-  const [services, settings, shopProducts, petloversCollection, latestPosts, groomingTestimonials] =
-    await Promise.all([
-      getAllServices(),
-      getSiteSettings(),
-      getProductsByHandles(SHOP_TEASER_HANDLES),
-      getCollectionByHandle('petlovers'),
-      getLatestPosts(3),
-      getGroomingTestimonials(),
-    ])
+  const [services, petlovers, settings, latestPosts, groomingTestimonials] = await Promise.all([
+    getAllServices(),
+    getCollectionByHandle('petlovers'),
+    getSiteSettings(),
+    getLatestPosts(3),
+    getGroomingTestimonials(),
+  ])
 
-  const usedHandles = new Set(shopProducts.map((p) => p.handle))
-
-  const fallbackPool = (petloversCollection?.products.nodes ?? []).filter(
-    (p) => p.availableForSale && !usedHandles.has(p.handle)
-  )
-
-  const pickedFallbackHandles = new Set<string>()
-
-  const finalProducts = shopProducts.map((p) => {
-    if (p.availableForSale) return p
-    if (fallbackPool.length === 0) return p
-
-    const hash = p.handle.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
-    const available = fallbackPool.filter((f) => !pickedFallbackHandles.has(f.handle))
-
-    if (available.length === 0) return p
-
-    const fallback = available[hash % available.length]
-    pickedFallbackHandles.add(fallback.handle)
-
-    return fallback
-  })
+  const products = (petlovers?.products.nodes ?? []).filter((p) => p.availableForSale).slice(0, 6)
+  const instagramFeedId = process.env.NEXT_PUBLIC_BEHOLD_FEED_ID
 
   /* ---------------------------
      LOCAL BUSINESS
@@ -306,26 +274,21 @@ export default async function HomePage() {
         }}
       />
 
-      <Hero
-        subtitle="merci murphy® propose des services de toilettage, spa et crèche pour chiens et chats à Paris 9, dans un cadre premium dédié au bien-être animal."
-        imageSrc="/concept-hero.jpg"
-      />
+      <HeroV2 subtitle="merci murphy® propose des services de toilettage, spa et crèche pour chiens et chats à Paris 9, dans un cadre premium dédié au bien-être animal." />
 
-      <ShopTeaser products={finalProducts} />
+      <ShopTeaserV2 products={products} />
 
-      {services.length > 0 && <ServicesGrid services={services} preview />}
+      <ServicesV2 services={services} />
 
-      <GroomingSpotlight testimonials={groomingTestimonials} />
+      <GroomingSpotlightV2 testimonials={groomingTestimonials} />
 
-      <Values />
+      <ValuesV2 />
 
-      <HomeBlog posts={latestPosts} />
+      <HomeBlogV2 posts={latestPosts} />
 
-      {process.env.NEXT_PUBLIC_BEHOLD_FEED_ID && (
-        <InstagramFeed feedId={process.env.NEXT_PUBLIC_BEHOLD_FEED_ID} />
-      )}
+      {instagramFeedId && <InstagramFeedV2 feedId={instagramFeedId} />}
 
-      {settings && <InfoPratiques settings={settings} />}
+      {settings && <InfoPratiquesV2 settings={settings} />}
     </>
   )
 }

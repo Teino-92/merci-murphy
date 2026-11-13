@@ -5,6 +5,7 @@ import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { useCart } from '@/context/cart-context'
 import { Button } from '@/components/ui/button'
 import { formatPrice } from '@/lib/shopify'
+import { noOrphan } from '@/lib/typo'
 
 export function CartDrawer() {
   const { cart, isOpen, isLoading, closeCart, removeItem, updateItem } = useCart()
@@ -27,7 +28,7 @@ export function CartDrawer() {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-charcoal/10 px-6 py-4">
-          <h2 className="font-display text-xl font-bold text-charcoal">Mon panier</h2>
+          <h2 className="font-display text-xl font-bold text-charcoal">Mon panier</h2>
           <button
             onClick={closeCart}
             className="rounded-full p-1.5 text-charcoal/50 hover:bg-charcoal/10 hover:text-charcoal transition-colors"
@@ -40,7 +41,7 @@ export function CartDrawer() {
         {isEmpty ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
             <ShoppingBag className="h-16 w-16 text-charcoal/20" />
-            <p className="text-charcoal/50">Votre panier est vide.</p>
+            <p className="text-charcoal/50">Votre panier est vide.</p>
             <Button
               onClick={closeCart}
               variant="outline"
@@ -70,9 +71,11 @@ export function CartDrawer() {
 
                   {/* Info */}
                   <div className="flex flex-1 flex-col">
-                    <p className="font-medium text-charcoal leading-snug">{line.title}</p>
+                    <p className="font-medium text-charcoal leading-snug">{noOrphan(line.title)}</p>
                     {line.variantTitle !== 'Default Title' && (
-                      <p className="mt-0.5 text-sm text-charcoal/50">{line.variantTitle}</p>
+                      <p className="mt-0.5 text-sm text-charcoal/50">
+                        {noOrphan(line.variantTitle)}
+                      </p>
                     )}
                     {(() => {
                       const sub = parseFloat(line.subtotal.amount)
@@ -82,15 +85,17 @@ export function CartDrawer() {
                         <div className="mt-1">
                           <p className="flex items-baseline gap-2 font-semibold text-terracotta-dark">
                             <span>{formatPrice(line.discountedTotal)}</span>
-                            {hasDiscount && (
-                              <span className="text-xs text-charcoal/40 line-through">
-                                {formatPrice(line.subtotal)}
-                              </span>
+                            {noOrphan(
+                              hasDiscount && (
+                                <span className="text-xs text-charcoal/40 line-through">
+                                  {formatPrice(line.subtotal)}
+                                </span>
+                              )
                             )}
                           </p>
                           {hasDiscount && line.discounts.length > 0 && (
                             <p className="mt-0.5 text-xs font-medium text-terracotta-dark/80">
-                              {line.discounts.map((d) => d.title).join(' · ')}
+                              {noOrphan(line.discounts.map((d) => d.title).join(' · '))}
                             </p>
                           )}
                         </div>
@@ -168,7 +173,7 @@ export function CartDrawer() {
                 </span>
               </div>
               <p className="text-xs text-charcoal/40 text-center">
-                Frais de livraison calculés à la commande
+                Frais de livraison calculés à la commande
               </p>
               <a
                 href={cart?.checkoutUrl}

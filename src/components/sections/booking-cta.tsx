@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Phone, Calendar } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface BookingCtaProps {
   /** Renders the mobile sticky bottom bar variant instead of a single button */
@@ -13,6 +14,8 @@ interface BookingCtaProps {
   phone?: string
   /** Button label, defaults to "Prendre RDV" */
   label?: string
+  /** Classes du bouton desktop (variante non mobile uniquement). */
+  className?: string
 }
 
 /**
@@ -23,7 +26,12 @@ interface BookingCtaProps {
  * Desktop renders a single button; mobile renders a sticky bottom bar with
  * an "Appeler" button alongside.
  */
-export function BookingCta({ mobile = false, phone, label = 'Prendre RDV' }: BookingCtaProps) {
+export function BookingCta({
+  mobile = false,
+  phone,
+  label = 'Prendre RDV',
+  className,
+}: BookingCtaProps) {
   const [canBook, setCanBook] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -73,7 +81,11 @@ export function BookingCta({ mobile = false, phone, label = 'Prendre RDV' }: Boo
   }
 
   return (
-    <Button asChild size="lg" className="bg-terracotta-dark text-white hover:bg-terracotta-dark/90">
+    <Button
+      asChild
+      size="lg"
+      className={cn('bg-terracotta-dark text-white hover:bg-terracotta-dark/90', className)}
+    >
       <Link href={bookingHref}>{label}</Link>
     </Button>
   )

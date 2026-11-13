@@ -177,7 +177,7 @@ export async function submitLead(data: LeadFormData & Partial<AntiSpamInput>) {
 </td></tr>
 <tr><td style="padding:40px 48px;">
   <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1D164E;">Nouvelle demande de rappel</p>
-  <p style="margin:0 0 32px;font-size:14px;color:#888;">Service demandé : <strong style="color:#1D164E;">${esc(serviceLabel)}</strong></p>
+  <p style="margin:0 0 32px;font-size:14px;color:#888;">Service demandé : <strong style="color:#1D164E;">${esc(serviceLabel)}</strong></p>
   <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
     <tr><td>
       <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Client</p>
@@ -364,7 +364,7 @@ export async function submitRevendeurLead(data: RevendeurLeadFormData & Partial<
 </td></tr>
 <tr><td style="padding:40px 48px;">
   <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#1D164E;">Nouvelle demande revendeur</p>
-  <p style="margin:0 0 32px;font-size:14px;color:#888;">Type de commerce : <strong style="color:#1D164E;">${esc(commerceLabel)}</strong></p>
+  <p style="margin:0 0 32px;font-size:14px;color:#888;">Type de commerce : <strong style="color:#1D164E;">${esc(commerceLabel)}</strong></p>
   <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f5f0eb;border-radius:12px;padding:20px 24px;">
     <tr><td>
       <p style="margin:0 0 12px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.08em;">Enseigne</p>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { Section, Container } from '@/components/ui/section'
+
 import { ForgotPasswordForm } from '@/components/forms/forgot-password-form'
+import { AuthPageV2 } from '@/components/sections/auth-page-v2'
 
 export const metadata: Metadata = {
   title: 'Mot de passe oublié',
@@ -8,24 +9,13 @@ export const metadata: Metadata = {
   robots: { index: false },
 }
 
-export default function ForgotPasswordPage() {
+export default function MotDePasseOubliePage() {
   return (
-    <>
-      <div style={{ backgroundColor: '#B5A89A' }}>
-        <Section className="text-charcoal py-20">
-          <Container className="max-w-2xl text-center">
-            <h1 className="font-display text-4xl font-bold sm:text-6xl">Mot de passe oublié</h1>
-            <p className="mt-4 text-lg text-charcoal/60">
-              Entrez votre email et nous vous enverrons un lien de réinitialisation.
-            </p>
-          </Container>
-        </Section>
-      </div>
-      <Section className="bg-cream">
-        <Container className="max-w-sm">
-          <ForgotPasswordForm />
-        </Container>
-      </Section>
-    </>
+    <AuthPageV2
+      title="Mot de passe oublié"
+      intro="Entrez votre email et nous vous enverrons un lien de réinitialisation."
+    >
+      <ForgotPasswordForm />
+    </AuthPageV2>
   )
 }

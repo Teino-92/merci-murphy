@@ -231,7 +231,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
             )}
             {profileDogs.length === 1 && (
               <p className="text-xs text-gray-400">
-                Chien : <span className="font-medium text-gray-600">{profileDogs[0].name}</span>
+                Chien : <span className="font-medium text-gray-600">{profileDogs[0].name}</span>
               </p>
             )}
           </div>

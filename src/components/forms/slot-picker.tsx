@@ -15,6 +15,7 @@ import {
 import type { Profile, Dog } from '@/lib/auth-actions'
 import { ONLINE_BOOKABLE, BOOKING_HORIZON_DAYS } from '@/lib/booking-config'
 import { SERVICE_LABELS } from '@/lib/dog-constants'
+import { noOrphan } from '@/lib/typo'
 
 const SERVICE_ICON: Record<string, LucideIcon> = {
   toilettage: Scissors,
@@ -433,15 +434,16 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
       <div className="rounded-2xl bg-white border border-[#f0ebe3] p-8 text-center space-y-4">
         <div className="text-4xl">🐾</div>
         <h2 className="font-display text-xl font-bold text-charcoal">
-          Votre demande de rendez-vous est prise en compte !
+          Votre demande de rendez-vous est prise en compte !
         </h2>
         <p className="text-sm text-charcoal/60">
           {SERVICE_LABELS[confirmedService?.split('-')[0] ?? ''] ?? confirmedService}
-          {durationLabel} · {confirmedDate ? formatDateFr(confirmedDate) : ''} à {confirmedTime}
+          {durationLabel} · {confirmedDate ? formatDateFr(confirmedDate) : ''} à{' '}
+          {noOrphan(confirmedTime)}
         </p>
         <p className="text-xs text-charcoal/40">
           Nous avons bien pris en compte votre demande de rendez-vous. Le planning peut évoluer et
-          nous faisons au mieux pour nous adapter à vos disponibilités et à vos souhaits.
+          nous faisons au mieux pour nous adapter à vos disponibilités et à vos souhaits.
         </p>
         <button
           onClick={resetAll}
@@ -461,7 +463,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
     return (
       <div className="space-y-6">
         <p className="text-sm text-charcoal/50 text-center tracking-wide uppercase text-xs font-semibold">
-          Choisissez votre service
+          Choisissez votre service
         </p>
         {(() => {
           const row1 = visible.slice(0, 3)
@@ -524,7 +526,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
   if (step === 'dog') {
     return (
       <div className="space-y-4">
-        <h2 className="font-display text-xl font-bold text-charcoal">Pour quel chien ?</h2>
+        <h2 className="font-display text-xl font-bold text-charcoal">Pour quel chien ?</h2>
         <div className="space-y-2">
           {dogs.map((dog) => (
             <button
@@ -535,10 +537,10 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
               }}
               className="w-full text-left p-4 rounded-xl border border-charcoal/10 hover:border-terracotta-dark hover:bg-terracotta-dark/5 transition-colors"
             >
-              <p className="font-medium text-charcoal">{dog.name}</p>
-              {dog.breed && <p className="text-sm text-charcoal/60">{dog.breed}</p>}
+              <p className="font-medium text-charcoal">{noOrphan(dog.name)}</p>
+              {dog.breed && <p className="text-sm text-charcoal/60">{noOrphan(dog.breed)}</p>}
               {!dog.grooming_duration && (
-                <p className="text-xs text-red-400 mt-1">Durée de toilettage non définie</p>
+                <p className="text-xs text-red-400 mt-1">Durée de toilettage non définie</p>
               )}
             </button>
           ))}
@@ -572,7 +574,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
           </p>
         </div>
         <p className="text-sm text-charcoal/50 text-center tracking-wide uppercase text-xs font-semibold">
-          Choisissez votre toiletteur
+          Choisissez votre toiletteur
         </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {toiletteurs.map((t) => (
@@ -636,10 +638,10 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
             })()}
             {SERVICE_LABELS[selectedService?.split('-')[0] ?? ''] ?? selectedService}
             {selectedService === 'toilettage' && selectedStaffName ? ` · ${selectedStaffName}` : ''}
-            {isCreche && crecheDuration ? ` · ${crecheDuration / 60}h` : ''}
+            {noOrphan(isCreche && crecheDuration ? ` · ${crecheDuration / 60}h` : '')}
           </p>
         </div>
-        <p className="text-sm text-charcoal/60">Choisissez une date</p>
+        <p className="text-sm text-charcoal/60">Choisissez une date</p>
         <MonthCalendar
           onSelectDate={(date) => {
             setSelectedDate(date)
@@ -680,25 +682,27 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
         <p className="text-sm font-semibold text-charcoal">
           {selectedDate ? formatDateFr(selectedDate) : ''}
           {selectedService === 'toilettage' && selectedStaffName ? ` · ${selectedStaffName}` : ''}
-          {isCreche && crecheDuration ? ` · ${crecheDuration / 60}h` : ''}
+          {noOrphan(isCreche && crecheDuration ? ` · ${crecheDuration / 60}h` : '')}
         </p>
       </div>
 
       {slotsLoading && (
-        <p className="text-sm text-charcoal/40 text-center py-8">Chargement des créneaux…</p>
+        <p className="text-sm text-charcoal/40 text-center py-8">Chargement des créneaux…</p>
       )}
 
-      {slotsError && <p className="text-sm text-red-500 text-center py-4">{slotsError}</p>}
+      {slotsError && (
+        <p className="text-sm text-red-500 text-center py-4">{noOrphan(slotsError)}</p>
+      )}
 
       {!slotsLoading && !slotsError && !hasSlots && (
         <p className="text-sm text-charcoal/40 text-center py-8">
-          Aucun créneau disponible ce jour. Choisissez une autre date.
+          Aucun créneau disponible ce jour. Choisissez une autre date.
         </p>
       )}
 
       {!slotsLoading && hasSlots && (
         <>
-          <p className="text-sm text-charcoal/60">Choisissez un créneau</p>
+          <p className="text-sm text-charcoal/60">Choisissez un créneau</p>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             {isCreche
               ? crecheSlots.map((slot) => (
@@ -731,7 +735,9 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
 
           {(selectedSlot || selectedCrecheSlot) && (
             <div className="pt-2 space-y-3">
-              {confirmError && <p className="text-sm text-red-500 text-center">{confirmError}</p>}
+              {confirmError && (
+                <p className="text-sm text-red-500 text-center">{noOrphan(confirmError)}</p>
+              )}
               <button
                 onClick={() => {
                   if (isCreche && selectedCrecheSlot) {

@@ -5,14 +5,22 @@ import { ShopifyImage as Image } from '@/components/ui/shopify-image'
 import { formatPrice, type ShopifyProduct } from '@/lib/shopify'
 import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 import { useProductPromoBadge, useProductPromoPrice } from '@/context/promo-context'
+import { noOrphan } from '@/lib/typo'
 
 interface ProductCardProps {
   product: ShopifyProduct
   className?: string
   imageOverride?: [number, number] // [defaultIndex, hoverIndex] into images.nodes
+  /** Préfixe des fiches produit (BAT : /bat/shop). */
+  basePath?: string
 }
 
-export function ProductCard({ product, className, imageOverride }: ProductCardProps) {
+export function ProductCard({
+  product,
+  className,
+  imageOverride,
+  basePath = '/shop',
+}: ProductCardProps) {
   const catalogPrice = product.priceRange.minVariantPrice
   const nativeCompareAt = product.compareAtPriceRange?.minVariantPrice
   const promoBadge = useProductPromoBadge(product.tags)
@@ -35,7 +43,7 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
   const secondImage = imageOverride ? (nodes[imageOverride[1]] ?? null) : (nodes[1] ?? null)
 
   return (
-    <Link href={`/shop/${product.handle}`} className={cn('group flex flex-col', className)}>
+    <Link href={`${basePath}/${product.handle}`} className={cn('group flex flex-col', className)}>
       <div className="relative aspect-square overflow-hidden rounded-2xl bg-rose/20">
         {firstImage ? (
           <>
@@ -67,7 +75,7 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
           </>
         ) : (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-charcoal/30">Pas de photo</p>
+            <p className="text-sm text-charcoal/30">Pas de photo</p>
           </div>
         )}
         {!product.availableForSale && (
@@ -85,12 +93,16 @@ export function ProductCard({ product, className, imageOverride }: ProductCardPr
       </div>
       <div className="mt-3">
         <p className="text-sm font-medium text-charcoal line-clamp-2 group-hover:text-terracotta-dark transition-colors">
-          {product.title}
+          {noOrphan(product.title, 32, true)}
         </p>
         <p className="mt-1 flex items-baseline gap-2 text-sm">
           <span className="font-semibold text-terracotta-dark">{formatPrice(displayPrice)}</span>
-          {compareAt && (
-            <span className="text-xs text-charcoal/40 line-through">{formatPrice(compareAt)}</span>
+          {noOrphan(
+            compareAt && (
+              <span className="text-xs text-charcoal/40 line-through">
+                {formatPrice(compareAt)}
+              </span>
+            )
           )}
         </p>
       </div>

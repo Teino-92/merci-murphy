@@ -1,6 +1,19 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+
+import { FaqV2 } from '@/components/sections/faq-v2'
+import { PageHeaderV2 } from '@/components/sections/page-header-v2'
+import { Button } from '@/components/ui/button'
+import {
+  CONTAINER,
+  DisplayTitle,
+  FOCUS_RING,
+  INLINE_LINK,
+  TEXT_LINK,
+} from '@/components/ui/editorial'
+import { cn } from '@/lib/utils'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
+import { noOrphan } from '@/lib/typo'
 
 export const metadata: Metadata = {
   title: { absolute: 'Toiletteur chien Paris 9e — Toilettage sans stress | merci murphy®' },
@@ -32,106 +45,142 @@ export const metadata: Metadata = {
   },
 }
 
+const SPLIT = cn(
+  CONTAINER,
+  'grid grid-cols-1 gap-y-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2.1fr)] lg:gap-x-16'
+)
+const STICKY = 'lg:sticky lg:top-28 lg:self-start'
+
 const SERVICES = [
   {
     name: 'Toilettage maison POILUS®',
     slug: 'le-toilettage-maison-poilus-r',
     description:
       'Bain, séchage, coupe et mise en beauté par nos toiletteuses expertes. Méthode sans stress, adaptée à chaque race.',
-    keywords: 'toilettage chien Paris, salon de toilettage Paris 9',
   },
   {
     name: 'Bain libre-service',
     slug: 'le-bain-en-libre-service-maison-poilus-r',
     description:
-      'Baignoire professionnelle à votre disposition : shampoing fourni, séchage inclus. Idéal entre deux toilettages.',
-    keywords: 'bain chien Paris, bain libre-service chien Paris 9',
+      'Baignoire professionnelle à votre disposition : shampoing fourni, séchage inclus. Idéal entre deux toilettages.',
   },
   {
     name: 'Balnéothérapie',
     slug: 'balneo-maison-poilus-r',
     description:
       'Jacuzzi canin à jets pulsés pour soulager les douleurs articulaires, muscler et détendre votre chien.',
-    keywords: 'balnéo chien Paris, spa chien Paris 9',
   },
   {
     name: 'Massage bien-être',
     slug: 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
     description:
       'Séances de massage thérapeutique pour réduire le stress, améliorer la circulation et renforcer le lien.',
-    keywords: 'massage chien Paris, bien-être canin Paris',
   },
   {
     name: 'Crèche canine',
     slug: 'la-creche',
     description:
       'Garde en demi-journée encadrée par un éducateur canin. Socialisation, jeux et stimulation dans un environnement sécurisé.',
-    keywords: 'crèche chien Paris, garde chien Paris 9',
   },
   {
     name: 'Éducation canine',
     slug: 'l-education',
     description:
-      "Séances d'éducation positive pour un chien équilibré : rappel, marche en laisse, sociabilisation.",
-    keywords: 'éducation canine Paris, éducateur canin Paris 9',
+      "Séances d'éducation positive pour un chien équilibré : rappel, marche en laisse, sociabilisation.",
   },
   {
     name: 'Ostéopathie animale',
     slug: 'l-osteopathie',
     description:
       "Consultations d'ostéopathie pour chiens réalisées par un praticien certifié. Mobilité, posture, récupération.",
-    keywords: 'ostéopathie chien Paris, ostéopathe animal Paris',
   },
+]
+
+const REASONS = [
+  {
+    title: 'Une approche sans stress',
+    text: 'Nos équipes utilisent la méthode maison POILUS® : patience, douceur, techniques adaptées à chaque chien pour une expérience positive.',
+  },
+  {
+    title: 'Des experts passionnés',
+    text: 'Toiletteuses diplômées, éducateur canin certifié, ostéopathe animalier. Chaque professionnel est sélectionné pour son expertise et son amour des animaux.',
+  },
+  {
+    title: 'Un lieu premium au cœur de Paris',
+    text: 'Situé au 18 rue Victor Massé (75009), notre boutique allie esthétique soignée et fonctionnalité. Équipements professionnels, matériaux sains, espace pensé pour le confort animal.',
+  },
+  {
+    title: 'Une offre globale unique',
+    text: 'Du bain hebdomadaire au suivi ostéopathique mensuel, vous trouverez tout ce dont votre chien a besoin en un seul endroit, avec une équipe qui le connaît.',
+  },
+]
+
+const QUARTIERS = [
+  'Paris 9ème',
+  'Paris 18ème',
+  'Paris 10ème',
+  'Paris 2ème',
+  'Paris 1er',
+  'Pigalle',
+  'Montmartre',
+  'Opéra',
+  'République',
+  'Grands Boulevards',
+  'South Pigalle (SoPi)',
 ]
 
 const FAQ = [
   {
-    question: 'Où se trouve merci murphy® à Paris ?',
+    question: 'Où se trouve merci murphy® à Paris ?',
     answer:
       'merci murphy® est situé au 18 rue Victor Massé, Paris 75009, dans le quartier Pigalle et Notre-Dame-de-Lorette, accessible en métro (ligne 12, station Pigalle ou Saint-Georges).',
   },
   {
-    question: 'Quels services de toilettage proposez-vous pour les chiens à Paris ?',
+    question: 'Quels services de toilettage proposez-vous pour les chiens à Paris ?',
     answer:
       "Nous proposons le toilettage complet maison POILUS® (bain, coupe, mise en beauté), le bain libre-service, la balnéothérapie, le massage bien-être, la crèche canine, l'éducation positive et l'ostéopathie animale.",
   },
   {
-    question: 'Comment réserver un toilettage chien à Paris ?',
+    question: 'Comment réserver un toilettage chien à Paris ?',
     answer:
       'Vous pouvez réserver directement en ligne via notre formulaire de réservation sur mercimurphy.com, ou nous contacter par téléphone au 09 78 81 04 21.',
   },
   {
-    question: 'Acceptez-vous toutes les races de chiens ?',
+    question: 'Acceptez-vous toutes les races de chiens ?',
     answer:
-      'Oui, nous accueillons toutes les races. Nos toiletteuses sont formées aux spécificités de chaque type de pelage : longs, frisés, à poils durs ou ras.',
+      'Oui, nous accueillons toutes les races. Nos toiletteuses sont formées aux spécificités de chaque type de pelage : longs, frisés, à poils durs ou ras.',
   },
   {
-    question: "Qu'est-ce que la balnéothérapie pour chiens ?",
+    question: "Qu'est-ce que la balnéothérapie pour chiens ?",
     answer:
       'La balnéothérapie est un soin en jacuzzi à jets pulsés. Elle soulage les douleurs articulaires (arthrose, dysplasie), améliore la circulation sanguine et favorise la relaxation. Idéale pour les chiens senior ou sportifs.',
   },
   {
-    question: 'Proposez-vous une crèche canine à Paris ?',
+    question: 'Proposez-vous une crèche canine à Paris ?',
     answer:
       'Oui, notre crèche canine accueille les chiens en demi-journée. Ils sont encadrés par un éducateur canin diplômé dans un environnement sécurisé avec espace de jeux et de repos.',
   },
   {
-    question: 'Quels sont vos horaires ?',
+    question: 'Quels sont vos horaires ?',
     answer:
       'Nous sommes ouverts du mardi au samedi. Consultez notre page contact ou Google Maps pour les horaires exacts, qui peuvent varier selon les saisons.',
   },
   {
-    question: 'Y a-t-il un parking ou un accès facile en transports en commun ?',
+    question: 'Y a-t-il un parking ou un accès facile en transports en commun ?',
     answer:
       "Oui. Arrêt Pigalle (M12) et Saint-Georges (M12) à 5 minutes à pied. Accès Vélib' devant la boutique. Parking Pigalle à 200m.",
   },
   {
-    question: 'Vous cherchez un toiletteur pour chien autour de vous à Paris ?',
+    question: 'Vous cherchez un toiletteur pour chien autour de vous à Paris ?',
     answer:
       'Notre salon, au 18 rue Victor Massé (Paris 9e), est central et accessible depuis tout Paris. Nous recevons régulièrement des clients des 9ème, 18ème, 17ème, 10ème et 2ème arrondissements, ainsi que de Pigalle, Montmartre et Batignolles.',
   },
 ]
 
+/**
+ * Landing « toiletteur chien Paris » : ligne italique en surtitre, listes à
+ * filets, liens soulignés sans flèche.
+ */
 export default async function ToilettageChienParisPage() {
   const settings = await getSiteSettings()
 
@@ -240,213 +289,178 @@ export default async function ToilettageChienParisPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      <main className="bg-cream text-charcoal">
-        {/* Hero */}
-        <section className="px-4 py-20 sm:px-6 lg:px-8 bg-[#f5f0eb]">
-          <div className="mx-auto max-w-4xl text-center">
-            <p className="mb-4 text-sm font-medium uppercase tracking-widest text-terracotta-dark">
-              Paris 75009 · Pigalle · Saint-Georges
-            </p>
-            <h1 className="font-display text-4xl font-bold leading-tight text-charcoal sm:text-5xl lg:text-6xl">
-              Toiletteur chien
-              <br />
-              <span className="text-terracotta-dark">à Paris</span>
-            </h1>
-            <p className="mt-6 text-lg text-charcoal/70 max-w-2xl mx-auto">
-              merci murphy® est votre toiletteur chien à Paris 9e. Salon de toilettage premium rue
-              Victor Massé : toilettage complet, bain libre-service, balnéothérapie, massage, crèche
-              et éducation, tout sous un même toit.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href="/reservation"
-                className="inline-flex items-center justify-center rounded-md bg-terracotta-dark px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-terracotta-dark/90"
-              >
-                Réserver en ligne
-              </Link>
-              <Link
-                href="/services"
-                className="inline-flex items-center justify-center rounded-md border border-charcoal/20 px-8 py-3 text-sm font-medium text-charcoal transition-colors hover:bg-charcoal/5"
-              >
-                Voir tous les services
-              </Link>
-            </div>
-          </div>
-        </section>
+      <PageHeaderV2
+        title={
+          <>
+            Toiletteur chien
+            <br />à Paris
+          </>
+        }
+        sub="Paris 75009, Pigalle, Saint-Georges"
+        intro="merci murphy® est votre toiletteur chien à Paris 9e. Salon de toilettage premium rue Victor Massé : toilettage complet, bain libre-service, balnéothérapie, massage, crèche et éducation, tout sous un même toit."
+        image={{
+          src: '/avant-apres-1-apres.jpg',
+          alt: 'Un chien tout juste toiletté chez merci murphy®',
+          position: 'center 35%',
+        }}
+      >
+        <Button
+          asChild
+          size="lg"
+          className="h-12 self-start bg-terracotta-dark px-8 text-[15px] text-white hover:bg-terracotta-dark/90 sm:self-auto"
+        >
+          <Link href="/reservation">Réserver en ligne</Link>
+        </Button>
+        <Link href="/services" className={cn(TEXT_LINK.light, 'self-start sm:self-auto')}>
+          Voir tous les services
+        </Link>
+      </PageHeaderV2>
 
-        {/* Services */}
-        <section className="px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-              Nos services à Paris 9ème
-            </h2>
-            <p className="mt-3 text-charcoal/60">
+      <section className="bg-white py-16 lg:py-24">
+        <div className={SPLIT}>
+          <div className={STICKY}>
+            <DisplayTitle size="compact">Nos services à Paris 9ème</DisplayTitle>
+            <p className="mt-5 max-w-sm text-base leading-relaxed text-charcoal/70">
               Du toilettage quotidien aux soins thérapeutiques. Une offre complète pour le bien-être
-              de votre chien.
+              de votre chien.
             </p>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          </div>
+
+          <div>
+            <ul className="border-b border-charcoal/15">
               {SERVICES.map((service) => (
-                <Link
-                  key={service.slug}
-                  href={`/services/${service.slug}`}
-                  className="group rounded-xl border border-charcoal/10 bg-white p-6 transition-shadow hover:shadow-md"
-                >
-                  <h3 className="font-display text-lg font-semibold text-charcoal group-hover:text-terracotta-dark transition-colors">
-                    {service.name}
-                  </h3>
-                  <p className="mt-2 text-sm text-charcoal/60 leading-relaxed">
-                    {service.description}
-                  </p>
-                </Link>
+                <li key={service.slug} className="border-t border-charcoal/15">
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className={cn(
+                      'group grid grid-cols-1 gap-y-2 rounded-sm py-6 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-x-10 lg:py-7',
+                      FOCUS_RING
+                    )}
+                  >
+                    <h3 className="font-display text-xl leading-snug text-charcoal transition-colors group-hover:text-terracotta-dark lg:text-2xl">
+                      {noOrphan(service.name)}
+                    </h3>
+                    <p className="text-base leading-relaxed text-charcoal/70">
+                      {noOrphan(service.description)}
+                    </p>
+                  </Link>
+                </li>
               ))}
-            </div>
-            <p className="mt-8 text-sm text-charcoal/70">
+            </ul>
+            <p className="mt-8 text-base leading-relaxed text-charcoal/70">
               Prix par gabarit et type de poil, du bain à l&apos;épilation&nbsp;:{' '}
-              <Link
-                href="/services/le-toilettage-maison-poilus-r#tarifs"
-                className="font-medium text-terracotta-dark hover:underline"
-              >
+              <Link href="/services/le-toilettage-maison-poilus-r#tarifs" className={INLINE_LINK}>
                 voir les tarifs du toilettage chien
               </Link>
               .
             </p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Why merci murphy */}
-        <section className="bg-[#f5f0eb] px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-              Pourquoi choisir notre salon de toilettage à Paris ?
-            </h2>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2">
-              {[
-                {
-                  title: 'Une approche sans stress',
-                  text: 'Nos équipes utilisent la méthode maison POILUS® : patience, douceur, techniques adaptées à chaque chien pour une expérience positive.',
-                },
-                {
-                  title: 'Des experts passionnés',
-                  text: 'Toiletteuses diplômées, éducateur canin certifié, ostéopathe animalier. Chaque professionnel est sélectionné pour son expertise et son amour des animaux.',
-                },
-                {
-                  title: 'Un lieu premium au cœur de Paris',
-                  text: 'Situé au 18 rue Victor Massé (75009), notre boutique allie esthétique soignée et fonctionnalité. Équipements professionnels, matériaux sains, espace pensé pour le confort animal.',
-                },
-                {
-                  title: 'Une offre globale unique',
-                  text: 'Du bain hebdomadaire au suivi ostéopathique mensuel, vous trouverez tout ce dont votre chien a besoin en un seul endroit, avec une équipe qui le connaît.',
-                },
-              ].map((item) => (
-                <div key={item.title}>
-                  <h3 className="font-display text-xl font-semibold text-charcoal">{item.title}</h3>
-                  <p className="mt-2 text-sm text-charcoal/65 leading-relaxed">{item.text}</p>
-                </div>
-              ))}
-            </div>
+      <section className="bg-[#4F6072] py-16 lg:py-24">
+        <div className={SPLIT}>
+          <div className={STICKY}>
+            <DisplayTitle size="compact" surface="slate">
+              Pourquoi choisir notre salon de toilettage à Paris&nbsp;?
+            </DisplayTitle>
           </div>
-        </section>
 
-        {/* Quartiers desservis */}
-        <section className="px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-              Toilettage chien : quartiers proches de Paris 75009
-            </h2>
-            <p className="mt-3 text-sm text-charcoal/60 max-w-2xl">
+          <div className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+            {REASONS.map((item) => (
+              <div key={item.title} className="border-t border-cream/20 py-7 lg:py-8">
+                <h3 className="font-display text-xl leading-snug text-cream lg:text-2xl">
+                  {noOrphan(item.title)}
+                </h3>
+                <p className="mt-3 text-base leading-relaxed text-cream/80">
+                  {noOrphan(item.text)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cream py-16 lg:py-24">
+        <div className={SPLIT}>
+          <div className={STICKY}>
+            <DisplayTitle size="compact">
+              Toilettage chien&nbsp;: quartiers proches de Paris 75009
+            </DisplayTitle>
+          </div>
+
+          <div>
+            <p className="max-w-2xl text-base leading-relaxed text-charcoal/70 lg:text-lg">
               Notre salon est facilement accessible depuis tous les arrondissements de Paris. Nous
-              accueillons régulièrement des clients venant du 9ème, 18ème, 10ème, 2ème et 1er
-              arrondissement.
+              accueillons régulièrement des clients venant du 9ème, 18ème, 10ème, 2ème et
+              1er arrondissement.
             </p>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {[
-                'Paris 9ème',
-                'Paris 18ème',
-                'Paris 10ème',
-                'Paris 2ème',
-                'Paris 1er',
-                'Pigalle',
-                'Montmartre',
-                'Opéra',
-                'République',
-                'Grands Boulevards',
-                'South Pigalle (SoPi)',
-              ].map((q) => (
+            <ul className="mt-8 grid grid-cols-2 gap-x-5 border-b border-charcoal/15 sm:gap-x-10 xl:grid-cols-3">
+              {QUARTIERS.map((q) => (
                 <li
                   key={q}
-                  className="rounded-full border border-charcoal/15 px-3 py-1 text-xs text-charcoal/70"
+                  className="border-t border-charcoal/15 py-3 font-display text-lg leading-snug text-charcoal"
                 >
-                  {q}
+                  {noOrphan(q)}
                 </li>
               ))}
             </ul>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-6">
-              <Link
-                href="/creche-canine-paris"
-                className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
-              >
-                Crèche canine à Paris →
+            <div className="mt-8 flex flex-col gap-y-4 sm:flex-row sm:gap-x-9">
+              <Link href="/creche-canine-paris" className={cn(TEXT_LINK.light, 'self-start')}>
+                Crèche canine à Paris
               </Link>
-              <Link
-                href="/toilettage-chat-paris"
-                className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
-              >
-                Toilettage chat à Paris →
+              <Link href="/toilettage-chat-paris" className={cn(TEXT_LINK.light, 'self-start')}>
+                Toilettage chat à Paris
               </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* FAQ */}
-        <section className="bg-[#f5f0eb] px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
-              Questions fréquentes sur notre salon de toilettage Paris
-            </h2>
-            <dl className="mt-10 divide-y divide-charcoal/10">
-              {FAQ.map((item) => (
-                <div key={item.question} className="py-6">
-                  <dt className="font-display text-lg font-semibold text-charcoal">
-                    {item.question}
-                  </dt>
-                  <dd className="mt-2 text-sm text-charcoal/65 leading-relaxed">{item.answer}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </section>
+      <FaqV2
+        items={FAQ.map((f) => ({ question: f.question, reponse: f.answer }))}
+        title="Questions fréquentes sur notre salon de toilettage Paris"
+      />
 
-        {/* CTA final */}
-        <section className="px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-bold text-charcoal sm:text-4xl">
+      <section className="bg-[#B5A89A] py-16 lg:py-24">
+        <div
+          className={cn(
+            CONTAINER,
+            'flex flex-col gap-y-8 lg:flex-row lg:items-end lg:justify-between lg:gap-x-16'
+          )}
+        >
+          <div className="max-w-2xl">
+            <DisplayTitle size="compact" surface="taupe">
               Prenez rendez-vous pour votre chien à Paris
-            </h2>
-            <p className="mt-4 text-charcoal/65">
-              Réservez en ligne en 2 minutes : toilettage, bain, massage ou crèche.
-              <br />
-              18 rue Victor Massé, Paris 75009 · 09 78 81 04 21
+            </DisplayTitle>
+            <p className="mt-5 text-base leading-relaxed text-charcoal/80 lg:text-lg">
+              Réservez en ligne en 2 minutes : toilettage, bain, massage ou crèche.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href="/reservation"
-                className="inline-flex items-center justify-center rounded-md bg-terracotta-dark px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-terracotta-dark/90"
-              >
-                Réserver en ligne
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-md border border-charcoal/20 px-8 py-3 text-sm font-medium text-charcoal transition-colors hover:bg-charcoal/5"
-              >
-                Nous contacter
-              </Link>
-            </div>
-            <p className="mt-6 text-xs text-charcoal/40">
-              Métro Pigalle (L12) · Saint-Georges (L12) · Vélib&apos; devant la boutique
+            <p className="mt-4 text-base leading-relaxed text-charcoal/80">
+              <span className="block">18 rue Victor Massé, Paris 75009</span>
+              <a href="tel:+33978810421" className={cn(INLINE_LINK, 'inline-block')}>
+                09 78 81 04 21
+              </a>
+            </p>
+            <p className="mt-4 text-sm text-charcoal/70">
+              Métro Pigalle (L12) et Saint-Georges (L12), Vélib&apos; devant la boutique
             </p>
           </div>
-        </section>
-      </main>
+
+          <div className="flex flex-col gap-y-5 sm:flex-row sm:items-center sm:gap-x-9">
+            <Button
+              asChild
+              size="lg"
+              className="h-12 self-start bg-charcoal px-8 text-[15px] text-cream hover:bg-charcoal/90 sm:self-auto"
+            >
+              <Link href="/reservation">Réserver en ligne</Link>
+            </Button>
+            <Link href="/contact" className={cn(TEXT_LINK.taupe, 'self-start sm:self-auto')}>
+              Nous contacter
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   )
 }

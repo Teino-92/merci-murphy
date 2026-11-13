@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
-import { getAllCollections, getCollectionByHandle } from '@/lib/shopify'
-import { Section, Container } from '@/components/ui/section'
-import { ShopCatalog } from '@/components/shop/shop-catalog'
-import { ShopManifesto } from '@/components/shop/shop-manifesto'
+
+import { PageHeaderV2 } from '@/components/sections/page-header-v2'
 import { ProBanner } from '@/components/shop/pro-banner'
-import { BLUR_PLACEHOLDER } from '@/lib/utils'
+import { ShopCatalogV2 } from '@/components/shop/shop-catalog-v2'
+import { ShopManifestoV2 } from '@/components/shop/shop-manifesto-v2'
+import { CONTAINER, SUB_LINE, SUB_TONE, TEXT_LINK } from '@/components/ui/editorial'
+import { getAllCollections, getCollectionByHandle } from '@/lib/shopify'
+import { cn } from '@/lib/utils'
 
 export const revalidate = 3600
 
@@ -18,16 +19,14 @@ export const metadata: Metadata = {
   },
 }
 
+const COLLECTION_ORDER = ['merci murphy', 'chien', 'chat', 'petshop']
+
 export default async function ShopPage() {
   const collections = await getAllCollections()
-
-  // Fetch chaque collection avec ses produits ordonnés (MANUAL)
   const collectionsWithProducts = await Promise.all(
     collections.map((c) => getCollectionByHandle(c.handle))
   )
 
-  // Produits "Tout voir" : dédoublonné dans l'ordre COLLECTION_ORDER
-  const COLLECTION_ORDER = ['merci murphy', 'chien', 'chat', 'petshop']
   const sortedCollections = [...collectionsWithProducts].sort((a, b) => {
     const ai = COLLECTION_ORDER.findIndex((t) => a?.title.toLowerCase().includes(t))
     const bi = COLLECTION_ORDER.findIndex((t) => b?.title.toLowerCase().includes(t))
@@ -42,45 +41,49 @@ export default async function ShopPage() {
       return true
     })
 
+  const collectionProducts = Object.fromEntries(
+    collectionsWithProducts.flatMap((c) => (c ? [[c.handle, c.products.nodes]] : []))
+  )
+
+  // <main> : fourni en prod par le layout (shop), pas de <main> ici.
   return (
     <>
-      {/* Manifesto */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
-        <Section className="text-charcoal py-12">
-          <Container className="max-w-6xl">
-            <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:items-end">
-              <ShopManifesto />
+      <PageHeaderV2
+        // Même texte de h1 qu'en prod ; la seconde moitié passe en ligne italique.
+        title={
+          <>
+            Boutique merci murphy®{' '}
+            <span className={cn(SUB_LINE, SUB_TONE.light, 'mt-4 lg:mt-6')}>
+              éthique &amp; éco-responsable pour chiens et chats
+            </span>
+          </>
+        }
+        intro={
+          // La suite du texte prod (« Nos achats ont un sens… ») ouvre la section engagements.
+          <p>merci murphy®, c&apos;est aussi un dog shop engagé.</p>
+        }
+        image={{
+          src: '/boutique-hero.jpg',
+          alt: 'La boutique merci murphy®',
+        }}
+        imageDesktopOnly
+      >
+        <a href="#engagements" className={cn(TEXT_LINK.light, 'self-start')}>
+          Nos engagements
+        </a>
+      </PageHeaderV2>
 
-              {/* Mobile only — products shelf below manifesto */}
-              <div className="lg:hidden mt-6 relative w-full aspect-[3/1] overflow-hidden rounded-2xl lg:order-3">
-                <Image
-                  src="/boutique-products.jpg"
-                  alt="Produits merci murphy®"
-                  fill
-                  placeholder="blur"
-                  blurDataURL={BLUR_PLACEHOLDER}
-                  className="object-cover object-[center_calc(50%+40px)]"
-                  sizes="100vw"
-                />
-              </div>
-            </div>
-          </Container>
-        </Section>
-      </div>
-
-      <Section className="bg-cream">
-        <Container>
-          <ShopCatalog
+      <section className="border-t border-charcoal/15 bg-white pb-20 pt-10 lg:pb-28 lg:pt-14">
+        <div className={CONTAINER}>
+          <ShopCatalogV2
             collections={collections}
             allProducts={allProducts}
-            collectionProducts={Object.fromEntries(
-              collectionsWithProducts
-                .filter((c) => c !== null)
-                .map((c) => [c!.handle, c!.products.nodes])
-            )}
+            collectionProducts={collectionProducts}
           />
-        </Container>
-      </Section>
+        </div>
+      </section>
+
+      <ShopManifestoV2 />
 
       <ProBanner />
     </>

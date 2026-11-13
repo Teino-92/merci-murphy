@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
         <div className="bg-white rounded-2xl p-8 shadow-xl">
           {success ? (
             <div className="text-center">
-              <p className="text-lg font-semibold text-[#4F6072]">Mot de passe mis à jour !</p>
+              <p className="text-lg font-semibold text-[#4F6072]">Mot de passe mis à jour !</p>
               <p className="mt-2 text-sm text-gray-500">Redirection en cours…</p>
             </div>
           ) : (
