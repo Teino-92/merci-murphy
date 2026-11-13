@@ -81,7 +81,9 @@ export default async function ContactPage() {
         image={{
           src: '/contact-hero.jpg',
           alt: 'merci murphy® — vitrine',
-          position: '55% center',
+          position: '50% center',
+          // Paysage : le lettrage « merci murphy » occupe ~70 % de la largeur.
+          aspect: 'aspect-[5/4]',
         }}
       >
         <a href="#ecrire" className={cn(TEXT_LINK.light, 'self-start')}>
