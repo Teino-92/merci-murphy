@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { finalizeSignup } from '@/lib/signup-finalize'
 
 function safeNext(raw: string | null): string {
   if (!raw) return '/'
@@ -28,6 +29,12 @@ export async function GET(request: Request) {
   if (authError) {
     return NextResponse.redirect(new URL('/compte/connexion?error=auth', origin))
   }
+
+  // First confirmation of a self-service signup: create profile + dog now
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (user) await finalizeSignup(user)
 
   return NextResponse.redirect(new URL(next, origin))
 }
