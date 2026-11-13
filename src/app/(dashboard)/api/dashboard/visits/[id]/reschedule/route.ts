@@ -121,7 +121,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             dogName: firstDog?.name ?? null,
             serviceName,
             newDate: formattedDate,
-            acceptUrl: `${BASE_URL}/api/booking/visit-respond?token=${respondToken}`,
+            acceptUrl: `${BASE_URL}/booking/respond/confirm?kind=visit&token=${respondToken}`,
           }),
         })
         .catch(() => {})
