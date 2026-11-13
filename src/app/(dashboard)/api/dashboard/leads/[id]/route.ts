@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin, updateLeadStatus } from '@/lib/supabase-admin'
@@ -8,6 +9,18 @@ import { Resend } from 'resend'
 import { randomBytes } from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+
+const LeadStatusSchema = z.enum(['new', 'contacted', 'confirmed', 'cancelled'])
+
+// Payment link goes straight into a client email: https only
+const DepositSchema = z.object({
+  depositAmount: z.coerce.number().positive().max(10000),
+  paymentUrl: z
+    .string()
+    .max(500)
+    .url()
+    .refine((u) => new URL(u).protocol === 'https:', 'Lien https requis'),
+})
 
 const SERVICE_LABELS: Record<string, string> = {
   toilettage: 'Toilettage',
@@ -32,15 +45,22 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   // ── Cas 1 : simple changement de statut ──────────────────────────────────
   if (body.status && !body.action) {
-    await updateLeadStatus(params.id, body.status)
+    const status = LeadStatusSchema.safeParse(body.status)
+    if (!status.success) return NextResponse.json({ error: 'Statut invalide' }, { status: 400 })
+    await updateLeadStatus(params.id, status.data)
     return NextResponse.json({ ok: true })
   }
 
   // ── Cas 2 : proposer un créneau ──────────────────────────────────────────
   if (body.action === 'propose') {
     const { proposedDate, proposedTime } = body
-    if (!proposedDate || !proposedTime)
-      return NextResponse.json({ error: 'Date/heure manquante' }, { status: 400 })
+    if (
+      typeof proposedDate !== 'string' ||
+      typeof proposedTime !== 'string' ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(proposedDate) ||
+      !/^\d{2}:\d{2}$/.test(proposedTime)
+    )
+      return NextResponse.json({ error: 'Date/heure invalide' }, { status: 400 })
 
     const { data: lead } = await supabaseAdmin
       .from('leads')
@@ -96,9 +116,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   // ── Cas 3 : envoyer demande d'acompte ────────────────────────────────────
   if (body.action === 'send-deposit') {
-    const { depositAmount, paymentUrl } = body
-    if (!depositAmount || !paymentUrl)
-      return NextResponse.json({ error: 'Montant ou lien manquant' }, { status: 400 })
+    const deposit = DepositSchema.safeParse(body)
+    if (!deposit.success)
+      return NextResponse.json({ error: 'Montant ou lien invalide' }, { status: 400 })
+    const { depositAmount, paymentUrl } = deposit.data
 
     const { data: lead } = await supabaseAdmin
       .from('leads')

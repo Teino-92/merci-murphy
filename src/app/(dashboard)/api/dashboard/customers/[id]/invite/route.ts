@@ -32,7 +32,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   })
 
   if (resetError) {
-    return NextResponse.json({ error: resetError.message }, { status: 500 })
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true })

@@ -61,7 +61,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .eq('id', params.id)
 
   if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 })
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 
   const slugBase = visit.service.split('-')[0]

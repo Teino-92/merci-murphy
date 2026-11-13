@@ -39,7 +39,7 @@ export async function addDog(data: z.infer<typeof DogSchema>) {
     photo_url: parsed.data.photo_url || null,
   })
 
-  if (error) return { success: false, error: error.message }
+  if (error) return { success: false, error: 'Une erreur est survenue.' }
 
   revalidatePath('/compte')
   return { success: true }
@@ -71,7 +71,7 @@ export async function updateDog(dogId: string, data: z.infer<typeof DogSchema>) 
     .eq('id', dogId)
     .eq('owner_id', user.id)
 
-  if (error) return { success: false, error: error.message }
+  if (error) return { success: false, error: 'Une erreur est survenue.' }
 
   revalidatePath('/compte')
   return { success: true }

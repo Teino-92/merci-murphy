@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     .order('date')
     .order('time')
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
 
   // Fetch profile names
   const profileIds = Array.from(new Set((data ?? []).map((v) => v.profile_id)))
