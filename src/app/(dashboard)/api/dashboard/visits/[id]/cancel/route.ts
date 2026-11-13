@@ -17,7 +17,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     .update({ status: 'cancelled' })
     .eq('id', params.id)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
 
   return NextResponse.json({ ok: true })
 }

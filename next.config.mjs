@@ -55,6 +55,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'behold.pictures' },
       { protocol: 'https', hostname: 'cdn2.behold.pictures' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'cdn.brandfetch.io' },
     ],
   },
 }

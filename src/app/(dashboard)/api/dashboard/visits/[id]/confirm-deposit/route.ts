@@ -53,7 +53,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     })
     .eq('id', params.id)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
 
   await sendPushToStaff('deposit-paid', {
     service: SERVICE_LABELS[visit.service.split('-')[0]] ?? visit.service,

@@ -15,7 +15,13 @@ import { noOrphan } from '@/lib/typo'
 
 interface GroomingSpotlightV2Props {
   testimonials: Testimonial[]
+  /** Lien de la fiche Google (siteSettings.google_maps_url). */
+  googleUrl?: string
 }
+
+// Mis à jour à la main depuis la fiche Google.
+const GOOGLE_RATING = 5
+const GOOGLE_REVIEW_COUNT = 60
 
 const SERVICE_HREF = '/services/le-toilettage-maison-poilus-r'
 
@@ -30,7 +36,7 @@ const STRIPES =
  * hors cadre (écho de l'aplat rose du hero). Les avis passent du carrousel à
  * une liste à filets.
  */
-export function GroomingSpotlightV2({ testimonials }: GroomingSpotlightV2Props) {
+export function GroomingSpotlightV2({ testimonials, googleUrl }: GroomingSpotlightV2Props) {
   return (
     <section className="overflow-hidden bg-cream py-16 lg:py-24">
       <div className={CONTAINER}>
@@ -101,6 +107,25 @@ export function GroomingSpotlightV2({ testimonials }: GroomingSpotlightV2Props) 
             <h3 className="font-display text-2xl leading-tight text-charcoal lg:text-[1.75rem]">
               Ce qu&apos;en disent nos clients
             </h3>
+            <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-charcoal/70">
+              <span>
+                <span aria-hidden="true" className="tracking-[0.2em] text-terracotta-dark">
+                  {'★'.repeat(GOOGLE_RATING)}
+                </span>
+                <span className="sr-only">Note Google : {GOOGLE_RATING} sur 5, </span>{' '}
+                {GOOGLE_RATING}/5 · {GOOGLE_REVIEW_COUNT} avis Google
+              </span>
+              {googleUrl && (
+                <a
+                  href={googleUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={TEXT_LINK.light}
+                >
+                  Voir la fiche Google
+                </a>
+              )}
+            </p>
 
             {/* Pas de gap-x : les filets doivent rester continus d'une colonne à l'autre. */}
             <ul className={cn(RULED_LIST, 'mt-6 grid grid-cols-1 lg:grid-cols-2')}>

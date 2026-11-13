@@ -2,30 +2,32 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { sendPushToStaff } from '@/lib/push'
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const token = searchParams.get('token')
-  const action = searchParams.get('action')
+const TOKEN_RE = /^[a-f0-9]{64}$/
 
-  if (!token || action !== 'accept') {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
-  }
+// Email links: never mutate on GET (link scanners), send to the confirmation page.
+export async function GET(req: NextRequest) {
+  const dest = new URL('/booking/respond/confirm', req.url)
+  dest.searchParams.set('kind', 'lead')
+  dest.searchParams.set('token', req.nextUrl.searchParams.get('token') ?? '')
+  return NextResponse.redirect(dest, 303)
+}
+
+export async function POST(req: NextRequest) {
+  const invalid = NextResponse.redirect(new URL('/booking/respond/invalid', req.url), 303)
+  const form = await req.formData().catch(() => null)
+  const token = form?.get('token')
+  if (typeof token !== 'string' || !TOKEN_RE.test(token)) return invalid
 
   const { data: lead, error } = await supabaseAdmin
     .from('leads')
-    .select('id, status, respond_token, proposed_date, proposed_time, service, user_id, email')
+    .select('id, status, proposed_date, proposed_time, service, user_id, email')
     .eq('respond_token', token)
     .single()
 
-  if (error || !lead) {
-    return NextResponse.redirect(new URL('/booking/respond/invalid', req.url))
-  }
+  if (error || !lead || lead.status === 'cancelled') return invalid
 
-  if (lead.status === 'cancelled') {
-    return NextResponse.redirect(new URL('/booking/respond/expired', req.url))
-  }
-
-  await supabaseAdmin
+  // Consume the token atomically: a double submit must not create two visits
+  const { data: consumed } = await supabaseAdmin
     .from('leads')
     .update({
       client_response: 'accepted',
@@ -33,6 +35,9 @@ export async function GET(req: NextRequest) {
       respond_token: null,
     })
     .eq('id', lead.id)
+    .eq('respond_token', token)
+    .select('id')
+  if (!consumed || consumed.length === 0) return invalid
 
   // Crée la visite si on a les infos nécessaires
   if (lead.proposed_date && lead.proposed_time) {
@@ -75,5 +80,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL('/booking/respond/accepted', req.url))
+  return NextResponse.redirect(new URL('/booking/respond/accepted', req.url), 303)
 }

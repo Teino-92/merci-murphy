@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 
   if (error) {
     console.error('Cron reminder query error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 
   if (!visits || visits.length === 0) {

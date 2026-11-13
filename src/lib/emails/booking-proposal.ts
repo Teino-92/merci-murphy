@@ -11,7 +11,7 @@ export function bookingProposalHtml(params: {
 }): string {
   const { clientName, dogName, serviceName, proposedDate, token } = params
 
-  const acceptUrl = `${BASE_URL}/api/booking/respond?token=${token}&action=accept`
+  const acceptUrl = `${BASE_URL}/booking/respond/confirm?kind=lead&token=${token}`
   const declineUrl = `${BASE_URL}/booking/respond/decline?token=${token}`
 
   const subject = dogName

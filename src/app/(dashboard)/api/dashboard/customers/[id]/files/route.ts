@@ -24,7 +24,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   const { data, error } = await supabaseAdmin.storage.from(BUCKET).list(params.id, {
     sortBy: { column: 'created_at', order: 'desc' },
   })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
 
   const files = await Promise.all(
     (data ?? []).map(async (file) => {
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .from(BUCKET)
     .upload(path, bytes, { contentType: file.type || `application/${ext}`, upsert: false })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
 
   const { data: signed } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(path, 3600)
 
@@ -81,7 +81,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   const { name } = await req.json()
   const path = `${params.id}/${name}`
   const { error } = await supabaseAdmin.storage.from(BUCKET).remove([path])
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
 
   return NextResponse.json({ ok: true })
 }

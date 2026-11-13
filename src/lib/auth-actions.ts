@@ -6,9 +6,11 @@ import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { Resend } from 'resend'
-import { accountWelcomeHtml } from '@/lib/emails/account-welcome'
+import { accountConfirmHtml } from '@/lib/emails/account-confirm'
+import type { PendingSignup } from '@/lib/signup-finalize'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercimurphy.com'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -34,16 +36,19 @@ const SignUpSchema = z.object({
     .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
     .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
-  prenom: z.string().min(1),
-  nom: z.string().min(1),
-  telephone: z.string().regex(/^\+\d+\s[\d\s]{6,}$/, 'Numéro de téléphone invalide'),
+  prenom: z.string().trim().min(1).max(80),
+  nom: z.string().trim().min(1).max(80),
+  telephone: z
+    .string()
+    .max(30)
+    .regex(/^\+\d+\s[\d\s]{6,}$/, 'Numéro de téléphone invalide'),
   newsletter_subscribed: z.boolean().optional(),
   // Dog fields
-  dog_name: z.string().min(1, 'Le prénom du chien est requis'),
-  dog_breed: z.string().optional(),
-  dog_age: z.string().optional(),
-  dog_poids: z.string().optional(),
-  dog_etat_poil: z.string().optional(),
+  dog_name: z.string().trim().min(1, 'Le prénom du chien est requis').max(60),
+  dog_breed: z.string().max(80).optional(),
+  dog_age: z.string().max(30).optional(),
+  dog_poids: z.string().max(30).optional(),
+  dog_etat_poil: z.string().max(60).optional(),
 })
 
 export type SignUpData = z.infer<typeof SignUpSchema>
@@ -53,83 +58,56 @@ export async function signUp(data: SignUpData) {
   if (!parsed.success)
     return { success: false, error: parsed.error.issues[0]?.message ?? 'Données invalides.' }
 
-  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+  // The account stays unconfirmed until the address owner clicks the link.
+  // Profile + dog are created in /auth/callback (finalizeSignup), never before.
+  const pending: PendingSignup = {
+    prenom: parsed.data.prenom,
+    nom: parsed.data.nom,
+    telephone: parsed.data.telephone,
+    newsletter_subscribed: parsed.data.newsletter_subscribed ?? false,
+    dog_name: parsed.data.dog_name,
+    dog_breed: parsed.data.dog_breed ?? null,
+    dog_age: parsed.data.dog_age ?? null,
+    dog_poids: parsed.data.dog_poids ?? null,
+    dog_etat_poil: parsed.data.dog_etat_poil ?? null,
+  }
+
+  const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'signup',
     email: parsed.data.email,
     password: parsed.data.password,
-    email_confirm: true,
+    options: { data: { signup: pending } },
   })
 
-  if (authError || !authData.user) {
-    if (
-      authError?.message.includes('already registered') ||
-      authError?.message.includes('already been registered')
-    ) {
-      return { success: false, error: 'Cet email est déjà utilisé. Veuillez vous connecter.' }
+  if (linkError || !linkData.properties?.hashed_token) {
+    const alreadyExists =
+      linkError?.message.includes('already registered') ||
+      linkError?.message.includes('already been registered')
+    if (!alreadyExists) {
+      // eslint-disable-next-line no-console
+      console.error('[signUp] generateLink failed:', linkError)
+      return { success: false, error: 'Erreur lors de la création du compte.' }
     }
-    return { success: false, error: 'Erreur lors de la création du compte.' }
+    // Same response as a fresh signup: don't reveal which addresses have an account
+    return { success: true }
   }
 
-  const userId = authData.user.id
-  const newsletterSubscribed = parsed.data.newsletter_subscribed ?? false
-  const fullNom = `${parsed.data.prenom} ${parsed.data.nom}`.trim()
+  const confirmUrl = new URL('/auth/callback', SITE_URL)
+  confirmUrl.searchParams.set('token_hash', linkData.properties.hashed_token)
+  confirmUrl.searchParams.set('type', 'signup')
+  confirmUrl.searchParams.set('next', '/compte')
 
-  const { error: profileError } = await supabaseAdmin.from('profiles').insert({
-    id: userId,
-    nom: fullNom,
-    telephone: parsed.data.telephone,
-    newsletter_subscribed: newsletterSubscribed,
-  })
-
-  if (profileError) {
-    await supabaseAdmin.auth.admin.deleteUser(userId)
-    return { success: false, error: `Erreur profil: ${profileError.message}` }
-  }
-
-  const { error: dogError } = await supabaseAdmin.from('dogs').insert({
-    owner_id: userId,
-    name: parsed.data.dog_name,
-    breed: parsed.data.dog_breed ?? null,
-    age: parsed.data.dog_age ?? null,
-    poids: parsed.data.dog_poids ?? null,
-    etat_poil: parsed.data.dog_etat_poil ?? null,
-  })
-
-  if (dogError) {
-    await supabaseAdmin.from('profiles').delete().eq('id', userId)
-    await supabaseAdmin.auth.admin.deleteUser(userId)
-    return { success: false, error: `Erreur chien: ${dogError.message}` }
-  }
-
-  // Subscribe to newsletter if opted in
-  if (newsletterSubscribed) {
-    await Promise.resolve(
-      supabaseAdmin
-        .from('newsletter_subscribers')
-        .upsert({ email: parsed.data.email, active: true }, { onConflict: 'email' })
-    ).catch(() => {})
-    if (process.env.RESEND_AUDIENCE_ID) {
-      await resend.contacts
-        .create({
-          email: parsed.data.email,
-          audienceId: process.env.RESEND_AUDIENCE_ID,
-          unsubscribed: false,
-        })
-        .catch(() => {})
-    }
-  }
-
-  // Welcome email
-  const prenom = parsed.data.prenom
   const { error: emailError } = await resend.emails.send({
-    from: `merci murphy® <${process.env.RESEND_NEWSLETTER_FROM ?? process.env.RESEND_AUTH_FROM}>`,
+    from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
-    subject: `Bienvenue chez merci murphy®, ${prenom}`,
-    html: accountWelcomeHtml(prenom, parsed.data.dog_name),
+    subject: 'Confirmez votre adresse email — merci murphy®',
+    html: accountConfirmHtml(parsed.data.prenom, confirmUrl.toString()),
   })
 
   if (emailError) {
     // eslint-disable-next-line no-console
-    console.error('[signUp] welcome email failed:', emailError)
+    console.error('[signUp] confirmation email failed:', emailError)
+    return { success: false, error: "Impossible d'envoyer l'email de confirmation." }
   }
 
   return { success: true }
@@ -179,7 +157,12 @@ export async function getProfile(): Promise<Profile | null> {
   if (!user) return null
 
   // Use admin client to bypass RLS — user identity already verified above
-  const { data } = await supabaseAdmin.from('profiles').select('*').eq('id', user.id).single()
+  // Explicit columns: internal fields (notes) must never reach the browser
+  const { data } = await supabaseAdmin
+    .from('profiles')
+    .select('id, nom, telephone, can_book, admission_passed, newsletter_subscribed')
+    .eq('id', user.id)
+    .single()
   if (!data) return null
 
   // Reconcile newsletter_subscribed with the newsletter_subscribers table —

@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
@@ -17,6 +18,16 @@ const SERVICE_LABELS: Record<string, string> = {
   creche: 'Crèche',
 }
 
+// Payment link goes straight into a client email: https only, sane length
+const DepositSchema = z.object({
+  depositAmount: z.coerce.number().positive().max(10000),
+  paymentUrl: z
+    .string()
+    .max(500)
+    .url()
+    .refine((u) => new URL(u).protocol === 'https:', 'Lien https requis'),
+})
+
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = await createSupabaseServerClient()
   const {
@@ -26,10 +37,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!hasDashboardAccess(user.email))
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { depositAmount, paymentUrl } = await req.json()
-  if (!depositAmount || Number(depositAmount) <= 0 || !paymentUrl) {
-    return NextResponse.json({ error: 'Montant ou lien manquant' }, { status: 400 })
+  const body = DepositSchema.safeParse(await req.json().catch(() => null))
+  if (!body.success) {
+    return NextResponse.json({ error: 'Montant ou lien invalide' }, { status: 400 })
   }
+  const { depositAmount, paymentUrl } = body.data
 
   const { data: visit, error: fetchError } = await supabaseAdmin
     .from('visits')

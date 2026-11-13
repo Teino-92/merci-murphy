@@ -11,6 +11,8 @@ interface PageHeaderImage {
   alt: string
   /** object-position CSS, pour cadrer le sujet dans le format portrait. */
   position?: string
+  /** Classe Tailwind de ratio du cadre (défaut : portrait 4:5). */
+  aspect?: string
   /** URL issue de urlFor() : passe par le loader Sanity (srcset léger en mobile). */
   sanity?: boolean
   blurDataURL?: string
@@ -86,7 +88,12 @@ export function PageHeaderV2({
               className="absolute bottom-[18%] left-[38%] top-0 -z-10 w-screen bg-rose"
             />
 
-            <div className="relative ml-10 aspect-[4/5] w-[78%] overflow-hidden sm:ml-16 sm:w-[60%] lg:ml-0 lg:w-[88%]">
+            <div
+              className={cn(
+                'relative ml-10 w-[78%] overflow-hidden sm:ml-16 sm:w-[60%] lg:ml-0 lg:w-[88%]',
+                image.aspect ?? 'aspect-[4/5]'
+              )}
+            >
               <HeaderImage
                 src={image.src}
                 alt={image.alt}

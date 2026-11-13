@@ -35,6 +35,7 @@ import { ValuesV2 } from '@/components/sections/values-v2'
 import { getCollectionByHandle } from '@/lib/shopify'
 import { getLatestPosts } from '@/sanity/queries/posts'
 import { getAllServices } from '@/sanity/queries/services'
+import { PopUpGaleriesLafayette } from '@/components/sections/popup-galeries-lafayette'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { getGroomingTestimonials } from '@/sanity/queries/testimonials'
 
@@ -280,11 +281,16 @@ export default async function HomePage() {
 
       <ServicesV2 services={services} />
 
-      <GroomingSpotlightV2 testimonials={groomingTestimonials} />
+      <GroomingSpotlightV2
+        testimonials={groomingTestimonials}
+        googleUrl={settings?.google_maps_url}
+      />
 
       <ValuesV2 />
 
       <HomeBlogV2 posts={latestPosts} />
+
+      <PopUpGaleriesLafayette />
 
       {instagramFeedId && <InstagramFeedV2 feedId={instagramFeedId} />}
 

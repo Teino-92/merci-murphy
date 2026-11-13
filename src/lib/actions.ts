@@ -304,7 +304,12 @@ const RevendeurLeadSchema = z.object({
     .regex(/^[\d\s]*$/, 'SIRET invalide.')
     .optional()
     .or(z.literal('')),
-  site_web: z.string().max(200).optional().or(z.literal('')),
+  site_web: z
+    .string()
+    .max(200)
+    .regex(/^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i, 'Site web invalide.')
+    .optional()
+    .or(z.literal('')),
   message: z.string().max(3000).optional(),
 })
 

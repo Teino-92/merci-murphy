@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,14 +14,12 @@ import { BreedCombobox } from '@/components/ui/breed-combobox'
 import { signUp, type SignUpData } from '@/lib/auth-actions'
 import { COUNTRY_PREFIXES } from '@/lib/phone-prefixes'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
-import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { CheckCircle } from 'lucide-react'
 import { noOrphan } from '@/lib/typo'
 
 const STEPS = ['Vos coordonnées', 'Votre compte', 'Votre chien']
 
 export function SignUpForm() {
-  const router = useRouter()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -61,14 +58,9 @@ export function SignUpForm() {
       setError(result.error ?? 'Une erreur est survenue.')
       return
     }
-    // Auto sign-in then redirect
-    const supabase = createSupabaseBrowserClient()
-    await supabase.auth.signInWithPassword({
-      email: form.email!,
-      password: form.password!,
-    })
+    // Account is activated only once the address is confirmed by email
+    setLoading(false)
     setDone(true)
-    router.push('/compte')
   }
 
   if (done) {
