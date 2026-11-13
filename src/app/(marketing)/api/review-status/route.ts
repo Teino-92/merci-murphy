@@ -28,13 +28,23 @@ export async function GET() {
   if (visit) return NextResponse.json({ isClient: true })
 
   // Sinon, une demande confirmée rattachée au compte ou à son email.
-  const { data: lead } = await supabaseAdmin
+  // Two plain .eq() queries: never interpolate user data into a PostgREST .or() filter
+  const { data: byUser } = await supabaseAdmin
     .from('leads')
     .select('id')
     .eq('status', 'confirmed')
-    .or(`user_id.eq.${user.id},email.eq.${user.email}`)
+    .eq('user_id', user.id)
+    .limit(1)
+    .maybeSingle()
+  if (byUser || !user.email) return NextResponse.json({ isClient: Boolean(byUser) })
+
+  const { data: byEmail } = await supabaseAdmin
+    .from('leads')
+    .select('id')
+    .eq('status', 'confirmed')
+    .eq('email', user.email)
     .limit(1)
     .maybeSingle()
 
-  return NextResponse.json({ isClient: Boolean(lead) })
+  return NextResponse.json({ isClient: Boolean(byEmail) })
 }

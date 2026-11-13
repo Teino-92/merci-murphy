@@ -1,5 +1,5 @@
 // src/lib/emails/deposit-request.ts
-import { emailHtml, btn, p } from './base'
+import { emailHtml, btn, p, esc } from './base'
 
 export function depositRequestHtml(params: {
   clientName: string
@@ -12,8 +12,8 @@ export function depositRequestHtml(params: {
   const { clientName, dogName, serviceName, appointmentDate, depositAmount, paymentUrl } = params
   const prenom = clientName.split(' ')[0]
   const subject = dogName
-    ? `le rendez-vous de <strong>${dogName}</strong> ${appointmentDate} chez merci murphy pour son ${serviceName.toLowerCase()}`
-    : `votre rendez-vous ${appointmentDate} chez merci murphy pour le ${serviceName.toLowerCase()}`
+    ? `le rendez-vous de <strong>${esc(dogName)}</strong> ${appointmentDate} chez merci murphy pour son ${esc(serviceName.toLowerCase())}`
+    : `votre rendez-vous ${appointmentDate} chez merci murphy pour le ${esc(serviceName.toLowerCase())}`
 
   return emailHtml({
     title: 'Confirmez votre réservation — merci murphy®',

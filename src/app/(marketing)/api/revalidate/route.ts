@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { createHash, timingSafeEqual } from 'crypto'
+
+// Constant-time comparison (hash first so lengths always match)
+function secretMatches(given: string | null, expected: string | undefined): boolean {
+  if (!given || !expected) return false
+  const a = createHash('sha256').update(given).digest()
+  const b = createHash('sha256').update(expected).digest()
+  return timingSafeEqual(a, b)
+}
 
 export async function POST(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret')
+  // Header preferred; query param kept for existing webhook configs
+  const secret = req.headers.get('x-revalidate-secret') ?? req.nextUrl.searchParams.get('secret')
 
-  if (secret !== process.env.SHOPIFY_REVALIDATE_SECRET) {
+  if (!secretMatches(secret, process.env.SHOPIFY_REVALIDATE_SECRET)) {
     return NextResponse.json({ message: 'Invalid secret' }, { status: 401 })
   }
 
