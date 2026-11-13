@@ -11,7 +11,7 @@ const EVENT_URL =
 // Sans client ID, on retombe sur le nom en texte.
 const BRANDFETCH_CLIENT_ID = process.env.NEXT_PUBLIC_BRANDFETCH_CLIENT_ID
 const LOGO_URL = BRANDFETCH_CLIENT_ID
-  ? `https://cdn.brandfetch.io/galerieslafayette.com/w/400/h/80/theme/light/logo?c=${BRANDFETCH_CLIENT_ID}`
+  ? `https://cdn.brandfetch.io/galerieslafayette.com/w/800/h/160/theme/light/logo?c=${BRANDFETCH_CLIENT_ID}`
   : null
 
 /**
@@ -44,18 +44,21 @@ export function PopUpGaleriesLafayette() {
             className="mt-3 font-display text-3xl leading-tight text-charcoal lg:text-4xl"
           >
             {LOGO_URL ? (
-              <>
-                merci murphy® s&apos;installe aux
+              // Colonne à la largeur du texte : le logo se centre sous la phrase.
+              <span className="inline-flex flex-col items-center">
+                <span>merci murphy® s&apos;installe aux</span>
                 <span className="sr-only"> Galeries Lafayette</span>
                 <Image
                   src={LOGO_URL}
                   alt=""
-                  width={400}
-                  height={80}
+                  width={800}
+                  height={160}
                   unoptimized
-                  className="mt-4 block h-10 w-auto lg:h-12"
+                  // brightness-0 : logo forcé en noir, quelle que soit la
+                  // variante servie par Brandfetch.
+                  className="mt-5 block h-14 w-auto max-w-full brightness-0 lg:h-20"
                 />
-              </>
+              </span>
             ) : (
               <>merci murphy® s&apos;installe aux Galeries Lafayette</>
             )}
