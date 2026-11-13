@@ -179,7 +179,12 @@ export async function getProfile(): Promise<Profile | null> {
   if (!user) return null
 
   // Use admin client to bypass RLS — user identity already verified above
-  const { data } = await supabaseAdmin.from('profiles').select('*').eq('id', user.id).single()
+  // Explicit columns: internal fields (notes) must never reach the browser
+  const { data } = await supabaseAdmin
+    .from('profiles')
+    .select('id, nom, telephone, can_book, admission_passed, newsletter_subscribed')
+    .eq('id', user.id)
+    .single()
   if (!data) return null
 
   // Reconcile newsletter_subscribed with the newsletter_subscribers table —

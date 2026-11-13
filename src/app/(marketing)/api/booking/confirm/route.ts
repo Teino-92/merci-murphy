@@ -4,9 +4,20 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { SERVICE_DURATIONS, SERVICE_BUFFER } from '@/lib/booking-config'
 import { bookingConfirmedHtml } from '@/lib/emails/booking-confirmed'
 import { sendPushToStaff } from '@/lib/push'
+import { computeBookableSlots } from '@/lib/booking-availability'
+import { esc } from '@/lib/emails/base'
 import { Resend } from 'resend'
+import { z } from 'zod'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+
+const bodySchema = z.object({
+  serviceSlug: z.string().min(1).max(50),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  timeUtc: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  staffId: z.string().min(1).max(64).nullable().optional(),
+  dogId: z.string().min(1).max(64).nullable().optional(),
+})
 
 function timeToMinutes(t: string): number {
   const [h, m] = t.split(':').map(Number)
@@ -20,38 +31,60 @@ export async function POST(req: NextRequest) {
   } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const {
-    serviceSlug,
-    date,
-    timeUtc,
-    staffId,
-    duration: durationOverride,
-    dogId,
-  } = await req.json()
-
-  if (!serviceSlug || !date || !timeUtc) {
+  const parsed = bodySchema.safeParse(await req.json().catch(() => null))
+  if (!parsed.success) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
+  const { serviceSlug, date, timeUtc, staffId, dogId } = parsed.data
 
   const slugBase = serviceSlug.split('-')[0] as keyof typeof SERVICE_DURATIONS
 
   // Crèche has no staff assignment; all other services require staffId
-  let staffName: string | null = null
-  if (slugBase !== 'creche') {
-    if (!staffId) return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-    const { data: staffRow } = await supabaseAdmin
-      .from('staff')
-      .select('name')
-      .eq('id', staffId)
-      .single()
-    if (!staffRow) return NextResponse.json({ error: 'Staff not found' }, { status: 404 })
-    staffName = staffRow.name
+  if (slugBase !== 'creche' && !staffId) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
-  // Resolve duration
+  // Any dog referenced must belong to the caller
+  let dogName: string | null = null
+  let dogGroomingDuration: number | null = null
+  if (dogId) {
+    const { data: dog } = await supabaseAdmin
+      .from('dogs')
+      .select('name, grooming_duration')
+      .eq('id', dogId)
+      .eq('owner_id', user.id)
+      .single()
+    if (!dog) return NextResponse.json({ error: 'Chien introuvable.' }, { status: 404 })
+    dogName = dog.name
+    dogGroomingDuration = dog.grooming_duration ?? null
+  }
+
+  // Resolve duration server-side only (never from the request body)
   let duration: number = SERVICE_DURATIONS[slugBase] ?? 0
-  if (duration === 0) duration = durationOverride ?? 0
+  if (slugBase === 'toilettage') duration = dogGroomingDuration ?? 0
   if (duration <= 0) return NextResponse.json({ error: 'Duration required' }, { status: 400 })
+
+  // Re-run the exact availability rules used to display slots
+  const availability = await computeBookableSlots({
+    userId: user.id,
+    slugBase,
+    dateStr: date,
+    duration,
+    staffId: slugBase === 'creche' ? null : staffId,
+  })
+  if (!availability.ok) {
+    return NextResponse.json({ error: availability.error }, { status: availability.status })
+  }
+  const slot = availability.slots.find(
+    (s) => s.timeUtc === timeUtc && (slugBase === 'creche' || s.staffId === staffId)
+  )
+  if (!slot) {
+    return NextResponse.json(
+      { error: "Ce créneau n'est plus disponible. Merci d'en choisir un autre." },
+      { status: 409 }
+    )
+  }
+  const staffName: string | null = slot.staffName ?? null
 
   // Get user profile
   const { data: profile } = await supabaseAdmin
@@ -60,19 +93,7 @@ export async function POST(req: NextRequest) {
     .eq('id', user.id)
     .single()
 
-  let dogName: string | null = null
-  if (slugBase === 'toilettage' && dogId) {
-    const { data: dog } = await supabaseAdmin
-      .from('dogs')
-      .select('name, grooming_duration')
-      .eq('id', dogId)
-      .eq('owner_id', user.id)
-      .single()
-    if (dog) {
-      dogName = dog.name
-      if (dog.grooming_duration && !durationOverride) duration = dog.grooming_duration
-    }
-  } else {
+  if (!dogId) {
     const { data: firstDog } = await supabaseAdmin
       .from('dogs')
       .select('name')
@@ -164,7 +185,7 @@ export async function POST(req: NextRequest) {
   if (visitError) {
     // eslint-disable-next-line no-console
     console.error('Visit insert error:', visitError)
-    return NextResponse.json({ error: visitError.message }, { status: 500 })
+    return NextResponse.json({ error: 'Erreur lors de la réservation.' }, { status: 500 })
   }
 
   const [hh, mm] = timeUtc.split(':')
@@ -231,12 +252,16 @@ export async function POST(req: NextRequest) {
         await resend.emails.send({
           from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
           to: internalEmail,
-          subject: `Nouveau toilettage — ${profile?.nom ?? user.email}${dogLine} · ${appointmentDate}`,
+          subject:
+            `Nouveau toilettage — ${profile?.nom ?? user.email}${dogLine} · ${appointmentDate}`.replace(
+              /[\r\n]/g,
+              ' '
+            ),
           html: `<p>Un toilettage a été réservé en ligne :</p>
 <ul>
-  <li><strong>Client :</strong> ${profile?.nom ?? user.email}${dogLine}</li>
-  <li><strong>Email :</strong> ${user.email}</li>
-  <li><strong>Prestataire :</strong> ${staffName}</li>
+  <li><strong>Client :</strong> ${esc(profile?.nom ?? user.email)}${esc(dogLine)}</li>
+  <li><strong>Email :</strong> ${esc(user.email)}</li>
+  <li><strong>Prestataire :</strong> ${esc(staffName)}</li>
   <li><strong>Date :</strong> ${appointmentDate}</li>
   <li><strong>Durée :</strong> ${duration} min</li>
 </ul>
