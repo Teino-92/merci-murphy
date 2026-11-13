@@ -15,6 +15,7 @@ import { submitLead, type LeadFormData } from '@/lib/actions'
 import { useAntiSpam } from '@/hooks/use-anti-spam'
 import { CheckCircle } from 'lucide-react'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
+import { noOrphan } from '@/lib/typo'
 
 const SERVICES = [
   { value: 'toilettage', label: 'Toilettage' },
@@ -85,9 +86,10 @@ export function ReservationForm({
     return (
       <div className="flex flex-col items-center py-12 text-center">
         <CheckCircle className="h-16 w-16 text-rose" />
-        <h2 className="mt-6 font-display text-2xl font-bold text-charcoal">Demande envoyée !</h2>
+        <h2 className="mt-6 font-display text-2xl font-bold text-charcoal">Demande envoyée !</h2>
         <p className="mt-3 text-charcoal/60">
-          Notre équipe vous rappellera dans les plus brefs délais pour confirmer votre rendez-vous.
+          Notre équipe vous rappellera dans les plus brefs délais pour confirmer{' '}
+          <span className="whitespace-nowrap">votre rendez-vous.</span>
         </p>
       </div>
     )
@@ -106,7 +108,7 @@ export function ReservationForm({
             <p
               className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta-dark' : 'text-charcoal/40'}`}
             >
-              {label}
+              {noOrphan(label)}
             </p>
           </div>
         ))}
@@ -117,7 +119,7 @@ export function ReservationForm({
         <div className="space-y-4">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-charcoal">
-              Quel service souhaitez-vous ?
+              Quel service souhaitez-vous ?
             </label>
             <Select value={form.service} onValueChange={(v) => set('service', v)}>
               <SelectTrigger>
@@ -269,7 +271,7 @@ export function ReservationForm({
               onChange={(e) => set('message', e.target.value)}
             />
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-red-500">{noOrphan(error)}</p>}
           <div className="flex gap-3">
             <Button variant="outline" onClick={prev} className="flex-1">
               Retour

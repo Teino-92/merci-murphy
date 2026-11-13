@@ -107,7 +107,7 @@ export function CustomerDetail({
   }
 
   async function deleteDogForCustomer(dogId: string) {
-    if (!confirm('Supprimer ce chien ?')) return
+    if (!confirm('Supprimer ce chien ?')) return
     await fetch(`/api/dashboard/customers/${profile.id}/dogs/${dogId}`, { method: 'DELETE' })
     router.refresh()
   }
@@ -273,7 +273,7 @@ export function CustomerDetail({
   }
 
   async function deleteCustomer() {
-    if (!confirm('Supprimer définitivement ce client ?')) return
+    if (!confirm('Supprimer définitivement ce client ?')) return
     setDeleting(true)
     await fetch(`/api/dashboard/customers/${profile.id}/profile`, { method: 'DELETE' })
     router.push('/dashboard/customers')
@@ -362,7 +362,7 @@ export function CustomerDetail({
   }
 
   async function deleteVisit(visitId: string) {
-    if (!confirm('Supprimer cette visite ?')) return
+    if (!confirm('Supprimer cette visite ?')) return
     await fetch(`/api/dashboard/customers/${profile.id}/visits/${visitId}`, { method: 'DELETE' })
     setVisits((v) => v.filter((x) => x.id !== visitId))
   }
@@ -384,7 +384,7 @@ export function CustomerDetail({
   }
 
   async function deleteFile(name: string) {
-    if (!confirm('Supprimer ce fichier ?')) return
+    if (!confirm('Supprimer ce fichier ?')) return
     await fetch(`/api/dashboard/customers/${profile.id}/files`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -643,33 +643,33 @@ export function CustomerDetail({
                       </div>
                       {dog.breed && (
                         <p>
-                          <span className="text-gray-400">Race :</span> {dog.breed}
+                          <span className="text-gray-400">Race :</span> {dog.breed}
                         </p>
                       )}
                       {dog.age && (
                         <p>
-                          <span className="text-gray-400">Âge :</span> {dog.age}
+                          <span className="text-gray-400">Âge :</span> {dog.age}
                         </p>
                       )}
                       {dog.poids && (
                         <p>
-                          <span className="text-gray-400">Poids :</span> {dog.poids}
+                          <span className="text-gray-400">Poids :</span> {dog.poids}
                         </p>
                       )}
                       {dog.etat_poil && (
                         <p>
-                          <span className="text-gray-400">Poil :</span> {dog.etat_poil}
+                          <span className="text-gray-400">Poil :</span> {dog.etat_poil}
                         </p>
                       )}
                       {dog.numero_puce && (
                         <p>
-                          <span className="text-gray-400">N° puce :</span>{' '}
+                          <span className="text-gray-400">N° puce :</span>{' '}
                           <span className="font-mono text-xs">{dog.numero_puce}</span>
                         </p>
                       )}
                       {dog.grooming_duration && (
                         <p>
-                          <span className="text-gray-400">Durée séance :</span>{' '}
+                          <span className="text-gray-400">Durée séance :</span>{' '}
                           <span className="font-medium text-[#1D164E]">
                             {dog.grooming_duration} min
                           </span>

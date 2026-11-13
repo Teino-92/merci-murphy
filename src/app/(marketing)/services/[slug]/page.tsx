@@ -1,24 +1,33 @@
-export const revalidate = 3600
-
-import { notFound } from 'next/navigation'
 import { toPlainText } from '@portabletext/toolkit'
-import { SanityImage as Image } from '@/components/ui/sanity-image'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
+import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
+import { BookingCta } from '@/components/sections/booking-cta'
+import { FaqV2 } from '@/components/sections/faq-v2'
+import { PageHeaderV2 } from '@/components/sections/page-header-v2'
+import { PortableText } from '@/components/sections/portable-text'
+import { formatTitle } from '@/components/sections/services-v2'
+import { ShopTeaserV2 } from '@/components/sections/shop-teaser-v2'
+import { TarifsToilettageTable } from '@/components/sections/tarifs-toilettage'
+import {
+  CONTAINER,
+  DisplayTitle,
+  FOCUS_RING,
+  RULED_ITEM,
+  RULED_LIST,
+  TEXT_LINK,
+} from '@/components/ui/editorial'
+import { getProductsByHandles } from '@/lib/shopify'
+import { blurDataURL, cn } from '@/lib/utils'
+import { urlFor } from '@/sanity/client'
+import { getAllPublishedSeoPages, type SeoPageSummary } from '@/sanity/queries/seo-pages'
 import { getAllServices, getServiceBySlug, type TarifsToilettage } from '@/sanity/queries/services'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
-import { getAllPublishedSeoPages, type SeoPageSummary } from '@/sanity/queries/seo-pages'
-import { urlFor } from '@/sanity/client'
-import { getProductsByHandles } from '@/lib/shopify'
-import { BLUR_PLACEHOLDER } from '@/lib/utils'
-import { Section, Container } from '@/components/ui/section'
-import { PortableText } from '@/components/sections/portable-text'
-import { FaqAccordion } from '@/components/sections/faq-accordion'
-import { TarifsToilettageTable } from '@/components/sections/tarifs-toilettage'
-import { ServiceShopTeaser } from '@/components/sections/service-shop-teaser'
-import { BookingCta } from '@/components/sections/booking-cta'
-import { BeforeAfterSlider } from '@/components/sections/before-after-slider'
-import { Reveal } from '@/components/ui/reveal'
+import { noOrphan } from '@/lib/typo'
+
+export const revalidate = 3600
 
 const BAINS_SHOP_HANDLES = [
   'shampoing',
@@ -26,6 +35,12 @@ const BAINS_SHOP_HANDLES = [
   'spray-demelant-pour-chiens-et-chats',
   'apres-shampooing-adoucissant-et-demelant-pour-chiens-et-chats',
   'dog-cologne',
+]
+
+const TOILETTAGE_SLUG = 'le-toilettage-maison-poilus-r'
+const BAINS_SLUGS = [
+  'le-bain-en-libre-service-maison-poilus-r',
+  'les-bains-en-libre-service-maison-poilus-r',
 ]
 
 /**
@@ -49,7 +64,6 @@ function pickDiverseRaces(races: SeoPageSummary[], limit: number): SeoPageSummar
     if (picked.length === limit) return picked
   }
 
-  // Complète si pas assez de combinaisons distinctes
   for (const race of leftovers) {
     if (picked.length === limit) break
     picked.push(race)
@@ -57,7 +71,6 @@ function pickDiverseRaces(races: SeoPageSummary[], limit: number): SeoPageSummar
   return picked
 }
 
-// Avant/après pour Maison Poilus
 const BEFORE_AFTER_PAIRS = [
   {
     before: { src: '/avant-apres-1-avant.jpg', alt: 'Avant toilettage' },
@@ -92,6 +105,44 @@ const BEFORE_AFTER_PAIRS = [
   },
 ]
 
+// Fourchette de prix (€) des prestations principales, pour l'Offer JSON-LD.
+function getTarifsPriceRange(data: TarifsToilettage): { low: number; high: number } | null {
+  const prices = (data.gabarits ?? [])
+    .flatMap((g) => g.lignes)
+    .flatMap((l) => [l.bain, l.bainCoupe, l.bainEpilation])
+    .flatMap((p) => (p ? (p.match(/\d+/g) ?? []).map(Number) : []))
+  if (prices.length === 0) return null
+  return { low: Math.min(...prices), high: Math.max(...prices) }
+}
+
+function getApprocheTitle(slug: string, isBains: boolean) {
+  if (isBains) return 'Prenez soin de votre loulou à votre rythme'
+  if (slug === 'la-creche') return "Vous bossez, il s'éclate !"
+  if (slug === 'balneo-maison-poilus-r') {
+    return 'Offrez à votre chien un moment de bien-être profond grâce à la balnéothérapie'
+  }
+  if (slug === 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar') {
+    return 'Offrez à votre chien un véritable moment de bien-être'
+  }
+  if (slug === 'l-osteopathie')
+    return 'Ostéopathie structurelle, fonctionnelle, viscérale et crânienne'
+  return 'Notre approche'
+}
+
+function getDerouleTitle(slug: string, isBains: boolean) {
+  if (isBains) return 'Partagez un vrai moment de complicité avec votre chien'
+  if (slug === 'la-creche') return "Les conditions d'admission"
+  return 'Le déroulé du rendez-vous'
+}
+
+// Titre collant à gauche, contenu à droite : même grille que la home v2.
+const SPLIT = cn(
+  CONTAINER,
+  'grid grid-cols-1 gap-y-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2.1fr)] lg:gap-x-16'
+)
+const STICKY = 'lg:sticky lg:top-28 lg:self-start'
+const BODY = 'max-w-2xl text-base lg:text-lg'
+
 interface Props {
   params: { slug: string }
 }
@@ -117,23 +168,12 @@ const SEO_META_OVERRIDES: Record<string, { title: string; description: string }>
   },
 }
 
-// Fourchette de prix (€) des prestations principales, pour l'Offer JSON-LD.
-// Les prix Sanity sont des chaînes libres : « 50€ », « A partir de 60€ », « 70 - 90€ ».
-function getTarifsPriceRange(data: TarifsToilettage): { low: number; high: number } | null {
-  const prices = (data.gabarits ?? [])
-    .flatMap((g) => g.lignes)
-    .flatMap((l) => [l.bain, l.bainCoupe, l.bainEpilation])
-    .flatMap((p) => (p ? (p.match(/\d+/g) ?? []).map(Number) : []))
-  if (prices.length === 0) return null
-  return { low: Math.min(...prices), high: Math.max(...prices) }
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const service = await getServiceBySlug(params.slug)
   if (!service) return {}
+
   const url = `https://mercimurphy.com/services/${params.slug}`
   const image = service.image ? urlFor(service.image).width(1200).height(630).url() : undefined
-
   const override = SEO_META_OVERRIDES[params.slug]
   const title = override?.title ?? service.title
   const description = override?.description ?? service.description
@@ -153,11 +193,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ServicePage({ params }: Props) {
-  const isBains =
-    params.slug === 'le-bain-en-libre-service-maison-poilus-r' ||
-    params.slug === 'les-bains-en-libre-service-maison-poilus-r'
-
-  const isToilettage = params.slug === 'le-toilettage-maison-poilus-r'
+  const isBains = BAINS_SLUGS.includes(params.slug)
+  const isToilettage = params.slug === TOILETTAGE_SLUG
 
   const [service, settings, bainsProducts, allSeoRaces] = await Promise.all([
     getServiceBySlug(params.slug),
@@ -168,7 +205,6 @@ export default async function ServicePage({ params }: Props) {
 
   if (!service) notFound()
 
-  // Aperçu de 6 races max, diversifiées par type de poil + gabarit
   const seoRaces = pickDiverseRaces(allSeoRaces, 6)
 
   const imageUrl = service.image
@@ -177,6 +213,7 @@ export default async function ServicePage({ params }: Props) {
 
   const pageUrl = `https://mercimurphy.com/services/${params.slug}`
   const priceRange = service.tarifsToilettage ? getTarifsPriceRange(service.tarifsToilettage) : null
+  const hasTarifs = Boolean(service.tarifsToilettage) || (service.tarifs?.length ?? 0) > 0
 
   const serviceLd = {
     '@context': 'https://schema.org',
@@ -261,248 +298,216 @@ export default async function ServicePage({ params }: Props) {
         />
       )}
 
-      {/* Header */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
-        {imageUrl && (
-          <Image
-            src={imageUrl}
-            alt={service.title}
-            fill
-            priority
-            placeholder="blur"
-            blurDataURL={BLUR_PLACEHOLDER}
-            sizes="100vw"
-            className={`object-cover opacity-80 ${params.slug === 'le-toilettage-maison-poilus-r' ? 'object-top' : 'object-center'}`}
-          />
+      <PageHeaderV2
+        title={formatTitle(service.title)}
+        intro={<p>{noOrphan(service.description)}</p>}
+        image={
+          imageUrl
+            ? {
+                src: imageUrl,
+                alt: service.title,
+                position: isToilettage ? 'center top' : undefined,
+                sanity: true,
+                blurDataURL: service.image?.dominantColor
+                  ? blurDataURL(service.image.dominantColor)
+                  : undefined,
+              }
+            : undefined
+        }
+      >
+        <BookingCta
+          label={service.cta?.label}
+          className="h-12 self-start px-8 text-[15px] sm:self-auto"
+        />
+        {hasTarifs && (
+          <Link href="#tarifs" className={cn(TEXT_LINK.light, 'self-start sm:self-auto')}>
+            Voir les tarifs
+          </Link>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-charcoal/10 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
-          <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
-            {service.title}
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-            {service.description}
-          </p>
-        </div>
-      </div>
+      </PageHeaderV2>
 
-      {/* Approche */}
       {service.approche && service.approche.length > 0 && (
-        <Section className="bg-cream">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                {isBains
-                  ? 'Prenez soin de votre loulou à votre rythme'
-                  : params.slug === 'la-creche'
-                    ? "Vous bossez, il s'éclate !"
-                    : params.slug === 'balneo-maison-poilus-r'
-                      ? 'Offrez à votre chien un moment de bien-être profond grâce à la balnéothérapie'
-                      : params.slug === 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar'
-                        ? 'Offrez à votre chien un véritable moment de bien-être'
-                        : params.slug === 'l-osteopathie'
-                          ? 'Ostéopathie structurelle, fonctionnelle, viscérale et crânienne'
-                          : 'Notre approche'}
-              </h2>
-              <PortableText value={service.approche} className="mt-6" />
-            </Reveal>
-          </Container>
-        </Section>
+        <section className="bg-white py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle size="compact">{getApprocheTitle(params.slug, isBains)}</DisplayTitle>
+            </div>
+            <PortableText value={service.approche} className={BODY} />
+          </div>
+        </section>
       )}
 
-      {/* Déroulé */}
       {service.deroule && service.deroule.length > 0 && (
-        <Section className="bg-[#4F6072] pb-8 lg:pb-12">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-cream sm:text-3xl">
-                {isBains
-                  ? 'Partagez un vrai moment de complicité avec votre chien'
-                  : params.slug === 'la-creche'
-                    ? "Les conditions d'admission"
-                    : 'Le déroulé du rendez-vous'}
-              </h2>
-              <PortableText value={service.deroule} className="mt-6" light />
-            </Reveal>
-          </Container>
-        </Section>
+        <section className="bg-[#4F6072] py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle size="compact" surface="slate">
+                {getDerouleTitle(params.slug, isBains)}
+              </DisplayTitle>
+            </div>
+            <PortableText value={service.deroule} light className={BODY} />
+          </div>
+        </section>
       )}
 
-      {/* Avant / Après — Maison Poilus uniquement */}
-      {params.slug === 'le-toilettage-maison-poilus-r' && (
-        <Section className="bg-cream py-8 lg:py-12">
-          <Container>
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl text-center">
-                Avant & après
-              </h2>
-              <p className="mt-2 text-center text-charcoal/50 text-sm">
-                <span className="lg:hidden">
-                  Touchez une photo pour découvrir la transformation.
-                </span>
-                <span className="hidden lg:inline">
-                  Glissez le curseur pour découvrir la transformation.
-                </span>
-              </p>
-            </Reveal>
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
-              {BEFORE_AFTER_PAIRS.map((pair, i) => (
-                <Reveal key={i} delay={i * 100}>
+      {isToilettage && (
+        <section className="bg-cream py-16 lg:py-24">
+          <div className={CONTAINER}>
+            <DisplayTitle>Avant & après</DisplayTitle>
+            <p className="mt-5 text-base text-charcoal/70 lg:text-lg">
+              <span className="lg:hidden">Touchez une photo pour découvrir la transformation.</span>
+              <span className="hidden lg:inline">
+                Glissez le curseur pour découvrir la transformation.
+              </span>
+            </p>
+
+            {/* Coins vifs sur les visuels, sans toucher au composant partagé. */}
+            <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-6 lg:mt-14 lg:grid-cols-3 [&_.rounded-2xl]:rounded-none">
+              {BEFORE_AFTER_PAIRS.map((pair) => (
+                <li key={pair.before.src}>
                   <BeforeAfterSlider
-                    before={'before' in pair ? pair.before : undefined}
-                    after={'after' in pair ? pair.after : undefined}
-                    beforeColor={'beforeColor' in pair ? (pair.beforeColor as string) : undefined}
-                    afterColor={'afterColor' in pair ? (pair.afterColor as string) : undefined}
-                    zoom={'zoom' in pair ? (pair.zoom as number) : undefined}
-                    beforeZoom={'beforeZoom' in pair ? (pair.beforeZoom as number) : undefined}
-                    afterZoom={'afterZoom' in pair ? (pair.afterZoom as number) : undefined}
+                    before={pair.before}
+                    after={pair.after}
+                    zoom={'zoom' in pair ? pair.zoom : undefined}
+                    beforeZoom={'beforeZoom' in pair ? pair.beforeZoom : undefined}
+                    afterZoom={'afterZoom' in pair ? pair.afterZoom : undefined}
                     mobileFlip
                   />
-                </Reveal>
+                </li>
               ))}
-            </div>
-          </Container>
-        </Section>
+            </ul>
+          </div>
+        </section>
       )}
 
-      {/* Tarifs toilettage — grouped table */}
       {service.tarifsToilettage && (
-        <Section className="bg-cream">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2
-                id="tarifs"
-                className="scroll-mt-24 font-display text-2xl font-bold text-charcoal sm:text-3xl"
-              >
+        <section className="bg-white py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle id="tarifs" size="compact" className="scroll-mt-28">
                 Tarifs du toilettage chien à Paris
-              </h2>
+              </DisplayTitle>
+              <p className="mt-6 max-w-xs text-sm italic leading-relaxed text-charcoal/60">
+                Merci de noter que toute prestation annulée moins de 24h à l&apos;avance est due.
+              </p>
+            </div>
+            <div className="[&_.rounded-2xl]:rounded-none [&>div]:mt-0">
               <TarifsToilettageTable data={service.tarifsToilettage} />
-              <p className="mt-4 text-xs text-charcoal/50 italic">
-                Merci de noter que toute prestation annulée moins de 24h à l&apos;avance est due.
-              </p>
-            </Reveal>
-          </Container>
-        </Section>
+            </div>
+          </div>
+        </section>
       )}
 
-      {/* Tarifs standard (all other services) */}
       {!service.tarifsToilettage && service.tarifs && service.tarifs.length > 0 && (
-        <Section className="bg-cream">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">Tarifs</h2>
-              <div className="mt-8 divide-y divide-charcoal/10 rounded-2xl border border-charcoal/10 bg-white">
-                {service.tarifs.map((tarif, i) => (
-                  <div key={i} className="flex items-start justify-between px-6 py-4">
-                    <div>
-                      <p className="font-medium text-charcoal">{tarif.label}</p>
-                      {tarif.disclaimer && (
-                        <p className="mt-0.5 text-xs text-charcoal/40">{tarif.disclaimer}</p>
-                      )}
-                    </div>
-                    <p className="ml-4 shrink-0 font-semibold text-terracotta-dark">{tarif.prix}</p>
+        <section className="bg-white py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle id="tarifs" className="scroll-mt-28">
+                Tarifs
+              </DisplayTitle>
+            </div>
+            <ul className={RULED_LIST}>
+              {service.tarifs.map((tarif) => (
+                <li
+                  key={`${tarif.label}-${tarif.prix}`}
+                  className={cn(RULED_ITEM, 'flex items-baseline justify-between gap-x-6 py-5')}
+                >
+                  <div>
+                    <p className="font-display text-xl leading-snug text-charcoal sm:text-2xl">
+                      {noOrphan(tarif.label)}
+                    </p>
+                    {tarif.disclaimer && (
+                      <p className="mt-1 text-sm text-charcoal/60">{noOrphan(tarif.disclaimer)}</p>
+                    )}
                   </div>
-                ))}
-              </div>
-            </Reveal>
-          </Container>
-        </Section>
+                  <p className="shrink-0 font-display text-xl text-terracotta-dark sm:text-2xl">
+                    {noOrphan(tarif.prix)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
 
-      {/* Toilettage par race — maillage SEO */}
       {isToilettage && seoRaces.length > 0 && (
-        <Section className="bg-white">
-          <Container className="max-w-5xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                Toilettage par race
-              </h2>
-              <p className="mt-4 max-w-2xl text-charcoal/70">
-                Chaque race a son pelage, ses besoins, son rythme. Découvrez nos conseils adaptés.
+        <section className="bg-cream py-16 lg:py-24">
+          <div className={SPLIT}>
+            <div className={STICKY}>
+              <DisplayTitle size="compact">Toilettage par race</DisplayTitle>
+              <p className="text-balance mt-5 max-w-xs text-base leading-relaxed text-charcoal/70 lg:text-lg">
+                Chaque race a son pelage, ses besoins, son rythme. Découvrez nos conseils adaptés.
               </p>
-              <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-                {seoRaces.map((p) => (
-                  <Link
-                    key={p._id}
-                    href={`/toilettage/${p.slugRace}`}
-                    className="group rounded-2xl border border-charcoal/10 bg-cream px-5 py-4 transition hover:border-terracotta-dark/40 hover:shadow-sm"
-                  >
-                    <p className="font-display text-base font-semibold text-charcoal group-hover:text-terracotta-dark">
-                      {p.race}
-                    </p>
-                    {p.typePoil && (
-                      <p className="mt-0.5 text-xs text-charcoal/50 capitalize">
-                        Pelage {p.typePoil}
-                      </p>
-                    )}
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-6">
-                <Link
-                  href="/toilettage"
-                  className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
-                >
-                  Voir toutes les races →
+              <div className="mt-8 flex flex-col items-start gap-4">
+                <Link href="/toilettage" className={TEXT_LINK.light}>
+                  Voir toutes les races
                 </Link>
                 {/* Maillage anti-cannibalisation : ancre géo vers le pilier */}
-                <Link
-                  href="/toilettage-chien-paris"
-                  className="inline-block text-sm font-semibold text-terracotta-dark underline-offset-4 hover:underline"
-                >
-                  Notre toiletteur chien à Paris →
+                <Link href="/toilettage-chien-paris" className={TEXT_LINK.light}>
+                  Notre toiletteur chien à Paris
                 </Link>
               </div>
-            </Reveal>
-          </Container>
-        </Section>
+            </div>
+
+            <ul className={cn(RULED_LIST, 'grid grid-cols-1 sm:grid-cols-2')}>
+              {seoRaces.map((p) => (
+                <li key={p._id} className={cn(RULED_ITEM, 'sm:odd:pr-8 sm:even:pl-8')}>
+                  <Link
+                    href={`/toilettage/${p.slugRace}`}
+                    className={cn('group block py-5 lg:py-6', FOCUS_RING)}
+                  >
+                    <span className="block font-display text-2xl leading-tight text-charcoal transition-colors group-hover:text-terracotta-dark lg:text-3xl">
+                      {p.race}
+                    </span>
+                    {noOrphan(
+                      p.typePoil && (
+                        <span className="mt-1 block text-sm text-charcoal/60">
+                          Pelage {p.typePoil}
+                        </span>
+                      )
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
 
-      {/* FAQ */}
-      {service.faq && service.faq.length > 0 && (
-        <Section className="bg-rose/20">
-          <Container className="max-w-3xl">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold text-charcoal sm:text-3xl">
-                Questions fréquentes
-              </h2>
-              <div className="mt-8">
-                <FaqAccordion items={service.faq} />
-              </div>
-            </Reveal>
-          </Container>
-        </Section>
+      {service.faq && service.faq.length > 0 && <FaqV2 items={service.faq} />}
+
+      {isBains && (
+        <ShopTeaserV2
+          products={bainsProducts}
+          title="Vous avez aimé nos produits maison POILUS ?"
+          intro="Retrouvez-les sur notre éco-shop et continuez les soins à la maison."
+        />
       )}
 
-      {/* Shop teaser — bains only */}
-      {isBains && bainsProducts.length > 0 && <ServiceShopTeaser products={bainsProducts} />}
+      <section className="bg-[#B5A89A] py-16 lg:py-24">
+        <div className={CONTAINER}>
+          <DisplayTitle surface="taupe" className="max-w-4xl">
+            Prêt.e à prendre rendez-vous ?
+          </DisplayTitle>
+          <p className="mt-5 text-base text-charcoal/80 lg:text-lg">
+            Réservez en ligne en quelques clics.
+          </p>
+          <div className="mt-8">
+            <BookingCta
+              label={service.cta?.label}
+              className="h-12 bg-charcoal px-8 text-[15px] text-cream hover:bg-charcoal/90"
+            />
+          </div>
+        </div>
+      </section>
 
-      {/* CTA desktop */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
-        <Section className="text-charcoal">
-          <Container className="max-w-2xl text-center">
-            <Reveal>
-              <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                Prêt.e à prendre rendez-vous ?
-              </h2>
-              <p className="mt-4 text-charcoal/70">Réservez en ligne en quelques clics.</p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <BookingCta label={service.cta?.label} />
-              </div>
-            </Reveal>
-          </Container>
-        </Section>
-      </div>
-
-      {/* Mobile sticky CTA */}
       <BookingCta mobile phone={settings?.telephone} label={service.cta?.label} />
 
-      {/* Spacer for mobile CTA + divider before footer (same bg color) */}
-      <div style={{ backgroundColor: '#B5A89A' }}>
+      {/* Espace pour la barre mobile + filet avant le footer (même fond) */}
+      <div className="bg-[#B5A89A]">
         <div className="h-20 lg:hidden" />
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto w-full max-w-7xl border-t-2 border-charcoal/20" />
+        <div className={CONTAINER}>
+          <div className="border-t-2 border-charcoal/20" />
         </div>
       </div>
     </>

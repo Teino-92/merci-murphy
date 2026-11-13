@@ -17,6 +17,7 @@ import { COUNTRY_PREFIXES } from '@/lib/phone-prefixes'
 import { POIDS, ETAT_POIL } from '@/lib/dog-constants'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { CheckCircle } from 'lucide-react'
+import { noOrphan } from '@/lib/typo'
 
 const STEPS = ['Vos coordonnées', 'Votre compte', 'Votre chien']
 
@@ -75,9 +76,9 @@ export function SignUpForm() {
       <div className="flex flex-col items-center py-12 text-center">
         <CheckCircle className="h-16 w-16 text-rose" />
         <h2 className="mt-6 font-display text-2xl font-bold text-charcoal">
-          Bienvenue chez merci murphy® !
+          Bienvenue chez merci murphy® !
         </h2>
-        <p className="mt-3 text-charcoal/60 max-w-sm">Redirection vers votre espace…</p>
+        <p className="mt-3 text-charcoal/60 max-w-sm">Redirection vers votre espace…</p>
       </div>
     )
   }
@@ -94,7 +95,7 @@ export function SignUpForm() {
             <p
               className={`mt-1 text-xs ${i === step ? 'font-medium text-terracotta-dark' : 'text-charcoal/40'}`}
             >
-              {label}
+              {noOrphan(label)}
             </p>
           </div>
         ))}
@@ -175,7 +176,7 @@ export function SignUpForm() {
               onChange={(e) => set('password', e.target.value)}
             />
             <p className="mt-1.5 text-xs text-charcoal/50">
-              8 caractères minimum · majuscule, minuscule et chiffre requis
+              8 caractères minimum · majuscule, minuscule et chiffre requis
             </p>
           </div>
           <label className="flex items-start gap-3 cursor-pointer">
@@ -274,7 +275,7 @@ export function SignUpForm() {
               </SelectContent>
             </Select>
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-red-500">{noOrphan(error)}</p>}
           <div className="flex gap-3">
             <Button variant="outline" onClick={prev} className="flex-1">
               Retour

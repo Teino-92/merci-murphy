@@ -117,7 +117,7 @@ export function ReviewPrompt() {
               id="review-prompt-title"
               className="font-display text-lg font-semibold text-charcoal"
             >
-              Vous êtes déjà venu chez nous ? 🐾
+              Vous êtes déjà venu chez nous ? 🐾
             </p>
             <p className="mt-2 text-sm leading-relaxed text-charcoal/70">
               Si votre chien a déjà passé un moment chez merci murphy®, votre avis nous aiderait

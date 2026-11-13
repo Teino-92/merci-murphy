@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { submitLead, type LeadFormData } from '@/lib/actions'
 import { useAntiSpam } from '@/hooks/use-anti-spam'
 import { CheckCircle } from 'lucide-react'
+import { noOrphan } from '@/lib/typo'
 
 export function ContactForm() {
   const [form, setForm] = useState({ nom: '', email: '', telephone: '', message: '' })
@@ -37,9 +38,9 @@ export function ContactForm() {
     return (
       <div className="flex flex-col items-center py-8 text-center">
         <CheckCircle className="h-12 w-12 text-rose" />
-        <h3 className="mt-4 font-display text-xl font-bold text-charcoal">Message envoyé !</h3>
+        <h3 className="mt-4 font-display text-xl font-bold text-charcoal">Message envoyé !</h3>
         <p className="mt-2 text-sm text-charcoal/60">
-          Nous vous répondrons dans les plus brefs délais.
+          Nous vous répondrons dans les plus brefs délais.
         </p>
       </div>
     )
@@ -87,7 +88,7 @@ export function ContactForm() {
         />
       </div>
       <input {...honeypotProps} />
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-500">{noOrphan(error)}</p>}
       <Button
         type="submit"
         disabled={loading}

@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
+
+import { FAQ_SERVICES } from '@/components/sections/faq-services-data'
+import { FaqV2 } from '@/components/sections/faq-v2'
+import { PageHeaderV2 } from '@/components/sections/page-header-v2'
+import { ServicesCatalogV2 } from '@/components/sections/services-catalog-v2'
+import { TestimonialsV2 } from '@/components/sections/testimonials-v2'
+import { Button } from '@/components/ui/button'
+import { CONTAINER, INLINE_LINK } from '@/components/ui/editorial'
 import { getAllServices } from '@/sanity/queries/services'
 import { getTestimonials } from '@/sanity/queries/testimonials'
-import { ServicesGrid } from '@/components/sections/services-grid'
-import { TestimonialsSection } from '@/components/sections/testimonials-section'
-import { FaqServices } from '@/components/sections/faq-services'
-import { FAQ_SERVICES } from '@/components/sections/faq-services-data'
-import { Section, Container } from '@/components/ui/section'
-import { BLUR_PLACEHOLDER } from '@/lib/utils'
 
 export const revalidate = 3600
 
@@ -45,55 +46,55 @@ export default async function ServicesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      {/* Hero */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] overflow-hidden bg-charcoal-light">
-        <Image
-          src="/services-hero.jpg"
-          alt="Les services merci murphy®"
-          fill
-          priority
-          placeholder="blur"
-          blurDataURL={BLUR_PLACEHOLDER}
-          className="object-cover opacity-70"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-charcoal/10 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 px-8 pb-10 sm:px-14 sm:pb-14 max-w-2xl">
-          <h1 className="font-display text-4xl font-bold text-cream sm:text-6xl drop-shadow-sm">
-            Nos services
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-cream/80 sm:text-lg drop-shadow-sm">
-            Toilettage, balnéo, crèche, éducation, ostéopathie : toute l&apos;attention et
-            l&apos;expertise que votre chien mérite, réunies dans un lieu unique à Paris 9e.
+
+      <PageHeaderV2
+        title="Nos services"
+        sub="sous un même toit, à Paris 9e"
+        intro={
+          <p>
+            Toilettage, balnéo, crèche, éducation, ostéopathie : toute l&apos;attention et
+            l&apos;expertise que votre chien mérite, réunies dans un lieu unique à Paris 9e.
           </p>
-        </div>
-      </div>
+        }
+        image={{
+          src: '/services-hero.jpg',
+          alt: 'Les services merci murphy®',
+          position: '78% 40%',
+        }}
+      >
+        <Button
+          asChild
+          size="lg"
+          className="h-12 self-start bg-terracotta-dark px-8 text-[15px] text-white hover:bg-terracotta-dark/90 sm:self-auto"
+        >
+          <Link href="/reservation">Prendre rendez-vous</Link>
+        </Button>
+      </PageHeaderV2>
+
       {services.length > 0 ? (
-        <ServicesGrid services={services} />
+        <ServicesCatalogV2
+          services={services}
+          aside={
+            <p>
+              Notre cœur de métier reste le{' '}
+              <Link href="/toilettage-chien-paris" className={INLINE_LINK}>
+                toilettage pour chien à Paris
+              </Link>
+              {' : une mise en beauté'} sans stress, pensée pour le confort de votre compagnon.
+            </p>
+          }
+        />
       ) : (
-        <Section className="bg-cream">
-          <Container>
-            <p className="text-center text-charcoal/50">Services bientôt disponibles.</p>
-          </Container>
-        </Section>
+        <section className="bg-white py-16">
+          <div className={CONTAINER}>
+            <p className="text-charcoal/50">Services bientôt disponibles.</p>
+          </div>
+        </section>
       )}
-      <Section className="bg-cream pt-0">
-        <Container className="max-w-3xl">
-          <p className="text-charcoal/70 leading-relaxed">
-            Notre cœur de métier reste le{' '}
-            <Link
-              href="/toilettage-chien-paris"
-              className="font-medium text-terracotta-dark underline-offset-2 hover:underline"
-            >
-              toilettage pour chien à Paris
-            </Link>{' '}
-            : une mise en beauté sans stress, pensée pour le confort de votre compagnon.
-          </p>
-        </Container>
-      </Section>
-      {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
-      <FaqServices />
+
+      <TestimonialsV2 testimonials={testimonials} />
+
+      <FaqV2 items={FAQ_SERVICES} />
     </>
   )
 }

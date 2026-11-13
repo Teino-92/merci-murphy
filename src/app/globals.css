@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  /* Typographie : pas de mot seul sur la dernière ligne. La valeur est héritée,
+     donc tout le texte du site en profite ; les titres sont équilibrés. */
+  body {
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
+
   @keyframes reveal-in {
     from {
       opacity: 0;
@@ -17,6 +32,59 @@
   .reveal-anim {
     opacity: 0;
     animation: reveal-in 0.6s ease-out forwards;
+  }
+}
+
+/* Hero v2 (BAT) — séquence unique au chargement : titre qui monte derrière
+   son masque, puis devanture dévoilée comme un rideau qui se lève. */
+@keyframes hero-line-up {
+  from {
+    transform: translateY(115%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-curtain-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes hero-medallion-in {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@layer components {
+  .hero-line {
+    animation: hero-line-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero-curtain {
+    animation: hero-curtain-up 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+  }
+
+  .hero-medallion {
+    animation: hero-medallion-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-line,
+    .hero-curtain,
+    .hero-medallion {
+      animation: none;
+    }
   }
 }
 

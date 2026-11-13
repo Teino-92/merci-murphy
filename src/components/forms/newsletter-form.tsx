@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { subscribeNewsletter } from '@/lib/actions'
 import { useAntiSpam } from '@/hooks/use-anti-spam'
+import { noOrphan } from '@/lib/typo'
 
 export function NewsletterForm() {
   const [email, setEmail] = useState('')
@@ -26,7 +27,7 @@ export function NewsletterForm() {
   if (submitted) {
     return (
       <div className="min-h-[40px] flex items-center">
-        <p className="text-sm font-medium text-charcoal">Merci ! Vous êtes bien inscrit(e).</p>
+        <p className="text-sm font-medium text-charcoal">Merci ! Vous êtes bien inscrit(e).</p>
       </div>
     )
   }
@@ -49,7 +50,7 @@ export function NewsletterForm() {
       >
         {loading ? '...' : "S'inscrire à notre newsletter"}
       </Button>
-      {error && <p className="text-xs text-red-400">{error}</p>}
+      {error && <p className="text-xs text-red-400">{noOrphan(error)}</p>}
     </form>
   )
 }

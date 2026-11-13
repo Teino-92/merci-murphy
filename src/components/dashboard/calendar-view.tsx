@@ -138,7 +138,7 @@ function RescheduleModal({ visit, onClose, onSaved, onDeleted }: RescheduleModal
         {confirmDelete ? (
           <div className="space-y-3">
             <p className="text-sm text-gray-700">
-              Vous êtes sûr de vouloir supprimer cette réservation ?
+              Vous êtes sûr de vouloir supprimer cette réservation ?
             </p>
             <div className="flex gap-2">
               <button
@@ -182,7 +182,7 @@ function RescheduleModal({ visit, onClose, onSaved, onDeleted }: RescheduleModal
                   min="1"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
-                  placeholder="Ex : 75"
+                  placeholder="Ex : 75"
                   className="w-full text-sm rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
                 />
               </div>

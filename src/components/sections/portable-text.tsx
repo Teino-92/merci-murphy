@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { PortableText as SanityPortableText, type PortableTextBlock } from '@portabletext/react'
 
+import { noOrphan } from '@/lib/typo'
+
 interface PortableTextProps {
   value: PortableTextBlock[]
   className?: string
@@ -20,16 +22,16 @@ export function PortableText({ value, className, light }: PortableTextProps) {
         components={{
           block: {
             normal: ({ children }) => (
-              <p className={`mb-4 leading-relaxed last:mb-0 ${body}`}>{children}</p>
+              <p className={`mb-4 leading-relaxed last:mb-0 ${body}`}>{noOrphan(children)}</p>
             ),
             h2: ({ children }) => (
               <h2 className={`mb-3 mt-6 font-display text-2xl font-semibold ${heading}`}>
-                {children}
+                {noOrphan(children)}
               </h2>
             ),
             h3: ({ children }) => (
               <h3 className={`mb-2 mt-4 font-display text-xl font-semibold ${heading}`}>
-                {children}
+                {noOrphan(children)}
               </h3>
             ),
           },
@@ -50,6 +52,9 @@ export function PortableText({ value, className, light }: PortableTextProps) {
                 </a>
               )
             },
+          },
+          listItem: {
+            bullet: ({ children }) => <li>{noOrphan(children)}</li>,
           },
           list: {
             bullet: ({ children }) => (

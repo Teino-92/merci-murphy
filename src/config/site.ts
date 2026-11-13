@@ -1,5 +1,5 @@
 export const SITE_CONFIG = {
-  name: 'Merci Murphy : Toilettage, spa, crèche, éducation et ostéopathie pour chiens à Paris',
+  name: 'Merci Murphy : Toilettage, spa, crèche, éducation et ostéopathie pour chiens à Paris',
   description:
     "Boutique premium de bien-être pour chiens à Paris. merci murphy®, c'est aussi un dog shop engagé.",
   url: 'https://mercimurphy.com',
@@ -21,7 +21,7 @@ export const SITE_CONFIG = {
     {
       label: 'Espace revendeurs',
       href: '/revendeurs',
-      description: 'Boutiques, concept-stores et toiletteurs : découvrez nos conditions pro.',
+      description: 'Boutiques, concept-stores et toiletteurs : découvrez nos conditions pro.',
     },
   ],
 }

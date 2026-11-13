@@ -1,8 +1,9 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Navbar } from '@/components/layout/navbar'
-import { Footer } from '@/components/layout/footer'
+
+import { FooterV2 } from '@/components/layout/footer-v2'
+import { NavbarV2 } from '@/components/layout/navbar-v2'
 import { PromoBanner } from '@/components/layout/promo-banner'
 import { CartDrawer } from '@/components/shop/cart-drawer'
 import type { PromoBanner as PromoBannerData } from '@/sanity/queries/site-settings'
@@ -23,11 +24,13 @@ export function SiteShell({ children, showBlog = false, promoBanner }: SiteShell
     <>
       <div className="sticky top-0 z-50">
         {promoBanner && <PromoBanner banner={promoBanner} />}
-        <Navbar showBlog={showBlog} />
+        <NavbarV2 variant="enseigne" showBlog={showBlog} />
       </div>
+      {/* Réserve la place de la rangée de liens, posée hors flux pour pouvoir se replier. */}
+      <div aria-hidden className="hidden h-[49px] bg-cream lg:block" />
       <CartDrawer />
       {children}
-      <Footer showBlog={showBlog} />
+      <FooterV2 variant="taupe" showBlog={showBlog} />
     </>
   )
 }

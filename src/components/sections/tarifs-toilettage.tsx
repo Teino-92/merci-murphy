@@ -1,4 +1,5 @@
 import type { TarifsToilettage } from '@/sanity/queries/services'
+import { noOrphan } from '@/lib/typo'
 
 interface Props {
   data: TarifsToilettage
@@ -10,9 +11,11 @@ export function TarifsToilettageTable({ data }: Props) {
       {/* Notes */}
       {(data.note || data.surDevis) && (
         <div className="space-y-1">
-          {data.note && <p className="text-sm text-charcoal/70">{data.note}</p>}
+          {data.note && <p className="text-sm text-charcoal/70">{noOrphan(data.note)}</p>}
           {data.surDevis && (
-            <p className="text-sm italic font-bold text-terracotta-dark">{data.surDevis}</p>
+            <p className="text-sm italic font-bold text-terracotta-dark">
+              {noOrphan(data.surDevis)}
+            </p>
           )}
         </div>
       )}
@@ -28,11 +31,11 @@ export function TarifsToilettageTable({ data }: Props) {
                 <th className="px-3 py-3 text-center font-semibold text-charcoal leading-tight">
                   Bain + Coupe
                   <span className="block text-xs font-normal text-charcoal/50">
-                    (ciseaux ou tonte)
+                    (ciseaux ou tonte)
                   </span>
                 </th>
                 <th className="px-3 py-3 text-center font-semibold text-charcoal">
-                  Bain + Épilation
+                  Bain + Épilation
                 </th>
               </tr>
             </thead>
@@ -45,7 +48,7 @@ export function TarifsToilettageTable({ data }: Props) {
                       colSpan={4}
                       className="py-2.5 pl-5 pr-3 font-semibold text-charcoal text-sm"
                     >
-                      {gabarit.label}
+                      {noOrphan(gabarit.label)}
                     </td>
                   </tr>
                   {/* Price rows */}
@@ -54,15 +57,19 @@ export function TarifsToilettageTable({ data }: Props) {
                       key={i}
                       className="border-t border-charcoal/5 last:border-b last:border-charcoal/5"
                     >
-                      <td className="py-3 pl-5 pr-3 text-charcoal/50 text-xs">{ligne.type}</td>
-                      <td className="px-3 py-3 text-center font-medium text-charcoal">
-                        {ligne.bain || <span className="text-charcoal/30">—</span>}
+                      <td className="py-3 pl-5 pr-3 text-charcoal/50 text-xs">
+                        {noOrphan(ligne.type)}
                       </td>
                       <td className="px-3 py-3 text-center font-medium text-charcoal">
-                        {ligne.bainCoupe || <span className="text-charcoal/30">—</span>}
+                        {noOrphan(ligne.bain || <span className="text-charcoal/30">—</span>)}
                       </td>
                       <td className="px-3 py-3 text-center font-medium text-charcoal">
-                        {ligne.bainEpilation || <span className="text-charcoal/30">—</span>}
+                        {noOrphan(ligne.bainCoupe || <span className="text-charcoal/30">—</span>)}
+                      </td>
+                      <td className="px-3 py-3 text-center font-medium text-charcoal">
+                        {noOrphan(
+                          ligne.bainEpilation || <span className="text-charcoal/30">—</span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -76,12 +83,14 @@ export function TarifsToilettageTable({ data }: Props) {
       {/* Patticure */}
       {data.patticure && data.patticure.length > 0 && (
         <div>
-          <h3 className="mb-3 text-base font-semibold text-charcoal">Soin Patticure</h3>
+          <h3 className="mb-3 text-base font-semibold text-charcoal">Soin Patticure</h3>
           <div className="rounded-2xl border border-charcoal/10 bg-white divide-y divide-charcoal/10">
             {data.patticure.map((s, i) => (
               <div key={i} className="flex items-center justify-between px-5 py-3.5">
-                <p className="text-sm text-charcoal">{s.label}</p>
-                <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">{s.prix}</p>
+                <p className="text-sm text-charcoal">{noOrphan(s.label)}</p>
+                <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">
+                  {noOrphan(s.prix)}
+                </p>
               </div>
             ))}
           </div>
@@ -92,13 +101,15 @@ export function TarifsToilettageTable({ data }: Props) {
       {data.supplements && data.supplements.length > 0 && (
         <div>
           <h3 className="mb-3 text-base font-semibold text-charcoal">
-            Suppléments & soins spécifiques
+            Suppléments & soins spécifiques
           </h3>
           <div className="rounded-2xl border border-charcoal/10 bg-white divide-y divide-charcoal/10">
             {data.supplements.map((s, i) => (
               <div key={i} className="flex items-center justify-between px-5 py-3.5">
-                <p className="text-sm text-charcoal">{s.label}</p>
-                <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">{s.prix}</p>
+                <p className="text-sm text-charcoal">{noOrphan(s.label)}</p>
+                <p className="ml-4 shrink-0 text-sm font-semibold text-terracotta-dark">
+                  {noOrphan(s.prix)}
+                </p>
               </div>
             ))}
           </div>

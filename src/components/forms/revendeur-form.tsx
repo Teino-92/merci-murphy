@@ -15,6 +15,7 @@ import { submitRevendeurLead, type RevendeurLeadFormData } from '@/lib/actions'
 import { TYPE_COMMERCE_LABELS } from '@/lib/revendeur-constants'
 import { useAntiSpam } from '@/hooks/use-anti-spam'
 import { CheckCircle } from 'lucide-react'
+import { noOrphan } from '@/lib/typo'
 
 const EMPTY = {
   nom: '',
@@ -55,9 +56,9 @@ export function RevendeurForm() {
     return (
       <div className="flex flex-col items-center py-8 text-center">
         <CheckCircle className="h-12 w-12 text-rose" />
-        <h3 className="mt-4 font-display text-xl font-bold text-charcoal">Demande envoyée !</h3>
+        <h3 className="mt-4 font-display text-xl font-bold text-charcoal">Demande envoyée !</h3>
         <p className="mt-2 max-w-sm text-sm text-charcoal/60">
-          Nous revenons vers vous sous 48h ouvrées avec nos conditions revendeur.
+          Nous revenons vers vous sous 48h ouvrées avec nos conditions revendeur.
         </p>
       </div>
     )
@@ -174,7 +175,7 @@ export function RevendeurForm() {
       </div>
 
       <input {...honeypotProps} />
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-500">{noOrphan(error)}</p>}
       <Button
         type="submit"
         disabled={loading}
@@ -183,7 +184,7 @@ export function RevendeurForm() {
         {loading ? 'Envoi...' : 'Demander nos conditions revendeur'}
       </Button>
       <p className="text-center text-xs text-charcoal/50">
-        Réponse sous 48h ouvrées. Aucun engagement.
+        Réponse sous 48h ouvrées. Aucun engagement.
       </p>
     </form>
   )

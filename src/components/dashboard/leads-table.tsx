@@ -172,7 +172,7 @@ function DepositModal({ lead, onClose, onSent }: DepositModalProps) {
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="Ex : 25"
+              placeholder="Ex : 25"
               required
               className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D164E]"
             />

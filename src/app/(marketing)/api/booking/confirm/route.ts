@@ -232,13 +232,13 @@ export async function POST(req: NextRequest) {
           from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
           to: internalEmail,
           subject: `Nouveau toilettage — ${profile?.nom ?? user.email}${dogLine} · ${appointmentDate}`,
-          html: `<p>Un toilettage a été réservé en ligne :</p>
+          html: `<p>Un toilettage a été réservé en ligne :</p>
 <ul>
-  <li><strong>Client :</strong> ${profile?.nom ?? user.email}${dogLine}</li>
-  <li><strong>Email :</strong> ${user.email}</li>
-  <li><strong>Prestataire :</strong> ${staffName}</li>
-  <li><strong>Date :</strong> ${appointmentDate}</li>
-  <li><strong>Durée :</strong> ${duration} min</li>
+  <li><strong>Client :</strong> ${profile?.nom ?? user.email}${dogLine}</li>
+  <li><strong>Email :</strong> ${user.email}</li>
+  <li><strong>Prestataire :</strong> ${staffName}</li>
+  <li><strong>Date :</strong> ${appointmentDate}</li>
+  <li><strong>Durée :</strong> ${duration} min</li>
 </ul>
 <p>Rendez-vous dans le dashboard pour saisir le prix final et envoyer le lien d'acompte.</p>`,
         })

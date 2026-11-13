@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
       to: internalEmail,
       subject: `❌ Créneau refusé — ${lead.nom}`,
       html: `<p><strong>${lead.nom}</strong> a refusé le créneau proposé.</p>
-${counter ? `<p><strong>Contre-proposition :</strong> ${counter}</p>` : '<p>Aucune contre-proposition fournie.</p>'}
-<p>Service : ${lead.service}</p>
+${counter ? `<p><strong>Contre-proposition :</strong> ${counter}</p>` : '<p>Aucune contre-proposition fournie.</p>'}
+<p>Service : ${lead.service}</p>
 <p>→ <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard">Voir dans le dashboard</a></p>`,
     })
   }

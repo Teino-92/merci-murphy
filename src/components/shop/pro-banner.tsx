@@ -50,9 +50,9 @@ export function ProBanner() {
     >
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3 sm:px-6">
         <p className="min-w-0 flex-1 text-sm text-charcoal/80">
-          <span className="font-semibold text-charcoal">Vous êtes un professionnel ?</span>{' '}
+          <span className="font-semibold text-charcoal">Vous êtes un professionnel ?</span>{' '}
           <span className="hidden sm:inline">
-            Boutiques, concept-stores et toiletteurs : découvrez nos conditions revendeur.
+            Boutiques, concept-stores et toiletteurs : découvrez nos conditions revendeur.
           </span>
         </p>
         <Link

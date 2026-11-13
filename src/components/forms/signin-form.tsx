@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { noOrphan } from '@/lib/typo'
 
 export function SignInForm() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export function SignInForm() {
           required
         />
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-500">{noOrphan(error)}</p>}
       <Button
         type="submit"
         disabled={loading}
@@ -62,13 +63,13 @@ export function SignInForm() {
       </Button>
       <p className="text-center text-sm text-charcoal/50">
         <Link href="/compte/mot-de-passe-oublie" className="text-terracotta-dark hover:underline">
-          Mot de passe oublié ?
+          Mot de passe oublié ?
         </Link>
       </p>
       <p className="text-center text-sm text-charcoal/50">
-        Pas encore de compte ?{' '}
+        Pas encore de compte ?{' '}
         <Link href="/compte/inscription" className="text-terracotta-dark hover:underline">
-          Créer un compte
+          Créer un compte
         </Link>
       </p>
     </form>
