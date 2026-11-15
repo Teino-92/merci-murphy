@@ -21,7 +21,7 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
 
 interface Props {
-  params: { race: string }
+  params: Promise<{ race: string }>
 }
 
 const SITE_URL = 'https://mercimurphy.com'
@@ -38,7 +38,8 @@ export async function generateStaticParams() {
   return pages.map((p) => ({ race: p.slugRace }))
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const page = await getSeoPageBySlugRace(params.race)
   if (!page) return {}
 
@@ -121,7 +122,8 @@ function buildJsonLd(page: {
  * droite ; l'encart tarifs et les cartes « autres races » perdent leurs coins
  * arrondis au profit des filets.
  */
-export default async function RacePage({ params }: Props) {
+export default async function RacePage(props: Props) {
+  const params = await props.params
   const page = await getSeoPageBySlugRace(params.race)
   if (!page) notFound()
 

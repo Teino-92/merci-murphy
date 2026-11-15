@@ -1,13 +1,14 @@
 import { CONTAINER, DisplayTitle } from '@/components/ui/editorial'
 
 interface Props {
-  searchParams: { deposit?: string }
+  searchParams: Promise<{ deposit?: string }>
 }
 
 /**
  * Confirmation de créneau, avec une variante selon `?deposit=paid`.
  */
-export default function AcceptedPage({ searchParams }: Props) {
+export default async function AcceptedPage(props: Props) {
+  const searchParams = await props.searchParams
   const depositPaid = searchParams.deposit === 'paid'
 
   return (

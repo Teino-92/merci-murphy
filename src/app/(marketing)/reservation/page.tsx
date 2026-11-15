@@ -29,11 +29,10 @@ const FORM_SKIN =
  * choix entre formulaire de rappel et prise de créneau, mêmes valeurs par
  * défaut.
  */
-export default async function ReservationPage({
-  searchParams,
-}: {
-  searchParams: { contact?: string }
+export default async function ReservationPage(props: {
+  searchParams: Promise<{ contact?: string }>
 }) {
+  const searchParams = await props.searchParams
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },

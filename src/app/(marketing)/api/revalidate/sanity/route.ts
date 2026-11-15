@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: `Unknown type: ${body._type}` }, { status: 200 })
   }
 
-  revalidateTag(tag)
+  revalidateTag(tag, 'max')
 
   // Pages with hand-curated content benefit from path-level revalidation too
   if (body._type === 'siteSettings') revalidatePath('/', 'layout')

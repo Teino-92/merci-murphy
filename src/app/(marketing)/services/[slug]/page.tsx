@@ -144,7 +144,7 @@ const STICKY = 'lg:sticky lg:top-28 lg:self-start'
 const BODY = 'max-w-2xl text-base lg:text-lg'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
@@ -168,7 +168,8 @@ const SEO_META_OVERRIDES: Record<string, { title: string; description: string }>
   },
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const service = await getServiceBySlug(params.slug)
   if (!service) return {}
 
@@ -192,7 +193,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ServicePage({ params }: Props) {
+export default async function ServicePage(props: Props) {
+  const params = await props.params
   const isBains = BAINS_SLUGS.includes(params.slug)
   const isToilettage = params.slug === TOILETTAGE_SLUG
 

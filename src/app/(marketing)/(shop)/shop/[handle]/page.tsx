@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils'
 import { noOrphan, noOrphanHtml } from '@/lib/typo'
 
 interface Props {
-  params: { handle: string }
+  params: Promise<{ handle: string }>
 }
 
 // Composants prod repris tels quels : seul leur habillage change, depuis ces
@@ -49,7 +49,8 @@ export async function generateStaticParams() {
   return products.map((p) => ({ handle: p.handle }))
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const product = await getProductByHandle(params.handle)
   if (!product) return {}
 
@@ -74,7 +75,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Fiche produit. La colonne d'achat reste visible pendant le défilement de
  * la galerie.
  */
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage(props: Props) {
+  const params = await props.params
   const product = await getProductByHandle(params.handle)
   if (!product) notFound()
 

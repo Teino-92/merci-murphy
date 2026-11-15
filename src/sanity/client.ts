@@ -1,6 +1,5 @@
 import { createClient } from '@sanity/client'
-import imageUrlBuilder from '@sanity/image-url'
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
+import { createImageUrlBuilder, type SanityImageSource } from '@sanity/image-url'
 
 // Token serveur — lecture authentifiée pour types restreints par ACL (ex: seoPage).
 // Sans token, Sanity omet ces docs ("reason: permission"). useCdn désactivé quand token présent.
@@ -17,7 +16,7 @@ export const sanityClient = createClient({
   perspective: 'published',
 })
 
-const builder = imageUrlBuilder(sanityClient)
+const builder = createImageUrlBuilder(sanityClient)
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source)

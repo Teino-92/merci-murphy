@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
     if (dry) return NextResponse.json({ ok: true, ...result })
 
     if (result.status === 'published') {
-      revalidateTag('sanity:post')
+      revalidateTag('sanity:post', 'max')
       revalidatePath('/blog')
       await send(RECAP_RECIPIENTS, blogPublishedSubject(result), blogPublishedHtml(result))
     }

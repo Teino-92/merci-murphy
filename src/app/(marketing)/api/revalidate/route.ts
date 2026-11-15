@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const handle = body?.handle as string | undefined
 
     // Invalidate all Shopify fetches
-    revalidateTag('shopify')
+    revalidateTag('shopify', 'max')
 
     if (handle) {
       revalidatePath(`/shop/${handle}`)

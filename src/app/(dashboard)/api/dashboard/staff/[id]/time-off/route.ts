@@ -12,7 +12,8 @@ async function requireAdmin() {
   return user
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const user = await requireAdmin()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { searchParams } = req.nextUrl
@@ -22,7 +23,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json(timeOff)
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const user = await requireAdmin()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { date, note } = await req.json()

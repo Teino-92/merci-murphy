@@ -13,7 +13,8 @@ async function requireDashboard() {
 }
 
 // GET /api/dashboard/staff/[id]/schedule?from=YYYY-MM-DD&to=YYYY-MM-DD
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const user = await requireDashboard()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
@@ -25,7 +26,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // POST /api/dashboard/staff/[id]/schedule  { date, start_time, end_time }
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const user = await requireDashboard()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 

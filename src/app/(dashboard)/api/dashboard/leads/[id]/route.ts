@@ -30,7 +30,8 @@ const SERVICE_LABELS: Record<string, string> = {
   creche: 'Crèche',
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },

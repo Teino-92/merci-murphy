@@ -3,7 +3,8 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { updateProfileNotes } from '@/lib/supabase-admin'
 import { hasDashboardAccess } from '@/lib/auth-role'
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },
