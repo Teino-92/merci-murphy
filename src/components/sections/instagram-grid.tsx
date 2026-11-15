@@ -40,7 +40,7 @@ const GRID_SLOTS_DESKTOP = [
   { col: '1 / 2', row: '1 / 2' }, // small
   { col: '2 / 3', row: '1 / 4' }, // full tall (same as video)
   { col: '3 / 4', row: '1 / 2' }, // small
-  { col: '4 / 5', row: '1 / 4' }, // video — full portrait
+  { col: '4 / 5', row: '1 / 4' }, // video - full portrait
   { col: '1 / 2', row: '2 / 4' }, // tall
   { col: '3 / 4', row: '2 / 4' }, // tall
 ]

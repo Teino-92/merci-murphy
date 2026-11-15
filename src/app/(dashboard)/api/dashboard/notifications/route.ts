@@ -17,21 +17,21 @@ export async function GET() {
     'id, profile_id, dog_id, service, status, date, time, created_at, deposit_paid_at, profiles(nom), dogs(name)'
 
   const [newVisitsRes, pendingRes, depositRes, leadsRes, nlRes] = await Promise.all([
-    // New visits (not yet confirmed) — all
+    // New visits (not yet confirmed) - all
     supabaseAdmin
       .from('visits')
       .select(selectVisit)
       .eq('status', 'new')
       .order('created_at', { ascending: false })
       .limit(20),
-    // Pending deposit — all
+    // Pending deposit - all
     supabaseAdmin
       .from('visits')
       .select(selectVisit)
       .eq('status', 'pending_deposit')
       .order('created_at', { ascending: false })
       .limit(20),
-    // Deposit just paid — last 30 days (pending_deposit → confirmed via confirm-deposit route)
+    // Deposit just paid - last 30 days (pending_deposit → confirmed via confirm-deposit route)
     supabaseAdmin
       .from('visits')
       .select(selectVisit)
@@ -40,7 +40,7 @@ export async function GET() {
       .gte('deposit_paid_at', since30)
       .order('deposit_paid_at', { ascending: false })
       .limit(10),
-    // New leads — last 30 days
+    // New leads - last 30 days
     supabaseAdmin
       .from('leads')
       .select('id, nom, service, created_at')
@@ -48,7 +48,7 @@ export async function GET() {
       .gte('created_at', since30)
       .order('created_at', { ascending: false })
       .limit(20),
-    // Newsletter — last 30 days
+    // Newsletter - last 30 days
     supabaseAdmin
       .from('newsletter_subscribers')
       .select('id, email, created_at')

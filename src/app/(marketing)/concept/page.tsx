@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Découvrez l'histoire de merci murphy®, notre équipe et nos engagements pour le bien-être animal à Paris.",
   openGraph: {
     images: [
-      { url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Le concept — Merci Murphy' },
+      { url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Le concept - Merci Murphy' },
     ],
   },
 }

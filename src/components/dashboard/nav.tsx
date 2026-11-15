@@ -144,7 +144,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
         </button>
       </div>
 
-      {/* Mobile bottom tab bar — Calendrier, Clients, Demandes only */}
+      {/* Mobile bottom tab bar - Calendrier, Clients, Demandes only */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1D164E] border-t border-white/10 flex">
         {MOBILE_NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))

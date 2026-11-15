@@ -9,7 +9,7 @@ export const service = defineType({
       name: 'ordre',
       title: "Ordre d'affichage",
       description:
-        'Nombre entier — le SPA parent doit être 1, ses enfants 2, 3, 4, 5… Les autres services suivent.',
+        'Nombre entier, le SPA parent doit être 1, ses enfants 2, 3, 4, 5… Les autres services suivent.',
       type: 'number',
     }),
     defineField({
@@ -46,7 +46,7 @@ export const service = defineType({
     defineField({
       name: 'deroule',
       title: 'Déroulé du rendez-vous',
-      description: 'Optionnel — pour toilettage et crèche uniquement',
+      description: 'Optionnel, pour toilettage et crèche uniquement',
       type: 'array',
       of: [{ type: 'block' }],
     }),
@@ -71,7 +71,7 @@ export const service = defineType({
     defineField({
       name: 'tarifsToilettage',
       title: 'Tarifs toilettage (tableau par gabarit)',
-      description: 'Uniquement pour le service toilettage — remplace la liste de tarifs standard.',
+      description: 'Uniquement pour le service toilettage, remplace la liste de tarifs standard.',
       type: 'object',
       fields: [
         defineField({

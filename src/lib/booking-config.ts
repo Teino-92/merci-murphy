@@ -7,7 +7,7 @@
 
 // Duration of the appointment itself (not including buffer)
 export const SERVICE_DURATIONS: Record<string, number> = {
-  toilettage: 0, // dynamic — comes from profile.grooming_duration
+  toilettage: 0, // dynamic - comes from profile.grooming_duration
   bains: 45,
   balneo: 45,
   osteo: 60,
@@ -31,13 +31,13 @@ export const SERVICE_BUFFER: Record<string, number> = {
 // If a service is NOT listed here, the staff member's own availability windows apply.
 // When listed, slots are clamped to these hours regardless of staff availability.
 export const SERVICE_HOURS: Record<string, { start: string; end: string; days: number[] }[]> = {
-  // Toilettage — Spa POILUS hours
+  // Toilettage - Spa POILUS hours
   // Lundi 13h00–17h00, Mardi–Samedi 9h30–18h30
   toilettage: [
     { days: [1], start: '13:00', end: '17:00' },
     { days: [2, 3, 4, 5, 6], start: '09:30', end: '18:30' },
   ],
-  // Bains/Balnéo — Bains hours (longer)
+  // Bains/Balnéo - Bains hours (longer)
   // Lundi 13h00–19h30, Mardi–Samedi 10h30–19h30
   bains: [
     { days: [1], start: '13:00', end: '19:30' },
@@ -47,7 +47,7 @@ export const SERVICE_HOURS: Record<string, { start: string; end: string; days: n
     { days: [1], start: '13:00', end: '19:30' },
     { days: [2, 3, 4, 5, 6], start: '10:30', end: '19:30' },
   ],
-  // Crèche — last 4 hours of crèche opening, bookable Mardi–Vendredi only
+  // Crèche - last 4 hours of crèche opening, bookable Mardi–Vendredi only
   // Mardi 13h30–18h30, Mercredi–Vendredi 9h30–18h30
   creche: [
     { days: [2], start: '13:30', end: '18:30' },
@@ -56,14 +56,14 @@ export const SERVICE_HOURS: Record<string, { start: string; end: string; days: n
 }
 
 // Services that clients can book online.
-// osteo, education: "être rappelé" only — not self-bookable.
+// osteo, education: "être rappelé" only - not self-bookable.
 // creche: slot-based (last N hours of the day), requires admission_passed=true.
 export const ONLINE_BOOKABLE = ['toilettage', 'bains', 'balneo', 'massage', 'creche'] as const
 
 // Slot granularity in minutes (how far apart slot start times are)
 export const SLOT_GRANULARITY = 15
 
-// Per-service granularity override — if not listed, SLOT_GRANULARITY applies
+// Per-service granularity override - if not listed, SLOT_GRANULARITY applies
 export const SERVICE_GRANULARITY: Record<string, number> = {
   toilettage: 30, // every 30min to avoid excessive slot count
 }

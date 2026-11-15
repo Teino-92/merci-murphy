@@ -93,7 +93,7 @@ export function SignUpForm() {
         ))}
       </div>
 
-      {/* Step 0 — Coordonnées */}
+      {/* Step 0 - Coordonnées */}
       {step === 0 && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -147,7 +147,7 @@ export function SignUpForm() {
         </div>
       )}
 
-      {/* Step 1 — Compte */}
+      {/* Step 1 - Compte */}
       {step === 1 && (
         <div className="space-y-4">
           <div>
@@ -197,7 +197,7 @@ export function SignUpForm() {
         </div>
       )}
 
-      {/* Step 2 — Chien */}
+      {/* Step 2 - Chien */}
       {step === 2 && (
         <div className="space-y-4">
           <div>

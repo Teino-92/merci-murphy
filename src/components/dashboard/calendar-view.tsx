@@ -61,7 +61,7 @@ function toLocalDateStr(date: Date): string {
 function formatHeader(monday: Date): string {
   const saturday = addDays(monday, 5)
   const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' }
-  return `${monday.toLocaleDateString('fr-FR', opts)} — ${saturday.toLocaleDateString('fr-FR', { ...opts, year: 'numeric' })}`
+  return `${monday.toLocaleDateString('fr-FR', opts)} - ${saturday.toLocaleDateString('fr-FR', { ...opts, year: 'numeric' })}`
 }
 
 // ─── RescheduleModal ──────────────────────────────────────────────────────────
@@ -131,7 +131,7 @@ function RescheduleModal({ visit, onClose, onSaved, onDeleted }: RescheduleModal
           </button>
         </div>
         <p className="text-sm text-gray-500 mb-4">
-          {visit.nom_chien ?? visit.client_nom} — {SERVICE_LABELS[visit.service] ?? visit.service}
+          {visit.nom_chien ?? visit.client_nom} - {SERVICE_LABELS[visit.service] ?? visit.service}
           {visit.staff ? ` · ${visit.staff}` : ''}
         </p>
 
@@ -174,7 +174,7 @@ function RescheduleModal({ visit, onClose, onSaved, onDeleted }: RescheduleModal
                 <label className="block text-xs font-medium text-gray-500 mb-1">
                   Durée (min){' '}
                   <span className="text-gray-400 font-normal">
-                    — laisser vide pour ne pas modifier
+                    (laisser vide pour ne pas modifier)
                   </span>
                 </label>
                 <input
@@ -323,7 +323,7 @@ function WeekGrid({ monday, visits, showStaff, onReschedule }: WeekGridProps) {
                       backgroundColor: showStaff ? v.staff_color : '#4F6072',
                       minHeight: 28,
                     }}
-                    title={`${v.client_nom}${v.nom_chien ? ` — ${v.nom_chien}` : ''} · ${SERVICE_LABELS[v.service] ?? v.service}`}
+                    title={`${v.client_nom}${v.nom_chien ? ` - ${v.nom_chien}` : ''} · ${SERVICE_LABELS[v.service] ?? v.service}`}
                   >
                     <p className="font-semibold truncate leading-tight text-xs">
                       {v.nom_chien ?? v.client_nom}
@@ -510,7 +510,7 @@ function CalendarSection({ title, tabs }: CalendarSectionProps) {
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">{title}</p>
 
-        {/* Tab switcher — desktop only */}
+        {/* Tab switcher - desktop only */}
         <div className="hidden sm:flex items-center gap-2">
           {tabs.length > 1 && (
             <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm">
@@ -651,13 +651,13 @@ function CalendarSection({ title, tabs }: CalendarSectionProps) {
 export function CalendarView() {
   return (
     <div className="space-y-8">
-      {/* Spa POILUS — Toilettage / Bains / Balnéo */}
+      {/* Spa POILUS - Toilettage / Bains / Balnéo */}
       <CalendarSection title="Spa POILUS" tabs={SPA_TABS} />
 
-      {/* Bien-être — Massage / Ostéopathie */}
+      {/* Bien-être - Massage / Ostéopathie */}
       <CalendarSection title="Bien-être" tabs={BIENETRE_TABS} />
 
-      {/* Crèche & Éducation — Aurore */}
+      {/* Crèche & Éducation - Aurore */}
       <CalendarSection title="Crèche & Éducation" tabs={CRECHE_EDUCATION_TABS} />
     </div>
   )

@@ -10,7 +10,7 @@ export default async function ShopifyCustomersPage() {
     <div>
       <h1 className="text-2xl font-bold text-[#1D164E] mb-2">Clients Shopify</h1>
       <p className="text-sm text-gray-400 mb-8">
-        Acheteurs de la boutique en ligne —{' '}
+        Acheteurs de la boutique en ligne -{' '}
         <span className="font-medium">{customers.length} clients</span>
       </p>
       {customers.length === 0 ? (

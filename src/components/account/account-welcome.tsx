@@ -32,7 +32,7 @@ export function AccountWelcome({ prenom, memberSince, canBook }: AccountWelcomeP
       ) : (
         <p className="mt-3.5 text-[12px] leading-relaxed" style={{ color: 'rgba(26,26,26,0.55)' }}>
           Pour activer la réservation en ligne, venez nous rendre visite en boutique avec votre
-          chien — nous aurons ainsi le plaisir de faire connaissance. 🐾
+          chien, nous aurons ainsi le plaisir de faire connaissance. 🐾
         </p>
       )}
     </div>

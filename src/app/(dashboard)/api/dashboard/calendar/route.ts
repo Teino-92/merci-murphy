@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
 
   const visits = (data ?? []).map((v) => ({
     ...v,
-    client_nom: profileMap[v.profile_id]?.nom ?? '—',
+    client_nom: profileMap[v.profile_id]?.nom ?? '-',
     nom_chien: dogMap[v.profile_id] ?? null,
     staff_color: v.staff ? (staffColorMap[v.staff] ?? '#4F6072') : '#4F6072',
   }))

@@ -61,14 +61,14 @@ export function TarifsToilettageTable({ data }: Props) {
                         {noOrphan(ligne.type)}
                       </td>
                       <td className="px-3 py-3 text-center font-medium text-charcoal">
-                        {noOrphan(ligne.bain || <span className="text-charcoal/30">—</span>)}
+                        {noOrphan(ligne.bain || <span className="text-charcoal/30">-</span>)}
                       </td>
                       <td className="px-3 py-3 text-center font-medium text-charcoal">
-                        {noOrphan(ligne.bainCoupe || <span className="text-charcoal/30">—</span>)}
+                        {noOrphan(ligne.bainCoupe || <span className="text-charcoal/30">-</span>)}
                       </td>
                       <td className="px-3 py-3 text-center font-medium text-charcoal">
                         {noOrphan(
-                          ligne.bainEpilation || <span className="text-charcoal/30">—</span>
+                          ligne.bainEpilation || <span className="text-charcoal/30">-</span>
                         )}
                       </td>
                     </tr>

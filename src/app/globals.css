@@ -35,7 +35,7 @@
   }
 }
 
-/* Hero v2 (BAT) — séquence unique au chargement : titre qui monte derrière
+/* Hero v2 (BAT) - séquence unique au chargement : titre qui monte derrière
    son masque, puis devanture dévoilée comme un rideau qui se lève. */
 @keyframes hero-line-up {
   from {

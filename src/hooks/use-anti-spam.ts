@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 export type AntiSpamPayload = {
-  /** Honeypot field — must stay empty. Bots fill it because it exists in the DOM. */
+  /** Honeypot field - must stay empty. Bots fill it because it exists in the DOM. */
   website: string
   /** Milliseconds elapsed between form mount and submission. */
   elapsedMs: number

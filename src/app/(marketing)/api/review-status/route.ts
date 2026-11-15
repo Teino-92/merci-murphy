@@ -1,5 +1,5 @@
 // Dit au modal d'avis si le visiteur connecté est un client confirmé.
-// Appelé côté client uniquement, après le délai d'affichage — le layout
+// Appelé côté client uniquement, après le délai d'affichage - le layout
 // marketing reste statique.
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'

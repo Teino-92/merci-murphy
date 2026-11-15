@@ -25,7 +25,7 @@ const ENGAGEMENTS = [
     body: (
       <>
         {BRAND} aime le vrai et les savoir-faire des passionnés. La plupart de nos
-        fournisseurs-partenaires sont des artisans locaux. Nos produits voyagent le moins possible —
+        fournisseurs-partenaires sont des artisans locaux. Nos produits voyagent le moins possible -
         fabrication engagé pour favoriser la mixité dans l&apos;entreprenariat. {BRAND} est engagé
         pour favoriser la mixité dans l&apos;entreprenariat. Nous favorisons les marques dirigées
         par des femmes.
@@ -37,8 +37,8 @@ const ENGAGEMENTS = [
     lead: 'Éco-responsable, sans cuir animal',
     body: (
       <>
-        Seuls les produits éco-responsables — matières premières biologiques, recyclées et
-        innovantes, sans compromis sur leur origine et leur traçabilité — entrent dans la sélection.
+        Seuls les produits éco-responsables, matières premières biologiques, recyclées et
+        innovantes, sans compromis sur leur origine et leur traçabilité, entrent dans la sélection.
         Pas de souffrance animale : vous ne trouverez pas de cuir animal chez {BRAND}.
       </>
     ),
@@ -50,7 +50,7 @@ const ENGAGEMENTS = [
       <>
         La durabilité est un critère essentiel. {BRAND} est la première boutique pour chien à
         proposer du <span className="font-medium text-charcoal">second-hand</span> et une
-        consommation en vrac. Réutiliser est la meilleure option pour la planète — pour une
+        consommation en vrac. Réutiliser est la meilleure option pour la planète, pour une
         consommation éclairée et responsable.
       </>
     ),
@@ -77,7 +77,7 @@ export function ShopManifestoV2() {
         <div className="lg:sticky lg:top-28 lg:self-start">
           <DisplayTitle>Une seule planète</DisplayTitle>
           <p className="text-balance mt-5 max-w-xs text-base leading-relaxed text-charcoal/70 lg:text-lg">
-            Nos achats ont un sens — pour nos poilus et pour la planète.
+            Nos achats ont un sens, pour nos poilus et pour la planète.
           </p>
         </div>
 

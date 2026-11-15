@@ -19,7 +19,7 @@ import { noOrphan } from '@/lib/typo'
 
 const SERVICES = [
   { value: 'toilettage', label: 'Toilettage' },
-  { value: 'bains', label: 'Bain — Dog wash self-service' },
+  { value: 'bains', label: 'Bain - Dog wash self-service' },
   { value: 'balneo', label: 'Balnéo' },
   { value: 'massage', label: 'Massage bien-être' },
   { value: 'creche', label: 'Crèche' },
@@ -114,7 +114,7 @@ export function ReservationForm({
         ))}
       </div>
 
-      {/* Step 0 — Service */}
+      {/* Step 0 - Service */}
       {step === 0 && (
         <div className="space-y-4">
           <div>
@@ -144,7 +144,7 @@ export function ReservationForm({
         </div>
       )}
 
-      {/* Step 1 — Chien */}
+      {/* Step 1 - Chien */}
       {step === 1 && (
         <div className="space-y-4">
           <div>
@@ -213,7 +213,7 @@ export function ReservationForm({
         </div>
       )}
 
-      {/* Step 2 — Contact (pre-filled, read-only email) */}
+      {/* Step 2 - Contact (pre-filled, read-only email) */}
       {step === 2 && (
         <div className="space-y-4">
           <div>
@@ -257,7 +257,7 @@ export function ReservationForm({
         </div>
       )}
 
-      {/* Step 3 — Message */}
+      {/* Step 3 - Message */}
       {step === 3 && (
         <div className="space-y-4">
           <div>

@@ -52,7 +52,7 @@ export function RealtimeNotifications() {
   }, [router])
 
   useEffect(() => {
-    // Request notification permission on mount (silent — no prompt if already decided)
+    // Request notification permission on mount (silent - no prompt if already decided)
     if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
       Notification.requestPermission()
     }

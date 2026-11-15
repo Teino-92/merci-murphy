@@ -5,7 +5,7 @@ const DISALLOW = ['/studio/', '/api/', '/dashboard/']
 /**
  * AI crawlers are allowed explicitly so the salon stays visible in generative
  * answers (ChatGPT, Claude, Perplexity, Google AI Overviews). They are already
- * covered by the wildcard rule — naming them makes the intent unambiguous.
+ * covered by the wildcard rule - naming them makes the intent unambiguous.
  */
 const AI_CRAWLERS = [
   'GPTBot',

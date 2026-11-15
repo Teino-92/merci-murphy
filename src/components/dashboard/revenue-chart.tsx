@@ -214,7 +214,7 @@ export function RevenueChart({ initialDaily, initialTop, from, to, loading = fal
       {/* Top products */}
       <div className="bg-white rounded-2xl p-6 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5">
-          Top 5 produits Shopify — même période
+          Top 5 produits Shopify - même période
         </p>
         <TopProducts items={initialTop} />
       </div>

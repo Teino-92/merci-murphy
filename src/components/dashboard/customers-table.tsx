@@ -101,22 +101,22 @@ export function CustomersTable({
                           )}
                         </div>
                       ) : (
-                        '—'
+                        '-'
                       )}
                     </td>
                     <td className="px-5 py-4 text-gray-500 hidden sm:table-cell">
                       {first ? (
                         <div>
-                          <span>{first.breed ?? '—'}</span>
+                          <span>{first.breed ?? '-'}</span>
                           {isExpanded &&
                             rest.map((d) => (
                               <div key={d.name} className="text-xs mt-0.5">
-                                {d.breed ?? '—'}
+                                {d.breed ?? '-'}
                               </div>
                             ))}
                         </div>
                       ) : (
-                        '—'
+                        '-'
                       )}
                     </td>
                     <td className="px-5 py-4 text-gray-500 hidden md:table-cell">{p.telephone}</td>

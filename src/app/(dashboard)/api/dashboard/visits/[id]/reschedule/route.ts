@@ -93,7 +93,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
     })
 
     if (onlyDurationChanged) {
-      // Mail info simple — pas de OUI/NON
+      // Mail info simple - pas de OUI/NON
       await resend.emails
         .send({
           from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,

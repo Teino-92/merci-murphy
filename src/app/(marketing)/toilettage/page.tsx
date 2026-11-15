@@ -13,12 +13,12 @@ import { noOrphan } from '@/lib/typo'
 const SITE_URL = 'https://mercimurphy.com'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Toilettage chien à Paris par race — merci murphy®' },
+  title: { absolute: 'Toilettage chien à Paris par race - merci murphy®' },
   description:
     'Découvrez nos soins de toilettage adaptés à chaque race à Paris 9e. Golden Retriever, Caniche, Yorkshire, Berger Australien et plus encore.',
   alternates: { canonical: `${SITE_URL}/toilettage` },
   openGraph: {
-    title: 'Toilettage chien à Paris par race — merci murphy®',
+    title: 'Toilettage chien à Paris par race - merci murphy®',
     description:
       'Soins de toilettage adaptés à chaque race à Paris 9e. Approche premium, savoir-faire reconnu.',
     url: `${SITE_URL}/toilettage`,
@@ -49,7 +49,7 @@ function buildJsonLd(pages: SeoPageSummary[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Toilettage chien à Paris par race — merci murphy®',
+    name: 'Toilettage chien à Paris par race - merci murphy®',
     itemListElement: pages.map((p, i) => ({
       '@type': 'ListItem',
       position: i + 1,

@@ -1,6 +1,6 @@
 // Service Worker for merci murphy® dashboard web push notifications.
-// No caching, no offline — only push + notificationclick handlers.
-// v2 — broadcast push events to open clients for in-app realtime refresh.
+// No caching, no offline - only push + notificationclick handlers.
+// v2 - broadcast push events to open clients for in-app realtime refresh.
 
 self.addEventListener('install', () => {
   self.skipWaiting()

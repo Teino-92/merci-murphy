@@ -9,7 +9,7 @@ export function bookingConfirmedHtml(params: {
   const { clientName, serviceName, appointmentDate } = params
   const prenom = clientName.split(' ')[0]
   return emailHtml({
-    title: 'Votre réservation est confirmée — merci murphy®',
+    title: 'Votre réservation est confirmée - merci murphy®',
     body: [
       p(`Bonjour ${prenom},`),
       p(

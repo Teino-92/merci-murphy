@@ -1,6 +1,6 @@
 // Server-only helper for sending Web Push notifications to dashboard staff.
 // Invoked from Server Actions / API routes after a relevant INSERT / UPDATE.
-// Never throws — failures are logged, main flow is never broken.
+// Never throws - failures are logged, main flow is never broken.
 
 import 'server-only'
 import webpush from 'web-push'
@@ -44,28 +44,28 @@ function buildPayload(event: PushEventType, data: PushEventData): PushPayload {
     case 'new-lead':
       return {
         title: 'Nouvelle demande',
-        body: `${who} — ${service}`,
+        body: `${who} - ${service}`,
         url: '/dashboard/leads',
         tag: `lead-${data.leadId ?? 'x'}`,
       }
     case 'new-visit':
       return {
         title: 'Nouvelle réservation',
-        body: `${who} — ${service}${when ? ` · ${when}` : ''}`,
+        body: `${who} - ${service}${when ? ` · ${when}` : ''}`,
         url: '/dashboard/reservations',
         tag: `visit-${data.visitId ?? 'x'}`,
       }
     case 'pending-deposit':
       return {
         title: 'Acompte à demander',
-        body: `${who} — ${service}${when ? ` · ${when}` : ''}`,
+        body: `${who} - ${service}${when ? ` · ${when}` : ''}`,
         url: '/dashboard/reservations?filter=pending_deposit',
         tag: `pending-${data.visitId ?? 'x'}`,
       }
     case 'deposit-paid':
       return {
         title: 'Acompte payé',
-        body: `${who} — ${service}${when ? ` · ${when}` : ''}`,
+        body: `${who} - ${service}${when ? ` · ${when}` : ''}`,
         url: '/dashboard/reservations',
         tag: `paid-${data.visitId ?? 'x'}`,
       }

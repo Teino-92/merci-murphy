@@ -146,7 +146,7 @@ export const seoPage = defineType({
     select: { title: 'race', subtitle: 'status', pos: 'googlePosition' },
     prepare: ({ title, subtitle, pos }) => ({
       title: `🐕 ${title}`,
-      subtitle: pos ? `${subtitle} — pos #${pos}` : subtitle,
+      subtitle: pos ? `${subtitle} - pos #${pos}` : subtitle,
     }),
   },
   orderings: [

@@ -1,5 +1,5 @@
 /**
- * Référentiel races canines — source de vérité côté Next/cron.
+ * Référentiel races canines - source de vérité côté Next/cron.
  * Synchroniser avec scripts/seo/lib/breeds.ts (même contenu).
  */
 

@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // Refresh session — required for Server Components to read auth state
+  // Refresh session - required for Server Components to read auth state
   const {
     data: { user },
   } = await supabase.auth.getUser()

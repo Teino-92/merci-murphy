@@ -16,7 +16,7 @@ export function depositRequestHtml(params: {
     : `votre rendez-vous ${appointmentDate} chez merci murphy pour le ${esc(serviceName.toLowerCase())}`
 
   return emailHtml({
-    title: 'Confirmez votre réservation — merci murphy®',
+    title: 'Confirmez votre réservation - merci murphy®',
     body: [
       p(`Bonjour ${prenom},`),
       p(`Nous vous rappelons ${subject}.`),

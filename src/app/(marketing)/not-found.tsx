@@ -16,7 +16,7 @@ export default function NotFound() {
         Page introuvable
       </h1>
       <p className="text-sm text-charcoal/50 max-w-sm mb-10 leading-relaxed">
-        Cette page n&apos;existe pas ou a été déplacée. Pas de panique — votre chien, lui, sait
+        Cette page n&apos;existe pas ou a été déplacée. Pas de panique, votre chien, lui, sait
         toujours où il est.
       </p>
       <Link

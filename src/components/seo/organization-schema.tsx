@@ -2,7 +2,7 @@
  * Global Organization JSON-LD for merci murphy®.
  * Rendered once in the marketing layout so every page reinforces the brand
  * entity. `alternateName` covers the spellings people actually type
- * ("merci murphy", "Merci Murphy") — helps Google tie the bare brand query
+ * ("merci murphy", "Merci Murphy") - helps Google tie the bare brand query
  * to this site (navigational intent → sitelinks).
  */
 export const ORGANIZATION_ID = 'https://mercimurphy.com/#organization'

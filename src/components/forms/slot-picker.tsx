@@ -288,7 +288,7 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null)
   const [selectedStaffName, setSelectedStaffName] = useState<string | null>(null)
 
-  // Crèche duration — always fixed 4h
+  // Crèche duration - always fixed 4h
   const crecheDuration = CRECHE_FIXED_DURATION
 
   // Selected dog state

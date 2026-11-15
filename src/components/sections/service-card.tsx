@@ -42,9 +42,9 @@ export function ServiceCard({
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         )}
-        {/* Gradient overlay — bottom half fades to charcoal */}
+        {/* Gradient overlay - bottom half fades to charcoal */}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
-        {/* Text on top of image — fixed height so all cards align */}
+        {/* Text on top of image - fixed height so all cards align */}
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 flex flex-col justify-end h-[120px] sm:h-[160px]">
           <h3 className="font-display text-base sm:text-xl font-semibold text-cream line-clamp-2 min-h-[40px] sm:min-h-[56px]">
             {title}

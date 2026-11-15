@@ -11,7 +11,7 @@ const BRAND = <span className="font-medium text-charcoal">merci murphy®</span>
 const VALUES: { photo: string; alt: string; position?: string; text: ReactNode }[] = [
   {
     photo: '/valeurs-1.jpg',
-    alt: 'La boutique merci murphy® — rayons et créations florales',
+    alt: 'La boutique merci murphy® - rayons et créations florales',
     position: 'center 60%',
     text: (
       <>
@@ -22,12 +22,12 @@ const VALUES: { photo: string; alt: string; position?: string; text: ReactNode }
   },
   {
     photo: '/valeurs-2.jpg',
-    alt: "Tote bag merci murphy® — It's never just a dog",
+    alt: "Tote bag merci murphy® - It's never just a dog",
     position: 'center 3%',
     text: (
       <>
         Dans tout ce qui est entrepris pour la relation entre les chiens et leur famille, {BRAND}{' '}
-        recherche un impact sociétal positif et significatif — amélioration des conditions de
+        recherche un impact sociétal positif et significatif, amélioration des conditions de
         travail, recherche d&apos;une juste rémunération, insertion par le travail, soutien de
         l&apos;entreprenariat féminin.
       </>
@@ -35,12 +35,12 @@ const VALUES: { photo: string; alt: string; position?: string; text: ReactNode }
   },
   {
     photo: '/valeurs-3.jpg',
-    alt: 'Chiens dans la boutique merci murphy® — un espace de vie partagé',
+    alt: 'Chiens dans la boutique merci murphy® - un espace de vie partagé',
     position: 'center 30%',
     text: (
       <>
-        {BRAND} est engagé pour réduire son impact environnemental — conception éco-responsable de
-        la crèche et de l&apos;atelier de toilettage, pratiques quotidiennes visant la réduction de
+        {BRAND} est engagé pour réduire son impact environnemental, conception éco-responsable de la
+        crèche et de l&apos;atelier de toilettage, pratiques quotidiennes visant la réduction de
         consommation énergétique et d&apos;eau, choix du matériel et produits utilisés.
       </>
     ),
@@ -52,7 +52,7 @@ const VALUES: { photo: string; alt: string; position?: string; text: ReactNode }
       <>
         Souhaiter le meilleur pour son chien, c&apos;est aussi consommer différemment. {BRAND}{' '}
         propose une consommation en vrac et une offre resserrée de produits éco-responsables et
-        éthiques — et est la première boutique pour chien à proposer du{' '}
+        éthiques, et est la première boutique pour chien à proposer du{' '}
         <span className="font-medium text-charcoal">second-hand</span>. Réutiliser est la meilleure
         option pour la planète.
       </>

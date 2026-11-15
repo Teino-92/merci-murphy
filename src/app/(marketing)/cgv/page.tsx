@@ -117,7 +117,7 @@ export default function CGVPage() {
               bonjour@mercimurphy.com
             </a>
           </li>
-          <li>Par courrier : Murphy Honsha, 18, rue Victor Massé, 75009 Paris — France</li>
+          <li>Par courrier : Murphy Honsha, 18, rue Victor Massé, 75009 Paris - France</li>
         </ul>
       </div>
 
@@ -232,7 +232,7 @@ export default function CGVPage() {
           <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta-dark hover:underline">
             bonjour@mercimurphy.com
           </a>{' '}
-          ou par courrier à Murphy Honsha, 18 rue Victor Massé, 75009 Paris — France, le jour même
+          ou par courrier à Murphy Honsha, 18 rue Victor Massé, 75009 Paris - France, le jour même
           de la livraison ou au plus tard le premier jour ouvré suivant.
         </p>
       </div>

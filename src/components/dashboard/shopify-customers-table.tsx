@@ -55,7 +55,7 @@ export function ShopifyCustomersTable({ customers }: { customers: ShopifyCustome
                     className="border-b border-gray-50 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-5 py-4 font-medium text-[#1D164E]">
-                      {[c.firstName, c.lastName].filter(Boolean).join(' ') || '—'}
+                      {[c.firstName, c.lastName].filter(Boolean).join(' ') || '-'}
                     </td>
                     <td className="px-5 py-4 text-gray-500 hidden sm:table-cell">{c.email}</td>
                     <td className="px-5 py-4 text-gray-500 hidden md:table-cell">

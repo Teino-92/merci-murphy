@@ -4,7 +4,7 @@ import type { ComponentProps } from 'react'
 /**
  * Drop-in replacement for next/image for Shopify CDN images.
  * Uses Shopify's own CDN URL params (?width=&format=webp) for resizing
- * so Vercel never proxies the image — zero cost, full performance.
+ * so Vercel never proxies the image - zero cost, full performance.
  */
 
 function shopifyImageUrl(src: string, width: number): string {

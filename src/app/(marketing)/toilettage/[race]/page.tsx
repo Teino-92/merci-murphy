@@ -203,7 +203,7 @@ export default async function RacePage(props: Props) {
       </section>
 
       {page.faq && page.faq.length > 0 && (
-        <FaqV2 items={page.faq} title={`Questions fréquentes — ${page.race}`} />
+        <FaqV2 items={page.faq} title={`Questions fréquentes - ${page.race}`} />
       )}
 
       {related.length > 0 && (

@@ -16,10 +16,10 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Toilettage, spa & crèche pour chiens à Paris 9e',
   description:
-    'Toilettage sans stress, balnéothérapie, crèche, éducation et ostéopathie pour chiens — 8 prestations sous un même toit à Paris 9e. Réservez en ligne 7j/7.',
+    'Toilettage sans stress, balnéothérapie, crèche, éducation et ostéopathie pour chiens, 8 prestations sous un même toit à Paris 9e. Réservez en ligne 7j/7.',
   openGraph: {
     images: [
-      { url: '/og/og-services.jpg', width: 1200, height: 630, alt: 'Nos services — Merci Murphy' },
+      { url: '/og/og-services.jpg', width: 1200, height: 630, alt: 'Nos services - Merci Murphy' },
     ],
   },
 }

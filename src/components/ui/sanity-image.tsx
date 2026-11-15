@@ -11,7 +11,7 @@ import { sanityLoader } from '@/lib/sanity-loader'
  * requests (driven by `sizes` + DPR). This yields a real responsive
  * srcset so mobile downloads a small variant instead of the full
  * desktop-sized image. The image bytes are still served/resized by
- * Sanity's CDN — Vercel never proxies them.
+ * Sanity's CDN - Vercel never proxies them.
  */
 export function SanityImage(props: ComponentProps<typeof Image>) {
   return <Image {...props} loader={sanityLoader} />

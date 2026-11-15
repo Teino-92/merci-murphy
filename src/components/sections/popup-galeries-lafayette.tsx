@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { CONTAINER, TEXT_LINK } from '@/components/ui/editorial'
 import { cn } from '@/lib/utils'
 
-// TEMPORAIRE — à retirer après l'événement.
+// TEMPORAIRE - à retirer après l'événement.
 const EVENT_URL =
   'https://www.galerieslafayette.com/m/magasin-haussmann/en-ce-moment/pop-up-merci-murphy'
 

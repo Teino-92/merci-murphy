@@ -14,7 +14,7 @@ export function bookingReminderHtml(params: {
     : 'votre rendez-vous'
 
   return emailHtml({
-    title: 'Rappel de votre rendez-vous — merci murphy®',
+    title: 'Rappel de votre rendez-vous - merci murphy®',
     body: [
       p(`Bonjour ${esc(prenom)},`),
       p(

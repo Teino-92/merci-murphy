@@ -5,7 +5,7 @@ import type { ImageLoaderProps } from 'next/image'
  *
  * Sanity's CDN resizes on the fly via `?w=`. We let Next drive the width
  * (from the `sizes` attribute + device DPR) instead of baking a fixed
- * `.width()` into the URL — so mobile downloads a small variant, not the
+ * `.width()` into the URL - so mobile downloads a small variant, not the
  * full desktop-sized image.
  *
  * The incoming `src` is already a `urlFor(...).url()` string. We:

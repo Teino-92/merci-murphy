@@ -99,7 +99,7 @@ export async function signUp(data: SignUpData) {
   const { error: emailError } = await resend.emails.send({
     from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
     to: parsed.data.email,
-    subject: 'Confirmez votre adresse email — merci murphy®',
+    subject: 'Confirmez votre adresse email - merci murphy®',
     html: accountConfirmHtml(parsed.data.prenom, confirmUrl.toString()),
   })
 
@@ -155,7 +155,7 @@ export async function getProfile(): Promise<Profile | null> {
   } = await supabase.auth.getUser()
   if (!user) return null
 
-  // Use admin client to bypass RLS — user identity already verified above
+  // Use admin client to bypass RLS - user identity already verified above
   // Explicit columns: internal fields (notes) must never reach the browser
   const { data } = await supabaseAdmin
     .from('profiles')
@@ -164,7 +164,7 @@ export async function getProfile(): Promise<Profile | null> {
     .single()
   if (!data) return null
 
-  // Reconcile newsletter_subscribed with the newsletter_subscribers table —
+  // Reconcile newsletter_subscribed with the newsletter_subscribers table -
   // the user may have subscribed via the homepage form which only writes to that table.
   if (!data.newsletter_subscribed) {
     const { data: nlRow } = await supabaseAdmin
