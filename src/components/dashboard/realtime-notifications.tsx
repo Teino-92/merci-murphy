@@ -58,7 +58,7 @@ export function RealtimeNotifications() {
     const supabase = createSupabaseBrowserClient()
 
     const channel = supabase
-      .channel('dashboard-notifications')
+      .channel(`dashboard-notifications-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'leads' },
