@@ -11,10 +11,10 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'error',
       'no-console': 'warn',
       // Règles React Compiler arrivées avec eslint-plugin-react-hooks v7 (Next 16).
-      // Elles signalent du code existant fonctionnel : warn le temps de refactorer.
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/purity': 'warn',
-      'react-hooks/refs': 'warn',
+      // Code existant refactoré : on les garde en error pour éviter les régressions.
+      'react-hooks/set-state-in-effect': 'error',
+      'react-hooks/purity': 'error',
+      'react-hooks/refs': 'error',
     },
   },
 ])

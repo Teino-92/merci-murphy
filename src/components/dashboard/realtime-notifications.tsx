@@ -47,7 +47,9 @@ function notify(title: string, body: string) {
 export function RealtimeNotifications() {
   const router = useRouter()
   const routerRef = useRef(router)
-  routerRef.current = router
+  useEffect(() => {
+    routerRef.current = router
+  }, [router])
 
   useEffect(() => {
     // Request notification permission on mount (silent — no prompt if already decided)

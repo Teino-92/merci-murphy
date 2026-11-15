@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
+
+import { useIsClient } from '@/hooks/use-is-client'
 
 function isMobile(): boolean {
   if (typeof window === 'undefined') return false
@@ -22,16 +23,12 @@ function isStandalone(): boolean {
 }
 
 export function PwaGate({ children }: { children: React.ReactNode }) {
-  const [checked, setChecked] = useState(false)
-  const [standalone, setStandalone] = useState(true)
+  const isClient = useIsClient()
 
-  useEffect(() => {
-    // Desktop always passes through — PWA gate is mobile-only
-    setStandalone(isStandalone() || !isMobile())
-    setChecked(true)
-  }, [])
+  if (!isClient) return null
 
-  if (!checked) return null
+  // Desktop always passes through — PWA gate is mobile-only
+  const standalone = isStandalone() || !isMobile()
 
   if (!standalone) {
     return (

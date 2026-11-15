@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 export type AntiSpamPayload = {
   /** Honeypot field — must stay empty. Bots fill it because it exists in the DOM. */
@@ -15,11 +15,12 @@ export type AntiSpamPayload = {
  */
 export function useAntiSpam() {
   const [website, setWebsite] = useState('')
-  const mountedAt = useRef(Date.now())
+  // Initialiseur paresseux : Date.now() n'est appelé qu'au premier rendu.
+  const [mountedAt] = useState(() => Date.now())
 
   const getPayload = (): AntiSpamPayload => ({
     website,
-    elapsedMs: Date.now() - mountedAt.current,
+    elapsedMs: Date.now() - mountedAt,
   })
 
   /** Props for the hidden input. Render it inside the form, before the submit button. */

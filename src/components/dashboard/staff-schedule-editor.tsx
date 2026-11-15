@@ -40,22 +40,20 @@ export function StaffScheduleEditor({ staffId }: Props) {
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
   const [entries, setEntries] = useState<StaffSchedule[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loadedKey, setLoadedKey] = useState<string | null>(null)
   const [saving, setSaving] = useState<string | null>(null) // dateStr being saved
 
   const days = getMonthDays(year, month)
   const firstDay = toDateStr(new Date(year, month, 1))
   const lastDay = toDateStr(new Date(year, month + 1, 0))
+  const loading = loadedKey !== `${staffId}_${firstDay}_${lastDay}`
 
   useEffect(() => {
-    setLoading(true)
     fetch(`/api/dashboard/staff/${staffId}/schedule?from=${firstDay}&to=${lastDay}`)
       .then((r) => r.json())
-      .then((data) => {
-        setEntries(Array.isArray(data) ? data : [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+      .then((data) => setEntries(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setLoadedKey(`${staffId}_${firstDay}_${lastDay}`))
   }, [staffId, firstDay, lastDay])
 
   function getEntry(dateStr: string): StaffSchedule | undefined {

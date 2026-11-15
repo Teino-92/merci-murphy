@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { X } from 'lucide-react'
+import { useIsClient } from '@/hooks/use-is-client'
 import { isPromoLive, type PromoBanner as PromoBannerData } from '@/sanity/queries/site-settings'
 
 const STORAGE_KEY = 'mm-promo-banner-dismissed'
@@ -18,18 +19,17 @@ interface Props {
 }
 
 export function PromoBanner({ banner }: Props) {
-  const [dismissed, setDismissed] = useState(true)
+  const isClient = useIsClient()
+  const [dismissedNow, setDismissedNow] = useState(false)
   const [live, setLive] = useState(() => isPromoLive(banner))
-
-  useEffect(() => {
-    if (!banner.message) return
-    const stored = window.localStorage.getItem(STORAGE_KEY)
-    setDismissed(stored === banner.message)
-  }, [banner.message])
+  // Masquée tant qu'on ne peut pas lire localStorage (SSR / hydratation).
+  const dismissed =
+    !isClient ||
+    dismissedNow ||
+    (Boolean(banner.message) && window.localStorage.getItem(STORAGE_KEY) === banner.message)
 
   // Auto-hide when endDate passes without needing a page reload.
   useEffect(() => {
-    setLive(isPromoLive(banner))
     if (!banner.endDate) return
     const ms = new Date(banner.endDate).getTime() - Date.now()
     if (ms <= 0 || ms > 2_147_483_647) return
@@ -45,7 +45,7 @@ export function PromoBanner({ banner }: Props) {
 
   const handleDismiss = () => {
     if (banner.message) window.localStorage.setItem(STORAGE_KEY, banner.message)
-    setDismissed(true)
+    setDismissedNow(true)
   }
 
   const segment = (

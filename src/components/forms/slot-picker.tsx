@@ -130,33 +130,40 @@ function MonthCalendar({
 
   const [year, setYear] = useState(() => parseInt(today.slice(0, 4), 10))
   const [month, setMonth] = useState(() => parseInt(today.slice(5, 7), 10) - 1)
-  const [availableDates, setAvailableDates] = useState<Set<string> | null>(null)
-  const [datesLoading, setDatesLoading] = useState(false)
+  // Résultat indexé par URL : loading et reset sont dérivés, sans setState synchrone dans l'effet.
+  const [datesResult, setDatesResult] = useState<{
+    url: string
+    dates: Set<string> | null
+  } | null>(null)
 
   const dates = getDatesInMonth(year, month)
   const firstDow = getDayOfWeek(dates[0])
   const gridOffset = firstDow === 0 ? 6 : firstDow - 1
 
-  // Fetch available dates when month/service/staff changes
-  useEffect(() => {
-    if (!serviceSlug) return
+  let datesUrl: string | null = null
+  if (serviceSlug) {
     const slugBase = serviceSlug.split('-')[0]
     const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`
-    let url = `/api/booking/available-dates?service=${slugBase}&month=${monthStr}`
-    if (staffId) url += `&staffId=${staffId}`
-    if (slugBase === 'toilettage' && dogDuration) url += `&duration=${dogDuration}`
-    if (slugBase === 'creche' && crecheDuration) url += `&duration=${crecheDuration}`
+    datesUrl = `/api/booking/available-dates?service=${slugBase}&month=${monthStr}`
+    if (staffId) datesUrl += `&staffId=${staffId}`
+    if (slugBase === 'toilettage' && dogDuration) datesUrl += `&duration=${dogDuration}`
+    if (slugBase === 'creche' && crecheDuration) datesUrl += `&duration=${crecheDuration}`
+  }
+  const isCurrent = datesUrl !== null && datesResult?.url === datesUrl
+  const availableDates = isCurrent ? datesResult.dates : null
+  const datesLoading = datesUrl !== null && !isCurrent
 
-    setDatesLoading(true)
-    setAvailableDates(null)
+  // Fetch available dates when month/service/staff changes
+  useEffect(() => {
+    if (!datesUrl) return
+    const url = datesUrl
     fetch(url)
       .then((r) => r.json())
       .then((data: { availableDates?: string[] }) => {
-        setAvailableDates(new Set(data.availableDates ?? []))
+        setDatesResult({ url, dates: new Set(data.availableDates ?? []) })
       })
-      .catch(() => setAvailableDates(null))
-      .finally(() => setDatesLoading(false))
-  }, [serviceSlug, staffId, dogDuration, crecheDuration, year, month])
+      .catch(() => setDatesResult({ url, dates: null }))
+  }, [datesUrl])
 
   const prevMonth = () => {
     if (month === 0) {
@@ -346,6 +353,9 @@ export function SlotPicker({ profile, dogs }: { profile: Profile; dogs: Dog[] })
   useEffect(() => {
     if (step === 'time' && selectedService && selectedDate) {
       const slugBase = selectedService.split('-')[0]
+      // fetchSlots réinitialise l'état des créneaux avant la requête (loading/erreur) :
+      // c'est voulu, la requête dépend de l'étape courante du tunnel.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchSlots(
         selectedService,
         selectedDate,

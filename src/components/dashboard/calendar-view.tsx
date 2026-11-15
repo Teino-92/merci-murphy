@@ -450,22 +450,21 @@ function CalendarSection({ title, tabs }: CalendarSectionProps) {
   const [monday, setMonday] = useState<Date>(() => getMondayOf(new Date()))
   const [selectedDay, setSelectedDay] = useState<Date>(() => new Date())
   const [visits, setVisits] = useState<CalVisit[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loadedKey, setLoadedKey] = useState<string | null>(null)
   const [rescheduling, setRescheduling] = useState<CalVisit | null>(null)
 
-  // On mobile fetch a wider window: Mon–Sun of the selected day's week
+  const from = toLocalDateStr(monday)
+  const to = toLocalDateStr(addDays(monday, 5))
+  const fetchKey = `${from}_${to}`
+  const loading = loadedKey !== fetchKey
+
   useEffect(() => {
-    setLoading(true)
-    const from = toLocalDateStr(monday)
-    const to = toLocalDateStr(addDays(monday, 5))
     fetch(`/api/dashboard/calendar?from=${from}&to=${to}`)
       .then((r) => r.json())
-      .then((data) => {
-        setVisits(Array.isArray(data) ? data : [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [monday])
+      .then((data) => setVisits(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setLoadedKey(`${from}_${to}`))
+  }, [from, to])
 
   function handleDeleted(id: string) {
     setVisits((prev) => prev.filter((v) => v.id !== id))
