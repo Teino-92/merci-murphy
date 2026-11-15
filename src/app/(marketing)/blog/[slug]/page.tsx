@@ -48,7 +48,7 @@ const ARTICLE_BODY = cn(
 )
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
@@ -56,7 +56,8 @@ export async function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug.current }))
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const post = await getPostBySlug(params.slug)
   if (!post) return {}
 
@@ -162,7 +163,8 @@ function CoverCredit({ post }: { post: PostDetail }) {
  * une mesure de lecture confortable ; la FAQ reste rendue en clair (pas
  * d'accordéon) pour Google et les LLM.
  */
-export default async function BlogArticlePage({ params }: Props) {
+export default async function BlogArticlePage(props: Props) {
+  const params = await props.params
   const [post, allProducts] = await Promise.all([getPostBySlug(params.slug), getAllProducts()])
   if (!post) notFound()
 

@@ -17,7 +17,7 @@ This repo uses two distinct agent modes. Load the corresponding file at the star
 
 Stack choices are final — do not suggest alternatives (see `project/STACK.md`).
 
-- **Framework**: Next.js 14 App Router, TypeScript strict
+- **Framework**: Next.js 16 App Router, React 19, TypeScript strict
 - **Styling**: Tailwind CSS with custom palette (`cream`, `sage`, `terracotta`, `charcoal`), shadcn/ui primitives
 - **CMS**: Sanity.io — editorial content (services, pricing, FAQ, team, testimonials); Studio at `/studio`
 - **E-commerce**: Shopify Storefront API (read-only); checkout stays on native Shopify
@@ -118,7 +118,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
 RESEND_API_KEY=
-RESEND_FROM_EMAIL=
+RESEND_AUTH_FROM=
 RESEND_INTERNAL_EMAIL=
 
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=

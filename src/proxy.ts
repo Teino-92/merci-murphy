@@ -17,7 +17,7 @@ const AUTH_PREFIXES = [
 // API routes that don't need Supabase session refresh (webhooks, public endpoints)
 const API_AUTH_SKIP = ['/api/revalidate', '/api/cron', '/api/push']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const needsAuth = AUTH_PREFIXES.some((p) => pathname.startsWith(p))
   if (!needsAuth) return NextResponse.next({ request })

@@ -24,7 +24,8 @@ const StaffUpdateSchema = z
   .partial()
   .strict()
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const user = await requireAdmin()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const parsed = StaffUpdateSchema.safeParse(await req.json().catch(() => null))

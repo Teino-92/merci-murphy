@@ -133,6 +133,12 @@ export async function submitLead(data: LeadFormData & Partial<AntiSpamInput>) {
   }
 
   const parsed = LeadSchema.safeParse(data)
+  if (!parsed.success) {
+    console.warn(
+      '[submitLead] validation failed:',
+      parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(' | ')
+    )
+  }
   if (!parsed.success) return { success: false, error: 'Données invalides.' }
 
   const { data: inserted, error } = await supabaseAdmin

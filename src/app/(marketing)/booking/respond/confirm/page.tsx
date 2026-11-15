@@ -1,7 +1,7 @@
 import { CONTAINER, DisplayTitle } from '@/components/ui/editorial'
 
 interface Props {
-  searchParams: { token?: string; kind?: string }
+  searchParams: Promise<{ token?: string; kind?: string }>
 }
 
 export const metadata = { robots: { index: false, follow: false } }
@@ -11,7 +11,8 @@ export const metadata = { robots: { index: false, follow: false } }
  * the client submits the form (POST), so link scanners/prefetchers can't
  * confirm a booking on the client's behalf.
  */
-export default function ConfirmSlotPage({ searchParams }: Props) {
+export default async function ConfirmSlotPage(props: Props) {
+  const searchParams = await props.searchParams
   const token = searchParams.token ?? ''
   const action =
     searchParams.kind === 'visit' ? '/api/booking/visit-respond' : '/api/booking/respond'

@@ -156,7 +156,9 @@ export function NotificationBell() {
     load()
 
     const channel = supabase
-      .channel('notif-bell')
+      // Nom unique par instance : la cloche est montée plusieurs fois (nav mobile
+      // + desktop) et supabase-js réutilise un channel existant du même nom.
+      .channel(`notif-bell-${crypto.randomUUID()}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'visits' }, () => {
         load()
       })

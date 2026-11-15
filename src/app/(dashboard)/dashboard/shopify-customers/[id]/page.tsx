@@ -5,7 +5,8 @@ import { ArrowLeft } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ShopifyCustomerPage({ params }: { params: { id: string } }) {
+export default async function ShopifyCustomerPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const data = await getShopifyCustomerById(params.id)
   if (!data) notFound()
   const { customer, orders } = data

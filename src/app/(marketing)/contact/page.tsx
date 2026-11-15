@@ -1,22 +1,17 @@
 export const revalidate = 3600
 
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 
 import { ContactForm } from '@/components/forms/contact-form'
 import { HorairesAccordion } from '@/components/sections/horaires-accordion'
+import { MapboxMapLazy } from '@/components/sections/mapbox-map-lazy'
 import { PageHeaderV2 } from '@/components/sections/page-header-v2'
 import { LocalBusinessSchema } from '@/components/seo/local-business-schema'
 import { CONTAINER, DisplayTitle, INLINE_LINK, TEXT_LINK } from '@/components/ui/editorial'
 import { cn } from '@/lib/utils'
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
-
-const MapboxMap = dynamic(
-  () => import('@/components/sections/mapbox-map').then((m) => m.MapboxMap),
-  { ssr: false, loading: () => <div className="h-[420px] w-full bg-cream/50" /> }
-)
 
 export const metadata: Metadata = {
   title: { absolute: 'Contact merci murphy® — 18 rue Victor Massé, Paris 9e' },
@@ -149,7 +144,7 @@ export default async function ContactPage() {
             )}
 
             <div className="mt-12 h-64 overflow-hidden bg-cream/50 sm:h-80">
-              <MapboxMap lat={48.880805} lng={2.338646} />
+              <MapboxMapLazy lat={48.880805} lng={2.338646} />
             </div>
             <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
               {DIRECTIONS.map((d) => (
