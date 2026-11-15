@@ -72,9 +72,12 @@ export function NavbarV2({ variant, showBlog = false }: NavbarV2Props) {
   const showCart = pathname.startsWith('/shop') || (cartData?.totalQuantity ?? 0) > 0
   const isEnseigne = variant === 'enseigne'
 
-  useEffect(() => {
+  // Ferme le menu à chaque navigation (ajustement d'état pendant le rendu).
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname)
     setOpen(false)
-  }, [pathname])
+  }
 
   useEffect(() => {
     if (!open) return

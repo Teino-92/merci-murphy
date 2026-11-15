@@ -308,9 +308,11 @@ export function BreedCombobox({ value, onChange }: BreedComboboxProps) {
       : DOG_BREEDS.filter((b) => b.toLowerCase().includes(query.toLowerCase()))
 
   // Sync external value → local query when form resets
-  useEffect(() => {
+  const [prevValue, setPrevValue] = useState(value)
+  if (value !== prevValue) {
+    setPrevValue(value)
     setQuery(value)
-  }, [value])
+  }
 
   // Close on click outside
   useEffect(() => {

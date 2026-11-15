@@ -87,6 +87,8 @@ export function NotificationBell() {
   const panelRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [panelPos, setPanelPos] = useState<{ top: number; left: number } | null>(null)
+  // Heure de référence des « il y a X min », rafraîchie à chaque ouverture.
+  const [now, setNow] = useState(() => Date.now())
 
   const unseenCount = notifications.filter((n) => !seenIds.has(n.id)).length
 
@@ -153,6 +155,8 @@ export function NotificationBell() {
   }
 
   useEffect(() => {
+    // Faux positif : load() est async, ses setState arrivent après l'await du fetch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load()
 
     const channel = supabase
@@ -221,6 +225,7 @@ export function NotificationBell() {
     if (!open && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
       setPanelPos({ top: rect.bottom + 8, left: rect.left })
+      setNow(Date.now())
     }
     setOpen((prev) => !prev)
   }
@@ -235,7 +240,7 @@ export function NotificationBell() {
   }
 
   function relativeTime(iso: string) {
-    const diff = Date.now() - new Date(iso).getTime()
+    const diff = now - new Date(iso).getTime()
     const mins = Math.floor(diff / 60000)
     if (mins < 60) return `il y a ${mins || 1} min`
     const hrs = Math.floor(mins / 60)

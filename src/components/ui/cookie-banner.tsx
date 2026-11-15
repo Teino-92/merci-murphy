@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { useIsClient } from '@/hooks/use-is-client'
 
 const STORAGE_KEY = 'mm_cookie_consent'
 
 export function CookieBanner() {
-  const [visible, setVisible] = useState(false)
+  const isClient = useIsClient()
+  const [answered, setAnswered] = useState(false)
+  const visible = isClient && !answered && !localStorage.getItem(STORAGE_KEY)
 
   useEffect(() => {
-    const consent = localStorage.getItem(STORAGE_KEY)
-    if (!consent) {
-      setVisible(true)
-    } else if (consent === 'accepted') {
+    if (localStorage.getItem(STORAGE_KEY) === 'accepted') {
       window.gtag?.('consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted' })
     }
   }, [])
@@ -20,13 +20,13 @@ export function CookieBanner() {
   function accept() {
     localStorage.setItem(STORAGE_KEY, 'accepted')
     window.gtag?.('consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted' })
-    setVisible(false)
+    setAnswered(true)
   }
 
   function decline() {
     localStorage.setItem(STORAGE_KEY, 'declined')
     window.gtag?.('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied' })
-    setVisible(false)
+    setAnswered(true)
   }
 
   if (!visible) return null
