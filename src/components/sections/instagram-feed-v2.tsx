@@ -14,7 +14,7 @@ type BeholdResponse = { posts?: FeedPost[] } | FeedPost[] | null
 async function getInstagramPosts(feedId: string): Promise<FeedPost[]> {
   try {
     const res = await fetch(`https://feeds.behold.so/${feedId}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 86400 },
     })
     if (!res.ok) return []
 

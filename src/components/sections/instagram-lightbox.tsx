@@ -57,6 +57,7 @@ export function InstagramLightbox({
           {isVideo && videoSrc ? (
             <video
               src={videoSrc}
+              poster={src}
               autoPlay
               loop
               muted
@@ -67,6 +68,7 @@ export function InstagramLightbox({
           ) : (
             <div className="relative w-full" style={{ maxHeight: '80vh' }}>
               <Image
+                unoptimized
                 src={src}
                 alt={alt}
                 width={800}

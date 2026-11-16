@@ -19,6 +19,8 @@ export interface FeedPost {
   thumbnailUrl?: string
   permalink: string
   caption?: string
+  prunedCaption?: string
+  colorPalette?: { dominant?: string; mutedDark?: string }
   sizes?: {
     small?: BeholdSize
     medium?: BeholdSize
@@ -56,7 +58,37 @@ const GRID_SLOTS_MOBILE = [
 ]
 
 function getImgSrc(post: FeedPost, size: 'medium' | 'large' = 'medium') {
-  return post.sizes?.[size]?.mediaUrl ?? post.sizes?.medium?.mediaUrl ?? post.mediaUrl
+  if (post.sizes?.[size]?.mediaUrl) return post.sizes[size].mediaUrl
+  if (post.sizes?.medium?.mediaUrl) return post.sizes.medium.mediaUrl
+  // Vidéo : mediaUrl est le fichier vidéo, pas une image
+  return post.mediaType === 'VIDEO' ? (post.thumbnailUrl ?? '') : post.mediaUrl
+}
+
+function getCaption(post: FeedPost) {
+  return post.prunedCaption ?? post.caption?.replace(/#\w+/g, '').trim() ?? ''
+}
+
+// Couleur dominante Behold ("r,g,b") en fond pendant le chargement
+function getPlaceholderStyle(post: FeedPost) {
+  const rgb = post.colorPalette?.dominant
+  return rgb ? { backgroundColor: `rgb(${rgb})` } : undefined
+}
+
+function PlayIcon() {
+  return (
+    <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      <span className="rounded-full bg-black/45 p-3 backdrop-blur-sm">
+        <svg
+          className="h-5 w-5 translate-x-px text-white"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+        </svg>
+      </span>
+    </span>
+  )
 }
 
 export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
@@ -96,39 +128,23 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
               style={{ gridColumn: slot.col, gridRow: slot.row }}
               className="h-full"
             >
-              {isVideo ? (
-                <div className="group relative w-full h-full overflow-hidden rounded-2xl bg-black">
-                  <video
-                    src={post.mediaUrl}
-                    poster={post.thumbnailUrl ?? imgSrc}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <a
-                    href={post.permalink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Voir sur Instagram"
-                    className="absolute inset-0 bg-[#4F6072]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
-                  />
-                </div>
-              ) : (
-                <button
-                  onClick={handleClick}
-                  className="group relative block w-full h-full overflow-hidden rounded-2xl bg-white/5 cursor-pointer"
-                >
-                  <Image
-                    src={imgSrc}
-                    alt={post.caption?.slice(0, 80) ?? 'merci murphy® Instagram'}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="50vw"
-                  />
-                </button>
-              )}
+              {/* Mobile : pas d'autoplay, vignette + lecture au tap (lightbox) */}
+              <button
+                onClick={handleClick}
+                aria-label={isVideo ? 'Lire la vidéo' : 'Agrandir la photo'}
+                style={getPlaceholderStyle(post)}
+                className="group relative block w-full h-full overflow-hidden rounded-2xl bg-white/5 cursor-pointer"
+              >
+                <Image
+                  unoptimized
+                  src={imgSrc}
+                  alt={getCaption(post).slice(0, 80) || 'merci murphy® Instagram'}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="50vw"
+                />
+                {isVideo && <PlayIcon />}
+              </button>
             </Reveal>
           )
         })}
@@ -167,10 +183,13 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
               className="h-full"
             >
               {isVideo ? (
-                <div className="group relative w-full h-full overflow-hidden rounded-2xl bg-black">
+                <div
+                  style={getPlaceholderStyle(post)}
+                  className="group relative w-full h-full overflow-hidden rounded-2xl bg-black"
+                >
                   <video
                     src={post.mediaUrl}
-                    poster={post.thumbnailUrl ?? imgSrc}
+                    poster={imgSrc}
                     autoPlay
                     loop
                     muted
@@ -184,9 +203,9 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
                     aria-label="Voir sur Instagram"
                     className="absolute inset-0 bg-[#4F6072]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
                   >
-                    {post.caption && (
+                    {getCaption(post) && (
                       <p className="text-cream text-xs leading-relaxed line-clamp-3">
-                        {noOrphan(post.caption.replace(/#\w+/g, '').trim())}
+                        {noOrphan(getCaption(post))}
                       </p>
                     )}
                   </a>
@@ -194,20 +213,22 @@ export function InstagramGrid({ posts }: { posts: FeedPost[] }) {
               ) : (
                 <button
                   onClick={handleClick}
+                  style={getPlaceholderStyle(post)}
                   className="group relative block w-full h-full overflow-hidden rounded-2xl bg-white/5 cursor-pointer"
                 >
                   <Image
+                    unoptimized
                     src={imgSrc}
-                    alt={post.caption?.slice(0, 80) ?? 'merci murphy® Instagram'}
+                    alt={getCaption(post).slice(0, 80) || 'merci murphy® Instagram'}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 640px) 50vw, 25vw"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-[#4F6072]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                    {post.caption && (
+                    {getCaption(post) && (
                       <p className="text-cream text-xs leading-relaxed line-clamp-3 text-left">
-                        {noOrphan(post.caption.replace(/#\w+/g, '').trim())}
+                        {noOrphan(getCaption(post))}
                       </p>
                     )}
                   </div>
