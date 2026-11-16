@@ -48,7 +48,7 @@ function formatDateRange(from: string, to: string) {
     month: 'short',
     year: 'numeric',
   })
-  return from === to ? f : `${f} — ${t}`
+  return from === to ? f : `${f} - ${t}`
 }
 
 function localDateStr(d: Date) {
@@ -220,29 +220,29 @@ export function DashboardMain({
       {/* Visits KPIs */}
       <section className="mb-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
-          Services — {formatDateRange(from, to)}
+          Services - {formatDateRange(from, to)}
         </h2>
         <div
           className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${loading ? 'opacity-50' : ''}`}
         >
           <StatCard
             label="CA services"
-            value={visits.totalRevenue > 0 ? formatEUR(visits.totalRevenue) : '—'}
+            value={visits.totalRevenue > 0 ? formatEUR(visits.totalRevenue) : '-'}
             highlight={visits.totalRevenue > 0}
             sub="Visites enregistrées"
           />
           <StatCard
             label="Visites"
-            value={visits.visitCount > 0 ? String(visits.visitCount) : '—'}
+            value={visits.visitCount > 0 ? String(visits.visitCount) : '-'}
             sub="Avec prix renseigné"
           />
-          <StatCard label="Ticket moyen" value={avgTicket > 0 ? formatEUR(avgTicket) : '—'} />
+          <StatCard label="Ticket moyen" value={avgTicket > 0 ? formatEUR(avgTicket) : '-'} />
           <StatCard
             label="Top service"
             value={
               visits.byService[0]
                 ? (SERVICE_LABELS[visits.byService[0].service] ?? visits.byService[0].service)
-                : '—'
+                : '-'
             }
             sub={
               visits.byService[0]

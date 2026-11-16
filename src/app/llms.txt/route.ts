@@ -15,7 +15,7 @@ function oneLine(text: string | null | undefined, max = 160) {
   return flat.length > max ? `${flat.slice(0, max - 1).trimEnd()}…` : flat
 }
 
-/** `- [Label](url): description` — the link format llms.txt expects. */
+/** `- [Label](url): description` - the link format llms.txt expects. */
 function entry(label: string, path: string, description?: string | null) {
   const desc = oneLine(description)
   return `- [${label}](${BASE}${path})${desc ? `: ${desc}` : ''}`
@@ -31,7 +31,7 @@ export async function GET() {
   ])
 
   // Each group is a distinct set of opening hours (salon, boutique…), so keep
-  // its title — flattening them together produces contradictory ranges.
+  // its title - flattening them together produces contradictory ranges.
   const horaires = (settings?.horairesGroupes ?? [])
     .map((g) => {
       const lignes = g.lignes.map((l) => `${l.jour} : ${l.heures}`).join(' · ')

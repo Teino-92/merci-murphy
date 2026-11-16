@@ -30,7 +30,7 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             <span className="font-medium text-charcoal">Adresse :</span> 18, rue Victor Massé, 75009
-            Paris — France
+            Paris - France
           </li>
           <li>
             <span className="font-medium text-charcoal">Email :</span>{' '}
@@ -197,7 +197,7 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             <span className="font-medium text-charcoal">Cookies analytiques :</span> pour mesurer
-            l&apos;audience et améliorer nos contenus (Plausible Analytics — sans
+            l&apos;audience et améliorer nos contenus (Plausible Analytics, sans
             tracking individuel)
           </li>
         </ul>
@@ -223,7 +223,7 @@ export default function ConfidentialitePage() {
           <a href="mailto:bonjour@mercimurphy.com" className="text-terracotta-dark hover:underline">
             bonjour@mercimurphy.com
           </a>{' '}
-          ou par courrier à Murphy Honsha, 18, rue Victor Massé, 75009 Paris — France.
+          ou par courrier à Murphy Honsha, 18, rue Victor Massé, 75009 Paris - France.
         </p>
         <p className="mt-3">
           En cas de réponse insatisfaisante, vous pouvez introduire une réclamation auprès de la{' '}
@@ -276,7 +276,7 @@ export default function ConfidentialitePage() {
           </li>
           <li>
             <span className="font-medium text-charcoal">Courrier :</span> Murphy Honsha, 18, rue
-            Victor Massé, 75009 Paris — France
+            Victor Massé, 75009 Paris - France
           </li>
         </ul>
       </div>

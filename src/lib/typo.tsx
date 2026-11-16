@@ -8,7 +8,7 @@ const MAX_TAIL = 26
 
 /**
  * Variante « souple » pour les titres : le groupe passe entier à la ligne s'il
- * tient, et se replie en interne sinon — jamais de débordement horizontal.
+ * tient, et se replie en interne sinon - jamais de débordement horizontal.
  */
 const SOFT = 'inline-block max-w-full'
 

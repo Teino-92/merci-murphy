@@ -80,7 +80,7 @@ export default async function ProductPage(props: Props) {
   const product = await getProductByHandle(params.handle)
   if (!product) notFound()
 
-  // Related products — from first collection, in-stock, excluding current
+  // Related products - from first collection, in-stock, excluding current
   const firstCollectionHandle = product.collections.nodes[0]?.handle
   const relatedCollection = firstCollectionHandle
     ? await getCollectionByHandle(firstCollectionHandle)

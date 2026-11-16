@@ -11,7 +11,7 @@ import { noOrphan } from '@/lib/typo'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Crèche canine Paris 9e — Garderie pour chien en demi-journée | merci murphy®',
+    absolute: 'Crèche canine Paris 9e - Garderie pour chien en demi-journée | merci murphy®',
   },
   description:
     'Crèche canine à Paris 9e (rue Victor Massé) : garderie pour chien en demi-journée, encadrée par un éducateur canin. Socialisation, jeux, repos ✓ Réservez la demi-journée de votre chien en ligne.',

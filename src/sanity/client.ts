@@ -1,7 +1,7 @@
 import { createClient } from '@sanity/client'
 import { createImageUrlBuilder, type SanityImageSource } from '@sanity/image-url'
 
-// Token serveur — lecture authentifiée pour types restreints par ACL (ex: seoPage).
+// Token serveur - lecture authentifiée pour types restreints par ACL (ex: seoPage).
 // Sans token, Sanity omet ces docs ("reason: permission"). useCdn désactivé quand token présent.
 const SANITY_READ_TOKEN = process.env.SANITY_API_READ_TOKEN ?? process.env.SANITY_API_TOKEN
 

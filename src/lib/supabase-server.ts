@@ -17,7 +17,7 @@ export const createSupabaseServerClient = cache(async () => {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
         } catch {
-          // Called from a Server Component — middleware handles session refresh
+          // Called from a Server Component - middleware handles session refresh
         }
       },
     },

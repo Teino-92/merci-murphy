@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         url: '/og/og-home.jpg',
         width: 1200,
         height: 630,
-        alt: 'merci murphy® — Boutique bien-être pour chiens à Paris',
+        alt: 'merci murphy® - Boutique bien-être pour chiens à Paris',
       },
     ],
   },

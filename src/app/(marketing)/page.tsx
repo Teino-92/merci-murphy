@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   // les satellites /toilettage-chien-paris et /toilettage-chat-paris. On garde
   // "chien" en tête (rank #1 acquis) mais on élargit l'entité au chat pour
   // capter la requête large "toiletteur Paris" (aujourd'hui rank 5-6).
-  title: 'Toiletteur chien & chat à Paris 9e — merci murphy® · Spa Paris 75009',
+  title: 'Toiletteur chien & chat à Paris 9e - merci murphy® · Spa Paris 75009',
   description:
     'Toiletteur pour chien et chat à Paris 9e (75009), rue Victor Massé. Salon de toilettage premium, bain, spa, crèche et bien-être animal. Sans stress, par des experts.',
   keywords: [

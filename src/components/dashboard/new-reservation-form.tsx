@@ -219,7 +219,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                   value={selectedDogId}
                   onChange={(e) => handleDogChange(e.target.value)}
                 >
-                  <option value="">— Choisir un chien</option>
+                  <option value="">Choisir un chien</option>
                   {profileDogs.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.name}
@@ -316,7 +316,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     onValueChange={(v) => setNewClient((d) => ({ ...d, age_chien: v }))}
                   >
                     <SelectTrigger className={inputCls}>
-                      <SelectValue placeholder="—" />
+                      <SelectValue placeholder="-" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="3-5-mois">3 à 5 mois</SelectItem>
@@ -342,7 +342,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     onValueChange={(v) => setNewClient((d) => ({ ...d, poids_chien: v }))}
                   >
                     <SelectTrigger className={inputCls}>
-                      <SelectValue placeholder="—" />
+                      <SelectValue placeholder="-" />
                     </SelectTrigger>
                     <SelectContent>
                       {POIDS.map((p) => (
@@ -362,7 +362,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                     onValueChange={(v) => setNewClient((d) => ({ ...d, etat_poil: v }))}
                   >
                     <SelectTrigger className={inputCls}>
-                      <SelectValue placeholder="—" />
+                      <SelectValue placeholder="-" />
                     </SelectTrigger>
                     <SelectContent>
                       {ETAT_POIL.map((ep) => (
@@ -505,7 +505,7 @@ export function NewReservationForm({ services }: NewReservationFormProps) {
                 onChange={(e) => setVisitStaff(e.target.value)}
                 className={inputCls}
               >
-                <option value="">— Choisir</option>
+                <option value="">Choisir</option>
                 {staffList.map((s) => (
                   <option key={s.id} value={s.name}>
                     {s.name}

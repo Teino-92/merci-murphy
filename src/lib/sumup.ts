@@ -1,5 +1,5 @@
 // src/lib/sumup.ts
-// SumUp Checkout API — create a payment link for a given amount
+// SumUp Checkout API - create a payment link for a given amount
 
 interface SumUpCheckoutResponse {
   id: string

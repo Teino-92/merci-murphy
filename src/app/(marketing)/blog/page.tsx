@@ -12,10 +12,10 @@ import { noOrphan } from '@/lib/typo'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Blog — Conseils bien-être pour votre chien',
+  title: 'Blog - Conseils bien-être pour votre chien',
   description: "Conseils, bien-être, éducation et produits pour chiens par l'équipe merci murphy®.",
   openGraph: {
-    images: [{ url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Blog — Merci Murphy' }],
+    images: [{ url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Blog - Merci Murphy' }],
   },
 }
 

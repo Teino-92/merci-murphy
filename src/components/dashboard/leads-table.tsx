@@ -333,7 +333,7 @@ export function LeadsTable({ leads: initialLeads }: { leads: ExtendedLead[] }) {
                       />
                       {!lead.has_account && (
                         <span className="text-[10px] text-gray-400" title="Sans compte">
-                          —
+                          -
                         </span>
                       )}
                     </div>

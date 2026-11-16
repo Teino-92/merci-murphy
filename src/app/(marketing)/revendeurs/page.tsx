@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   // Intention B2B « grossiste / fournisseur » : merci murphy® est une marque
   // (pas un grossiste multimarque), mais c'est le mot que tapent les acheteurs.
   title: {
-    absolute: 'Grossiste accessoires chien — marque française pour boutiques et toiletteurs',
+    absolute: 'Grossiste accessoires chien - marque française pour boutiques et toiletteurs',
   },
   description:
     'Fournisseur de soins et accessoires chien & chat pour boutiques, toiletteurs et animaleries. Marque française testée dans notre boutique parisienne. Net 60, retours offerts.',

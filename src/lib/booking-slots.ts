@@ -7,8 +7,8 @@ import {
 import type { Availability, TimeOff, StaffSchedule } from '@/lib/supabase-admin'
 
 export interface AvailableSlot {
-  timeUtc: string // "HH:MM" in UTC — what gets stored in the DB
-  timeParis: string // "HH:MM" in Paris local time — what gets shown to the user
+  timeUtc: string // "HH:MM" in UTC - what gets stored in the DB
+  timeParis: string // "HH:MM" in Paris local time - what gets shown to the user
   staffId: string
   staffName: string
 }
@@ -25,7 +25,7 @@ interface StaffInput {
   availabilities: Availability[]
   timeOff: TimeOff[]
   bookedSlots: BookedSlot[]
-  scheduleEntries?: StaffSchedule[] // monthly schedule — overrides availabilities when present
+  scheduleEntries?: StaffSchedule[] // monthly schedule - overrides availabilities when present
 }
 
 /**

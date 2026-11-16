@@ -23,7 +23,7 @@ export default function MentionsLegalesPage() {
           </li>
           <li>
             <span className="font-medium text-charcoal">Adresse physique :</span> 18, rue Victor
-            Massé, 75009 Paris — France
+            Massé, 75009 Paris - France
           </li>
           <li>
             <span className="font-medium text-charcoal">Numéro de téléphone :</span>{' '}

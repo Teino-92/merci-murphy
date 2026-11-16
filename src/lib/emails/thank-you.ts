@@ -46,14 +46,14 @@ export function thankYouHtml(params: {
       : ''
 
   return emailHtml({
-    title: 'Merci pour votre visite — merci murphy®',
+    title: 'Merci pour votre visite - merci murphy®',
     body: [
       p('Bonjour,'),
       p(
         `Merci pour votre visite aujourd'hui ! Nous espérons que ${dogText} êtes repartis heureux de votre séance de <strong>${esc(serviceName).toLowerCase()}</strong>.`
       ),
       p(
-        'Votre avis compte beaucoup pour nous. Si vous avez été satisfait(e), nous serions ravis que vous partagiez votre expérience en ligne — cela nous aide énormément !'
+        'Votre avis compte beaucoup pour nous. Si vous avez été satisfait(e), nous serions ravis que vous partagiez votre expérience en ligne, cela nous aide énormément !'
       ),
       btn('Laisser un avis Google ⭐', googleReviewUrl),
       productsBlock,

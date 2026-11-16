@@ -14,11 +14,11 @@ export function depositPaidHtml(params: {
     : `votre rendez-vous`
 
   return emailHtml({
-    title: 'Acompte reçu — merci murphy®',
+    title: 'Acompte reçu - merci murphy®',
     body: [
       p(`Bonjour ${esc(prenom)},`),
       p(
-        `Nous avons bien reçu votre acompte pour ${subject} — <strong>${esc(serviceName)}</strong> le <strong>${esc(appointmentDate)}</strong>.`
+        `Nous avons bien reçu votre acompte pour ${subject} - <strong>${esc(serviceName)}</strong> le <strong>${esc(appointmentDate)}</strong>.`
       ),
       p('Votre créneau est désormais confirmé. Nous avons hâte de vous accueillir !'),
       p(

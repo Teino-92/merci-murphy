@@ -1,7 +1,7 @@
 // src/lib/auth-role.ts
 // Determines dashboard access roles based on env vars.
-// ADMIN_EMAILS  — full access (Vue d'ensemble, financials, all API routes)
-// TEAM_EMAILS   — restricted access (Calendrier, Clients, Demandes only)
+// ADMIN_EMAILS  - full access (Vue d'ensemble, financials, all API routes)
+// TEAM_EMAILS   - restricted access (Calendrier, Clients, Demandes only)
 
 export function isAdminEmail(email: string | undefined): boolean {
   if (!email) return false

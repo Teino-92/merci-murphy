@@ -15,7 +15,7 @@ const INTERNAL_EMAIL = process.env.RESEND_INTERNAL_EMAIL ?? 'bonjour@mercimurphy
 /**
  * Sends an internal notification without ever breaking the caller: a lead that
  * is already stored must not fail because Resend is down or misconfigured.
- * Failures are logged rather than swallowed — a silent catch here hid a missing
+ * Failures are logged rather than swallowed - a silent catch here hid a missing
  * sender address for weeks.
  */
 async function notifyInternal(subject: string, html: string) {
@@ -68,7 +68,7 @@ function isBotSubmission(input: unknown, minFillMs = MIN_FILL_MS) {
 
 /**
  * Rejects bot-generated names like "cDPshepRWwtNLPMGtc" or "iDHHbdsMihyCGAXov".
- * Only applies to single words of 12+ characters — real names that long are
+ * Only applies to single words of 12+ characters - real names that long are
  * virtually always multi-word ("Anne-Sophie de la Rochefoucauld").
  */
 function looksLikeGibberish(value: string) {
@@ -221,7 +221,7 @@ export async function submitLead(data: LeadFormData & Partial<AntiSpamInput>) {
 </body></html>`
 
   await notifyInternal(
-    `🐾 Nouvelle demande — ${d.nom}${d.nom_chien ? ` & ${d.nom_chien}` : ''} (${serviceLabel})`,
+    `🐾 Nouvelle demande - ${d.nom}${d.nom_chien ? ` & ${d.nom_chien}` : ''} (${serviceLabel})`,
     internalHtml
   )
 
@@ -412,7 +412,7 @@ export async function submitRevendeurLead(data: RevendeurLeadFormData & Partial<
   </table>`
       : ''
   }
-  <p style="margin:0;font-size:14px;color:#888;">Demande professionnelle — à traiter depuis le dashboard.</p>
+  <p style="margin:0;font-size:14px;color:#888;">Demande professionnelle, à traiter depuis le dashboard.</p>
 </td></tr>
 <tr><td style="padding:24px 48px;background:#f5f0eb;text-align:center;">
   <p style="margin:0;font-size:12px;color:#888;">merci murphy® · 18 rue Victor Massé, 75009 Paris · bonjour@mercimurphy.com</p>
@@ -420,7 +420,7 @@ export async function submitRevendeurLead(data: RevendeurLeadFormData & Partial<
 </table></td></tr></table>
 </body></html>`
 
-  await notifyInternal(`🏪 Demande revendeur — ${d.entreprise} (${d.ville})`, internalHtml)
+  await notifyInternal(`🏪 Demande revendeur - ${d.entreprise} (${d.ville})`, internalHtml)
 
   return { success: true }
 }

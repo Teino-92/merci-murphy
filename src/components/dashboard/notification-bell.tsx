@@ -58,7 +58,7 @@ type VisitRow = {
 
 function visitToNotif(v: VisitRow, type: Notification['type'], label: string): Notification {
   const profile = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles
-  const clientName = profile?.nom ?? '—'
+  const clientName = profile?.nom ?? '-'
   const firstDog = v.dogs?.name
   const slug = v.service.split('-')[0]
   const serviceLabel = SERVICE_LABELS[slug] ?? v.service
@@ -131,7 +131,7 @@ export function NotificationBell() {
       items.push({
         id: `lead-${l.id}`,
         type: 'lead',
-        label: `Nouvelle demande — ${l.nom}`,
+        label: `Nouvelle demande - ${l.nom}`,
         sub: SERVICE_LABELS[l.service.split('-')[0]] ?? l.service,
         href: '/dashboard/leads',
         created_at: l.created_at,
@@ -142,7 +142,7 @@ export function NotificationBell() {
       items.push({
         id: `nl-${s.id}`,
         type: 'newsletter',
-        label: `Newsletter — ${s.email}`,
+        label: `Newsletter - ${s.email}`,
         sub: 'Nouvel abonné',
         href: '/dashboard/newsletter',
         created_at: s.created_at,

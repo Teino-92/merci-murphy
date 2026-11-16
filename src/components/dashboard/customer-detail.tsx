@@ -112,7 +112,7 @@ export function CustomerDetail({
     router.refresh()
   }
 
-  // Reschedule state — keyed by visit id
+  // Reschedule state - keyed by visit id
   const [rescheduling, setRescheduling] = useState<Record<string, boolean>>({})
   const [rescheduleDate, setRescheduleDate] = useState<Record<string, string>>({})
   const [rescheduleTime, setRescheduleTime] = useState<Record<string, string>>({})
@@ -138,7 +138,7 @@ export function CustomerDetail({
     setRescheduleSending((s) => ({ ...s, [v.id]: false }))
   }
 
-  // Deposit state — keyed by visit id
+  // Deposit state - keyed by visit id
   const [depositPrices, setDepositPrices] = useState<Record<string, string>>({})
   const [paymentUrls, setPaymentUrls] = useState<Record<string, string>>({})
   const [depositSent, setDepositSent] = useState<Record<string, number>>({})
@@ -164,11 +164,11 @@ export function CustomerDetail({
     setDepositSending((s) => ({ ...s, [v.id]: false }))
   }
 
-  // Final price editing — keyed by visit id
+  // Final price editing - keyed by visit id
   const [finalPriceInputs, setFinalPriceInputs] = useState<Record<string, string>>({})
   const [savingFinalPrice, setSavingFinalPrice] = useState<Record<string, boolean>>({})
 
-  // Visit notes — keyed by visit id
+  // Visit notes - keyed by visit id
   const [visitNotesInputs, setVisitNotesInputs] = useState<Record<string, string>>({})
   const [savingVisitNotes, setSavingVisitNotes] = useState<Record<string, boolean>>({})
 
@@ -773,7 +773,7 @@ export function CustomerDetail({
             </button>
           </div>
 
-          {/* Delete — admin only */}
+          {/* Delete - admin only */}
           {isAdmin && (
             <button
               onClick={deleteCustomer}

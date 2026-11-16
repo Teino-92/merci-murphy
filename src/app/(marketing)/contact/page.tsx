@@ -14,11 +14,11 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Contact merci murphy® — 18 rue Victor Massé, Paris 9e' },
+  title: { absolute: 'Contact merci murphy® - 18 rue Victor Massé, Paris 9e' },
   description:
-    'Téléphone, email, horaires et plan d’accès — métro Pigalle / Saint-Georges. merci murphy®, 18 rue Victor Massé, Paris 9e. Ouvert du mardi au samedi.',
+    'Téléphone, email, horaires et plan d’accès, métro Pigalle / Saint-Georges. merci murphy®, 18 rue Victor Massé, Paris 9e. Ouvert du mardi au samedi.',
   openGraph: {
-    images: [{ url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Contact — Merci Murphy' }],
+    images: [{ url: '/og/og-home.jpg', width: 1200, height: 630, alt: 'Contact - Merci Murphy' }],
   },
 }
 
@@ -72,10 +72,10 @@ export default async function ContactPage() {
 
       <PageHeaderV2
         title="Contact merci murphy®"
-        intro="Une question ? Écrivez-nous, appelez-nous, ou passez nous voir au 18 rue Victor Massé — entre Pigalle et Saint-Georges, Paris 9e."
+        intro="Une question ? Écrivez-nous, appelez-nous, ou passez nous voir au 18 rue Victor Massé, entre Pigalle et Saint-Georges, Paris 9e."
         image={{
           src: '/contact-hero.jpg',
-          alt: 'merci murphy® — vitrine',
+          alt: 'merci murphy® - vitrine',
           position: '50% center',
           // Paysage : le lettrage « merci murphy » occupe ~70 % de la largeur.
           aspect: 'aspect-[5/4]',

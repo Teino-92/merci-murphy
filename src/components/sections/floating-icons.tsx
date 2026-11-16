@@ -60,7 +60,7 @@ const ICONS: Icon[] = [
     style: { transform: 'scaleX(-1)' },
   },
   {
-    // Étoile gauche — remontée
+    // Étoile gauche - remontée
     src: '/icons/star.png',
     width: 54,
     position: { top: '38%', left: '22%' },
@@ -70,7 +70,7 @@ const ICONS: Icon[] = [
     style: {},
   },
   {
-    // Cœur gauche — entre étoile et peigne, loin du slider
+    // Cœur gauche - entre étoile et peigne, loin du slider
     src: '/icons/heart.png',
     width: 72,
     position: { bottom: '32%', left: '-9%' },
@@ -80,7 +80,7 @@ const ICONS: Icon[] = [
     style: {},
   },
   {
-    // Peigne droite — entre cœur et ciseaux bas droite, proche du slider
+    // Peigne droite - entre cœur et ciseaux bas droite, proche du slider
     src: '/icons/comb.png',
     width: 70,
     position: { top: '62%', right: '22%' },

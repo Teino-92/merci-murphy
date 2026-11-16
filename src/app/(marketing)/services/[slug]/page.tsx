@@ -162,7 +162,7 @@ export async function generateStaticParams() {
 // Les titles contiennent déjà la marque → `absolute` pour éviter le template.
 const SEO_META_OVERRIDES: Record<string, { title: string; description: string }> = {
   'le-toilettage-maison-poilus-r': {
-    title: 'Tarifs toilettage chien Paris — prix bain & coupe | merci murphy®',
+    title: 'Tarifs toilettage chien Paris - prix bain & coupe | merci murphy®',
     description:
       'Prix du toilettage chien chez merci murphy® : bain, bain + coupe, épilation et patticure. Grille tarifaire par gabarit et type de poil, méthode sans stress.',
   },

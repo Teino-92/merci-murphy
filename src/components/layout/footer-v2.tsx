@@ -184,7 +184,7 @@ function BottomBar({ tone }: { tone: Tone }) {
 }
 
 /**
- * Footer v2 — deux propositions pour le refresh.
+ * Footer v2 - deux propositions pour le refresh.
  * « taupe » : la newsletter ouvre le pied de page, puis quatre colonnes à filets.
  * « ardoise » : la signature de la maison à gauche, les liens à droite, newsletter discrète.
  * Liens identiques au footer actuel (maillage intact), sans titres Hn.

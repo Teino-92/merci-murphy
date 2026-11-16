@@ -35,7 +35,7 @@ export function ProBanner() {
     try {
       window.localStorage.setItem(STORAGE_KEY, String(Date.now()))
     } catch {
-      // Nothing to persist to — the banner simply returns next visit.
+      // Nothing to persist to - the banner simply returns next visit.
     }
   }
 

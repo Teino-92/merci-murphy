@@ -71,7 +71,7 @@ export async function getSeoPageBySlugRace(slugRace: string): Promise<SeoPageDet
 }
 
 /**
- * Maillage interne — 3 pages races similaires (même gabarit ou même type de poil),
+ * Maillage interne - 3 pages races similaires (même gabarit ou même type de poil),
  * excluant la page courante.
  */
 export async function getRelatedSeoPages(

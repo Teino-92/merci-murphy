@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
       to: internalEmail,
-      subject: `❌ Créneau refusé — ${(lead.nom ?? '').replace(/[\r\n]/g, ' ').slice(0, 100)}`,
+      subject: `❌ Créneau refusé - ${(lead.nom ?? '').replace(/[\r\n]/g, ' ').slice(0, 100)}`,
       html: `<p><strong>${esc(lead.nom)}</strong> a refusé le créneau proposé.</p>
 ${counter ? `<p><strong>Contre-proposition :</strong> ${esc(counter)}</p>` : '<p>Aucune contre-proposition fournie.</p>'}
 <p>Service : ${esc(lead.service)}</p>

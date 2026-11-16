@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
           from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
           to: internalEmail,
           subject:
-            `Nouveau toilettage — ${profile?.nom ?? user.email}${dogLine} · ${appointmentDate}`.replace(
+            `Nouveau toilettage - ${profile?.nom ?? user.email}${dogLine} · ${appointmentDate}`.replace(
               /[\r\n]/g,
               ' '
             ),

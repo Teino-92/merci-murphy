@@ -16,7 +16,7 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Toiletteur chien Paris 9e — Toilettage sans stress | merci murphy®' },
+  title: { absolute: 'Toiletteur chien Paris 9e - Toilettage sans stress | merci murphy®' },
   description:
     'Salon de toilettage pour chien à Paris 9e (rue Victor Massé). Bain, coupe, balnéo et massage par des toiletteuses expertes. Méthode sans stress ✓ Réservez en ligne en 2 min.',
   // Canonical → home : on veut que "/" gagne "toiletteur chien Paris" ET

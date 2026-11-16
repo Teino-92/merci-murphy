@@ -194,7 +194,7 @@ export function StaffScheduleEditor({ staffId }: Props) {
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   } ${isSaving ? 'opacity-60' : ''}`}
                 >
-                  {/* Day number — click to toggle */}
+                  {/* Day number - click to toggle */}
                   <button
                     onClick={() => toggleDay(dateStr)}
                     disabled={isSaving}

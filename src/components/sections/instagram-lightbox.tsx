@@ -77,7 +77,7 @@ export function InstagramLightbox({
           )}
         </div>
 
-        {/* Footer — link to Instagram */}
+        {/* Footer - link to Instagram */}
         <div className="mt-3 flex justify-end">
           <a
             href={permalink}

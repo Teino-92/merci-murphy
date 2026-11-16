@@ -95,7 +95,7 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold text-[#4F6072]">Vue d&apos;ensemble</h1>
       </div>
 
-      {/* Main analytics — interactive */}
+      {/* Main analytics - interactive */}
       <DashboardMain
         initialFrom={from}
         initialTo={to}

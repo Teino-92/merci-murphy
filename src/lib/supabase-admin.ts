@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Service role client — server-side only, never expose to browser
+// Service role client - server-side only, never expose to browser
 // global.fetch is patched by Next.js; passing cache: 'no-store' prevents
 // Vercel's Data Cache from serving stale responses across requests.
 export const supabaseAdmin = createClient(
@@ -69,7 +69,7 @@ export interface Lead {
   etat_poil: string | null
   message: string | null
   source: string
-  // Reseller leads (source = 'revendeur') — null on B2C rows
+  // Reseller leads (source = 'revendeur') - null on B2C rows
   entreprise: string | null
   ville: string | null
   type_commerce: string | null
@@ -183,7 +183,7 @@ export async function setNewsletterActive(id: string, active: boolean): Promise<
 }
 
 export async function searchProfiles(query: string): Promise<Profile[]> {
-  // PostgREST `.or()` interpolates raw filter syntax — `,` and `()` in the
+  // PostgREST `.or()` interpolates raw filter syntax - `,` and `()` in the
   // query would inject extra conditions. Two parameterized .ilike() queries
   // merged instead.
   const pattern = `%${query}%`
@@ -225,7 +225,7 @@ export interface CreateProfileInput {
   nom: string
   telephone: string
   notes?: string | null
-  // Dog data — written to dogs table only
+  // Dog data - written to dogs table only
   nom_chien: string
   race_chien?: string
   age_chien?: string

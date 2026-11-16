@@ -27,7 +27,7 @@ export function PwaGate({ children }: { children: React.ReactNode }) {
 
   if (!isClient) return null
 
-  // Desktop always passes through — PWA gate is mobile-only
+  // Desktop always passes through - PWA gate is mobile-only
   const standalone = isStandalone() || !isMobile()
 
   if (!standalone) {

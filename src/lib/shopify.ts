@@ -15,7 +15,7 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
 
   if (!res.ok) {
     const text = await res.text()
-    throw new Error(`Shopify API error: ${res.status} — ${text}`)
+    throw new Error(`Shopify API error: ${res.status} - ${text}`)
   }
 
   const json = await res.json()

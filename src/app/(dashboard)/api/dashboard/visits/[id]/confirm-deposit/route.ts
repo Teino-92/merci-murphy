@@ -90,7 +90,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       .send({
         from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
         to: clientEmail,
-        subject: `Acompte reçu — votre toilettage est confirmé chez merci murphy®`,
+        subject: `Acompte reçu - votre toilettage est confirmé chez merci murphy®`,
         html: depositPaidHtml({
           clientName: profileRes.data?.nom ?? '',
           dogName: dogRes.data?.name ?? null,

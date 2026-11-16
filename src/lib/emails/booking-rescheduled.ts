@@ -21,7 +21,7 @@ export function bookingServiceChangedHtml(params: {
     newDuration != null ? `<br>⏱ Durée ajustée : <strong>${newDuration} min</strong>` : ''
 
   return emailHtml({
-    title: 'Modification de prestation — merci murphy®',
+    title: 'Modification de prestation - merci murphy®',
     body: [
       p(`Bonjour ${esc(prenom)},`),
       p(`Suite à votre demande, nous avons modifié ${subject}.`),
@@ -51,7 +51,7 @@ export function bookingRescheduledHtml(params: {
   const dogLabel = dogName ? esc(dogName) : 'mon chien'
   const serviceLabel = esc(serviceName).toLowerCase()
 
-  const declineSubject = encodeURIComponent(`❌ Ce créneau ne me convient pas — ${dogLabel}`)
+  const declineSubject = encodeURIComponent(`❌ Ce créneau ne me convient pas - ${dogLabel}`)
   const declineBody = encodeURIComponent(
     `Bonjour,\n\nLe créneau du ${esc(newDate)} ne me convient pas.\n\nMes disponibilités : `
   )
@@ -63,7 +63,7 @@ export function bookingRescheduledHtml(params: {
     : `votre rendez-vous pour ${serviceLabel}`
 
   return emailHtml({
-    title: 'Nouveau créneau — merci murphy®',
+    title: 'Nouveau créneau - merci murphy®',
     body: [
       p(`Bonjour ${esc(prenom)},`),
       p(`Nous vous proposons un nouveau créneau pour ${subject}.`),

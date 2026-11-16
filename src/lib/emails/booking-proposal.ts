@@ -19,7 +19,7 @@ export function bookingProposalHtml(params: {
     : `votre rendez-vous pour ${esc(serviceName).toLowerCase()}`
 
   return emailHtml({
-    title: 'Proposition de rendez-vous — merci murphy®',
+    title: 'Proposition de rendez-vous - merci murphy®',
     body: [
       p(`Bonjour ${esc(clientName)},`),
       p(`Nous vous proposons un nouveau créneau pour ${subject}.`),

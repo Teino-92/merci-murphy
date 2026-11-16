@@ -161,7 +161,7 @@ function BeforeAfterFlip({
             : '0 6px 16px -8px rgba(58,42,38,0.2)',
         }}
       >
-        {/* Front — Avant */}
+        {/* Front - Avant */}
         <div
           className="absolute inset-0 overflow-hidden rounded-2xl transition-opacity duration-200"
           style={{ opacity: flipped ? 0 : 1 }}
@@ -180,7 +180,7 @@ function BeforeAfterFlip({
           )}
         </div>
 
-        {/* Back — Après. Counter-rotated so its content reads correctly. */}
+        {/* Back - Après. Counter-rotated so its content reads correctly. */}
         <div
           className="absolute inset-0 overflow-hidden rounded-2xl transition-opacity duration-200 [transform:rotateY(180deg)]"
           style={{ opacity: flipped ? 1 : 0 }}

@@ -45,7 +45,7 @@ export function TestimonialsCarousel({ testimonials }: { testimonials: Testimoni
 
   return (
     <div className="mt-12">
-      {/* Track — chaque slide = 100% de la largeur du conteneur */}
+      {/* Track - chaque slide = 100% de la largeur du conteneur */}
       <div
         ref={trackRef}
         onScroll={handleScroll}

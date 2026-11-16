@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   const now = new Date().toISOString()
 
   // Check if a sub with this endpoint already exists for a different user.
-  // If so, delete it first — endpoint is being re-issued to the current user.
+  // If so, delete it first - endpoint is being re-issued to the current user.
   const { data: existing } = await supabaseAdmin
     .from('push_subscriptions')
     .select('id, user_id')

@@ -1,5 +1,5 @@
 // src/lib/emails/base.ts
-// Shared HTML email layout — dark navy header, cream background
+// Shared HTML email layout - dark navy header, cream background
 
 /** Escape user-supplied strings before inserting into HTML email bodies. */
 export function esc(str: string | null | undefined): string {
@@ -70,7 +70,7 @@ export function divider(): string {
 </table>`
 }
 
-/** Bullet list — pass an array of strings (may contain HTML) */
+/** Bullet list - pass an array of strings (may contain HTML) */
 export function ul(items: string[]): string {
   const rows = items
     .map(
