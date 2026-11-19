@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { resend } from '@/lib/resend'
 import { accountConfirmHtml } from '@/lib/emails/account-confirm'
+import { passwordResetHtml } from '@/lib/emails/password-reset'
 import type { PendingSignup } from '@/lib/signup-finalize'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercimurphy.com'
@@ -107,6 +108,52 @@ export async function signUp(data: SignUpData) {
     // eslint-disable-next-line no-console
     console.error('[signUp] confirmation email failed:', emailError)
     return { success: false, error: "Impossible d'envoyer l'email de confirmation." }
+  }
+
+  return { success: true }
+}
+
+// ─── Password reset ──────────────────────────────────────────────────────────
+
+const PasswordResetSchema = z.object({ email: z.string().email('Email invalide') })
+
+/**
+ * Builds the recovery link ourselves (same pattern as signUp) so it never
+ * depends on Supabase's Redirect URL allow-list: an unlisted redirectTo makes
+ * Supabase fall back to the Site URL, landing the user on the homepage.
+ * The link goes through /auth/callback (verifyOtp sets the session cookies),
+ * then on to /auth/reset-password.
+ */
+export async function requestPasswordReset(
+  email: string
+): Promise<{ success: boolean; error?: string }> {
+  const parsed = PasswordResetSchema.safeParse({ email })
+  if (!parsed.success) return { success: false, error: 'Email invalide' }
+
+  const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'recovery',
+    email: parsed.data.email,
+  })
+
+  // Unknown address: answer as if sent, so we don't reveal which emails have an account
+  if (linkError || !linkData.properties?.hashed_token) return { success: true }
+
+  const resetUrl = new URL('/auth/callback', SITE_URL)
+  resetUrl.searchParams.set('token_hash', linkData.properties.hashed_token)
+  resetUrl.searchParams.set('type', 'recovery')
+  resetUrl.searchParams.set('next', '/auth/reset-password')
+
+  const { error: emailError } = await resend.emails.send({
+    from: `merci murphy® <${process.env.RESEND_AUTH_FROM}>`,
+    to: parsed.data.email,
+    subject: 'Réinitialisation de votre mot de passe - merci murphy®',
+    html: passwordResetHtml(resetUrl.toString()),
+  })
+
+  if (emailError) {
+    // eslint-disable-next-line no-console
+    console.error('[requestPasswordReset] email failed:', emailError)
+    return { success: false, error: "Impossible d'envoyer l'email. Réessayez plus tard." }
   }
 
   return { success: true }

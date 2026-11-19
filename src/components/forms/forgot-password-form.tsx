@@ -4,10 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { requestPasswordReset } from '@/lib/auth-actions'
 import { noOrphan } from '@/lib/typo'
-
-const supabase = createSupabaseBrowserClient()
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('')
@@ -20,14 +18,12 @@ export function ForgotPasswordForm() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    })
+    const result = await requestPasswordReset(email)
 
     setLoading(false)
 
-    if (error) {
-      setError('Une erreur est survenue. Vérifiez votre adresse email.')
+    if (!result.success) {
+      setError(result.error ?? 'Une erreur est survenue. Vérifiez votre adresse email.')
       return
     }
 
