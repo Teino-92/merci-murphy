@@ -13,6 +13,7 @@ const TYPE_TO_TAG: Record<string, string> = {
   post: 'sanity:post',
   teamMember: 'sanity:team',
   testimonial: 'sanity:testimonial',
+  seoPage: 'sanity:seoPage',
 }
 
 export async function POST(req: NextRequest) {

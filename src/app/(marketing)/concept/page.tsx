@@ -8,7 +8,7 @@ import { ValuesV2 } from '@/components/sections/values-v2'
 import { CONTAINER, DisplayTitle, INLINE_LINK, TEXT_LINK } from '@/components/ui/editorial'
 import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Le concept',

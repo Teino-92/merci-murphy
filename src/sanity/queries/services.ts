@@ -46,7 +46,7 @@ export async function getAllServices(): Promise<ServiceSummary[]> {
   return sanityClient.fetch(
     `*[_type == "service"] | order(ordre asc, _createdAt asc) { ${SERVICE_SUMMARY_FIELDS} }`,
     {},
-    { next: { revalidate: 3600, tags: ['sanity:service'] } }
+    { next: { revalidate: 86400, tags: ['sanity:service'] } }
   )
 }
 
@@ -56,7 +56,7 @@ export async function getAllServicesForSitemap(): Promise<
   return sanityClient.fetch(
     `*[_type == "service"] | order(ordre asc) { "slug": slug, _updatedAt }`,
     {},
-    { next: { revalidate: 3600, tags: ['sanity:service'] } }
+    { next: { revalidate: 86400, tags: ['sanity:service'] } }
   )
 }
 
@@ -72,7 +72,7 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetail | nu
       cta
     }`,
     { slug },
-    { next: { revalidate: 3600, tags: ['sanity:service'] } }
+    { next: { revalidate: 86400, tags: ['sanity:service'] } }
   )
 }
 
@@ -82,6 +82,6 @@ export async function getAllServicesForLlmsTxt(): Promise<
   return sanityClient.fetch(
     `*[_type == "service"] | order(ordre asc) { title, "slug": slug, description }`,
     {},
-    { next: { revalidate: 3600, tags: ['sanity:service'] } }
+    { next: { revalidate: 86400, tags: ['sanity:service'] } }
   )
 }

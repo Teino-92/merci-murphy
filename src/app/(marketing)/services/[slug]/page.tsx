@@ -27,7 +27,7 @@ import { getAllServices, getServiceBySlug, type TarifsToilettage } from '@/sanit
 import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const BAINS_SHOP_HANDLES = [
   'shampoing',
