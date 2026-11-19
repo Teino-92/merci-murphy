@@ -1,30 +1,11 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Routes that need session refresh / auth gating.
-// Public marketing pages skip Supabase entirely for faster TTFB.
-const AUTH_PREFIXES = [
-  '/dashboard',
-  '/compte',
-  '/login',
-  '/reservation',
-  '/booking',
-  '/auth',
-  '/api',
-  '/studio',
-]
-
-// API routes that don't need Supabase session refresh (webhooks, public endpoints)
-const API_AUTH_SKIP = ['/api/revalidate', '/api/cron', '/api/push']
+// The proxy only runs on routes listed in `config.matcher` below.
+// Every other request (public pages, assets, bots) never invokes it,
+// so it costs zero Active CPU there.
 
 export async function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname
-  const needsAuth = AUTH_PREFIXES.some((p) => pathname.startsWith(p))
-  if (!needsAuth) return NextResponse.next({ request })
-  if (API_AUTH_SKIP.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next({ request })
-  }
-
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -62,7 +43,27 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // Allow-list: only routes that read the Supabase session.
+  // Server Components cannot write cookies, so these pages rely on the proxy
+  // to refresh an expired access token before rendering.
+  // Excluded by construction: _next/*, images, favicon, robots.txt, sitemap.xml,
+  // home, /services, /toilettage/[race], /blog, /shop, /studio, /booking/respond/*,
+  // /api/cron, /api/revalidate, /api/booking/respond|visit-respond.
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|css|js)$).*)',
+    // Protected pages
+    '/dashboard/:path*',
+    '/compte/:path*',
+    '/reservation/:path*',
+    // Auth routes (login, OAuth/email callback, password reset)
+    '/login',
+    '/auth/:path*',
+    // API routes that call supabase.auth.getUser()
+    '/api/dashboard/:path*',
+    '/api/booking/available-dates',
+    '/api/booking/confirm',
+    '/api/booking/slots',
+    '/api/booking/toiletteurs',
+    '/api/push/subscribe',
+    '/api/review-status',
   ],
 }
