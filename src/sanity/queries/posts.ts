@@ -55,7 +55,7 @@ export async function getAllPosts(): Promise<PostSummary[]> {
   return sanityClient.fetch(
     `*[_type == "post" && !(_id in path("drafts.**")) && publishedAt <= now()] | order(publishedAt desc) { ${POST_SUMMARY_FIELDS} }`,
     {},
-    { next: { revalidate: 3600, tags: ['sanity:post'] } }
+    { next: { revalidate: 86400, tags: ['sanity:post'] } }
   )
 }
 
@@ -72,7 +72,7 @@ export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
       _updatedAt
     }`,
     { slug },
-    { next: { revalidate: 3600, tags: ['sanity:post'] } }
+    { next: { revalidate: 86400, tags: ['sanity:post'] } }
   )
 }
 
@@ -88,7 +88,7 @@ export async function getRelatedPosts(
         + select(defined($animal) && (animal == $animal || animal == "les-deux" || $animal == "les-deux") => 2, 0)
     } | order(rel desc, publishedAt desc) [0...3]`,
     { slug: post.slug, category: post.category ?? null, animal: post.animal ?? null },
-    { next: { revalidate: 3600, tags: ['sanity:post'] } }
+    { next: { revalidate: 86400, tags: ['sanity:post'] } }
   )
 }
 
@@ -96,7 +96,7 @@ export async function getLatestPosts(limit: number): Promise<PostSummary[]> {
   return sanityClient.fetch(
     `*[_type == "post" && !(_id in path("drafts.**")) && publishedAt <= now()] | order(publishedAt desc) [0...$limit] { ${POST_SUMMARY_FIELDS} }`,
     { limit },
-    { next: { revalidate: 3600, tags: ['sanity:post'] } }
+    { next: { revalidate: 86400, tags: ['sanity:post'] } }
   )
 }
 
@@ -104,7 +104,7 @@ export async function getPublishedPostCount(): Promise<number> {
   return sanityClient.fetch(
     `count(*[_type == "post" && !(_id in path("drafts.**")) && publishedAt <= now()])`,
     {},
-    { next: { revalidate: 3600, tags: ['sanity:post'] } }
+    { next: { revalidate: 86400, tags: ['sanity:post'] } }
   )
 }
 
@@ -112,6 +112,6 @@ export async function getAllPostsForSitemap(): Promise<PostSitemapEntry[]> {
   return sanityClient.fetch(
     `*[_type == "post" && !(_id in path("drafts.**")) && publishedAt <= now()] | order(publishedAt desc) { "slug": slug.current, _updatedAt }`,
     {},
-    { next: { revalidate: 3600, tags: ['sanity:post'] } }
+    { next: { revalidate: 86400, tags: ['sanity:post'] } }
   )
 }

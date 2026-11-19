@@ -4,7 +4,7 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { getAllPosts } from '@/sanity/queries/posts'
 import { getAllProducts } from '@/lib/shopify'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 const BASE = 'https://mercimurphy.com'
 

@@ -32,7 +32,7 @@ const SEO_SUMMARY_FIELDS = `
   gabarit
 `
 
-const REVALIDATE_OPTS = { next: { revalidate: 3600, tags: ['sanity:seoPage'] } }
+const REVALIDATE_OPTS = { next: { revalidate: 86400, tags: ['sanity:seoPage'] } }
 
 export async function getAllPublishedSeoPages(): Promise<SeoPageSummary[]> {
   return sanityClient.fetch(

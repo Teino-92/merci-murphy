@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 import { getAllPosts, type PostSummary } from '@/sanity/queries/posts'
 import { noOrphan } from '@/lib/typo'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Blog - Conseils bien-être pour votre chien',

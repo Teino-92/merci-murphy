@@ -74,6 +74,6 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       }
     }`,
     {},
-    { next: { revalidate: 60, tags: ['sanity:site-settings'] } }
+    { next: { revalidate: 86400, tags: ['sanity:site-settings'] } }
   )
 }

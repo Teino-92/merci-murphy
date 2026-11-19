@@ -1,4 +1,4 @@
-export const revalidate = 3600
+export const revalidate = 86400
 export const dynamicParams = false
 
 import type { Metadata } from 'next'

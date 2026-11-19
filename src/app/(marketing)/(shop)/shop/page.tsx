@@ -8,7 +8,7 @@ import { CONTAINER, SUB_LINE, SUB_TONE, TEXT_LINK } from '@/components/ui/editor
 import { getAllCollections, getCollectionByHandle } from '@/lib/shopify'
 import { cn } from '@/lib/utils'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: { absolute: 'Boutique merci murphy® - shampoings & soins naturels pour chien' },

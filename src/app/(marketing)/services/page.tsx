@@ -11,7 +11,7 @@ import { CONTAINER, INLINE_LINK } from '@/components/ui/editorial'
 import { getAllServices } from '@/sanity/queries/services'
 import { getTestimonials } from '@/sanity/queries/testimonials'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Toilettage, spa & crèche pour chiens à Paris 9e',
