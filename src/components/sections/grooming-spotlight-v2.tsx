@@ -61,6 +61,12 @@ export function GroomingSpotlightV2({ testimonials, googleUrl }: GroomingSpotlig
                 pour chaque chien, et des transformations qui{' '}
                 <span className="whitespace-nowrap">parlent d&apos;elles-mêmes.</span>
               </p>
+              <p className="text-base leading-relaxed text-charcoal/70">
+                <Link href="/concept#maison-poilus" className="underline underline-offset-4">
+                  Découvrir maison POILUS®
+                </Link>
+                , nos soins naturels et notre méthode sans stress.
+              </p>
             </div>
 
             <div className="mt-9 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">

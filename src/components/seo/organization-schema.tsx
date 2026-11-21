@@ -26,7 +26,7 @@ export function OrganizationSchema() {
       name: 'maison POILUS®',
       url: 'https://mercimurphy.com/concept#maison-poilus',
       description:
-        'Gamme de soins naturels pour chiens fabriqués en France (shampoings, démêlants à base de plantes, huiles essentielles et élixirs floraux) et méthode de toilettage sans stress de merci murphy®.',
+        'Gamme de soins naturels pour chiens fabriqués en France par un partenaire et utilisés pour le toilettage, les bains et le dog wash (shampoings, démêlants à base de plantes, huiles essentielles et élixirs floraux) et méthode de toilettage sans stress de merci murphy®.',
     },
     contactPoint: {
       '@type': 'ContactPoint',
