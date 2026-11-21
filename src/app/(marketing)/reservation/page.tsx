@@ -14,8 +14,9 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
 
 export const metadata: Metadata = {
-  // Reserve with Google ajoute ?rwg_token=… : ~200 variantes indexées en GSC.
-  alternates: { canonical: '/reservation' },
+  // Page derrière connexion : non indexable. Les ~200 variantes
+  // ?rwg_token=… (Reserve with Google) sortiront de l'index d'elles-mêmes.
+  robots: { index: false, follow: false },
   title: 'Réservation',
   description:
     'Prenez rendez-vous en ligne pour nos services de toilettage, crèche, éducation et ostéopathie.',
