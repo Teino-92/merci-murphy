@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { LegalPageV2 } from '@/components/sections/legal-page-v2'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/mentions-legales' },
   title: 'Mentions légales',
   description: 'Mentions légales du site merci murphy®.',
 }

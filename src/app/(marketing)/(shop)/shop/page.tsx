@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
+  // Couvre aussi /shop?collection=… (variantes indexées en GSC).
+  alternates: { canonical: '/shop' },
   title: { absolute: 'Boutique merci murphy® - shampoings & soins naturels pour chien' },
   description:
     'La boutique merci murphy® : produits de toilettage sélectionnés par nos toiletteurs, shampoings doux, sprays démêlants, soins sans sulfate. Fabrication française, livraison en France.',

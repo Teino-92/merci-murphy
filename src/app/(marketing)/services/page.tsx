@@ -14,6 +14,7 @@ import { getTestimonials } from '@/sanity/queries/testimonials'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/services' },
   title: 'Toilettage, spa & crèche pour chiens à Paris 9e',
   description:
     'Toilettage sans stress, balnéothérapie, crèche, éducation et ostéopathie pour chiens, 8 prestations sous un même toit à Paris 9e. Réservez en ligne 7j/7.',

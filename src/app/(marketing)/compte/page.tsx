@@ -12,6 +12,7 @@ import { CompleteProfileGate } from '@/components/account/complete-profile-gate'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: 'Mon compte',
   description: 'Votre espace personnel merci murphy®.',
 }

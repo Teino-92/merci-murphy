@@ -14,6 +14,7 @@ import { getSiteSettings } from '@/sanity/queries/site-settings'
 import { noOrphan } from '@/lib/typo'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/contact' },
   title: { absolute: 'Contact merci murphy® - 18 rue Victor Massé, Paris 9e' },
   description:
     'Téléphone, email, horaires et plan d’accès, métro Pigalle / Saint-Georges. merci murphy®, 18 rue Victor Massé, Paris 9e. Ouvert du mardi au samedi.',

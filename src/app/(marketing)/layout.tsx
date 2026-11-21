@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   description:
     'Toiletteur chien à Paris 9e (75009), rue Victor Massé. Salon de toilettage premium, bain, spa, crèche et bien-être canin. Sans stress, par des experts.',
   applicationName: 'Merci Murphy',
-  alternates: {
-    canonical: 'https://mercimurphy.com',
-  },
+  // Pas de canonical ici : hérité par toutes les pages sans canonical propre,
+  // il les déclarait comme doublons de la home (/services, /contact,
+  // /reservation?rwg_token=…). Chaque page déclare désormais le sien.
   keywords: [
     'toiletteur chien Paris',
     'toiletteur chien Paris 9',
