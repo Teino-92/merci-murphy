@@ -352,6 +352,10 @@ export default async function ToilettageChienParisPage() {
               <Link href="/services/toilettage#tarifs" className={INLINE_LINK}>
                 voir les tarifs du toilettage chien
               </Link>
+              . Nos soins et notre méthode sans stress&nbsp;:{' '}
+              <Link href="/concept#maison-poilus" className={INLINE_LINK}>
+                maison POILUS®
+              </Link>
               .
             </p>
           </div>

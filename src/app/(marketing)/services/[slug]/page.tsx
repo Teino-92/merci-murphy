@@ -478,8 +478,8 @@ export default async function ServicePage(props: Props) {
       {isBains && (
         <ShopTeaserV2
           products={bainsProducts}
-          title="Vous avez aimé nos produits maison POILUS ?"
-          intro="Retrouvez-les sur notre éco-shop et continuez les soins à la maison."
+          title="Continuez les soins à la maison"
+          intro="Les produits maison POILUS® sont disponibles uniquement en boutique. Sur notre éco-shop, retrouvez d'autres soins naturels pour le bain de votre chien."
         />
       )}
 

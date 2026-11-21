@@ -126,13 +126,11 @@ export default function ConceptPage() {
               <h2 className="font-display text-2xl text-charcoal">Des soins 100 % naturels</h2>
               <p className="mt-3">
                 maison POILUS® a développé une gamme de soins naturels adaptés aux chiens, fabriqués
-                en France : shampoings et démêlants formulés à partir de plantes, d&apos;huiles
-                essentielles et d&apos;élixirs floraux. Ce sont ces produits que nous utilisons au
-                salon et que vous retrouvez en{' '}
-                <Link href="/shop" className={INLINE_LINK}>
-                  boutique
-                </Link>
-                .
+                en France par un partenaire : shampoings et démêlants formulés à partir de plantes,
+                d&apos;huiles essentielles et d&apos;élixirs floraux. Ce sont ces produits que nous
+                utilisons pour chaque toilettage, chaque bain et au dog wash. Ils sont disponibles
+                uniquement dans notre boutique, 18 rue Victor Massé (Paris 9e), et non sur
+                l&apos;e-shop.
               </p>
             </div>
 
@@ -140,6 +138,10 @@ export default function ConceptPage() {
               <h2 className="font-display text-2xl text-charcoal">
                 Un toilettage sans stress, par Andrea et Titouan
               </h2>
+              <p className="mt-3">
+                Diplômés du BTM toiletteur après trois années de formation, récompensés en concours
+                nationaux. Leur méthode :
+              </p>
               <ul className="mt-3 list-disc space-y-2 pl-5">
                 <li>
                   Un temps d&apos;acclimatation pour que chaque chien découvre le lieu à son rythme.
