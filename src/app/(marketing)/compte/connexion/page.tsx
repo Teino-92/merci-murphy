@@ -5,6 +5,7 @@ import { SignInForm } from '@/components/forms/signin-form'
 import { AuthPageV2 } from '@/components/sections/auth-page-v2'
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: true },
   title: 'Connexion',
   description: 'Connectez-vous à votre compte merci murphy®.',
 }

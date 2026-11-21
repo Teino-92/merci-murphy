@@ -4,6 +4,7 @@ import { SignUpForm } from '@/components/forms/signup-form'
 import { AuthPageV2 } from '@/components/sections/auth-page-v2'
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: true },
   title: 'Créer un compte',
   description:
     'Créez votre compte merci murphy® pour gérer les informations de votre chien et faciliter vos réservations.',

@@ -11,6 +11,7 @@ import { cn, BLUR_PLACEHOLDER } from '@/lib/utils'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/concept' },
   title: 'Le concept',
   description:
     "Découvrez l'histoire de merci murphy®, notre équipe et nos engagements pour le bien-être animal à Paris.",

@@ -12,6 +12,7 @@ import { noOrphan } from '@/lib/typo'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/blog' },
   title: 'Blog - Conseils bien-être pour votre chien',
   description: "Conseils, bien-être, éducation et produits pour chiens par l'équipe merci murphy®.",
   openGraph: {

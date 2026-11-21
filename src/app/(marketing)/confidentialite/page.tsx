@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { LegalPageV2 } from '@/components/sections/legal-page-v2'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/confidentialite' },
   title: 'Politique de confidentialité',
   description:
     'Politique de confidentialité et protection des données personnelles de merci murphy®.',

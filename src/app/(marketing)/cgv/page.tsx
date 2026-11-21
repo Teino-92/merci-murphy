@@ -6,6 +6,7 @@ import { LegalPageV2 } from '@/components/sections/legal-page-v2'
 import { INLINE_LINK } from '@/components/ui/editorial'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/cgv' },
   title: 'Conditions générales de vente',
   description: 'Conditions générales de vente de merci murphy®.',
 }
