@@ -193,7 +193,7 @@ export default async function RacePage(props: Props) {
               choisies. Retrouvez la grille complète sur notre page toilettage.
             </p>
             <Link
-              href="/services/le-toilettage-maison-poilus-r#tarifs"
+              href="/services/toilettage#tarifs"
               className={cn(TEXT_LINK.light, 'mt-6 inline-block')}
             >
               Voir les tarifs

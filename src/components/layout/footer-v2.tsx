@@ -26,12 +26,12 @@ const SHOP_LINKS: FooterLink[] = [
 ]
 
 const SERVICE_LINKS: FooterLink[] = [
-  { label: 'Toilettage', href: '/services/le-toilettage-maison-poilus-r' },
-  { label: 'Bains', href: '/services/le-bain-en-libre-service-maison-poilus-r' },
-  { label: 'Balnéo', href: '/services/balneo-maison-poilus-r' },
+  { label: 'Toilettage', href: '/services/toilettage' },
+  { label: 'Bains', href: '/services/bain-libre-service' },
+  { label: 'Balnéo', href: '/services/balneo-chien' },
   {
     label: 'Massage',
-    href: '/services/le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
+    href: '/services/massage-chien',
   },
   { label: 'Crèche', href: '/services/la-creche' },
   { label: 'Éducation', href: '/services/l-education' },

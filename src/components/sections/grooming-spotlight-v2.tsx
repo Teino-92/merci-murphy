@@ -23,7 +23,7 @@ interface GroomingSpotlightV2Props {
 const GOOGLE_RATING = 5
 const GOOGLE_REVIEW_COUNT = 60
 
-const SERVICE_HREF = '/services/le-toilettage-maison-poilus-r'
+const SERVICE_HREF = '/services/toilettage'
 
 // Rayures déjà utilisées par la section actuelle : ici elles deviennent un
 // store banne derrière la photo au lieu d'un fond de section.

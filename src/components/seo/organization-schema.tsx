@@ -21,6 +21,13 @@ export function OrganizationSchema() {
       url: 'https://mercimurphy.com/logo.avif',
     },
     sameAs: ['https://www.instagram.com/mercimurphy/'],
+    brand: {
+      '@type': 'Brand',
+      name: 'maison POILUS®',
+      url: 'https://mercimurphy.com/concept#maison-poilus',
+      description:
+        'Gamme de soins naturels pour chiens fabriqués en France (shampoings, démêlants à base de plantes, huiles essentielles et élixirs floraux) et méthode de toilettage sans stress de merci murphy®.',
+    },
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+33 9 78 81 04 21',

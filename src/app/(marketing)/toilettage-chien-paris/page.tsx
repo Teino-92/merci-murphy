@@ -54,25 +54,25 @@ const STICKY = 'lg:sticky lg:top-28 lg:self-start'
 const SERVICES = [
   {
     name: 'Toilettage maison POILUS®',
-    slug: 'le-toilettage-maison-poilus-r',
+    slug: 'toilettage',
     description:
       'Bain, séchage, coupe et mise en beauté par nos toiletteuses expertes. Méthode sans stress, adaptée à chaque race.',
   },
   {
     name: 'Bain libre-service',
-    slug: 'le-bain-en-libre-service-maison-poilus-r',
+    slug: 'bain-libre-service',
     description:
       'Baignoire professionnelle à votre disposition : shampoing fourni, séchage inclus. Idéal entre deux toilettages.',
   },
   {
     name: 'Balnéothérapie',
-    slug: 'balneo-maison-poilus-r',
+    slug: 'balneo-chien',
     description:
       'Jacuzzi canin à jets pulsés pour soulager les douleurs articulaires, muscler et détendre votre chien.',
   },
   {
     name: 'Massage bien-être',
-    slug: 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
+    slug: 'massage-chien',
     description:
       'Séances de massage thérapeutique pour réduire le stress, améliorer la circulation et renforcer le lien.',
   },
@@ -349,7 +349,7 @@ export default async function ToilettageChienParisPage() {
             </ul>
             <p className="mt-8 text-base leading-relaxed text-charcoal/70">
               Prix par gabarit et type de poil, du bain à l&apos;épilation&nbsp;:{' '}
-              <Link href="/services/le-toilettage-maison-poilus-r#tarifs" className={INLINE_LINK}>
+              <Link href="/services/toilettage#tarifs" className={INLINE_LINK}>
                 voir les tarifs du toilettage chien
               </Link>
               .

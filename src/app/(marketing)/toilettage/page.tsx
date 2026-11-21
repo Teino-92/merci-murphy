@@ -158,7 +158,7 @@ export default async function ToilettageHubPage() {
             size="lg"
             className="h-12 self-start bg-charcoal px-8 text-[15px] text-cream hover:bg-charcoal/90 lg:self-auto"
           >
-            <Link href="/services/le-toilettage-maison-poilus-r">Voir le service toilettage</Link>
+            <Link href="/services/toilettage">Voir le service toilettage</Link>
           </Button>
         </div>
       </section>

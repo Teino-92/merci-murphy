@@ -37,11 +37,8 @@ const BAINS_SHOP_HANDLES = [
   'dog-cologne',
 ]
 
-const TOILETTAGE_SLUG = 'le-toilettage-maison-poilus-r'
-const BAINS_SLUGS = [
-  'le-bain-en-libre-service-maison-poilus-r',
-  'les-bains-en-libre-service-maison-poilus-r',
-]
+const TOILETTAGE_SLUG = 'toilettage'
+const BAINS_SLUGS = ['bain-libre-service']
 
 /**
  * Sélectionne jusqu'à `limit` races en maximisant la diversité visuelle :
@@ -118,10 +115,10 @@ function getTarifsPriceRange(data: TarifsToilettage): { low: number; high: numbe
 function getApprocheTitle(slug: string, isBains: boolean) {
   if (isBains) return 'Prenez soin de votre loulou à votre rythme'
   if (slug === 'la-creche') return "Vous bossez, il s'éclate !"
-  if (slug === 'balneo-maison-poilus-r') {
+  if (slug === 'balneo-chien') {
     return 'Offrez à votre chien un moment de bien-être profond grâce à la balnéothérapie'
   }
-  if (slug === 'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar') {
+  if (slug === 'massage-chien') {
     return 'Offrez à votre chien un véritable moment de bien-être'
   }
   if (slug === 'l-osteopathie')
@@ -161,7 +158,7 @@ export async function generateStaticParams() {
 // commerciale « prix / tarifs toilettage chien » (grille tarifaire visible).
 // Les titles contiennent déjà la marque → `absolute` pour éviter le template.
 const SEO_META_OVERRIDES: Record<string, { title: string; description: string }> = {
-  'le-toilettage-maison-poilus-r': {
+  toilettage: {
     title: 'Tarifs toilettage chien Paris - prix bain & coupe | merci murphy®',
     description:
       'Prix du toilettage chien chez merci murphy® : bain, bain + coupe, épilation et patticure. Grille tarifaire par gabarit et type de poil, méthode sans stress.',
