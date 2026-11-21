@@ -100,6 +100,84 @@ export default function ConceptPage() {
         </div>
       </section>
 
+      <section
+        id="maison-poilus"
+        className="scroll-mt-28 border-t border-charcoal/15 bg-cream py-16 lg:py-24"
+      >
+        <div
+          className={cn(
+            CONTAINER,
+            'grid grid-cols-1 gap-y-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-x-20'
+          )}
+        >
+          <div>
+            <DisplayTitle size="compact" sub="nos soins et notre savoir-faire">
+              maison POILUS®
+            </DisplayTitle>
+            <p className="mt-8 max-w-prose text-base leading-relaxed text-charcoal/70 lg:text-lg">
+              maison POILUS® est la marque de {BRAND} pour tout ce qui touche au soin du poil :
+              notre gamme de produits faits maison et l&apos;expertise de nos toiletteurs, Andrea et
+              Titouan.
+            </p>
+          </div>
+
+          <div className="space-y-10 text-base leading-relaxed text-charcoal/70 lg:text-lg">
+            <div>
+              <h2 className="font-display text-2xl text-charcoal">Des soins 100 % naturels</h2>
+              <p className="mt-3">
+                maison POILUS® a développé une gamme de soins naturels adaptés aux chiens, fabriqués
+                en France : shampoings et démêlants formulés à partir de plantes, d&apos;huiles
+                essentielles et d&apos;élixirs floraux. Ce sont ces produits que nous utilisons au
+                salon et que vous retrouvez en{' '}
+                <Link href="/shop" className={INLINE_LINK}>
+                  boutique
+                </Link>
+                .
+              </p>
+            </div>
+
+            <div>
+              <h2 className="font-display text-2xl text-charcoal">
+                Un toilettage sans stress, par Andrea et Titouan
+              </h2>
+              <ul className="mt-3 list-disc space-y-2 pl-5">
+                <li>
+                  Un temps d&apos;acclimatation pour que chaque chien découvre le lieu à son rythme.
+                </li>
+                <li>
+                  Un chien par pièce avec son toiletteur : jamais deux chiens dans la même pièce
+                  pour la même prestation.
+                </li>
+                <li>Des gestes doux et un vrai travail à la main.</li>
+              </ul>
+              <p className="mt-4">
+                Découvrir le{' '}
+                <Link href="/services/toilettage" className={INLINE_LINK}>
+                  toilettage
+                </Link>
+                , le{' '}
+                <Link href="/services/spa-chien" className={INLINE_LINK}>
+                  spa
+                </Link>
+                , la{' '}
+                <Link href="/services/balneo-chien" className={INLINE_LINK}>
+                  balnéo
+                </Link>
+                , le{' '}
+                <Link href="/services/massage-chien" className={INLINE_LINK}>
+                  massage
+                </Link>{' '}
+                ou le{' '}
+                <Link href="/services/bain-libre-service" className={INLINE_LINK}>
+                  bain en libre-service
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <ConceptValuesV2 />
 
       <ValuesV2

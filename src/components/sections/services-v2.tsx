@@ -18,7 +18,7 @@ interface ServicesV2Props {
   services: ServiceSummary[]
 }
 
-const SPA_SLUG = 'le-spa-maison-poilus-r'
+const SPA_SLUG = 'spa-chien'
 const PREVIEW_SLUGS = [SPA_SLUG, 'la-creche', 'l-education', 'l-osteopathie']
 
 function getServiceHref(slug: string) {

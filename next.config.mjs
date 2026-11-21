@@ -44,6 +44,34 @@ const nextConfig = {
       { source: '/services-1-2', destination: '/services', permanent: true },
       { source: '/etaussi', destination: '/services', permanent: true },
       { source: '/about', destination: '/concept', permanent: true },
+      // Anciens slugs Sanity « maison-poilus-r » (® converti en « r »).
+      {
+        source: '/services/le-toilettage-maison-poilus-r',
+        destination: '/services/toilettage',
+        permanent: true,
+      },
+      {
+        source: '/services/le-toilettage-maison-poilus',
+        destination: '/services/toilettage',
+        permanent: true,
+      },
+      { source: '/services/le-spa-maison-poilus-r', destination: '/services/spa-chien', permanent: true },
+      { source: '/services/balneo-maison-poilus-r', destination: '/services/balneo-chien', permanent: true },
+      {
+        source: '/services/le-bain-en-libre-service-maison-poilus-r',
+        destination: '/services/bain-libre-service',
+        permanent: true,
+      },
+      {
+        source: '/services/les-bains-en-libre-service-maison-poilus-r',
+        destination: '/services/bain-libre-service',
+        permanent: true,
+      },
+      {
+        source: '/services/le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
+        destination: '/services/massage-chien',
+        permanent: true,
+      },
     ]
   },
   images: {

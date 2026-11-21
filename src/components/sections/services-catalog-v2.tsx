@@ -23,13 +23,8 @@ interface ServicesCatalogV2Props {
   basePath?: string
 }
 
-const SPA_SLUG = 'le-spa-maison-poilus-r'
-const SPA_CHILDREN_SLUGS = [
-  'le-toilettage-maison-poilus-r',
-  'le-bain-en-libre-service-maison-poilus-r',
-  'balneo-maison-poilus-r',
-  'le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
-]
+const SPA_SLUG = 'spa-chien'
+const SPA_CHILDREN_SLUGS = ['toilettage', 'bain-libre-service', 'balneo-chien', 'massage-chien']
 
 type RowSize = 'main' | 'nested'
 

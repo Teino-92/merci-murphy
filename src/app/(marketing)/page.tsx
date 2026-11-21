@@ -104,7 +104,7 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/le-toilettage-maison-poilus',
+        url: 'https://mercimurphy.com/services/toilettage',
       },
       {
         '@type': 'Service',
@@ -164,7 +164,7 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/le-bain-en-libre-service-maison-poilus-r',
+        url: 'https://mercimurphy.com/services/bain-libre-service',
       },
       {
         '@type': 'Service',
@@ -179,7 +179,7 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/balneo-maison-poilus-r',
+        url: 'https://mercimurphy.com/services/balneo-chien',
       },
       {
         '@type': 'Service',
@@ -194,7 +194,7 @@ export default async function HomePage() {
           '@type': 'City',
           name: 'Paris',
         },
-        url: 'https://mercimurphy.com/services/le-massage-bien-etre-maison-poilus-r-and-le-petit-nenuphar',
+        url: 'https://mercimurphy.com/services/massage-chien',
       },
     ],
   }

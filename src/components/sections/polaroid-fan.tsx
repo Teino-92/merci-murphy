@@ -63,7 +63,7 @@ export function PolaroidFan() {
                   {item.name}
                 </p>
                 <Link
-                  href="/services/le-toilettage-maison-poilus-r"
+                  href="/services/toilettage"
                   className="mt-1 block text-xs text-charcoal/50 hover:text-terracotta transition-colors font-medium tracking-wide"
                   style={{ fontFamily: 'var(--font-display, serif)', fontStyle: 'italic' }}
                   onClick={(e) => e.stopPropagation()}
