@@ -134,8 +134,8 @@ const FAQ = [
 ]
 
 /**
- * Landing « toiletteur chat Paris ». Pas de photo de chat dans /public :
- * l'en-tête reste typographique. Quartiers et prestations en listes à filets.
+ * Landing « toiletteur chat Paris ». Photo du hero reprise de la fiche shop
+ * « Bâtons de matatabi pour chats ». Quartiers et prestations en listes à filets.
  */
 export default async function ToilettageChatParisPage() {
   const settings = await getSiteSettings()
@@ -250,6 +250,11 @@ export default async function ToilettageChatParisPage() {
         }
         sub="Paris 75009, Pigalle, Saint-Georges"
         intro="merci murphy® toilette aussi les chats, à Paris 9e, rue Victor Massé. Bain, démêlage, brossage et soin du pelage par des expertes du toilettage félin, dans une approche douce et respectueuse du rythme de votre chat."
+        image={{
+          src: '/toilettage-chat-paris.webp',
+          alt: 'Chat à poils longs au pelage soyeux, toiletteur chat merci murphy® Paris 9e',
+          position: 'center 40%',
+        }}
       >
         <Button
           asChild
